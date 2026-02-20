@@ -15,7 +15,6 @@ import {
   Settings,
   Menu,
   X,
-  ChevronRight,
   LogOut
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -43,20 +42,25 @@ export default function Sidebar({ currentPage }) {
   const navContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="p-5 pb-6 border-b border-[var(--modal-border)]">
+      <div className="px-6 py-7">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl modal-gradient flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
-          </div>
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/6f560f8f2_modalitinerantlogo.png"
+            alt="Modal Itinerant"
+            className="w-9 h-9 object-contain"
+          />
           <div>
-            <h1 className="text-base font-bold text-white tracking-tight">Modal Itinerant</h1>
-            <p className="text-[10px] text-[var(--modal-text-muted)] tracking-widest uppercase">Education Platform</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-medium text-[#400070]">MODAL</span>
+              <span className="text-sm font-bold text-[#400070]">ITINERANT</span>
+            </div>
+            <p className="text-[10px] text-[var(--modal-text-muted)] tracking-wide">Itinerant Teaching Hub</p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto scrollbar-thin">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto scrollbar-thin">
         {navItems.map((item) => {
           const isActive = currentPage === item.page;
           return (
@@ -65,16 +69,21 @@ export default function Sidebar({ currentPage }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group
-                ${isActive 
-                  ? "bg-[#400070]/30 text-white border border-[#400070]/50" 
-                  : "text-[var(--modal-text-muted)] hover:text-white hover:bg-white/5"
+                relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 group
+                ${isActive
+                  ? "bg-[#EADDF5] text-[#400070]"
+                  : "text-[#6F6F6F] hover:text-[#400070] hover:bg-[#F7F3FA]"
                 }
               `}
             >
-              <item.icon className={`w-4 h-4 ${isActive ? "text-[var(--modal-purple-glow)]" : "text-[var(--modal-text-muted)] group-hover:text-white"}`} />
-              <span className="flex-1">{item.name}</span>
-              {isActive && <ChevronRight className="w-3 h-3 text-[var(--modal-purple-glow)]" />}
+              {isActive && (
+                <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#6B2FB9]" />
+              )}
+              <item.icon
+                className={`w-4 h-4 ${isActive ? "text-[#6B2FB9]" : "text-[#6F6F6F] group-hover:text-[#6B2FB9]"}`}
+                strokeWidth={isActive ? 2.5 : 2}
+              />
+              <span className={`flex-1 ${isActive ? "font-semibold" : ""}`}>{item.name}</span>
             </Link>
           );
         })}
@@ -85,18 +94,18 @@ export default function Sidebar({ currentPage }) {
         <Link
           to={createPageUrl("Settings")}
           onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
-            ${currentPage === "Settings" 
-              ? "bg-[#400070]/30 text-white border border-[#400070]/50" 
-              : "text-[var(--modal-text-muted)] hover:text-white hover:bg-white/5"
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+            ${currentPage === "Settings"
+              ? "bg-[#EADDF5] text-[#400070] font-semibold"
+              : "text-[#6F6F6F] hover:text-[#400070] hover:bg-[#F7F3FA]"
             }`}
         >
-          <Settings className="w-4 h-4" />
+          <Settings className={`w-4 h-4 ${currentPage === "Settings" ? "text-[#6B2FB9]" : "text-[#6F6F6F]"}`} />
           <span>Settings</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[var(--modal-text-muted)] hover:text-red-400 hover:bg-red-500/5 w-full transition-all"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#6F6F6F] hover:text-red-500 hover:bg-red-50 w-full transition-all"
         >
           <LogOut className="w-4 h-4" />
           <span>Sign Out</span>
@@ -110,16 +119,16 @@ export default function Sidebar({ currentPage }) {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-[var(--modal-card)] border border-[var(--modal-border)] text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-white border border-[var(--modal-border)] text-[#400070] shadow-sm"
       >
         <Menu className="w-5 h-5" />
       </button>
 
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
-          <div className="w-64 h-full bg-[var(--modal-bg)] border-r border-[var(--modal-border)]" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-white/50 hover:text-white">
+        <div className="lg:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
+          <div className="w-64 h-full bg-white border-r border-[var(--modal-border)]" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-[#6F6F6F] hover:text-[#400070]">
               <X className="w-5 h-5" />
             </button>
             {navContent}
@@ -128,7 +137,7 @@ export default function Sidebar({ currentPage }) {
       )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--modal-bg)] border-r border-[var(--modal-border)]">
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-[var(--modal-border)] pt-1">
         {navContent}
       </aside>
     </>

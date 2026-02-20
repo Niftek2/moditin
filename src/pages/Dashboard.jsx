@@ -3,33 +3,68 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
+import { motion } from "framer-motion";
 import {
   Users, Target, Clock, Car, Headphones, CalendarDays,
-  TrendingUp, ChevronRight, FileText, TestTube2, ClipboardCheck
+  ChevronRight, FileText, TestTube2, Plus
 } from "lucide-react";
-import PageHeader from "../components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
 
-function StatCard({ icon: Icon, label, value, page, color }) {
+function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
   return (
-    <Link to={createPageUrl(page)} className="modal-card p-5 hover:bg-[var(--modal-card-hover)] transition-all duration-300 group">
-      <div className="flex items-center justify-between mb-3">
-        <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>
-          <Icon className="w-5 h-5 text-white" />
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.35 }}
+    >
+      <Link
+        to={createPageUrl(page)}
+        className="modal-card block p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 group"
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-12 h-12 rounded-full bg-[#EADDF5] flex items-center justify-center">
+            <Icon className="w-5 h-5 text-[#6B2FB9]" strokeWidth={2.5} />
+          </div>
+          <ChevronRight className="w-4 h-4 text-[var(--modal-border)] group-hover:text-[#6B2FB9] transition-colors" />
         </div>
-        <ChevronRight className="w-4 h-4 text-[var(--modal-text-muted)] opacity-0 group-hover:opacity-100 transition-opacity" />
-      </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
-      <p className="text-xs text-[var(--modal-text-muted)] mt-0.5">{label}</p>
-    </Link>
+        <p className="text-3xl font-bold text-[var(--modal-text)]">{value}</p>
+        <p className="text-sm text-[var(--modal-text-muted)] mt-1">{label}</p>
+        {sub && <p className="text-xs text-[#6B2FB9] mt-0.5">{sub}</p>}
+      </Link>
+    </motion.div>
+  );
+}
+
+function QuickAction({ icon: Icon, label, page, delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.3 }}
+    >
+      <Link
+        to={createPageUrl(page)}
+        className="flex items-center gap-3 bg-white border border-[var(--modal-border)] rounded-2xl px-4 py-4 hover:border-[#6B2FB9] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+        style={{ boxShadow: "0px 2px 8px rgba(0,0,0,0.05)" }}
+      >
+        <div className="w-9 h-9 rounded-xl bg-[#EADDF5] flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-[#6B2FB9]" strokeWidth={2.5} />
+        </div>
+        <span className="text-sm font-medium text-[var(--modal-text)]">{label}</span>
+      </Link>
+    </motion.div>
   );
 }
 
 export default function Dashboard() {
-  const [userName, setUserName] = useState("");
-  
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
-    base44.auth.me().then(u => setUserName(u?.full_name || "")).catch(() => {});
+    base44.auth.me().then(setUser).catch(() => {});
   }, []);
+
+  const firstName = user?.full_name?.split(" ")[0] || "";
+  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
@@ -49,67 +84,99 @@ export default function Dashboard() {
   });
 
   const currentMonth = new Date().toISOString().slice(0, 7);
-  const monthlyMinutes = services.filter(s => s.monthKey === currentMonth).reduce((sum, s) => sum + (s.minutes || 0), 0);
+  const monthlyMinutes = services
+    .filter(s => s.monthKey === currentMonth)
+    .reduce((sum, s) => sum + (s.minutes || 0), 0);
 
   return (
     <div>
-      <PageHeader
-        title={userName ? `Welcome back, ${userName.split(" ")[0]}` : "Dashboard"}
-        subtitle="Your itinerant teaching hub"
-      />
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="mb-8"
+      >
+        <h1 className="text-2xl font-bold text-[var(--modal-text)]">
+          {firstName ? `👋 Welcome back, ${firstName}` : "👋 Welcome back"}
+        </h1>
+        <p className="text-sm text-[var(--modal-text-muted)] mt-1">
+          Here's your teaching overview for {monthName}.
+        </p>
+      </motion.div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={Users} label="Students" value={students.length} page="Students" color="bg-[#400070]" />
-        <StatCard icon={Target} label="Active Goals" value={goals.filter(g => g.status === "Active").length} page="GoalBank" color="bg-purple-700" />
-        <StatCard icon={Clock} label="Hours This Month" value={`${(monthlyMinutes / 60).toFixed(1)}h`} page="ServiceHours" color="bg-indigo-600" />
-        <StatCard icon={Headphones} label="Equipment" value={equipment.length} page="Equipment" color="bg-violet-600" />
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <StatCard icon={Users} label="Active Students" value={students.length} page="Students" delay={0} />
+        <StatCard icon={Target} label="Active Goals" value={goals.filter(g => g.status === "Active").length} page="GoalBank" delay={0.05} />
+        <StatCard
+          icon={Clock}
+          label="Hours This Month"
+          value={`${(monthlyMinutes / 60).toFixed(1)}h`}
+          sub={`${monthlyMinutes} minutes`}
+          page="ServiceHours"
+          delay={0.1}
+        />
+        <StatCard icon={Headphones} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.15} />
       </div>
 
       {/* Quick Actions */}
-      <div className="mb-8">
-        <h2 className="text-sm font-semibold text-[var(--modal-text-muted)] uppercase tracking-wider mb-4">Quick Actions</h2>
+      <div className="mb-10">
+        <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-          {[
-            { label: "Log Service", icon: Clock, page: "ServiceHours" },
-            { label: "Plan Activity", icon: CalendarDays, page: "ActivityPlanner" },
-            { label: "Log Mileage", icon: Car, page: "Mileage" },
-            { label: "Worksheets", icon: FileText, page: "Worksheets" },
-            { label: "Testing", icon: TestTube2, page: "TestingDecisions" },
-          ].map((action) => (
-            <Link
-              key={action.page}
-              to={createPageUrl(action.page)}
-              className="modal-card p-4 flex items-center gap-3 hover:bg-[var(--modal-card-hover)] transition-all group"
-            >
-              <action.icon className="w-4 h-4 text-[var(--modal-purple-glow)]" />
-              <span className="text-sm text-[var(--modal-text)]">{action.label}</span>
-            </Link>
-          ))}
+          <QuickAction icon={Clock} label="Log Service" page="ServiceHours" delay={0.2} />
+          <QuickAction icon={CalendarDays} label="Plan Activity" page="ActivityPlanner" delay={0.22} />
+          <QuickAction icon={Car} label="Log Mileage" page="Mileage" delay={0.24} />
+          <QuickAction icon={FileText} label="Worksheets" page="Worksheets" delay={0.26} />
+          <QuickAction icon={TestTube2} label="Testing" page="TestingDecisions" delay={0.28} />
         </div>
       </div>
 
       {/* Recent Service Entries */}
-      <div className="modal-card p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-[var(--modal-text-muted)] uppercase tracking-wider">Recent Service Entries</h2>
-          <Link to={createPageUrl("ServiceHours")} className="text-xs text-[var(--modal-purple-glow)] hover:underline">View all</Link>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.32, duration: 0.35 }}
+        className="modal-card p-6"
+      >
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider">Recent Service Entries</h2>
+          <Link to={createPageUrl("ServiceHours")} className="text-xs text-[#6B2FB9] hover:underline font-medium">
+            View all
+          </Link>
         </div>
+
         {services.length === 0 ? (
-          <p className="text-sm text-[var(--modal-text-muted)] text-center py-8">No service entries yet. Start logging your hours!</p>
+          <div className="text-center py-10">
+            <div className="w-12 h-12 rounded-2xl bg-[#EADDF5] flex items-center justify-center mx-auto mb-3">
+              <Clock className="w-6 h-6 text-[#6B2FB9]" />
+            </div>
+            <p className="text-sm font-medium text-[var(--modal-text)] mb-1">📋 No service entries yet</p>
+            <p className="text-xs text-[var(--modal-text-muted)] mb-4">
+              Start logging your first service to see monthly totals here.
+            </p>
+            <Link to={createPageUrl("ServiceHours")}>
+              <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2" size="sm">
+                <Plus className="w-3.5 h-3.5" /> Log Service
+              </Button>
+            </Link>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="divide-y divide-[var(--modal-border)]">
             {services.slice(0, 5).map((entry) => (
-              <div key={entry.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-white/5 transition-colors">
+              <div key={entry.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                 <div>
-                  <p className="text-sm text-white">{entry.category?.replace(/([A-Z])/g, " $1").trim()}</p>
+                  <p className="text-sm font-medium text-[var(--modal-text)]">
+                    {entry.category?.replace(/([A-Z])/g, " $1").trim()}
+                  </p>
                   <p className="text-xs text-[var(--modal-text-muted)]">{entry.date}</p>
                 </div>
-                <span className="text-sm font-medium text-[var(--modal-purple-glow)]">{entry.minutes} min</span>
+                <span className="text-sm font-semibold text-[#6B2FB9]">{entry.minutes} min</span>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -47,34 +47,34 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Dashboard from './pages/Dashboard';
-import Students from './pages/Students';
-import StudentDetail from './pages/StudentDetail';
-import GoalBank from './pages/GoalBank';
 import Accommodations from './pages/Accommodations';
-import TestingDecisions from './pages/TestingDecisions';
-import ServiceHours from './pages/ServiceHours';
-import Mileage from './pages/Mileage';
-import Equipment from './pages/Equipment';
 import ActivityPlanner from './pages/ActivityPlanner';
-import Worksheets from './pages/Worksheets';
+import Dashboard from './pages/Dashboard';
+import Equipment from './pages/Equipment';
+import GoalBank from './pages/GoalBank';
+import Mileage from './pages/Mileage';
+import ServiceHours from './pages/ServiceHours';
 import Settings from './pages/Settings';
+import StudentDetail from './pages/StudentDetail';
+import Students from './pages/Students';
+import TestingDecisions from './pages/TestingDecisions';
+import Worksheets from './pages/Worksheets';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Students": Students,
-    "StudentDetail": StudentDetail,
-    "GoalBank": GoalBank,
     "Accommodations": Accommodations,
-    "TestingDecisions": TestingDecisions,
-    "ServiceHours": ServiceHours,
-    "Mileage": Mileage,
-    "Equipment": Equipment,
     "ActivityPlanner": ActivityPlanner,
-    "Worksheets": Worksheets,
+    "Dashboard": Dashboard,
+    "Equipment": Equipment,
+    "GoalBank": GoalBank,
+    "Mileage": Mileage,
+    "ServiceHours": ServiceHours,
     "Settings": Settings,
+    "StudentDetail": StudentDetail,
+    "Students": Students,
+    "TestingDecisions": TestingDecisions,
+    "Worksheets": Worksheets,
 }
 
 export const pagesConfig = {

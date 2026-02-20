@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,13 +6,16 @@
 :root {
   --modal-purple: #400070;
   --modal-purple-light: #6B21A8;
-  --modal-purple-glow: #7C3AED;
-  --modal-bg: #0B0713;
-  --modal-card: #150F21;
-  --modal-card-hover: #1D1530;
-  --modal-border: #2D2240;
-  --modal-text: #E8E0F0;
-  --modal-text-muted: #9B8FB5;
+  --modal-purple-glow: #6B2FB9;
+  --modal-purple-pale: #EADDF5;
+  --modal-bg: #F7F3FA;
+  --modal-card: #FFFFFF;
+  --modal-card-hover: #F9F6FD;
+  --modal-border: #E8DFF5;
+  --modal-text: #1A1028;
+  --modal-text-muted: #6F6F6F;
+  --modal-sidebar-bg: #FFFFFF;
+  --modal-accent-bar: #400070;
 }
 
 @layer base {
@@ -25,13 +29,17 @@
 
 @layer utilities {
   .modal-gradient {
-    background: linear-gradient(135deg, #400070 0%, #1a0040 100%);
+    background: linear-gradient(135deg, #400070 0%, #6B2FB9 100%);
   }
   .modal-glow {
-    box-shadow: 0 0 20px rgba(64, 0, 112, 0.3);
+    box-shadow: 0 0 20px rgba(64, 0, 112, 0.15);
   }
   .modal-card {
-    @apply bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-2xl;
+    @apply bg-white border border-[var(--modal-border)] rounded-2xl;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.06);
+  }
+  .modal-card-hover {
+    @apply hover:shadow-md hover:-translate-y-0.5 transition-all duration-200;
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;
