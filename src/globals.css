@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --modal-purple: #400070;
+  --modal-purple-light: #6B21A8;
+  --modal-purple-glow: #7C3AED;
+  --modal-bg: #0B0713;
+  --modal-card: #150F21;
+  --modal-card-hover: #1D1530;
+  --modal-border: #2D2240;
+  --modal-text: #E8E0F0;
+  --modal-text-muted: #9B8FB5;
+}
+
+@layer base {
+  * {
+    @apply border-[var(--modal-border)];
+  }
+  body {
+    @apply bg-[var(--modal-bg)] text-[var(--modal-text)] font-[Arial,Helvetica,sans-serif];
+  }
+}
+
+@layer utilities {
+  .modal-gradient {
+    background: linear-gradient(135deg, #400070 0%, #1a0040 100%);
+  }
+  .modal-glow {
+    box-shadow: 0 0 20px rgba(64, 0, 112, 0.3);
+  }
+  .modal-card {
+    @apply bg-[var(--modal-card)] border border-[var(--modal-border)] rounded-2xl;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--modal-border);
+    border-radius: 4px;
+  }
+}
