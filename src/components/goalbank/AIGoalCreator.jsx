@@ -210,12 +210,20 @@ function GoalOutput({ goal, highlight }) {
   );
 }
 
-export default function AIGoalCreator({ open, onClose, onSave }) {
+export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
   const [step, setStep] = useState("form"); // "form" | "results"
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [highlight, setHighlight] = useState(false);
   const [expandAdvanced, setExpandAdvanced] = useState(false);
+  const [aslMode, setAslMode] = useState(false);
+
+  // Auto-detect ASL mode from student data
+  React.useEffect(() => {
+    if (studentData?.communicationModality?.includes("ASL")) {
+      setAslMode(true);
+    }
+  }, [studentData]);
 
   const [opts, setOpts] = useState({
     domain: "",
@@ -227,6 +235,7 @@ export default function AIGoalCreator({ open, onClose, onSave }) {
     hat: "Unknown",
     criterionStyle: "A",
     freeText: "",
+    readingLevel: studentData?.readingLevelBand || "Developing (3-5)",
   });
 
   const set = (key, val) => setOpts((p) => ({ ...p, [key]: val, ...(key === "domain" ? { topic: "" } : {}) }));
