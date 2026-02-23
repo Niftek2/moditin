@@ -354,15 +354,19 @@ export default function StudentDetailPage() {
       )}
 
       {activeTab === "Audiology" && (
-        <AudiologySnapshotView studentId={studentId} />
+        <div id="tab-Audiology" role="tabpanel" aria-labelledby="tab-Audiology">
+          <AudiologySnapshotView studentId={studentId} />
+        </div>
       )}
 
       {activeTab === "Interactive" && (
-        <StudentInteractiveHistory studentId={studentId} />
+        <div id="tab-Interactive" role="tabpanel" aria-labelledby="tab-Interactive">
+          <StudentInteractiveHistory studentId={studentId} />
+        </div>
       )}
 
       {(activeTab === "Contacts" || activeTab === "Accommodations" || activeTab === "Exports") && (
-        <div className="modal-card p-10 text-center text-[var(--modal-text-muted)]">
+        <div className="modal-card p-10 text-center text-[var(--modal-text-muted)]" id={`tab-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`}>
           <p className="text-sm">This section is available from the main navigation.</p>
         </div>
       )}
