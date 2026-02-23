@@ -153,9 +153,9 @@ export default function StudentDetailPage() {
           
           {/* Equipment */}
           <Collapsible>
-            <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all">
+            <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]" aria-expanded={expandedSection === "equipment"} aria-controls="equipment-content">
               <span className="font-semibold text-[var(--modal-text)]">Equipment & Device</span>
-              <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" />
+              <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
             </CollapsibleTrigger>
             <CollapsibleContent className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]">
               {equipment.length === 0 ? (
