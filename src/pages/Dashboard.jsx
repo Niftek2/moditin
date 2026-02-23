@@ -5,63 +5,13 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Users, Target, Clock, Car, CalendarDays,
-  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap, AlertCircle, Sun
+  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight
 } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
-import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval, startOfDay, endOfDay } from "date-fns";
-import { EVENT_TYPE_LABELS, EVENT_COLORS } from "../components/calendar/calendarUtils";
-import TodayAtAGlance from "../components/dashboard/TodayAtAGlance";
-import WeekAtAGlance from "../components/dashboard/WeekAtAGlance";
-
-function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.35 }}
-    >
-      <Link
-        to={createPageUrl(page)}
-        className="modal-card block p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-200 group"
-      >
-        <div className="flex items-start justify-between mb-4">
-          <div className="w-12 h-12 rounded-full bg-[#EADDF5] flex items-center justify-center">
-            {Icon === HearingAidIcon
-              ? <HearingAidIcon size={20} strokeColor="#6B2FB9" />
-              : <Icon className="w-5 h-5 text-[#6B2FB9]" strokeWidth={2.5} />}
-          </div>
-          <ChevronRight className="w-4 h-4 text-[var(--modal-border)] group-hover:text-[#6B2FB9] transition-colors" />
-        </div>
-        <p className="text-3xl font-bold text-[var(--modal-text)]">{value}</p>
-        <p className="text-sm text-[var(--modal-text-muted)] mt-1">{label}</p>
-        {sub && <p className="text-xs text-[#6B2FB9] mt-0.5">{sub}</p>}
-      </Link>
-    </motion.div>
-  );
-}
-
-function QuickAction({ icon: Icon, label, page, delay = 0 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.3 }}
-    >
-      <Link
-        to={createPageUrl(page)}
-        className="flex flex-col items-center gap-2 bg-white border border-[var(--modal-border)] rounded-2xl px-3 py-4 hover:border-[#6B2FB9] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group text-center"
-        style={{ boxShadow: "0px 2px 8px rgba(0,0,0,0.05)" }}
-      >
-        <div className="w-9 h-9 rounded-xl bg-[#EADDF5] flex items-center justify-center shrink-0">
-          <Icon className="w-4 h-4 text-[#6B2FB9]" strokeWidth={2.5} />
-        </div>
-        <span className="text-xs font-medium text-[var(--modal-text)] leading-tight">{label}</span>
-      </Link>
-    </motion.div>
-  );
-}
+import { Input } from "@/components/ui/input";
+import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval } from "date-fns";
+import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
