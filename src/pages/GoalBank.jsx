@@ -27,6 +27,7 @@ export default function GoalBankPage() {
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCompliance, setShowCompliance] = useState(true);
 
   const queryClient = useQueryClient();
 
