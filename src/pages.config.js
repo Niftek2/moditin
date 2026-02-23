@@ -52,15 +52,15 @@ import ActivityPlanner from './pages/ActivityPlanner';
 import Dashboard from './pages/Dashboard';
 import Equipment from './pages/Equipment';
 import GoalBank from './pages/GoalBank';
+import Ling6Check from './pages/Ling6Check';
 import Mileage from './pages/Mileage';
 import ServiceHours from './pages/ServiceHours';
 import Settings from './pages/Settings';
 import StudentDetail from './pages/StudentDetail';
 import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
-import Worksheets from './pages/Worksheets';
-import Ling6Check from './pages/Ling6Check';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
+import Worksheets from './pages/Worksheets';
 import __Layout from './Layout.jsx';
 
 
@@ -70,15 +70,15 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Equipment": Equipment,
     "GoalBank": GoalBank,
+    "Ling6Check": Ling6Check,
     "Mileage": Mileage,
     "ServiceHours": ServiceHours,
     "Settings": Settings,
     "StudentDetail": StudentDetail,
     "Students": Students,
     "TestingDecisions": TestingDecisions,
-    "Worksheets": Worksheets,
-    "Ling6Check": Ling6Check,
     "UploadLing6Sounds": UploadLing6Sounds,
+    "Worksheets": Worksheets,
 }
 
 export const pagesConfig = {

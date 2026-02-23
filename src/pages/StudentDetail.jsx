@@ -11,8 +11,9 @@ import {
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
+import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 
-const TABS = ["Overview", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Ling 6", "Exports"];
+const TABS = ["Overview", "Audiology", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Ling 6", "Exports"];
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
