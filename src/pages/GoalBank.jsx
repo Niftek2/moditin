@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Target, Search, Plus, Filter, Sparkles, ChevronDown, ChevronUp, Check, Loader2, X, ShieldAlert } from "lucide-react";
+import { Target, Search, Filter, ChevronDown, ChevronUp, Check, X, ShieldAlert, Sparkles } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
-import AIDisclaimer from "../components/shared/AIDisclaimer";
+import AIGoalCreator from "../components/goalbank/AIGoalCreator";
 
 const DOMAINS = ["Auditory Skills", "Self-Advocacy", "Speech", "Receptive Language", "Expressive Language", "Pragmatics", "Literacy Access", "Hearing Equipment Use", "Classroom Listening"];
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
