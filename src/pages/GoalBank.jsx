@@ -23,9 +23,7 @@ export default function GoalBankPage() {
   const [domainFilter, setDomainFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
   const [expanded, setExpanded] = useState(null);
-  const [showAI, setShowAI] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
+
   const [showFilters, setShowFilters] = useState(false);
   const [showCompliance, setShowCompliance] = useState(true);
   const [showAICreator, setShowAICreator] = useState(false);
