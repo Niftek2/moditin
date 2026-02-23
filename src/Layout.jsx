@@ -15,6 +15,9 @@ export default function Layout({ children, currentPageName }) {
       <Sidebar currentPage={currentPageName} />
       <main className="lg:pl-64 pt-1">
         <div className="p-4 pt-16 lg:pt-8 lg:p-8 pb-10 max-w-7xl mx-auto">
+          <div className="flex justify-end mb-4 -mt-2">
+            <NotificationBell />
+          </div>
           <PrivacyReminderBanner />
           {children}
         </div>
