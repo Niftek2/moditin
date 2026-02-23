@@ -79,39 +79,129 @@ export default function StudentDetailPage() {
         subtitle={`${student.gradeBand} · ${student.serviceDeliveryModel} · ${student.primaryEligibility || "No eligibility set"}`}
       />
 
-      {/* Info Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="modal-card p-4 text-center">
-          <Target className="w-5 h-5 text-[#6B2FB9] mx-auto mb-2" />
-          <p className="text-xl font-bold text-[var(--modal-text)]">{studentGoals.filter(g => g.status === "Active").length}</p>
-          <p className="text-xs text-[var(--modal-text-muted)]">Active Goals</p>
-        </div>
-        <div className="modal-card p-4 text-center">
-          <div className="flex justify-center mb-2">
-            <HearingAidIcon size={20} strokeColor="#6B2FB9" />
+      {/* 3 Main Cards: Overview */}
+      {activeTab === "Overview" && (
+        <div className="space-y-4 mb-6">
+          {/* Card 1: Goals */}
+          <div className="modal-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-[var(--modal-text)] flex items-center gap-2">
+                <Target className="w-5 h-5 text-[#6B2FB9]" />
+                Goals
+              </h2>
+              <p className="text-xl font-bold text-[#6B2FB9]">{studentGoals.filter(g => g.status === "Active").length}</p>
+            </div>
+            <p className="text-xs text-[var(--modal-text-muted)] mb-4">
+              {studentGoals.length === 0 ? "No goals assigned" : `Last updated: ${studentGoals[0]?.updated_date ? new Date(studentGoals[0].updated_date).toLocaleDateString() : "—"}`}
+            </p>
+            <Link to={createPageUrl(`GoalBank?studentId=${studentId}`)} className="w-full">
+              <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
+                <Plus className="w-4 h-4 mr-2" /> Add Goal
+              </Button>
+            </Link>
           </div>
-          <p className="text-xl font-bold text-[var(--modal-text)]">{equipment.length}</p>
-          <p className="text-xs text-[var(--modal-text-muted)]">Equipment</p>
-        </div>
-        <div className="modal-card p-4 text-center">
-          <Clock className="w-5 h-5 text-[#6B2FB9] mx-auto mb-2" />
-          <p className="text-xl font-bold text-[var(--modal-text)]">{(totalMinutes / 60).toFixed(1)}h</p>
-          <p className="text-xs text-[var(--modal-text-muted)]">Total Hours</p>
-        </div>
-        <div className="modal-card p-4 text-center">
-          <CalendarDays className="w-5 h-5 text-[#6B2FB9] mx-auto mb-2" />
-          <p className="text-sm font-bold text-[var(--modal-text)]">{student.iepAnnualReviewDate || "—"}</p>
-          <p className="text-xs text-[var(--modal-text-muted)]">Annual Review</p>
-        </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 overflow-x-auto pb-1 mb-6 scrollbar-thin">
+          {/* Card 2: Sessions */}
+          <div className="modal-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-[var(--modal-text)] flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#6B2FB9]" />
+                Sessions
+              </h2>
+              <p className="text-xl font-bold text-[#6B2FB9]">{(totalMinutes / 60).toFixed(1)}h</p>
+            </div>
+            <p className="text-xs text-[var(--modal-text-muted)] mb-4">
+              {services.length === 0 ? "No sessions logged" : `Last logged: ${services[0]?.date || "—"}`}
+            </p>
+            <Link to={createPageUrl("ServiceHours")} className="w-full">
+              <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
+                <Plus className="w-4 h-4 mr-2" /> Log Session
+              </Button>
+            </Link>
+          </div>
+
+          {/* Card 3: Profile */}
+          <div className="modal-card p-6">
+            <h2 className="text-lg font-bold text-[var(--modal-text)] mb-4">Profile</h2>
+            <div className="space-y-2 mb-4">
+              <div>
+                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Modality & Reading</p>
+                <p className="text-sm text-[var(--modal-text)]">{student.communicationModality || "—"} • {student.readingLevelBand || "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Equipment</p>
+                <p className="text-sm text-[var(--modal-text)]">{equipment.length} item{equipment.length !== 1 ? "s" : ""}</p>
+              </div>
+            </div>
+            <Link to={createPageUrl(`StudentDetail?id=${studentId}&tab=Details`)} className="w-full">
+              <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl">
+                Edit Profile
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* View More Sections (Collapsible) */}
+      {activeTab === "Overview" && (
+        <div className="space-y-3 mb-6">
+          <h3 className="text-sm font-bold text-[var(--modal-text-muted)] uppercase tracking-wider">More Information</h3>
+          
+          {/* Equipment */}
+          <Collapsible>
+            <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all">
+              <span className="font-semibold text-[var(--modal-text)]">Equipment & Device</span>
+              <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]">
+              {equipment.length === 0 ? (
+                <p className="text-sm text-[var(--modal-text-muted)]">No equipment recorded</p>
+              ) : (
+                <div className="space-y-2">
+                  {equipment.slice(0, 5).map(eq => (
+                    <div key={eq.id} className="p-2 bg-[#F7F3FA] rounded-lg">
+                      <p className="text-sm font-semibold text-[var(--modal-text)]">{eq.type}</p>
+                      <p className="text-xs text-[var(--modal-text-muted)]">{eq.description || "—"}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Notes */}
+          {(student.notes || student.warmNotes) && (
+            <Collapsible>
+              <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all">
+                <span className="font-semibold text-[var(--modal-text)]">Notes</span>
+                <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="modal-card p-4 mt-2 space-y-3 border-t border-[var(--modal-border)]">
+                {student.warmNotes && (
+                  <div>
+                    <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">Warm Notes</p>
+                    <p className="text-sm text-[var(--modal-text)]">{student.warmNotes}</p>
+                  </div>
+                )}
+                {student.notes && (
+                  <div>
+                    <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">General Notes</p>
+                    <p className="text-sm text-[var(--modal-text)]">{student.notes}</p>
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+        </div>
+      )}
+
+      {/* Tab Navigation */}
+      <div className="flex gap-1 overflow-x-auto pb-2 mb-6 scrollbar-thin">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
               activeTab === tab
                 ? "bg-[#400070] text-white"
                 : "bg-white text-[var(--modal-text)] border border-[var(--modal-border)] hover:border-[#6B2FB9] hover:text-[#6B2FB9]"
