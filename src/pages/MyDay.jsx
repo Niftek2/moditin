@@ -8,8 +8,8 @@ import {
   Plus, CalendarDays, Bell, Car, AlertCircle, Sun, Coffee, Moon, Check, Clock
 } from "lucide-react";
 import {
-  format, parseISO, isToday, isPast, addDays, isWithinInterval,
-  differenceInDays, addDays as addD
+  format, parseISO, isToday, isPast, addDays, addWeeks, addMonths, isWithinInterval,
+  differenceInDays
 } from "date-fns";
 import { EVENT_TYPE_LABELS, EVENT_COLORS } from "../components/calendar/calendarUtils";
 import ReminderCard from "../components/reminders/ReminderCard";
