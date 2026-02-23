@@ -337,15 +337,15 @@ export default function StudentDetailPage() {
       )}
 
       {activeTab === "Listening" && (
-        <div>
+        <div id="tab-Listening" role="tabpanel" aria-labelledby="tab-Listening">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-bold text-[var(--modal-text)]">Listening Check History</h2>
               <p className="text-xs text-[var(--modal-text-muted)] mt-0.5">Not diagnostic · For educational planning only</p>
             </div>
             <Link to={createPageUrl(`Ling6Check?studentId=${studentId}`)}>
-              <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl text-sm" size="sm">
-                <Plus className="w-4 h-4 mr-1" /> New Listening Check
+              <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl text-sm h-10" size="sm" aria-label="Create a new listening check">
+                <Plus className="w-4 h-4 mr-1" aria-hidden="true" /> New Listening Check
               </Button>
             </Link>
           </div>
