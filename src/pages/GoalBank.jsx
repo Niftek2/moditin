@@ -28,6 +28,7 @@ export default function GoalBankPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCompliance, setShowCompliance] = useState(true);
   const [showAICreator, setShowAICreator] = useState(false);
+  const [showDeafCultureGen, setShowDeafCultureGen] = useState(false);
 
   const queryClient = useQueryClient();
 
