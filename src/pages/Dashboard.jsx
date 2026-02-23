@@ -51,13 +51,13 @@ function QuickAction({ icon: Icon, label, page, delay = 0 }) {
     >
       <Link
         to={createPageUrl(page)}
-        className="flex items-center gap-3 bg-white border border-[var(--modal-border)] rounded-2xl px-4 py-4 hover:border-[#6B2FB9] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+        className="flex flex-col items-center gap-2 bg-white border border-[var(--modal-border)] rounded-2xl px-3 py-4 hover:border-[#6B2FB9] hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group text-center"
         style={{ boxShadow: "0px 2px 8px rgba(0,0,0,0.05)" }}
       >
         <div className="w-9 h-9 rounded-xl bg-[#EADDF5] flex items-center justify-center shrink-0">
           <Icon className="w-4 h-4 text-[#6B2FB9]" strokeWidth={2.5} />
         </div>
-        <span className="text-sm font-medium text-[var(--modal-text)]">{label}</span>
+        <span className="text-xs font-medium text-[var(--modal-text)] leading-tight">{label}</span>
       </Link>
     </motion.div>
   );
