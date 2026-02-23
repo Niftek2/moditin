@@ -208,6 +208,11 @@ export default function GoalBankPage() {
         onSave={handleAISave}
         studentData={studentIdToEdit ? students.find(s => s.id === studentIdToEdit) : null}
       />
+
+      <DeafCultureActivityGenerator
+        open={showDeafCultureGen}
+        onClose={() => setShowDeafCultureGen(false)}
+      />
     </div>
   );
 }
