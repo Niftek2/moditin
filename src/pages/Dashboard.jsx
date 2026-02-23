@@ -159,6 +159,81 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Calendar Widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Today's Schedule */}
+        <div className="modal-card p-5 lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider">Today's Schedule</h2>
+            <Link to={createPageUrl("Calendar")} className="text-xs text-[#6B2FB9] hover:underline font-medium">View calendar</Link>
+          </div>
+          {todayEvents.length === 0 ? (
+            <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No events scheduled today</p>
+          ) : (
+            <div className="space-y-2">
+              {todayEvents.map(e => {
+                const colors = EVENT_COLORS[e.eventType] || EVENT_COLORS.Other;
+                return (
+                  <div key={e.id} className={`flex items-center gap-3 p-3 rounded-xl border ${colors.bg} ${colors.border}`}>
+                    <div className={`w-1.5 h-10 rounded-full`} style={{ backgroundColor: colors.dot }} />
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-bold truncate ${colors.text}`}>{e.title}</p>
+                      <p className={`text-xs ${colors.text} opacity-75`}>
+                        {format(parseISO(e.startDateTime), "h:mm a")} – {format(parseISO(e.endDateTime), "h:mm a")}
+                        {e.studentInitials ? ` · ${e.studentInitials}` : ""}
+                      </p>
+                    </div>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/70 ${colors.text}`}>
+                      {EVENT_TYPE_LABELS[e.eventType]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Next Appointment + IEP alerts */}
+        <div className="space-y-4">
+          <div className="modal-card p-5">
+            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-3">Next Appointment</h2>
+            {nextEvent ? (
+              <div>
+                <p className="text-sm font-bold text-[var(--modal-text)]">{nextEvent.title}</p>
+                <p className="text-xs text-[var(--modal-text-muted)] mt-1">
+                  {isToday(parseISO(nextEvent.startDateTime)) ? "Today" : isTomorrow(parseISO(nextEvent.startDateTime)) ? "Tomorrow" : format(parseISO(nextEvent.startDateTime), "MMM d")}
+                  {" · "}{format(parseISO(nextEvent.startDateTime), "h:mm a")}
+                </p>
+                {nextEvent.studentInitials && (
+                  <p className="text-xs text-[#6B2FB9] font-semibold mt-1">{nextEvent.studentInitials}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-[var(--modal-text-muted)]">No upcoming appointments</p>
+            )}
+          </div>
+
+          <div className="modal-card p-5">
+            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-3">IEP Reviews (30 days)</h2>
+            {upcomingIEPs.length === 0 ? (
+              <p className="text-sm text-[var(--modal-text-muted)]">None in next 30 days</p>
+            ) : (
+              <div className="space-y-2">
+                {upcomingIEPs.slice(0, 4).map(s => (
+                  <div key={s.id} className="flex items-center gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--modal-text)]">{s.studentInitials}</p>
+                      <p className="text-xs text-[var(--modal-text-muted)]">{format(parseISO(s.iepAnnualReviewDate), "MMM d, yyyy")}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Recent Service Entries */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
