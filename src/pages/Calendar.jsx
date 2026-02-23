@@ -119,6 +119,8 @@ export default function CalendarPage() {
     const data = { ...pendingSave, bypassDriveWarning: true, bypassReason: reason };
     if (editingEvent) {
       updateEvent.mutate({ id: editingEvent.id, data });
+    } else if (data.recurrenceType && data.recurrenceType !== "None") {
+      expandRecurrence(data);
     } else {
       createEvent.mutate(data);
     }
