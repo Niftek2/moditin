@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight
-} from "lucide-react";
+  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight } from
+"lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,32 +27,32 @@ export default function Dashboard() {
 
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryFn: () => base44.entities.Student.list()
   });
 
   const { data: services = [] } = useQuery({
     queryKey: ["services-dash"],
-    queryFn: () => base44.entities.ServiceEntry.list("-created_date", 50),
+    queryFn: () => base44.entities.ServiceEntry.list("-created_date", 50)
   });
 
   const { data: calendarEvents = [] } = useQuery({
     queryKey: ["calendarEvents-dash"],
-    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 100),
+    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 100)
   });
 
   const now = new Date();
-  const todayEvents = calendarEvents
-    .filter(e => isToday(parseISO(e.startDateTime)))
-    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
+  const todayEvents = calendarEvents.
+  filter((e) => isToday(parseISO(e.startDateTime))).
+  sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
 
-  const nextEvent = calendarEvents
-    .filter(e => new Date(e.startDateTime) > now)
-    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0];
+  const nextEvent = calendarEvents.
+  filter((e) => new Date(e.startDateTime) > now).
+  sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0];
 
   // Filtered students for recent view
-  const filteredStudents = students.filter(s =>
-    s.studentInitials?.toLowerCase().includes(studentSearch.toLowerCase()) ||
-    s.gradeBand?.toLowerCase().includes(studentSearch.toLowerCase())
+  const filteredStudents = students.filter((s) =>
+  s.studentInitials?.toLowerCase().includes(studentSearch.toLowerCase()) ||
+  s.gradeBand?.toLowerCase().includes(studentSearch.toLowerCase())
   ).slice(0, 5);
 
   // Get "recent" students (last 5 by creation)
@@ -64,12 +64,12 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
+        transition={{ duration: 0.3 }}>
+
         <h1 className="text-3xl font-bold text-[var(--modal-text)]">
           {firstName ? `Welcome, ${firstName}` : "Welcome"}
         </h1>
-        <p className="text-sm text-[var(--modal-text-muted)] mt-1">Quick access to students and your tasks</p>
+        
         <DailyQuote />
       </motion.div>
 
@@ -80,8 +80,8 @@ export default function Dashboard() {
         transition={{ delay: 0.1, duration: 0.3 }}
         className="modal-card p-6 space-y-4"
         role="region"
-        aria-labelledby="today-heading"
-      >
+        aria-labelledby="today-heading">
+
         <h2 id="today-heading" className="text-lg font-bold text-[var(--modal-text)]">Today</h2>
         
         {/* Big metrics row */}
@@ -122,8 +122,8 @@ export default function Dashboard() {
         transition={{ delay: 0.15, duration: 0.3 }}
         className="space-y-3"
         role="region"
-        aria-labelledby="actions-heading"
-      >
+        aria-labelledby="actions-heading">
+
         <h2 id="actions-heading" className="text-lg font-bold text-[var(--modal-text)]">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3">
           <Link to={createPageUrl("ServiceHours")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
@@ -152,8 +152,8 @@ export default function Dashboard() {
         transition={{ delay: 0.2, duration: 0.3 }}
         className="space-y-3"
         role="region"
-        aria-labelledby="students-heading"
-      >
+        aria-labelledby="students-heading">
+
         <h2 id="students-heading" className="text-lg font-bold text-[var(--modal-text)]">My Students</h2>
         
         {/* Search */}
@@ -165,25 +165,25 @@ export default function Dashboard() {
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
             aria-label="Search students by name or initials"
-            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-12"
-          />
+            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-12" />
+
         </div>
 
         {/* Student List */}
-        {recentStudents.length === 0 ? (
-          <div className="text-center py-8 text-[var(--modal-text-muted)]">
+        {recentStudents.length === 0 ?
+        <div className="text-center py-8 text-[var(--modal-text-muted)]">
             <p className="text-sm">No students yet</p>
-          </div>
-        ) : (
-          <div className="space-y-2" role="list">
-            {recentStudents.map(s => (
-              <Link
-                key={s.id}
-                to={createPageUrl(`StudentDetail?id=${s.id}`)}
-                className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
-                role="listitem"
-                aria-label={`${s.studentInitials}, ${s.communicationModality || 'unknown modality'}`}
-              >
+          </div> :
+
+        <div className="space-y-2" role="list">
+            {recentStudents.map((s) =>
+          <Link
+            key={s.id}
+            to={createPageUrl(`StudentDetail?id=${s.id}`)}
+            className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+            role="listitem"
+            aria-label={`${s.studentInitials}, ${s.communicationModality || 'unknown modality'}`}>
+
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-[#400070] text-white flex items-center justify-center font-bold text-sm shrink-0" aria-hidden="true">
                     {s.studentInitials?.charAt(0) || "?"}
@@ -195,10 +195,10 @@ export default function Dashboard() {
                 </div>
                 <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" aria-hidden="true" />
               </Link>
-            ))}
+          )}
           </div>
-        )}
+        }
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }
