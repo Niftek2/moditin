@@ -253,7 +253,7 @@ export default function StudentDetailPage() {
             </div>
             <Link to={createPageUrl(`Ling6Check?studentId=${studentId}`)}>
               <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl text-sm" size="sm">
-                <Plus className="w-4 h-4 mr-1" /> New Check
+                <Plus className="w-4 h-4 mr-1" /> New Listening Check
               </Button>
             </Link>
           </div>
