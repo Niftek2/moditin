@@ -298,7 +298,7 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
       },
     };
     const res = await base44.integrations.Core.InvokeLLM({
-      prompt: buildPrompt(opts),
+      prompt: buildPrompt(opts, aslMode),
       response_json_schema: schema,
     });
     setResult(res);
