@@ -91,6 +91,19 @@ Return a JSON object with: annualGoal, baselinePrompt, objectives (array of 3 st
         }
       />
 
+      {/* Compliance reminder */}
+      {showCompliance && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5">
+          <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-800 flex-1">
+            <strong>Compliance reminder:</strong> Goals in this bank are starting points only. You are responsible for reviewing and ensuring all goals meet your district, school, and state/federal regulations before including them in any IEP.
+          </p>
+          <button onClick={() => setShowCompliance(false)} className="shrink-0 text-amber-400 hover:text-amber-600 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Search & Filters */}
       <div className="space-y-3 mb-6">
         <div className="flex gap-3">
