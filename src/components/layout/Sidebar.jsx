@@ -16,8 +16,7 @@ import {
   X,
   LogOut,
   Ear,
-  Zap,
-  CalendarDays as CalendarIcon
+  Zap
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
