@@ -14,7 +14,8 @@ import {
   Settings,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Ear
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import { base44 } from "@/api/base44Client";
@@ -28,6 +29,7 @@ const navItems = [
   { name: "Service Hours", icon: Clock, page: "ServiceHours" },
   { name: "Mileage", icon: Car, page: "Mileage" },
   { name: "Equipment", icon: null, page: "Equipment" },
+  { name: "Ling 6 Check", icon: Ear, page: "Ling6Check" },
   { name: "Activity Planner", icon: CalendarDays, page: "ActivityPlanner" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
 ];
