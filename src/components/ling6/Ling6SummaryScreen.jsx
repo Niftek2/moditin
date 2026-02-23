@@ -4,8 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, Save, Link2 } from "lucide-react";
 import { computeSummary, LING6_SOUNDS, SOUND_LABELS, soundStatusColor } from "./ling6Utils";
-import PIIGuard from "../shared/PIIGuard";
-import { checkPII } from "../shared/PIIGuard";
+import PIIWarning, { checkPII } from "../shared/PIIGuard";
 
 export default function Ling6SummaryScreen({ session, trials, onSave, onSaveAndLink, saving }) {
   const [notes, setNotes] = useState("");
@@ -106,7 +105,7 @@ export default function Ling6SummaryScreen({ session, trials, onSave, onSaveAndL
           className="resize-none rounded-xl border-[var(--modal-border)] min-h-[80px]"
         />
         {piiHits.length > 0 && (
-          <PIIGuard text={notes} />
+          <PIIWarning warnings={piiHits} />
         )}
       </div>
 
