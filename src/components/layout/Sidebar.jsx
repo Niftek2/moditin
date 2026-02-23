@@ -33,6 +33,7 @@ const navItems = [
   { name: "Ling 6 Check", icon: Ear, page: "Ling6Check" },
   { name: "Activity Planner", icon: CalendarDays, page: "ActivityPlanner" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
+  { name: "Upload Ling 6 Sounds", icon: Upload, page: "UploadLing6Sounds" },
 ];
 
 export default function Sidebar({ currentPage }) {
