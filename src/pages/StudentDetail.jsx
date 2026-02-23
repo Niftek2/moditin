@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import {
-  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear
+  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap
 } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
