@@ -77,21 +77,23 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.3 }}
         className="modal-card p-6 space-y-4"
+        role="region"
+        aria-labelledby="today-heading"
       >
-        <h2 className="text-lg font-bold text-[var(--modal-text)]">Today</h2>
+        <h2 id="today-heading" className="text-lg font-bold text-[var(--modal-text)]">Today</h2>
         
         {/* Big metrics row */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-3 gap-3 mb-4" role="group" aria-label="Today's quick metrics">
           <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-            <p className="text-2xl font-bold text-[#6B2FB9]">{todayEvents.length}</p>
+            <p className="text-2xl font-bold text-[#6B2FB9]" aria-label="Sessions today">{todayEvents.length}</p>
             <p className="text-xs text-[var(--modal-text-muted)] mt-1">Sessions</p>
           </div>
           <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-            <p className="text-2xl font-bold text-[#6B2FB9]">—</p>
+            <p className="text-2xl font-bold text-[#6B2FB9]" aria-label="Notes due">—</p>
             <p className="text-xs text-[var(--modal-text-muted)] mt-1">Notes Due</p>
           </div>
           <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-            <p className="text-lg font-bold text-[#6B2FB9]">{nextEvent ? format(parseISO(nextEvent.startDateTime), "h:mm a") : "—"}</p>
+            <p className="text-lg font-bold text-[#6B2FB9]" aria-label="Next appointment">{nextEvent ? format(parseISO(nextEvent.startDateTime), "h:mm a") : "—"}</p>
             <p className="text-xs text-[var(--modal-text-muted)] mt-1">Next Up</p>
           </div>
         </div>
@@ -99,13 +101,13 @@ export default function Dashboard() {
         {/* Primary CTA buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link to={createPageUrl("ServiceHours")} className="w-full">
-            <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
-              <Clock className="w-4 h-4 mr-2" /> Log Session
+            <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12" aria-label="Log a new session">
+              <Clock className="w-4 h-4 mr-2" aria-hidden="true" /> Log Session
             </Button>
           </Link>
           <Link to={createPageUrl("Calendar")} className="w-full">
-            <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl">
-              <CalendarDays className="w-4 h-4 mr-2" /> View Schedule
+            <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl h-12" aria-label="View your schedule">
+              <CalendarDays className="w-4 h-4 mr-2" aria-hidden="true" /> View Schedule
             </Button>
           </Link>
         </div>
