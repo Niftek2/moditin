@@ -362,6 +362,7 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
     onClose();
   };
 
+  const domains = aslMode ? DOMAINS_ASL : DOMAINS_LSL;
   const topics = opts.domain ? TOPICS[opts.domain] || [] : [];
 
   return (
