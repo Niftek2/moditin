@@ -157,13 +157,13 @@ export default function StudentDetailPage() {
               <span className="font-semibold text-[var(--modal-text)]">Equipment & Device</span>
               <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
             </CollapsibleTrigger>
-            <CollapsibleContent className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]">
+            <CollapsibleContent className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]" id="equipment-content">
               {equipment.length === 0 ? (
                 <p className="text-sm text-[var(--modal-text-muted)]">No equipment recorded</p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2" role="list">
                   {equipment.slice(0, 5).map(eq => (
-                    <div key={eq.id} className="p-2 bg-[#F7F3FA] rounded-lg">
+                    <div key={eq.id} className="p-3 bg-[#F7F3FA] rounded-lg" role="listitem">
                       <p className="text-sm font-semibold text-[var(--modal-text)]">{eq.type}</p>
                       <p className="text-xs text-[var(--modal-text-muted)]">{eq.description || "—"}</p>
                     </div>
