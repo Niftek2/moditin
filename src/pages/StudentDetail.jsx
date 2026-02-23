@@ -121,7 +121,7 @@ export default function StudentDetailPage() {
       {activeTab === "Overview" && (
         <div>
           <div className="modal-card p-6 mb-6">
-            <h2 className="font-semibold text-[var(--modal-text)] mb-3">Goals</h2>
+            <h2 className="font-bold text-[var(--modal-text)] mb-3">Goals</h2>
             {studentGoals.length === 0 ? (
               <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No goals assigned yet.</p>
             ) : (
@@ -146,7 +146,7 @@ export default function StudentDetailPage() {
 
           {(student.notes || student.warmNotes) && (
             <div className="modal-card p-6">
-              <h2 className="font-semibold text-[var(--modal-text)] mb-3">Notes</h2>
+              <h2 className="font-bold text-[var(--modal-text)] mb-3">Notes</h2>
               {student.warmNotes && (
                 <div className="mb-3">
                   <p className="text-xs text-[var(--modal-text-muted)] mb-1">Warm Notes</p>
@@ -167,7 +167,7 @@ export default function StudentDetailPage() {
       {activeTab === "Goals" && (
         <div className="modal-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-[var(--modal-text)]">Assigned Goals</h2>
+            <h2 className="font-bold text-[var(--modal-text)]">Assigned Goals</h2>
             <Link to={createPageUrl(`GoalBank?studentId=${studentId}`)} className="text-xs text-[#6B2FB9] hover:underline">Browse Goal Bank</Link>
           </div>
           {studentGoals.length === 0 ? (
@@ -199,7 +199,7 @@ export default function StudentDetailPage() {
 
       {activeTab === "Service Log" && (
         <div className="modal-card p-6">
-          <h2 className="font-semibold text-[var(--modal-text)] mb-4">Service Log</h2>
+          <h2 className="font-bold text-[var(--modal-text)] mb-4">Service Log</h2>
           {services.length === 0 ? (
             <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No service entries yet.</p>
           ) : (
@@ -221,7 +221,7 @@ export default function StudentDetailPage() {
       {activeTab === "Equipment" && (
         <div className="modal-card p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-[var(--modal-text)]">Equipment</h2>
+            <h2 className="font-bold text-[var(--modal-text)]">Equipment</h2>
             <Link to={createPageUrl("Equipment")} className="text-xs text-[#6B2FB9] hover:underline">Manage Equipment</Link>
           </div>
           {equipment.length === 0 ? (
