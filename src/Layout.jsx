@@ -3,6 +3,7 @@ import Sidebar from "./components/layout/Sidebar";
 import TermsAgreementModal, { hasAgreedToTerms } from "./components/shared/TermsAgreementModal";
 import StickyTermsFooter from "./components/shared/StickyTermsFooter";
 import PrivacyReminderBanner from "./components/shared/PrivacyReminderBanner";
+import NotificationBell from "./components/shared/NotificationBell";
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
