@@ -132,15 +132,15 @@ export default function Dashboard() {
           </Link>
           <Link to={createPageUrl("Worksheets")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
             <FileText className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
-            <p className="text-sm font-bold text-[var(--modal-text)]">Write Notes</p>
+            <p className="text-sm font-bold text-[var(--modal-text)]">Worksheet Generator</p>
           </Link>
           <Link to={createPageUrl("GoalBank")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
             <Target className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Generate Goal</p>
           </Link>
-          <Link to={createPageUrl("ActivityPlanner")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+          <Link to={createPageUrl("InteractiveActivities")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
             <Zap className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
-            <p className="text-sm font-bold text-[var(--modal-text)]">Plan Activity</p>
+            <p className="text-sm font-bold text-[var(--modal-text)]">Interactive Activities</p>
           </Link>
         </div>
       </motion.div>
