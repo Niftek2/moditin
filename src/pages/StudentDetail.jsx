@@ -257,10 +257,10 @@ export default function StudentDetailPage() {
 
 
       {activeTab === "Goals" && (
-        <div className="modal-card p-6">
+        <div className="modal-card p-6" id="tab-Goals" role="tabpanel" aria-labelledby="tab-Goals">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-[var(--modal-text)]">Assigned Goals</h2>
-            <Link to={createPageUrl(`GoalBank?studentId=${studentId}`)} className="text-xs text-[#6B2FB9] hover:underline">Browse Goal Bank</Link>
+            <Link to={createPageUrl(`GoalBank?studentId=${studentId}`)} className="text-xs text-[#6B2FB9] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">Browse Goal Bank</Link>
           </div>
           {studentGoals.length === 0 ? (
             <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No goals assigned yet.</p>
