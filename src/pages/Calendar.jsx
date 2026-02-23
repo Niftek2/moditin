@@ -59,6 +59,45 @@ export default function CalendarPage() {
     setPendingSave(null);
   };
 
+  // Generate recurring event instances and bulk-create them
+  const expandRecurrence = async (formData) => {
+    const { recurrenceType, recurrenceDaysOfWeek = [], recurrenceDayOfMonth, recurrenceInterval = 1, recurrenceEndDate } = formData;
+    const start = new Date(formData.startDateTime);
+    const end = new Date(formData.endDateTime);
+    const durationMs = end - start;
+    const stopDate = recurrenceEndDate ? new Date(recurrenceEndDate) : _addMonths(start, 12);
+
+    const baseEvent = { ...formData, isRecurrenceTemplate: false };
+    delete baseEvent.recurrenceEndDate;
+
+    const instances = [];
+    let cursor = new Date(start);
+
+    while (cursor <= stopDate) {
+      const shouldInclude = (() => {
+        if (recurrenceType === "Daily") return true;
+        if (recurrenceType === "Weekly") return recurrenceDaysOfWeek.length === 0 || recurrenceDaysOfWeek.includes(cursor.getDay());
+        if (recurrenceType === "Monthly") return cursor.getDate() === (recurrenceDayOfMonth || start.getDate());
+        return false;
+      })();
+
+      if (shouldInclude) {
+        const iStart = new Date(cursor);
+        const iEnd = new Date(iStart.getTime() + durationMs);
+        instances.push({ ...baseEvent, startDateTime: iStart.toISOString(), endDateTime: iEnd.toISOString() });
+      }
+
+      if (recurrenceType === "Daily") cursor = _addDays(cursor, recurrenceInterval);
+      else if (recurrenceType === "Weekly") cursor = _addDays(cursor, 1);
+      else if (recurrenceType === "Monthly") cursor = _addMonths(cursor, recurrenceInterval);
+      else break;
+    }
+
+    await base44.entities.CalendarEvent.bulkCreate(instances);
+    qc.invalidateQueries({ queryKey: ["calendarEvents"] });
+    resetForm();
+  };
+
   const handleSave = (formData) => {
     const saveDate = parseISO(formData.startDateTime);
     const conflict = checkDriveConflict(events, formData, saveDate);
