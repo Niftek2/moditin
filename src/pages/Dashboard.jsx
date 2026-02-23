@@ -24,7 +24,9 @@ function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
       >
         <div className="flex items-start justify-between mb-4">
           <div className="w-12 h-12 rounded-full bg-[#EADDF5] flex items-center justify-center">
-            <Icon className="w-5 h-5 text-[#6B2FB9]" strokeWidth={2.5} />
+            {Icon === HearingAidIcon
+              ? <HearingAidIcon size={20} strokeColor="#6B2FB9" />
+              : <Icon className="w-5 h-5 text-[#6B2FB9]" strokeWidth={2.5} />}
           </div>
           <ChevronRight className="w-4 h-4 text-[var(--modal-border)] group-hover:text-[#6B2FB9] transition-colors" />
         </div>
