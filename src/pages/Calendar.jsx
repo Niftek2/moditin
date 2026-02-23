@@ -108,6 +108,8 @@ export default function CalendarPage() {
     }
     if (editingEvent) {
       updateEvent.mutate({ id: editingEvent.id, data: formData });
+    } else if (formData.recurrenceType && formData.recurrenceType !== "None") {
+      expandRecurrence(formData);
     } else {
       createEvent.mutate(formData);
     }
