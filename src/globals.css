@@ -23,7 +23,31 @@ css
     @apply border-[var(--modal-border)];
   }
   body {
-    @apply bg-[var(--modal-bg)] text-[var(--modal-text)] font-[Arial,Helvetica,sans-serif];
+    @apply bg-[var(--modal-bg)] text-[var(--modal-text)];
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.3; color: var(--modal-text); }
+  h2 { font-size: 1.25rem; font-weight: 700; line-height: 1.4; color: var(--modal-text); }
+  h3 { font-size: 1.1rem; font-weight: 600; line-height: 1.4; color: var(--modal-text); }
+  p { color: var(--modal-text); }
+  label { font-size: 0.9rem; font-weight: 600; color: var(--modal-text); }
+  input, textarea, select {
+    font-size: 0.95rem !important;
+    color: var(--modal-text) !important;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #9E9E9E !important;
+  }
+  /* Fix white-on-white: ensure all text inputs have dark text */
+  .bg-white, .bg-popover {
+    color: var(--modal-text);
+  }
+  /* Ensure select dropdowns are readable */
+  [role="option"], [role="listbox"] {
+    color: var(--modal-text);
   }
 }
 

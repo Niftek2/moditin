@@ -69,10 +69,10 @@ export default function Sidebar({ currentPage }) {
               to={createPageUrl(item.page)}
               onClick={() => setMobileOpen(false)}
               className={`
-                relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 group
+                relative flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all duration-200 group
                 ${isActive
                   ? "bg-[#EADDF5] text-[#400070]"
-                  : "text-[#6F6F6F] hover:text-[#400070] hover:bg-[#F7F3FA]"
+                  : "text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA]"
                 }
               `}
             >
@@ -80,10 +80,10 @@ export default function Sidebar({ currentPage }) {
                 <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#6B2FB9]" />
               )}
               <item.icon
-                className={`w-4 h-4 ${isActive ? "text-[#6B2FB9]" : "text-[#6F6F6F] group-hover:text-[#6B2FB9]"}`}
+                className={`w-5 h-5 ${isActive ? "text-[#6B2FB9]" : "text-[#5A5A5A] group-hover:text-[#6B2FB9]"}`}
                 strokeWidth={isActive ? 2.5 : 2}
               />
-              <span className={`flex-1 ${isActive ? "font-semibold" : ""}`}>{item.name}</span>
+              <span className={`flex-1 ${isActive ? "font-semibold" : "font-medium"}`}>{item.name}</span>
             </Link>
           );
         })}
@@ -94,20 +94,20 @@ export default function Sidebar({ currentPage }) {
         <Link
           to={createPageUrl("Settings")}
           onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all
             ${currentPage === "Settings"
               ? "bg-[#EADDF5] text-[#400070] font-semibold"
-              : "text-[#6F6F6F] hover:text-[#400070] hover:bg-[#F7F3FA]"
+              : "text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA]"
             }`}
         >
-          <Settings className={`w-4 h-4 ${currentPage === "Settings" ? "text-[#6B2FB9]" : "text-[#6F6F6F]"}`} />
-          <span>Settings</span>
+          <Settings className={`w-5 h-5 ${currentPage === "Settings" ? "text-[#6B2FB9]" : "text-[#5A5A5A]"}`} />
+          <span className="font-medium">Settings</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#6F6F6F] hover:text-red-500 hover:bg-red-50 w-full transition-all"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-[#4A4A4A] hover:text-red-500 hover:bg-red-50 w-full transition-all"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-5 h-5" />
           <span>Sign Out</span>
         </button>
       </div>
