@@ -24,6 +24,7 @@ import { base44 } from "@/api/base44Client";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
+  { name: "Calendar", icon: CalendarDays, page: "Calendar" },
   { name: "Students", icon: Users, page: "Students" },
   { name: "Goal Bank", icon: Target, page: "GoalBank" },
   { name: "Accommodations", icon: ClipboardCheck, page: "Accommodations" },
