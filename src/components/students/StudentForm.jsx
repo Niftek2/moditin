@@ -9,6 +9,9 @@ import PIIWarning, { checkPII } from "../shared/PIIGuard";
 
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
 const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
+const COMMUNICATION_MODALITIES = ["LSL", "ASL", "Bilingual ASL/English", "Total Communication", "Other"];
+const PRIMARY_LANGUAGES = ["ASL", "English", "ASL/English Bilingual", "Other"];
+const READING_LEVELS = ["Emergent (PreK-K)", "Early (1-2)", "Developing (3-5)", "Expanding (6-8)", "Academic (9-12)"];
 
 export default function StudentForm({ student, onSubmit, onCancel }) {
   const [form, setForm] = useState(student || {
