@@ -66,9 +66,14 @@ export default function GoalBankPage() {
         title="Goal Bank"
         subtitle="SMART goals for Deaf/Hard of Hearing students"
         action={
-          <Button onClick={() => setShowAICreator(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
-            <Sparkles className="w-4 h-4" /> AI Goal Creator
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowAICreator(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm">
+              <Sparkles className="w-4 h-4" /> AI Goal Creator
+            </Button>
+            <Button onClick={() => setShowDeafCultureGen(true)} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-[#400070] rounded-xl gap-2 text-sm">
+              <Sparkles className="w-4 h-4" /> Deaf Culture Activity
+            </Button>
+          </div>
         }
       />
 
