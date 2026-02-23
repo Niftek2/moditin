@@ -5,7 +5,9 @@ import { Search, X, LayoutDashboard, Users, Target, ClipboardCheck, ClipboardLis
 
 const searchItems = [
   { label: "Dashboard", description: "Overview & quick stats", page: "Dashboard", icon: LayoutDashboard, keywords: ["home", "overview", "stats"] },
-  { label: "Calendar", description: "Schedule & appointments", page: "Calendar", icon: CalendarDays, keywords: ["schedule", "appointments", "events", "iep dates", "reminders"] },
+  { label: "My Day", description: "Daily snapshot & reminders", page: "MyDay", icon: Sun, keywords: ["today", "daily", "schedule", "my day"] },
+  { label: "Calendar", description: "Schedule & appointments", page: "Calendar", icon: CalendarDays, keywords: ["schedule", "appointments", "events", "iep dates"] },
+  { label: "Reminders", description: "Personal reminders & alerts", page: "Reminders", icon: Bell, keywords: ["reminder", "alert", "notification", "deadline"] },
   { label: "Students", description: "Manage your student caseload", page: "Students", icon: Users, keywords: ["caseload", "kids", "roster"] },
   { label: "Goal Bank", description: "Browse & create IEP goals", page: "GoalBank", icon: Target, keywords: ["iep", "goals", "objectives"] },
   { label: "Accommodations", description: "Student accommodations library", page: "Accommodations", icon: ClipboardCheck, keywords: ["504", "modifications", "supports"] },
