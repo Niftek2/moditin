@@ -26,7 +26,6 @@ function getGreeting() {
 function generateNextInstance(reminder) {
   const due = new Date(reminder.dueDateTime);
   let nextDue;
-  const { addDays, addWeeks, addMonths } = require("date-fns");
   switch (reminder.recurrence) {
     case "Daily": nextDue = addDays(due, 1); break;
     case "Weekly": nextDue = addWeeks(due, 1); break;
