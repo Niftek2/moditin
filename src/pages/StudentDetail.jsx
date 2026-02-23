@@ -244,7 +244,7 @@ export default function StudentDetailPage() {
         </div>
       )}
 
-      {activeTab === "Ling 6" && (
+      {activeTab === "Listening" && (
         <div>
           <div className="flex items-center justify-between mb-4">
             <div>
