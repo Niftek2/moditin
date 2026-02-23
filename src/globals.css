@@ -42,7 +42,25 @@ css
     color: var(--modal-text) !important;
   }
   input::placeholder, textarea::placeholder {
-    color: #9E9E9E !important;
+    color: var(--modal-text-muted) !important;
+  }
+  input:disabled, textarea:disabled, select:disabled {
+    color: var(--modal-text-disabled) !important;
+    background-color: #F5F5F5 !important;
+  }
+  /* Focus styles for keyboard accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid var(--modal-focus);
+    outline-offset: 2px;
+  }
+  button:disabled,
+  a[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   /* Fix white-on-white contrast issues */
   .bg-white { color: var(--modal-text); }
