@@ -62,6 +62,7 @@ import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
 import InteractiveActivities from './pages/InteractiveActivities';
+import Calendar from './pages/Calendar';
 import __Layout from './Layout.jsx';
 
 
@@ -81,6 +82,7 @@ export const PAGES = {
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
     "InteractiveActivities": InteractiveActivities,
+    "Calendar": Calendar,
 }
 
 export const pagesConfig = {
