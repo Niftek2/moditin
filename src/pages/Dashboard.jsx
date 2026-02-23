@@ -122,12 +122,21 @@ export default function Dashboard() {
         transition={{ duration: 0.3 }}
         className="mb-8"
       >
-        <h1 className="text-2xl font-bold text-[var(--modal-text)]">
-          {firstName ? `👋 Welcome back, ${firstName}` : "👋 Welcome back"}
-        </h1>
-        <p className="text-sm text-[var(--modal-text-muted)] mt-1">
-          Here's your overview for the month.
-        </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--modal-text)]">
+              {firstName ? `👋 Welcome back, ${firstName}` : "👋 Welcome back"}
+            </h1>
+            <p className="text-sm text-[var(--modal-text-muted)] mt-1">
+              Here's your overview for the month.
+            </p>
+          </div>
+          <Link to={createPageUrl("MyDay")}>
+            <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 shrink-0">
+              <Sun className="w-4 h-4" /> My Day
+            </Button>
+          </Link>
+        </div>
       </motion.div>
 
       {/* KPI Cards */}
