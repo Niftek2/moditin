@@ -90,8 +90,30 @@ export function soundStatusDotColor(status) {
   }
 }
 
-/** Play a synthetic tone representing a Ling 6 sound */
+export const LING6_SOUND_URLS = {
+  m: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/98bc19829_Mmm.mp3",
+  oo: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/c4969b517_ooomp3.mp3",
+  ah: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/cbf8b4e10_Aaaa.mp3",
+  ee: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/8f947fdc8_eeemp3.mp3",
+  sh: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/c70c6d691_Shh.mp3",
+  s: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/bdd1bb57e_SSmp3.mp3",
+};
+
+/** Play a real MP3 clip for a Ling 6 sound, falling back to synthetic tone */
 export function playLing6Sound(sound, onEnd) {
+  const url = LING6_SOUND_URLS[sound];
+  if (url) {
+    const audio = new Audio(url);
+    audio.onended = () => { if (onEnd) onEnd(); };
+    audio.onerror = () => _playLing6SoundSynthetic(sound, onEnd);
+    audio.play();
+    return;
+  }
+  _playLing6SoundSynthetic(sound, onEnd);
+}
+
+/** Synthetic fallback tone */
+function _playLing6SoundSynthetic(sound, onEnd) {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
   const ctx = new AudioContext();
