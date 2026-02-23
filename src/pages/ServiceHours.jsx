@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Clock, Play, Square, Plus, Timer } from "lucide-react";
+import { Clock, Play, Square, Plus, Timer, Download } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import SessionNotesForm from "../components/servicehours/SessionNotesForm";
@@ -112,6 +112,22 @@ export default function ServiceHoursPage() {
     return `${m}:${s}`;
   };
 
+  const handleExportPDF = async () => {
+    const { data } = await base44.functions.invoke('exportServiceLog', {
+      month: selectedMonth,
+      studentId: ""
+    });
+    const blob = new Blob([data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `service-log-${selectedMonth}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  };
+
   const studentMap = {};
   students.forEach(s => { studentMap[s.id] = s.studentInitials; });
 
@@ -181,6 +197,10 @@ export default function ServiceHoursPage() {
           <span className="text-xs text-[var(--modal-text-muted)]">Total: </span>
           <span className="text-sm font-bold text-[var(--modal-text)]">{(totalMinutes / 60).toFixed(1)} hours</span>
         </div>
+        <Button onClick={handleExportPDF} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
+          <Download className="w-4 h-4" />
+          Export PDF
+        </Button>
       </div>
 
       {/* Category Breakdown */}
