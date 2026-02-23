@@ -41,14 +41,35 @@ css
   input::placeholder, textarea::placeholder {
     color: #9E9E9E !important;
   }
-  /* Fix white-on-white: ensure all text inputs have dark text */
-  .bg-white, .bg-popover {
+  /* Fix white-on-white contrast issues */
+  .bg-white { color: var(--modal-text); }
+
+  /* Shadcn popover / select dropdown text */
+  [data-radix-popper-content-wrapper] *,
+  [role="option"],
+  [role="listbox"],
+  [data-state] {
     color: var(--modal-text);
   }
-  /* Ensure select dropdowns are readable */
-  [role="option"], [role="listbox"] {
-    color: var(--modal-text);
-  }
+
+  /* Shadcn Select content */
+  .bg-popover { color: var(--modal-text); }
+
+  /* Badge text always dark enough */
+  .text-muted-foreground { color: #555 !important; }
+
+  /* Ensure dialog/sheet text is dark */
+  [role="dialog"] { color: var(--modal-text); }
+
+  /* Table cells */
+  td, th { color: var(--modal-text); font-size: 0.95rem; }
+  th { font-weight: 700; color: #400070; }
+
+  /* Cards */
+  .modal-card p, .modal-card span, .modal-card label { color: var(--modal-text); }
+
+  /* Buttons — white text on purple bg */
+  .bg-\[\#400070\], .bg-\[\#6B2FB9\] { color: #fff !important; }
 }
 
 @layer utilities {
