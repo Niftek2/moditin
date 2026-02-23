@@ -12,8 +12,9 @@ import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
+import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 
-const TABS = ["Overview", "Audiology", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Ling 6", "Exports"];
+const TABS = ["Overview", "Audiology", "Interactive", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Ling 6", "Exports"];
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
@@ -262,6 +263,10 @@ export default function StudentDetailPage() {
 
       {activeTab === "Audiology" && (
         <AudiologySnapshotView studentId={studentId} />
+      )}
+
+      {activeTab === "Interactive" && (
+        <StudentInteractiveHistory studentId={studentId} />
       )}
 
       {(activeTab === "Contacts" || activeTab === "Accommodations" || activeTab === "Exports") && (
