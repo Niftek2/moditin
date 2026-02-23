@@ -149,17 +149,21 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.3 }}
         className="space-y-3"
+        role="region"
+        aria-labelledby="students-heading"
       >
-        <h2 className="text-lg font-bold text-[var(--modal-text)]">My Students</h2>
+        <h2 id="students-heading" className="text-lg font-bold text-[var(--modal-text)]">My Students</h2>
         
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--modal-text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
           <Input
+            id="student-search"
             placeholder="Search by name or initials..."
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
-            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-10"
+            aria-label="Search students by name or initials"
+            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-12"
           />
         </div>
 
@@ -169,15 +173,17 @@ export default function Dashboard() {
             <p className="text-sm">No students yet</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2" role="list">
             {recentStudents.map(s => (
               <Link
                 key={s.id}
                 to={createPageUrl(`StudentDetail?id=${s.id}`)}
-                className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl"
+                className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                role="listitem"
+                aria-label={`${s.studentInitials}, ${s.communicationModality || 'unknown modality'}`}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#400070] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#400070] text-white flex items-center justify-center font-bold text-sm shrink-0" aria-hidden="true">
                     {s.studentInitials?.charAt(0) || "?"}
                   </div>
                   <div className="min-w-0">
@@ -185,7 +191,7 @@ export default function Dashboard() {
                     <p className="text-xs text-[var(--modal-text-muted)]">{s.communicationModality || "—"} • {s.readingLevelBand || "—"}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" />
+                <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" aria-hidden="true" />
               </Link>
             ))}
           </div>
