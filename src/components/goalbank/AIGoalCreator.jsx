@@ -334,7 +334,7 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
       },
     };
     const res = await base44.integrations.Core.InvokeLLM({
-      prompt: buildPrompt(opts) + "\n\nIMPORTANT: Generate DIFFERENT wording from previous output while targeting the same skill.",
+      prompt: buildPrompt(opts, aslMode) + "\n\nIMPORTANT: Generate DIFFERENT wording from previous output while targeting the same skill.",
       response_json_schema: schema,
     });
     setResult(res);
