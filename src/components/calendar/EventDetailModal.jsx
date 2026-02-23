@@ -93,13 +93,16 @@ export default function EventDetailModal({ event, onClose, onEdit, onDelete }) {
         </div>
 
         {/* Actions */}
-        <div className="px-5 pb-5 flex gap-2">
-          <Button variant="outline" onClick={() => onEdit(event)} className="flex-1 gap-2">
-            <Edit2 className="w-4 h-4" /> Edit
-          </Button>
-          <Button variant="outline" onClick={() => onDelete(event)} className="flex-1 gap-2 text-red-600 border-red-200 hover:bg-red-50">
-            <Trash2 className="w-4 h-4" /> Delete
-          </Button>
+        <div className="px-5 pb-5 space-y-2">
+          <ExportToCalendar event={event} className="w-full" />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => onEdit(event)} className="flex-1 gap-2">
+              <Edit2 className="w-4 h-4" /> Edit
+            </Button>
+            <Button variant="outline" onClick={() => onDelete(event)} className="flex-1 gap-2 text-red-600 border-red-200 hover:bg-red-50">
+              <Trash2 className="w-4 h-4" /> Delete
+            </Button>
+          </div>
         </div>
       </div>
     </div>
