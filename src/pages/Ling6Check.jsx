@@ -115,7 +115,7 @@ export default function Ling6CheckPage() {
       {/* Step: select student */}
       {step === "select" && (
         <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold text-[var(--modal-text)] mb-2">Ling 6 Sound Check</h1>
+          <h1 className="text-2xl font-bold text-[var(--modal-text)] mb-2">Listening Check</h1>
           <p className="text-sm text-[var(--modal-text-muted)] mb-6">Quick listening check. <strong>Not diagnostic.</strong></p>
 
           <div className="modal-card p-6">

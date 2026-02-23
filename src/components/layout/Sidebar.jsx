@@ -30,7 +30,7 @@ const navItems = [
   { name: "Service Hours", icon: Clock, page: "ServiceHours" },
   { name: "Mileage", icon: Car, page: "Mileage" },
   { name: "Equipment", icon: null, page: "Equipment" },
-  { name: "Ling 6 Check", icon: Ear, page: "Ling6Check" },
+  { name: "Listening Check", icon: Ear, page: "Ling6Check" },
   { name: "Interactive Activities", icon: Zap, page: "InteractiveActivities" },
   { name: "Activity Planner", icon: CalendarDays, page: "ActivityPlanner" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },

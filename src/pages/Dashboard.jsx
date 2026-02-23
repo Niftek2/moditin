@@ -132,7 +132,7 @@ export default function Dashboard() {
           <QuickAction icon={Car} label="Log Mileage" page="Mileage" delay={0.24} />
           <QuickAction icon={FileText} label="Worksheets" page="Worksheets" delay={0.26} />
           <QuickAction icon={ClipboardList} label="Testing" page="TestingDecisions" delay={0.28} />
-          <QuickAction icon={Ear} label="Ling 6 Check" page="Ling6Check" delay={0.30} />
+          <QuickAction icon={Ear} label="Listening Check" page="Ling6Check" delay={0.30} />
           <QuickAction icon={Zap} label="Interactive Activity" page="InteractiveActivities" delay={0.32} />
         </div>
       </div>
