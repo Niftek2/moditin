@@ -50,13 +50,17 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <div className="space-y-2">
           <Label className="text-[var(--modal-text-muted)]">Student Initials *</Label>
           <Input
-            placeholder="Aa.Bb."
+            placeholder="Fi.La."
             value={form.studentInitials}
-            onChange={(e) => updateField("studentInitials", e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value.slice(0, 6);
+              updateField("studentInitials", val);
+            }}
+            maxLength={6}
             className="bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
             required
           />
-          <p className="text-[10px] text-[var(--modal-text-muted)]">Format: Aa.Bb. (initials only, no full names)</p>
+          <p className="text-[10px] text-[var(--modal-text-muted)]">Format: Fi.La. — first and last initial only, no full names</p>
         </div>
 
         <div className="space-y-2">
@@ -91,6 +95,18 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             className="bg-white/5 border-[var(--modal-border)] text-white"
             placeholder="e.g., DHH"
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[var(--modal-text-muted)]">School Code</Label>
+          <Input
+            placeholder="ELMW"
+            value={form.schoolCode || ""}
+            onChange={(e) => updateField("schoolCode", e.target.value.slice(0, 4).toUpperCase())}
+            maxLength={4}
+            className="bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
+          />
+          <p className="text-[10px] text-[var(--modal-text-muted)]">Up to 4 letters only — no full school or district names</p>
         </div>
 
         <div className="space-y-2">
