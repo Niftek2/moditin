@@ -6,10 +6,9 @@ import {
   Users,
   Target,
   ClipboardCheck,
-  TestTube2,
+  ClipboardList,
   Clock,
   Car,
-  Headphones,
   CalendarDays,
   FileText,
   Settings,
@@ -17,6 +16,7 @@ import {
   X,
   LogOut
 } from "lucide-react";
+import HearingAidIcon from "../shared/HearingAidIcon";
 import { base44 } from "@/api/base44Client";
 
 const navItems = [
