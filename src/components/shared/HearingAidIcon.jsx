@@ -1,5 +1,7 @@
 import React from "react";
 
+// BTE (Behind-The-Ear) hearing aid icon
+// Matches the reference image: a body unit that hooks over the ear with a tube looping down to an earmold
 export default function HearingAidIcon({ size = 24, className = "", strokeColor = "currentColor" }) {
   return (
     <svg
@@ -10,40 +12,41 @@ export default function HearingAidIcon({ size = 24, className = "", strokeColor 
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Main BTE body - the tall rounded rectangle part */}
+      {/* BTE body - rounded rectangular unit */}
       <path
-        d="M8 15 C8 18.5 10 21 12 21 C12 21 12.5 21 13 20.5 C13.8 19.6 14 18 14 16.5 L14 9 C14 6.5 12.5 4 10.5 4 C8.5 4 7 5.8 7 8 C7 9.5 7.8 10.8 9 11.5"
+        d="M7 16 L7 9.5 C7 7 8.2 5 10 5 C11.8 5 13 7 13 9.5 L13 11"
         stroke={strokeColor}
-        strokeWidth="1.7"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Tube going up and over */}
+      {/* Body outline right side */}
       <path
-        d="M14 9.5 C14 9.5 16 9 17 10 C18 11 18 13 17 14.5 C16.2 15.7 15 16.5 14 16.5"
+        d="M10 5 C11.8 5 13 7 13 9.5"
         stroke={strokeColor}
-        strokeWidth="1.7"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      {/* Tube that arcs from top of body, loops around and down to earmold */}
+      <path
+        d="M13 9.5 C13 9.5 15.5 9 16.5 11 C17.5 13 16 15.5 14 16.5 C13 17 13 18 13 19"
+        stroke={strokeColor}
+        strokeWidth="1.6"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Earmold / dome at bottom */}
-      <circle
-        cx="13"
-        cy="20.5"
-        r="1.2"
+      {/* Earmold/dome tip */}
+      <circle cx="13" cy="19.8" r="1.3" stroke={strokeColor} strokeWidth="1.5" />
+      {/* Bottom of body */}
+      <path
+        d="M7 16 C7 17.5 7.8 18.5 9 18.5 C10.2 18.5 11 17.5 11 16 L11 9.5"
         stroke={strokeColor}
-        strokeWidth="1.5"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      {/* Program button on body */}
-      <rect
-        x="9"
-        y="6.5"
-        width="2.5"
-        height="1"
-        rx="0.5"
-        stroke={strokeColor}
-        strokeWidth="1.2"
-      />
+      {/* Program button / indicator on body */}
+      <rect x="8.5" y="7.5" width="2" height="0.9" rx="0.4" fill={strokeColor} />
     </svg>
   );
 }
