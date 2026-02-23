@@ -75,8 +75,8 @@ const CRITERION_STYLES = [
 ];
 const HAT_OPTIONS = ["Yes", "No", "Unknown"];
 
-function buildPrompt(opts) {
-  return `You are an expert Teacher of the Deaf and Hard of Hearing (TODHH) writing original, professional IEP goals. 
+function buildPrompt(opts, isASL = false) {
+  const basePrompt = `You are an expert Teacher of the Deaf and Hard of Hearing (TODHH) writing original, professional IEP goals. 
 Generate ORIGINAL goals — do NOT copy from any goal bank or published resource. Never reproduce copyrighted text.
 
 USER INPUTS:
@@ -85,11 +85,38 @@ USER INPUTS:
 - Grade Band: ${opts.grade}
 - Setting: ${opts.setting}
 - Current Skill Level: ${opts.skillLevel}
-- Hearing Device: ${opts.device}
-- HAT Use: ${opts.hat}
+- Reading Level Band: ${opts.readingLevel || "Not specified"}
+${!isASL ? `- Hearing Device: ${opts.device}
+- HAT Use: ${opts.hat}` : ""}
 - Criterion Style: ${opts.criterionStyle === "B" ? "80% accuracy across 3 consecutive data points" : "80% accuracy in 4 of 5 trials"}
-- Communication approach: Listening and Spoken Language (LSL) unless otherwise noted
-- Free-form notes from educator: ${opts.freeText || "None"}
+- Communication approach: ${isASL ? "American Sign Language (ASL) — visual-spatial modality, not auditory-based" : "Listening and Spoken Language (LSL)"}
+- Free-form notes from educator: ${opts.freeText || "None"}`;
+
+  const aslSpecific = `
+
+ADDITIONAL CONTEXT FOR ASL USERS:
+- This student uses ASL as primary communication modality.
+- Goals should target visual-spatial linguistics, discourse skills, and Deaf culture integration.
+- Do NOT include auditory-based targets (listening discrimination, hearing device use, etc.).
+- Consider Deaf community norms, ASL grammar, and bilingual ASL/English contexts if applicable.
+- Goals should support visual classroom access and ASL literacy bridging if relevant.`;
+
+  const readingAdjustment = `
+
+LANGUAGE COMPLEXITY ADJUSTMENT FOR READING LEVEL "${opts.readingLevel}":
+${
+  opts.readingLevel.includes("Emergent")
+    ? "- Use very simple vocabulary and short sentences in goal text.\n- Prioritize concrete, observable skills.\n- Minimize embedded clauses.\n- Focus on foundational skills."
+    : opts.readingLevel.includes("Early")
+    ? "- Use simple-to-moderate vocabulary.\n- Include basic compound structures.\n- Limit academic jargon.\n- Emphasize concrete with some abstract concepts."
+    : opts.readingLevel.includes("Developing")
+    ? "- Use age-appropriate, moderately academic vocabulary.\n- Include clear, well-structured sentences.\n- Can include some technical terminology.\n- Balance concrete and abstract language."
+    : opts.readingLevel.includes("Expanding")
+    ? "- Use advanced vocabulary suitable for grade level.\n- Can include complex sentence structures.\n- Include academic and content-specific terminology.\n- Support multi-paragraph discourse."
+    : "- Use sophisticated, content-area vocabulary.\n- Include complex syntactic structures.\n- Emphasize metalinguistic and analytical language.\n- Support cross-disciplinary academic language."
+}`;
+
+  const outputRequirements = `
 
 OUTPUT REQUIREMENTS:
 Return a JSON object with exactly these fields:
@@ -117,13 +144,15 @@ RULES FOR EVERY GOAL:
 4. Each annual goal MUST include: setting/condition, observable skill, support level, criterion, timeframe ("by the end of the annual IEP period").
 5. Structure: "In [setting], XX will [observable skill] [support level] with [criterion] across [timeframe]."
 6. Objectives: scaffolded easier → harder, each starting with "XX will…"
-7. Reflect TODHH realities: distance, noise, HAT, repair strategies, classroom participation.
+7. ${isASL ? "Reflect ASL discourse norms: role shift, spatial mapping, non-manual markers, visual access strategies." : "Reflect TODHH realities: distance, noise, HAT, repair strategies, classroom participation."}
 8. Generate 2 goal options at different difficulty levels.
-9. Goals must be appropriate for mainstream settings with LSL approach.
+9. Adjust language complexity per reading level provided.
 10. Measurement notes should be 1-2 sentences describing data collection method.
 11. At the end of measurementNotes for option 1, append: "Generated goal is original and intended as a starting template. Edit to match district requirements."
 
 Do NOT include any copyrighted text, goal bank names, or external source references.`;
+
+  return basePrompt + (isASL ? aslSpecific : "") + readingAdjustment + outputRequirements;
 }
 
 function highlightPlaceholders(text) {
