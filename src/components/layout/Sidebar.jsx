@@ -24,7 +24,7 @@ const navItems = [
   { name: "Students", icon: Users, page: "Students" },
   { name: "Goal Bank", icon: Target, page: "GoalBank" },
   { name: "Accommodations", icon: ClipboardCheck, page: "Accommodations" },
-  { name: "Testing", icon: TestTube2, page: "TestingDecisions" },
+  { name: "Testing", icon: ClipboardList, page: "TestingDecisions" },
   { name: "Service Hours", icon: Clock, page: "ServiceHours" },
   { name: "Mileage", icon: Car, page: "Mileage" },
   { name: "Equipment", icon: Headphones, page: "Equipment" },
