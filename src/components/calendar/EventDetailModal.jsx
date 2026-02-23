@@ -3,6 +3,7 @@ import { format, parseISO } from "date-fns";
 import { X, Clock, MapPin, User, Car, Video, Edit2, Trash2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EVENT_COLORS, EVENT_TYPE_LABELS, SETTING_LABELS } from "./calendarUtils";
+import ExportToCalendar from "./ExportToCalendar";
 
 export default function EventDetailModal({ event, onClose, onEdit, onDelete }) {
   if (!event) return null;
