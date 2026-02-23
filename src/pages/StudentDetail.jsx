@@ -247,51 +247,7 @@ export default function StudentDetailPage() {
         </div>
       )}
 
-      {activeTab === "Overview" && (
-        <div>
-          <div className="modal-card p-6 mb-6">
-            <h2 className="font-bold text-[var(--modal-text)] mb-3">Goals</h2>
-            {studentGoals.length === 0 ? (
-              <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No goals assigned yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {studentGoals.slice(0, 5).map(sg => {
-                  const goal = goalMap[sg.goalId];
-                  return (
-                    <div key={sg.id} className="p-3 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-                      <p className="text-sm text-[var(--modal-text)]">{goal?.annualGoal || "Goal not found"}</p>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="secondary" className="text-[10px] bg-[#EADDF5] text-[#400070] border-0">{goal?.domain}</Badge>
-                        <Badge variant="secondary" className={`text-[10px] border-0 ${sg.status === "Active" ? "bg-green-100 text-green-700" : sg.status === "Met" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
-                          {sg.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
 
-          {(student.notes || student.warmNotes) && (
-            <div className="modal-card p-6">
-              <h2 className="font-bold text-[var(--modal-text)] mb-3">Notes</h2>
-              {student.warmNotes && (
-                <div className="mb-3">
-                  <p className="text-xs text-[var(--modal-text-muted)] mb-1">Warm Notes</p>
-                  <p className="text-sm text-[var(--modal-text)]">{student.warmNotes}</p>
-                </div>
-              )}
-              {student.notes && (
-                <div>
-                  <p className="text-xs text-[var(--modal-text-muted)] mb-1">General Notes</p>
-                  <p className="text-sm text-[var(--modal-text)]">{student.notes}</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
 
       {activeTab === "Goals" && (
         <div className="modal-card p-6">
