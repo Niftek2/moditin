@@ -372,9 +372,11 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[var(--modal-purple-glow)]" />
             AI Goal Creator
+            {aslMode && <span className="text-xs bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-semibold">ASL User</span>}
           </DialogTitle>
           <DialogDescription className="text-[var(--modal-text-muted)]">
             Generate original TODHH-style IEP goals. All output is original — not copied from any goal bank.
+            {aslMode && " Goals are tailored for ASL modality."}
           </DialogDescription>
         </DialogHeader>
 
