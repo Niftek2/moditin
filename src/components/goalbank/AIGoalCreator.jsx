@@ -387,10 +387,10 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
               <div>
                 <label className="block text-xs font-semibold mb-1 text-[var(--modal-text-muted)] uppercase tracking-wide">Domain *</label>
                 <Select value={opts.domain} onValueChange={(v) => set("domain", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select domain" /></SelectTrigger>
-                  <SelectContent>
-                    {DOMAINS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                  </SelectContent>
+                   <SelectTrigger><SelectValue placeholder="Select domain" /></SelectTrigger>
+                   <SelectContent>
+                     {domains.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                   </SelectContent>
                 </Select>
               </div>
               <div>
