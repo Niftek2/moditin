@@ -15,7 +15,8 @@ import {
   Menu,
   X,
   LogOut,
-  Ear
+  Ear,
+  Upload
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import { base44 } from "@/api/base44Client";
