@@ -14,7 +14,11 @@ import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 
-const TABS = ["Overview", "Communication", "Audiology", "Interactive", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Exports"];
+const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Contacts", "Exports"];
+
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import { useState as useCollapsibleState } from "react";
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
