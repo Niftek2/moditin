@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Sparkles, Loader2, Copy, Check, RefreshCw, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import AIDisclaimer from "@/components/shared/AIDisclaimer";
 
-const DOMAINS = ["Auditory Skills", "Language Skills", "Self-Advocacy Skills"];
+const DOMAINS_LSL = ["Auditory Skills", "Language Skills", "Self-Advocacy Skills"];
+const DOMAINS_ASL = ["ASL Discourse", "ASL Vocabulary & Conceptual Understanding", "Self-Advocacy & Deaf Identity", "Code-Switching (ASL to English)"];
 const TOPICS = {
   "Auditory Skills": [
     "Auditory Awareness / Localization",
@@ -30,6 +31,33 @@ const TOPICS = {
     "Compensatory Strategies",
     "Accommodation Knowledge",
     "Self-Esteem & Hearing Identity",
+  ],
+  "ASL Discourse": [
+    "Narrative Structure & Sequencing",
+    "Role Shift Use & Perspective-Taking",
+    "Referent Clarity & Spatial Mapping",
+    "Non-manual Markers (Questions, Conditionals)",
+    "Conversational Turn-Taking",
+  ],
+  "ASL Vocabulary & Conceptual Understanding": [
+    "Academic Vocabulary in ASL",
+    "Receptive ASL Comprehension",
+    "Expressive ASL Vocabulary",
+    "Classifier Accuracy & Use",
+    "Fingerspelling Fluency & Comprehension",
+  ],
+  "Self-Advocacy & Deaf Identity": [
+    "Understanding Deaf Culture & Community",
+    "Self-Advocacy for Access",
+    "Understanding Own ASL Development",
+    "Classroom Visual Access Strategies",
+    "Communication Preferences & Needs",
+  ],
+  "Code-Switching (ASL to English)": [
+    "ASL to English Literacy Bridging",
+    "Code-Switching in Bilingual Contexts",
+    "English Reading with ASL Support",
+    "Transliterating Between Languages",
   ],
 };
 const GRADE_BANDS = ["PK", "K–2", "3–5", "6–8", "9–12"];
