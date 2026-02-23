@@ -123,18 +123,22 @@ export default function StudentDetailPage() {
           {/* Card 3: Profile */}
           <div className="modal-card p-6">
             <h2 className="text-lg font-bold text-[var(--modal-text)] mb-4">Profile</h2>
-            <div className="space-y-2 mb-4">
+            <div className="space-y-3 mb-4">
               <div>
-                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Modality & Reading</p>
-                <p className="text-sm text-[var(--modal-text)]">{student.communicationModality || "—"} • {student.readingLevelBand || "—"}</p>
+                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Communication Modality</p>
+                <p className="text-sm text-[var(--modal-text)]">{student.communicationModality || "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Equipment</p>
+                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Reading Level</p>
+                <p className="text-sm text-[var(--modal-text)]">{student.readingLevelBand || "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[var(--modal-text-muted)] font-semibold">Equipment Count</p>
                 <p className="text-sm text-[var(--modal-text)]">{equipment.length} item{equipment.length !== 1 ? "s" : ""}</p>
               </div>
             </div>
             <Link to={createPageUrl(`StudentDetail?id=${studentId}&tab=Details`)} className="w-full">
-              <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl">
+              <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl h-12" aria-label="Edit student profile">
                 Edit Profile
               </Button>
             </Link>
