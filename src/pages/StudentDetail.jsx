@@ -14,7 +14,7 @@ import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 
-const TABS = ["Overview", "Audiology", "Interactive", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Exports"];
+const TABS = ["Overview", "Communication", "Audiology", "Interactive", "Contacts", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Exports"];
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
