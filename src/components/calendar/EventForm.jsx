@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EVENT_TYPE_LABELS } from "./calendarUtils";
+import RecurrenceFields from "./RecurrenceFields";
 
 const DRIVE_CHIPS = [0, 10, 15, 20, 30, 45, 60];
 const REMINDER_OPTIONS = [
