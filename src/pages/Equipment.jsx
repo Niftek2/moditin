@@ -63,7 +63,7 @@ export default function EquipmentPage() {
       />
 
       {equipment.length === 0 ? (
-        <EmptyState icon={Headphones} title="No equipment tracked" description="Add hearing equipment to start tracking checks and maintenance." actionLabel="Add Equipment" onAction={() => setShowEquipForm(true)} />
+        <EmptyState icon={HearingAidIcon} title="No equipment tracked" description="Add hearing equipment to start tracking checks and maintenance." actionLabel="Add Equipment" onAction={() => setShowEquipForm(true)} />
       ) : (
         <div className="space-y-3">
           {equipment.map(eq => {
@@ -74,7 +74,7 @@ export default function EquipmentPage() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-[#400070]/20 flex items-center justify-center">
-                      <Headphones className="w-5 h-5 text-[var(--modal-purple-glow)]" />
+                      <HearingAidIcon size={20} strokeColor="var(--modal-purple-glow)" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">{eq.type}</p>
