@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "./components/layout/Sidebar";
+import TermsAgreementModal, { hasAgreedToTerms } from "./components/shared/TermsAgreementModal";
 
 export default function Layout({ children, currentPageName }) {
+  const [agreed, setAgreed] = useState(hasAgreedToTerms());
+
   return (
     <div className="min-h-screen bg-[var(--modal-bg)]">
       {/* Top accent bar */}
@@ -12,6 +15,7 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </div>
       </main>
+      {!agreed && <TermsAgreementModal onAgree={() => setAgreed(true)} />}
     </div>
   );
 }
