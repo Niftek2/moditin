@@ -59,6 +59,7 @@ import StudentDetail from './pages/StudentDetail';
 import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import Worksheets from './pages/Worksheets';
+import Ling6Check from './pages/Ling6Check';
 import __Layout from './Layout.jsx';
 
 
@@ -75,6 +76,7 @@ export const PAGES = {
     "Students": Students,
     "TestingDecisions": TestingDecisions,
     "Worksheets": Worksheets,
+    "Ling6Check": Ling6Check,
 }
 
 export const pagesConfig = {
