@@ -66,9 +66,9 @@ export default function Dashboard() {
         transition={{ duration: 0.3 }}
       >
         <h1 className="text-3xl font-bold text-[var(--modal-text)]">
-          {firstName ? `👋 ${firstName}` : "👋 Welcome"}
+          {firstName ? `Welcome, ${firstName}` : "Welcome"}
         </h1>
-        <p className="text-sm text-[var(--modal-text-muted)] mt-1">Your student list and quick access</p>
+        <p className="text-sm text-[var(--modal-text-muted)] mt-1">Quick access to students and your tasks</p>
       </motion.div>
 
       {/* BLOCK A: TODAY */}
