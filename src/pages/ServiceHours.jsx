@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Clock, Play, Square, Plus, Timer } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
+import SessionNotesForm from "../components/servicehours/SessionNotesForm";
 
 const CATEGORIES = ["DirectService", "Planning", "Consultation", "Evaluation", "IEPMeeting", "Travel"];
 const CATEGORY_LABELS = {
@@ -33,7 +34,10 @@ export default function ServiceHoursPage() {
     minutes: "",
     studentId: "",
     notes: "",
+    sessionNotes: "",
   });
+
+  const [activeTab, setActiveTab] = useState("basic");
 
   const queryClient = useQueryClient();
 
@@ -45,6 +49,12 @@ export default function ServiceHoursPage() {
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
     queryFn: () => base44.entities.Student.list(),
+  });
+
+  const { data: studentGoals = [] } = useQuery({
+    queryKey: ["studentGoals", form.studentId],
+    queryFn: () => form.studentId ? base44.entities.StudentGoal.filter({ studentId: form.studentId }) : [],
+    enabled: !!form.studentId,
   });
 
   const createMutation = useMutation({
@@ -85,7 +95,8 @@ export default function ServiceHoursPage() {
       entryMethod: "Manual",
       monthKey: form.date.slice(0, 7),
     });
-    setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "" });
+    setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "" });
+    setActiveTab("basic");
   };
 
   const monthEntries = entries.filter(e => e.monthKey === selectedMonth);
@@ -205,43 +216,58 @@ export default function ServiceHoursPage() {
 
       {/* Manual Entry Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
+        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle className="text-white">Log Service Time</DialogTitle></DialogHeader>
-          <div className="space-y-4 mt-2">
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Date</Label>
-              <Input type="date" value={form.date} onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Category</Label>
-              <Select value={form.category} onValueChange={(v) => setForm(p => ({ ...p, category: v }))}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue /></SelectTrigger>
-                <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Minutes</Label>
-              <Input type="number" min="1" value={form.minutes} onChange={(e) => setForm(p => ({ ...p, minutes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" placeholder="30" />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Student (optional)</Label>
-              <Select value={form.studentId} onValueChange={(v) => setForm(p => ({ ...p, studentId: v }))}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="None" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={null}>None</SelectItem>
-                  {students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Notes</Label>
-              <Textarea value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white h-20" />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
-              <Button onClick={handleManualSubmit} disabled={!form.minutes} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save Entry</Button>
-            </div>
-          </div>
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="bg-white/5 border border-[var(--modal-border)] mb-4">
+              <TabsTrigger value="basic" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Basic Info</TabsTrigger>
+              <TabsTrigger value="notes" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Session Notes</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="basic" className="space-y-4 mt-2">
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text-muted)]">Date</Label>
+                <Input type="date" value={form.date} onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text-muted)]">Category</Label>
+                <Select value={form.category} onValueChange={(v) => setForm(p => ({ ...p, category: v }))}>
+                  <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue /></SelectTrigger>
+                  <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text-muted)]">Minutes</Label>
+                <Input type="number" min="1" value={form.minutes} onChange={(e) => setForm(p => ({ ...p, minutes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" placeholder="30" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text-muted)]">Student (optional)</Label>
+                <Select value={form.studentId} onValueChange={(v) => setForm(p => ({ ...p, studentId: v }))}>
+                  <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}>None</SelectItem>
+                    {students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text-muted)]">General Notes</Label>
+                <Textarea value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white h-20" />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
+                <Button onClick={handleManualSubmit} disabled={!form.minutes} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save Entry</Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="notes">
+              <SessionNotesForm studentGoals={studentGoals} />
+              <div className="flex justify-end gap-3 mt-6">
+                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Close</Button>
+              </div>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
