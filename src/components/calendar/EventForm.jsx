@@ -47,6 +47,11 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
     driveTimeMinutes: event?.driveTimeMinutes || 0,
     driveTimeIncluded: event?.driveTimeIncluded || false,
     reminderMinutes: event?.reminderMinutes || [15],
+    recurrenceType: event?.recurrenceType || "None",
+    recurrenceDaysOfWeek: event?.recurrenceDaysOfWeek || [],
+    recurrenceDayOfMonth: event?.recurrenceDayOfMonth || null,
+    recurrenceInterval: event?.recurrenceInterval || 1,
+    recurrenceEndDate: event?.recurrenceEndDate || "",
   });
 
   const needsDrive = ["InPerson", "Hybrid"].includes(form.setting);
