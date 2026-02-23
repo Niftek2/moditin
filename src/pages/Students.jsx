@@ -91,7 +91,7 @@ export default function StudentsPage() {
                   <span className="text-sm font-bold text-[var(--modal-purple-glow)]">{student.studentInitials?.slice(0, 2) || "?"}</span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white font-medium">{student.studentInitials}</p>
+                  <p className="text-[var(--modal-text)] font-semibold">{student.studentInitials}</p>
                   <div className="flex items-center gap-2 text-xs text-[var(--modal-text-muted)]">
                     <span>{student.gradeBand}</span>
                     <span>·</span>

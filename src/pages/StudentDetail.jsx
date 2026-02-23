@@ -248,7 +248,7 @@ export default function StudentDetailPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="font-semibold text-[var(--modal-text)]">Ling 6 Check History</h2>
+              <h2 className="font-bold text-[var(--modal-text)]">Listening Check History</h2>
               <p className="text-xs text-[var(--modal-text-muted)] mt-0.5">Not diagnostic · For educational planning only</p>
             </div>
             <Link to={createPageUrl(`Ling6Check?studentId=${studentId}`)}>

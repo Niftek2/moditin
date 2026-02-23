@@ -124,7 +124,7 @@ export default function ServiceHoursPage() {
               <Timer className={`w-6 h-6 ${timerRunning ? "text-red-400" : "text-[var(--modal-purple-glow)]"}`} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white font-mono">{formatTime(timerSeconds)}</p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] font-mono">{formatTime(timerSeconds)}</p>
               <p className="text-xs text-[var(--modal-text-muted)]">
                 {timerRunning ? "Recording..." : "Ready to start"}
               </p>
@@ -149,12 +149,14 @@ export default function ServiceHoursPage() {
               </SelectContent>
             </Select>
             {!timerRunning ? (
-              <Button onClick={() => setTimerRunning(true)} className="bg-green-600 hover:bg-green-700 text-white rounded-xl gap-2">
-                <Play className="w-4 h-4" /> Start
+              <Button onClick={() => setTimerRunning(true)} className="bg-green-600 hover:bg-green-700 text-white rounded-xl">
+                <Play className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1">Start</span>
               </Button>
             ) : (
-              <Button onClick={handleTimerStop} className="bg-red-600 hover:bg-red-700 text-white rounded-xl gap-2">
-                <Square className="w-4 h-4" /> Stop & Save
+              <Button onClick={handleTimerStop} className="bg-red-600 hover:bg-red-700 text-white rounded-xl">
+                <Square className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1">Stop</span>
               </Button>
             )}
           </div>
@@ -166,7 +168,7 @@ export default function ServiceHoursPage() {
         <Input type="month" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-48 bg-white/5 border-[var(--modal-border)] text-white" />
         <div className="modal-card px-4 py-2">
           <span className="text-xs text-[var(--modal-text-muted)]">Total: </span>
-          <span className="text-sm font-bold text-white">{(totalMinutes / 60).toFixed(1)} hours</span>
+          <span className="text-sm font-bold text-[var(--modal-text)]">{(totalMinutes / 60).toFixed(1)} hours</span>
         </div>
       </div>
 
@@ -175,7 +177,7 @@ export default function ServiceHoursPage() {
         {CATEGORIES.map(c => (
           <div key={c} className="modal-card p-3">
             <p className="text-xs text-[var(--modal-text-muted)]">{CATEGORY_LABELS[c]}</p>
-            <p className="text-lg font-bold text-white">{byCategory[c]} min</p>
+            <p className="text-lg font-bold text-[var(--modal-text)]">{byCategory[c]} min</p>
           </div>
         ))}
       </div>
@@ -189,7 +191,7 @@ export default function ServiceHoursPage() {
             {monthEntries.map(entry => (
               <div key={entry.id} className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white">{CATEGORY_LABELS[entry.category] || entry.category}</p>
+                  <p className="text-sm font-medium text-[var(--modal-text)]">{CATEGORY_LABELS[entry.category] || entry.category}</p>
                   <p className="text-xs text-[var(--modal-text-muted)]">
                     {entry.date} {entry.studentId ? `· ${studentMap[entry.studentId] || ""}` : ""} {entry.entryMethod ? `· ${entry.entryMethod}` : ""}
                   </p>
