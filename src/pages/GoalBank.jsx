@@ -63,7 +63,7 @@ export default function GoalBankPage() {
   return (
     <div>
       <PageHeader
-        title="Goal Bank"
+        title="Goal Writing"
         subtitle="SMART goals for Deaf/Hard of Hearing students"
         action={
           <div className="flex gap-2">

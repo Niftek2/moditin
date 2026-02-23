@@ -30,7 +30,7 @@ const navItems = [
   { name: "Calendar", icon: CalendarDays, page: "Calendar" },
   { name: "Reminders", icon: Bell, page: "Reminders" },
   { name: "Students", icon: Users, page: "Students" },
-  { name: "Goal Bank", icon: Target, page: "GoalBank" },
+  { name: "Goal Writing", icon: Target, page: "GoalBank" },
   { name: "Accommodations", icon: ClipboardCheck, page: "Accommodations" },
   { name: "Testing", icon: ClipboardList, page: "TestingDecisions" },
   { name: "Service Hours", icon: Clock, page: "ServiceHours" },
