@@ -217,9 +217,9 @@ export default function StudentDetailPage() {
 
       {/* Tab Content - Secondary Tabs */}
       {activeTab === "Details" && (
-        <div className="modal-card p-6 space-y-4">
+        <div className="modal-card p-6 space-y-4" id="tab-Details" role="tabpanel" aria-labelledby="tab-Details">
           <h2 className="font-bold text-[var(--modal-text)] flex items-center gap-2">
-            <Zap className="w-5 h-5 text-[#6B2FB9]" /> Student Details
+            <Zap className="w-5 h-5 text-[#6B2FB9]" aria-hidden="true" /> Student Details
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
