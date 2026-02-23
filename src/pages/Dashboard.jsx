@@ -8,6 +8,7 @@ import {
   Users, Target, Clock, Car, CalendarDays,
   ChevronRight, FileText, ClipboardList, Plus
 } from "lucide-react";
+import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
 
 function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
