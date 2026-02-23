@@ -118,6 +118,32 @@ export default function StudentDetailPage() {
       </div>
 
       {/* Tab Content */}
+      {activeTab === "Communication" && (
+        <div className="modal-card p-6">
+          <h2 className="font-bold text-[var(--modal-text)] mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-[#6B2FB9]" /> Communication & Language Profile
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">Communication Modality</p>
+              <p className="text-sm text-[var(--modal-text)]">{student.communicationModality || "—"}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">Primary Language</p>
+              <p className="text-sm text-[var(--modal-text)]">{student.primaryLanguage || "—"}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">Reading Level Band</p>
+              <p className="text-sm text-[var(--modal-text)]">{student.readingLevelBand || "—"}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">ASL Instruction Focus</p>
+              <p className="text-sm text-[var(--modal-text)]">{student.aslInstructionFocus ? "Yes" : "No"}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {activeTab === "Overview" && (
         <div>
           <div className="modal-card p-6 mb-6">
