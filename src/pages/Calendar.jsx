@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { format, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, parseISO } from "date-fns";
-// note: _addDays/_addWeeks/_addMonths/_parseISO imported below for recurrence expansion
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import DayView from "../components/calendar/DayView";
 import WeekView from "../components/calendar/WeekView";
