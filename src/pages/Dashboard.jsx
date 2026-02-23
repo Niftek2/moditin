@@ -6,7 +6,7 @@ import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
   Users, Target, Clock, Car, Headphones, CalendarDays,
-  ChevronRight, FileText, TestTube2, Plus
+  ChevronRight, FileText, ClipboardList, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
