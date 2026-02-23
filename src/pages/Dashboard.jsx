@@ -6,10 +6,12 @@ import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
   Users, Target, Clock, Car, CalendarDays,
-  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap
+  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap, AlertCircle
 } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
+import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { EVENT_TYPE_LABELS, EVENT_COLORS } from "../components/calendar/calendarUtils";
 
 function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
   return (
