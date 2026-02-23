@@ -19,6 +19,7 @@ import {
   Zap
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
+import GlobalSearch from "../shared/GlobalSearch";
 import { base44 } from "@/api/base44Client";
 
 const navItems = [
