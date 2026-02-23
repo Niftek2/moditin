@@ -155,7 +155,7 @@ export default function Dashboard() {
       {/* Quick Actions */}
       <div className="mb-10">
         <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
           <QuickAction icon={Clock} label="Log Service" page="ServiceHours" delay={0.2} />
           <QuickAction icon={CalendarDays} label="Plan Activity" page="ActivityPlanner" delay={0.22} />
           <QuickAction icon={Car} label="Log Mileage" page="Mileage" delay={0.24} />
