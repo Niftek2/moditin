@@ -63,6 +63,8 @@ import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
 import InteractiveActivities from './pages/InteractiveActivities';
 import Calendar from './pages/Calendar';
+import Reminders from './pages/Reminders';
+import MyDay from './pages/MyDay';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +85,8 @@ export const PAGES = {
     "Worksheets": Worksheets,
     "InteractiveActivities": InteractiveActivities,
     "Calendar": Calendar,
+    "Reminders": Reminders,
+    "MyDay": MyDay,
 }
 
 export const pagesConfig = {
