@@ -49,11 +49,15 @@
  */
 import Accommodations from './pages/Accommodations';
 import ActivityPlanner from './pages/ActivityPlanner';
+import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
 import Equipment from './pages/Equipment';
 import GoalBank from './pages/GoalBank';
+import InteractiveActivities from './pages/InteractiveActivities';
 import Ling6Check from './pages/Ling6Check';
 import Mileage from './pages/Mileage';
+import MyDay from './pages/MyDay';
+import Reminders from './pages/Reminders';
 import ServiceHours from './pages/ServiceHours';
 import Settings from './pages/Settings';
 import StudentDetail from './pages/StudentDetail';
@@ -61,21 +65,21 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import InteractiveActivities from './pages/InteractiveActivities';
-import Calendar from './pages/Calendar';
-import Reminders from './pages/Reminders';
-import MyDay from './pages/MyDay';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Accommodations": Accommodations,
     "ActivityPlanner": ActivityPlanner,
+    "Calendar": Calendar,
     "Dashboard": Dashboard,
     "Equipment": Equipment,
     "GoalBank": GoalBank,
+    "InteractiveActivities": InteractiveActivities,
     "Ling6Check": Ling6Check,
     "Mileage": Mileage,
+    "MyDay": MyDay,
+    "Reminders": Reminders,
     "ServiceHours": ServiceHours,
     "Settings": Settings,
     "StudentDetail": StudentDetail,
@@ -83,10 +87,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "InteractiveActivities": InteractiveActivities,
-    "Calendar": Calendar,
-    "Reminders": Reminders,
-    "MyDay": MyDay,
 }
 
 export const pagesConfig = {

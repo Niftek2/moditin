@@ -12,6 +12,8 @@ import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
 import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { EVENT_TYPE_LABELS, EVENT_COLORS } from "../components/calendar/calendarUtils";
+import TodayAtAGlance from "../components/dashboard/TodayAtAGlance";
+import WeekAtAGlance from "../components/dashboard/WeekAtAGlance";
 
 function StatCard({ icon: Icon, label, value, sub, page, delay = 0 }) {
   return (
