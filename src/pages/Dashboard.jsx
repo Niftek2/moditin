@@ -57,172 +57,131 @@ export default function Dashboard() {
   const recentStudents = studentSearch ? filteredStudents : students.slice(0, 5);
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mb-8"
       >
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--modal-text)]">
-              {firstName ? `👋 Welcome back, ${firstName}` : "👋 Welcome back"}
-            </h1>
-            <p className="text-sm text-[var(--modal-text-muted)] mt-1">
-              Here's your overview for the month.
-            </p>
+        <h1 className="text-3xl font-bold text-[var(--modal-text)]">
+          {firstName ? `👋 ${firstName}` : "👋 Welcome"}
+        </h1>
+        <p className="text-sm text-[var(--modal-text-muted)] mt-1">Your student list and quick access</p>
+      </motion.div>
+
+      {/* BLOCK A: TODAY */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+        className="modal-card p-6 space-y-4"
+      >
+        <h2 className="text-lg font-bold text-[var(--modal-text)]">Today</h2>
+        
+        {/* Big metrics row */}
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
+            <p className="text-2xl font-bold text-[#6B2FB9]">{todayEvents.length}</p>
+            <p className="text-xs text-[var(--modal-text-muted)] mt-1">Sessions</p>
           </div>
-          <Link to={createPageUrl("MyDay")}>
-            <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 shrink-0">
-              <Sun className="w-4 h-4" /> My Day
+          <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
+            <p className="text-2xl font-bold text-[#6B2FB9]">—</p>
+            <p className="text-xs text-[var(--modal-text-muted)] mt-1">Notes Due</p>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
+            <p className="text-lg font-bold text-[#6B2FB9]">{nextEvent ? format(parseISO(nextEvent.startDateTime), "h:mm a") : "—"}</p>
+            <p className="text-xs text-[var(--modal-text-muted)] mt-1">Next Up</p>
+          </div>
+        </div>
+
+        {/* Primary CTA buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link to={createPageUrl("ServiceHours")} className="w-full">
+            <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
+              <Clock className="w-4 h-4 mr-2" /> Log Session
+            </Button>
+          </Link>
+          <Link to={createPageUrl("Calendar")} className="w-full">
+            <Button variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl">
+              <CalendarDays className="w-4 h-4 mr-2" /> View Schedule
             </Button>
           </Link>
         </div>
       </motion.div>
 
-      {/* Today + Week at a Glance */}
-      <TodayAtAGlance calendarEvents={calendarEvents} />
-      <WeekAtAGlance calendarEvents={calendarEvents} />
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-        <StatCard icon={Users} label="Active Students" value={students.length} page="Students" delay={0} />
-        <StatCard icon={Target} label="Active Goals" value={goals.filter(g => g.status === "Active").length} page="GoalBank" delay={0.05} />
-        <StatCard icon={HearingAidIcon} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.1} />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mb-10">
-        <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          <QuickAction icon={Clock} label="Log Service" page="ServiceHours" delay={0.2} />
-          <QuickAction icon={CalendarDays} label="Plan Activity" page="ActivityPlanner" delay={0.22} />
-          <QuickAction icon={Car} label="Log Mileage" page="Mileage" delay={0.24} />
-          <QuickAction icon={FileText} label="Worksheets" page="Worksheets" delay={0.26} />
-          <QuickAction icon={ClipboardList} label="Testing" page="TestingDecisions" delay={0.28} />
-          <QuickAction icon={Ear} label="Listening Check" page="Ling6Check" delay={0.30} />
-          <QuickAction icon={Zap} label="Interactive Activity" page="InteractiveActivities" delay={0.32} />
-        </div>
-      </div>
-
-      {/* Calendar Widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Today's Schedule */}
-        <div className="modal-card p-5 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider">Today's Schedule</h2>
-            <Link to={createPageUrl("Calendar")} className="text-xs text-[#6B2FB9] hover:underline font-medium">View calendar</Link>
-          </div>
-          {todayEvents.length === 0 ? (
-            <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No events scheduled today</p>
-          ) : (
-            <div className="space-y-2">
-              {todayEvents.map(e => {
-                const colors = EVENT_COLORS[e.eventType] || EVENT_COLORS.Other;
-                return (
-                  <div key={e.id} className={`flex items-center gap-3 p-3 rounded-xl border ${colors.bg} ${colors.border}`}>
-                    <div className={`w-1.5 h-10 rounded-full`} style={{ backgroundColor: colors.dot }} />
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-bold truncate ${colors.text}`}>{e.title}</p>
-                      <p className={`text-xs ${colors.text} opacity-75`}>
-                        {format(parseISO(e.startDateTime), "h:mm a")} – {format(parseISO(e.endDateTime), "h:mm a")}
-                        {e.studentInitials ? ` · ${e.studentInitials}` : ""}
-                      </p>
-                    </div>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/70 ${colors.text}`}>
-                      {EVENT_TYPE_LABELS[e.eventType]}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Next Appointment + IEP alerts */}
-        <div className="space-y-4">
-          <div className="modal-card p-5">
-            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-3">Next Appointment</h2>
-            {nextEvent ? (
-              <div>
-                <p className="text-sm font-bold text-[var(--modal-text)]">{nextEvent.title}</p>
-                <p className="text-xs text-[var(--modal-text-muted)] mt-1">
-                  {isToday(parseISO(nextEvent.startDateTime)) ? "Today" : isTomorrow(parseISO(nextEvent.startDateTime)) ? "Tomorrow" : format(parseISO(nextEvent.startDateTime), "MMM d")}
-                  {" · "}{format(parseISO(nextEvent.startDateTime), "h:mm a")}
-                </p>
-                {nextEvent.studentInitials && (
-                  <p className="text-xs text-[#6B2FB9] font-semibold mt-1">{nextEvent.studentInitials}</p>
-                )}
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--modal-text-muted)]">No upcoming appointments</p>
-            )}
-          </div>
-
-          <div className="modal-card p-5">
-            <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider mb-3">IEP Reviews (30 days)</h2>
-            {upcomingIEPs.length === 0 ? (
-              <p className="text-sm text-[var(--modal-text-muted)]">None in next 30 days</p>
-            ) : (
-              <div className="space-y-2">
-                {upcomingIEPs.slice(0, 4).map(s => (
-                  <div key={s.id} className="flex items-center gap-2">
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--modal-text)]">{s.studentInitials}</p>
-                      <p className="text-xs text-[var(--modal-text-muted)]">{format(parseISO(s.iepAnnualReviewDate), "MMM d, yyyy")}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Service Entries */}
+      {/* BLOCK B: QUICK ACTIONS */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.32, duration: 0.35 }}
-        className="modal-card p-6"
+        transition={{ delay: 0.15, duration: 0.3 }}
+        className="space-y-3"
       >
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-sm font-bold text-[#400070] uppercase tracking-wider">Recent Service Entries</h2>
-          <Link to={createPageUrl("ServiceHours")} className="text-xs text-[#6B2FB9] hover:underline font-medium">
-            View all
+        <h2 className="text-lg font-bold text-[var(--modal-text)]">Quick Actions</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <Link to={createPageUrl("ServiceHours")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
+            <Clock className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+            <p className="text-sm font-bold text-[var(--modal-text)]">Log a Session</p>
+          </Link>
+          <Link to={createPageUrl("Worksheets")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
+            <FileText className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+            <p className="text-sm font-bold text-[var(--modal-text)]">Write Notes</p>
+          </Link>
+          <Link to={createPageUrl("GoalBank")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
+            <Target className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+            <p className="text-sm font-bold text-[var(--modal-text)]">Generate Goal</p>
+          </Link>
+          <Link to={createPageUrl("ActivityPlanner")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
+            <Zap className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+            <p className="text-sm font-bold text-[var(--modal-text)]">Plan Activity</p>
           </Link>
         </div>
+      </motion.div>
 
-        {services.length === 0 ? (
-          <div className="text-center py-10">
-            <div className="w-12 h-12 rounded-2xl bg-[#EADDF5] flex items-center justify-center mx-auto mb-3">
-              <Clock className="w-6 h-6 text-[#6B2FB9]" />
-            </div>
-            <p className="text-sm font-medium text-[var(--modal-text)] mb-1">📋 No service entries yet</p>
-            <p className="text-xs text-[var(--modal-text-muted)] mb-4">
-              Start logging your first service to see monthly totals here.
-            </p>
-            <Link to={createPageUrl("ServiceHours")}>
-              <Button className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2" size="sm">
-                <Plus className="w-3.5 h-3.5" /> Log Service
-              </Button>
-            </Link>
+      {/* BLOCK C: MY STUDENTS */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.3 }}
+        className="space-y-3"
+      >
+        <h2 className="text-lg font-bold text-[var(--modal-text)]">My Students</h2>
+        
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--modal-text-muted)]" />
+          <Input
+            placeholder="Search by name or initials..."
+            value={studentSearch}
+            onChange={(e) => setStudentSearch(e.target.value)}
+            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-10"
+          />
+        </div>
+
+        {/* Student List */}
+        {recentStudents.length === 0 ? (
+          <div className="text-center py-8 text-[var(--modal-text-muted)]">
+            <p className="text-sm">No students yet</p>
           </div>
         ) : (
-          <div className="divide-y divide-[var(--modal-border)]">
-            {services.slice(0, 5).map((entry) => (
-              <div key={entry.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                <div>
-                  <p className="text-sm font-medium text-[var(--modal-text)]">
-                    {entry.category?.replace(/([A-Z])/g, " $1").trim()}
-                  </p>
-                  <p className="text-xs text-[var(--modal-text-muted)]">{entry.date}</p>
+          <div className="space-y-2">
+            {recentStudents.map(s => (
+              <Link
+                key={s.id}
+                to={createPageUrl(`StudentDetail?id=${s.id}`)}
+                className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#400070] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    {s.studentInitials?.charAt(0) || "?"}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-[var(--modal-text)] truncate">{s.studentInitials}</p>
+                    <p className="text-xs text-[var(--modal-text-muted)]">{s.communicationModality || "—"} • {s.readingLevelBand || "—"}</p>
+                  </div>
                 </div>
-                <span className="text-sm font-semibold text-[#6B2FB9]">{entry.minutes} min</span>
-              </div>
+                <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" />
+              </Link>
             ))}
           </div>
         )}
