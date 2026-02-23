@@ -192,6 +192,9 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
             <Textarea value={form.notes} onChange={e => set("notes", e.target.value)} rows={2} placeholder="Optional session notes..." />
           </div>
 
+          {/* Recurrence */}
+          <RecurrenceFields form={form} set={set} />
+
           {/* Reminders */}
           <div>
             <label className="text-sm font-semibold mb-1 block">Reminders</label>
