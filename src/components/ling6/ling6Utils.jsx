@@ -99,20 +99,14 @@ export const LING6_SOUND_URLS = {
   s: "https://base44.app/api/apps/6998a9f042c4eb98ea121183/files/public/6998a9f042c4eb98ea121183/bdd1bb57e_SSmp3.mp3",
 };
 
-/** Play a real MP3 clip for a Ling 6 sound, falling back to synthetic tone */
+/** Play a real MP3 clip for a Ling 6 sound */
 export function playLing6Sound(sound, onEnd) {
   const url = LING6_SOUND_URLS[sound];
-  if (url) {
-    const audio = new Audio(url);
-    audio.onended = () => { if (onEnd) onEnd(); };
-    audio.onerror = () => _playLing6SoundSynthetic(sound, onEnd);
-    audio.play();
-    return;
-  }
-  _playLing6SoundSynthetic(sound, onEnd);
+  const audio = new Audio(url);
+  audio.onended = () => { if (onEnd) onEnd(); };
+  audio.play();
 }
 
-/** Synthetic fallback tone */
 function _playLing6SoundSynthetic(sound, onEnd) {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
