@@ -206,7 +206,7 @@ export default function GoalBankPage() {
         open={showAICreator}
         onClose={() => setShowAICreator(false)}
         onSave={handleAISave}
-        studentData={studentIdToEdit ? students.find(s => s.id === studentIdToEdit) : null}
+        studentData={studentId ? students.find(s => s.id === studentId) : null}
       />
 
       <DeafCultureActivityGenerator
