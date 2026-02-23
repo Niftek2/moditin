@@ -16,7 +16,9 @@ import {
   X,
   LogOut,
   Ear,
-  Zap
+  Zap,
+  Bell,
+  Sun
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
