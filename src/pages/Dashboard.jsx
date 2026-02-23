@@ -15,29 +15,22 @@ import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
+  const [studentSearch, setStudentSearch] = useState("");
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const firstName = user?.full_name?.split(" ")[0] || "";
-  const monthName = new Date().toLocaleString("default", { month: "long" });
 
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
     queryFn: () => base44.entities.Student.list(),
   });
-  const { data: goals = [] } = useQuery({
-    queryKey: ["studentGoals"],
-    queryFn: () => base44.entities.StudentGoal.list(),
-  });
+
   const { data: services = [] } = useQuery({
     queryKey: ["services-dash"],
     queryFn: () => base44.entities.ServiceEntry.list("-created_date", 50),
-  });
-  const { data: equipment = [] } = useQuery({
-    queryKey: ["equipment-dash"],
-    queryFn: () => base44.entities.Equipment.list(),
   });
 
   const { data: calendarEvents = [] } = useQuery({
@@ -54,16 +47,14 @@ export default function Dashboard() {
     .filter(e => new Date(e.startDateTime) > now)
     .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0];
 
-  const upcomingIEPs = students.filter(s => {
-    if (!s.iepAnnualReviewDate) return false;
-    const d = parseISO(s.iepAnnualReviewDate);
-    return isWithinInterval(d, { start: now, end: addDays(now, 30) });
-  }).sort((a, b) => new Date(a.iepAnnualReviewDate) - new Date(b.iepAnnualReviewDate));
+  // Filtered students for recent view
+  const filteredStudents = students.filter(s =>
+    s.studentInitials?.toLowerCase().includes(studentSearch.toLowerCase()) ||
+    s.gradeBand?.toLowerCase().includes(studentSearch.toLowerCase())
+  ).slice(0, 5);
 
-  const currentMonth = new Date().toISOString().slice(0, 7);
-  const monthlyMinutes = services
-    .filter(s => s.monthKey === currentMonth)
-    .reduce((sum, s) => sum + (s.minutes || 0), 0);
+  // Get "recent" students (last 5 by creation)
+  const recentStudents = studentSearch ? filteredStudents : students.slice(0, 5);
 
   return (
     <div>
