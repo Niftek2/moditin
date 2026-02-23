@@ -45,30 +45,10 @@ export default function GoalBankPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["studentGoals"] }),
   });
 
-  const handleAIGenerate = async () => {
-    setAiLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an expert Teacher of the Deaf/Hard of Hearing creating SMART IEP goals. Generate a SMART goal based on: ${aiPrompt}. 
-Return a JSON object with: annualGoal, baselinePrompt, objectives (array of 3 strings), progressMonitoring, domain (one of: ${DOMAINS.join(", ")}), gradeBand, baselineLevel, measurementType.`,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          annualGoal: { type: "string" },
-          baselinePrompt: { type: "string" },
-          objectives: { type: "array", items: { type: "string" } },
-          progressMonitoring: { type: "string" },
-          domain: { type: "string" },
-          gradeBand: { type: "string" },
-          baselineLevel: { type: "string" },
-          measurementType: { type: "string" },
-        },
-      },
-    });
-    await base44.entities.Goal.create({ ...result, isCustom: true });
+  const handleAISave = async (goalData) => {
+    await base44.entities.Goal.create({ ...goalData, isCustom: true });
     queryClient.invalidateQueries({ queryKey: ["goals"] });
-    setAiLoading(false);
-    setShowAI(false);
-    setAiPrompt("");
+    setShowAICreator(false);
   };
 
   const filtered = goals.filter(g => {
