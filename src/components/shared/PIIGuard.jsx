@@ -23,9 +23,9 @@ export default function PIIWarning({ warnings }) {
   if (!warnings || warnings.length === 0) return null;
   return (
     <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-sm">
-      <p className="text-red-400 font-medium">⚠️ Potential PII Detected</p>
+      <p className="text-red-400 font-medium">⚠️ Private Information Detected</p>
       <p className="text-red-300/70 text-xs mt-1">
-        This text may contain: {warnings.join(", ")}. Student data must use initials only (e.g., Aa.Bb.).
+        This text may contain identifying information ({warnings.join(", ")}). Please use initials only (e.g., Fi.La.) — never enter student names, school names, or identifying details.
       </p>
     </div>
   );
