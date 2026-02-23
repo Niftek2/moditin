@@ -25,6 +25,7 @@ export default function StudentDetailPage() {
   const studentId = params.get("id");
   const defaultTab = params.get("tab") || "Overview";
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [expandedSection, setExpandedSection] = useCollapsibleState(null);
 
   const { data: student } = useQuery({
     queryKey: ["student", studentId],
