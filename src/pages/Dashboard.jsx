@@ -119,23 +119,25 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.3 }}
         className="space-y-3"
+        role="region"
+        aria-labelledby="actions-heading"
       >
-        <h2 className="text-lg font-bold text-[var(--modal-text)]">Quick Actions</h2>
+        <h2 id="actions-heading" className="text-lg font-bold text-[var(--modal-text)]">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3">
-          <Link to={createPageUrl("ServiceHours")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
-            <Clock className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+          <Link to={createPageUrl("ServiceHours")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <Clock className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Log a Session</p>
           </Link>
-          <Link to={createPageUrl("Worksheets")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
-            <FileText className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+          <Link to={createPageUrl("Worksheets")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <FileText className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Write Notes</p>
           </Link>
-          <Link to={createPageUrl("GoalBank")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
-            <Target className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+          <Link to={createPageUrl("GoalBank")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <Target className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Generate Goal</p>
           </Link>
-          <Link to={createPageUrl("ActivityPlanner")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl">
-            <Zap className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" />
+          <Link to={createPageUrl("ActivityPlanner")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <Zap className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Plan Activity</p>
           </Link>
         </div>
