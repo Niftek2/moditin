@@ -6,8 +6,8 @@ export default function StickyTermsFooter() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 z-40 flex justify-center lg:pl-64">
-        <div className="w-full max-w-7xl px-4 lg:px-8 py-2 flex items-center justify-between">
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex justify-center lg:pl-64 bg-white">
+        <div className="w-full max-w-7xl px-4 lg:px-8 py-1.5 flex items-center justify-between">
           <span className="text-xs text-[var(--modal-text-muted)]">© 2026 Modal Education LLC</span>
           <button
             onClick={() => setShowTerms(true)}
