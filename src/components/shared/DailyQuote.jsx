@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { RotateCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
 
 const QUOTE_BANK = [
   "Small steps, steady impact.",
@@ -70,34 +68,14 @@ const getDailyQuote = () => {
   return QUOTE_BANK[index];
 };
 
-const getRandomQuote = () => {
-  const randomIndex = Math.floor(Math.random() * QUOTE_BANK.length);
-  return QUOTE_BANK[randomIndex];
-};
-
 export default function DailyQuote() {
-  const [currentQuote, setCurrentQuote] = useState(getDailyQuote());
-
-  const handleRefresh = () => {
-    setCurrentQuote(getRandomQuote());
-  };
+  const quote = getDailyQuote();
 
   return (
-    <div className="mt-3 p-4 border-l-4 border-[#6B2FB9] bg-[#F7F3FA] rounded-lg" role="region" aria-live="polite" aria-label="Daily motivational quote">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-base font-medium italic text-[#400070] leading-relaxed flex-1">
-          "{currentQuote}"
-        </p>
-        <Button
-          onClick={handleRefresh}
-          variant="ghost"
-          size="icon"
-          className="shrink-0 text-[#6B2FB9] hover:text-[#400070] hover:bg-white/50 rounded-lg h-8 w-8 min-h-[36px] min-w-[36px]"
-          aria-label="Show another quote for this session"
-        >
-          <RotateCw className="w-4 h-4" aria-hidden="true" />
-        </Button>
-      </div>
+    <div className="mt-3 p-4 border-l-4 border-[#6B2FB9] bg-[#F7F3FA] rounded-lg text-center" role="region" aria-live="polite" aria-label="Daily motivational quote">
+      <p className="text-base font-medium italic text-[#400070] leading-relaxed">
+        "{quote}"
+      </p>
       <p className="text-xs text-[#6B2FB9] mt-2">Daily Note</p>
     </div>
   );
