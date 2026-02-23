@@ -6,7 +6,7 @@ import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
   Users, Target, Clock, Car, CalendarDays,
-  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap, AlertCircle
+  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap, AlertCircle, Sun
 } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
