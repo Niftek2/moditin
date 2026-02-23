@@ -10,6 +10,7 @@ import {
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import DailyQuote from "../components/shared/DailyQuote";
 import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval } from "date-fns";
 import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 
@@ -69,6 +70,7 @@ export default function Dashboard() {
           {firstName ? `Welcome, ${firstName}` : "Welcome"}
         </h1>
         <p className="text-sm text-[var(--modal-text-muted)] mt-1">Quick access to students and your tasks</p>
+        <DailyQuote />
       </motion.div>
 
       {/* BLOCK A: TODAY */}
