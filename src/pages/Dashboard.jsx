@@ -141,19 +141,15 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {/* Today + Week at a Glance */}
+      <TodayAtAGlance calendarEvents={calendarEvents} />
+      <WeekAtAGlance calendarEvents={calendarEvents} />
+
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
         <StatCard icon={Users} label="Active Students" value={students.length} page="Students" delay={0} />
         <StatCard icon={Target} label="Active Goals" value={goals.filter(g => g.status === "Active").length} page="GoalBank" delay={0.05} />
-        <StatCard
-          icon={Clock}
-          label="Hours This Month"
-          value={`${(monthlyMinutes / 60).toFixed(1)}h`}
-          sub={`${monthlyMinutes} minutes`}
-          page="ServiceHours"
-          delay={0.1}
-        />
-        <StatCard icon={HearingAidIcon} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.15} />
+        <StatCard icon={HearingAidIcon} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.1} />
       </div>
 
       {/* Quick Actions */}
