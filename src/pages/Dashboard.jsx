@@ -118,7 +118,7 @@ export default function Dashboard() {
           page="ServiceHours"
           delay={0.1}
         />
-        <StatCard icon={Headphones} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.15} />
+        <StatCard icon={HearingAidIcon} label="Equipment Items" value={equipment.length} page="Equipment" delay={0.15} />
       </div>
 
       {/* Quick Actions */}
