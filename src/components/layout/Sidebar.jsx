@@ -27,7 +27,7 @@ const navItems = [
   { name: "Testing", icon: ClipboardList, page: "TestingDecisions" },
   { name: "Service Hours", icon: Clock, page: "ServiceHours" },
   { name: "Mileage", icon: Car, page: "Mileage" },
-  { name: "Equipment", icon: Headphones, page: "Equipment" },
+  { name: "Equipment", icon: null, page: "Equipment" },
   { name: "Activity Planner", icon: CalendarDays, page: "ActivityPlanner" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
 ];
@@ -79,10 +79,14 @@ export default function Sidebar({ currentPage }) {
               {isActive && (
                 <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#6B2FB9]" />
               )}
-              <item.icon
-                className={`w-5 h-5 ${isActive ? "text-[#6B2FB9]" : "text-[#5A5A5A] group-hover:text-[#6B2FB9]"}`}
-                strokeWidth={isActive ? 2.5 : 2}
-              />
+              {item.icon ? (
+                <item.icon
+                  className={`w-5 h-5 ${isActive ? "text-[#6B2FB9]" : "text-[#5A5A5A] group-hover:text-[#6B2FB9]"}`}
+                  strokeWidth={isActive ? 2.5 : 2}
+                />
+              ) : (
+                <HearingAidIcon size={20} strokeColor={isActive ? "#6B2FB9" : "#5A5A5A"} />
+              )}
               <span className={`flex-1 ${isActive ? "font-semibold" : "font-medium"}`}>{item.name}</span>
             </Link>
           );
