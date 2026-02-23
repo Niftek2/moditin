@@ -76,7 +76,7 @@ export default function AccommodationsPage() {
             <div key={category} className="modal-card p-5">
               <h3 className="font-semibold text-white mb-3">{category}</h3>
               {grouped[category].length === 0 ? (
-                <p className="text-xs text-[var(--modal-text-muted)]">No accommodations in this category yet.</p>
+                <p className="text-sm text-[var(--modal-text-muted)]">No accommodations in this category yet.</p>
               ) : (
                 <div className="space-y-2">
                   {grouped[category].map(acc => {
@@ -89,8 +89,8 @@ export default function AccommodationsPage() {
                           className="mt-0.5 border-[var(--modal-border)] data-[state=checked]:bg-[#400070] data-[state=checked]:border-[#400070]"
                         />
                         <div>
-                          <p className="text-sm text-white">{acc.name}</p>
-                          {acc.description && <p className="text-xs text-[var(--modal-text-muted)] mt-0.5">{acc.description}</p>}
+                          <p className="text-sm text-white font-medium">{acc.name}</p>
+                          {acc.description && <p className="text-sm text-[var(--modal-text)] mt-0.5">{acc.description}</p>}
                         </div>
                       </label>
                     );

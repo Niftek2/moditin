@@ -75,7 +75,7 @@ IMPORTANT: ${DISCLAIMER}`,
     <div>
       <PageHeader title="Testing Decisions" subtitle="Assessment tools and guided decision wizard" />
 
-      <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3 mb-6 text-xs text-amber-300/80">
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-700">
         {DISCLAIMER}
       </div>
 
@@ -122,9 +122,9 @@ IMPORTANT: ${DISCLAIMER}`,
                 </button>
                 {expanded === tool.id && (
                   <div className="px-4 pb-4 space-y-3 border-t border-[var(--modal-border)] pt-3">
-                    {tool.primaryPurpose && <div><p className="text-[10px] uppercase text-[var(--modal-text-muted)]">Purpose</p><p className="text-sm text-[var(--modal-text)]">{tool.primaryPurpose}</p></div>}
-                    {tool.domainsMeasured?.length > 0 && <div><p className="text-[10px] uppercase text-[var(--modal-text-muted)]">Domains</p><div className="flex flex-wrap gap-1 mt-1">{tool.domainsMeasured.map(d => <Badge key={d} variant="secondary" className="text-[10px] bg-white/10 border-0">{d}</Badge>)}</div></div>}
-                    {tool.cautionNotes && <div><p className="text-[10px] uppercase text-[var(--modal-text-muted)]">Caution</p><p className="text-sm text-amber-300/80">{tool.cautionNotes}</p></div>}
+                    {tool.primaryPurpose && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Purpose</p><p className="text-sm text-[var(--modal-text)]">{tool.primaryPurpose}</p></div>}
+                    {tool.domainsMeasured?.length > 0 && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Domains</p><div className="flex flex-wrap gap-1 mt-1">{tool.domainsMeasured.map(d => <Badge key={d} variant="secondary" className="text-xs bg-white/10 border-0">{d}</Badge>)}</div></div>}
+                    {tool.cautionNotes && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Caution</p><p className="text-sm text-amber-700">{tool.cautionNotes}</p></div>}
                   </div>
                 )}
               </div>
@@ -137,7 +137,7 @@ IMPORTANT: ${DISCLAIMER}`,
             <div className="modal-card p-6">
               {wizardStep < wizardQuestions.length ? (
                 <div>
-                  <p className="text-xs text-[var(--modal-text-muted)] mb-1">Question {wizardStep + 1} of {wizardQuestions.length}</p>
+                  <p className="text-sm text-[var(--modal-text-muted)] mb-2">Question {wizardStep + 1} of {wizardQuestions.length}</p>
                   <h3 className="text-white font-semibold mb-4">{wizardQuestions[wizardStep].label}</h3>
                   <div className="space-y-2">
                     {wizardQuestions[wizardStep].options.map(opt => (
@@ -172,7 +172,7 @@ IMPORTANT: ${DISCLAIMER}`,
                         <span className="text-sm font-medium text-white">{rec.toolName}</span>
                         <Badge className="text-[10px] bg-[#400070]/30 text-[var(--modal-purple-glow)] border-0">Priority {rec.priority}</Badge>
                       </div>
-                      <p className="text-xs text-[var(--modal-text-muted)]">{rec.rationale}</p>
+                      <p className="text-sm text-[var(--modal-text)]">{rec.rationale}</p>
                     </div>
                   ))}
                 </div>
