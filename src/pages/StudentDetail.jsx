@@ -212,8 +212,8 @@ export default function StudentDetailPage() {
         ))}
       </div>
 
-      {/* Tab Content */}
-      {activeTab === "Communication" && (
+      {/* Tab Content - Secondary Tabs */}
+      {activeTab === "Details" && (
         <div className="modal-card p-6">
           <h2 className="font-bold text-[var(--modal-text)] mb-4 flex items-center gap-2">
             <Zap className="w-5 h-5 text-[#6B2FB9]" /> Communication & Language Profile
