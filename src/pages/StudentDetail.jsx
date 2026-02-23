@@ -105,17 +105,17 @@ export default function StudentDetailPage() {
           <div className="modal-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-[var(--modal-text)] flex items-center gap-2">
-                <Clock className="w-5 h-5 text-[#6B2FB9]" />
+                <Clock className="w-5 h-5 text-[#6B2FB9]" aria-hidden="true" />
                 Sessions
               </h2>
-              <p className="text-xl font-bold text-[#6B2FB9]">{(totalMinutes / 60).toFixed(1)}h</p>
+              <p className="text-xl font-bold text-[#6B2FB9]" aria-label="Total hours">{(totalMinutes / 60).toFixed(1)}h</p>
             </div>
             <p className="text-xs text-[var(--modal-text-muted)] mb-4">
               {services.length === 0 ? "No sessions logged" : `Last logged: ${services[0]?.date || "—"}`}
             </p>
             <Link to={createPageUrl("ServiceHours")} className="w-full">
-              <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
-                <Plus className="w-4 h-4 mr-2" /> Log Session
+              <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12" aria-label="Log a new session for this student">
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Log Session
               </Button>
             </Link>
           </div>
