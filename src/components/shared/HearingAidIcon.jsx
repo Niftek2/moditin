@@ -1,46 +1,48 @@
-export default function HearingAidIcon({ className = "", size = 20, strokeColor = "currentColor" }) {
+import React from "react";
+
+export default function HearingAidIcon({ size = 24, className = "", strokeColor = "currentColor" }) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox="0 0 24 24"
       fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
+      {/* Main BTE body - the tall rounded rectangle part */}
       <path
-        d="M26 20
-           C26 15.6 29.6 12 34 12
-           C40 12 44 16.6 44 23
-           V34
-           C44 38.8 41.8 42.6 38.6 45.2
-           L36.4 47
-           C35.2 48 34.5 49.4 34.5 51
-           C34.5 54 32 56.5 29 56.5
-           C26 56.5 23.5 54 23.5 51
-           C23.5 48.4 25.4 46.1 28 45.6"
+        d="M8 15 C8 18.5 10 21 12 21 C12 21 12.5 21 13 20.5 C13.8 19.6 14 18 14 16.5 L14 9 C14 6.5 12.5 4 10.5 4 C8.5 4 7 5.8 7 8 C7 9.5 7.8 10.8 9 11.5"
         stroke={strokeColor}
-        strokeWidth="4"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      {/* Tube going up and over */}
       <path
-        d="M38.5 24.5
-           C38.5 21.5 36.5 19.5 34 19.5
-           C31.5 19.5 29.5 21.5 29.5 24.5
-           V34"
+        d="M14 9.5 C14 9.5 16 9 17 10 C18 11 18 13 17 14.5 C16.2 15.7 15 16.5 14 16.5"
         stroke={strokeColor}
-        strokeWidth="4"
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M34 34
-           C34 39 32 41.5 28.5 43"
+      {/* Earmold / dome at bottom */}
+      <circle
+        cx="13"
+        cy="20.5"
+        r="1.2"
         stroke={strokeColor}
-        strokeWidth="4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+      {/* Program button on body */}
+      <rect
+        x="9"
+        y="6.5"
+        width="2.5"
+        height="1"
+        rx="0.5"
+        stroke={strokeColor}
+        strokeWidth="1.2"
       />
     </svg>
   );
