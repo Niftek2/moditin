@@ -64,6 +64,11 @@ export default function Sidebar({ currentPage }) {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="px-3 pb-2">
+        <GlobalSearch onNavigate={() => setMobileOpen(false)} />
+      </div>
+
       {/* Nav */}
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto scrollbar-thin">
         {navItems.map((item) => {
