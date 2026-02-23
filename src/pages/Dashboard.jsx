@@ -88,6 +88,26 @@ export default function Dashboard() {
     queryFn: () => base44.entities.Equipment.list(),
   });
 
+  const { data: calendarEvents = [] } = useQuery({
+    queryKey: ["calendarEvents-dash"],
+    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 100),
+  });
+
+  const now = new Date();
+  const todayEvents = calendarEvents
+    .filter(e => isToday(parseISO(e.startDateTime)))
+    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
+
+  const nextEvent = calendarEvents
+    .filter(e => new Date(e.startDateTime) > now)
+    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0];
+
+  const upcomingIEPs = students.filter(s => {
+    if (!s.iepAnnualReviewDate) return false;
+    const d = parseISO(s.iepAnnualReviewDate);
+    return isWithinInterval(d, { start: now, end: addDays(now, 30) });
+  }).sort((a, b) => new Date(a.iepAnnualReviewDate) - new Date(b.iepAnnualReviewDate));
+
   const currentMonth = new Date().toISOString().slice(0, 7);
   const monthlyMinutes = services
     .filter(s => s.monthKey === currentMonth)
