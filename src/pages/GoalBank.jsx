@@ -195,31 +195,11 @@ export default function GoalBankPage() {
         </div>
       )}
 
-      {/* AI Generate Dialog */}
-      <Dialog open={showAI} onOpenChange={setShowAI}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2"><Sparkles className="w-5 h-5 text-[var(--modal-purple-glow)]" /> AI Goal Generator</DialogTitle>
-            <DialogDescription className="text-[var(--modal-text-muted)]">Describe the student's needs and the AI will draft a SMART goal.</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 mt-2">
-            <textarea
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
-              placeholder="e.g., A 3rd grader who needs to improve self-advocacy skills in the general education classroom..."
-              className="w-full h-28 bg-white/5 border border-[var(--modal-border)] rounded-xl p-3 text-sm text-white placeholder:text-[var(--modal-text-muted)]/50 resize-none focus:outline-none focus:ring-1 focus:ring-[#400070]"
-            />
-            <AIDisclaimer />
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowAI(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
-              <Button onClick={handleAIGenerate} disabled={!aiPrompt.trim() || aiLoading} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
-                {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                Generate
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AIGoalCreator
+        open={showAICreator}
+        onClose={() => setShowAICreator(false)}
+        onSave={handleAISave}
+      />
     </div>
   );
 }
