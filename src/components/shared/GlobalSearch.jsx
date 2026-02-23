@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../../utils";
-import { Search, X, LayoutDashboard, Users, Target, ClipboardCheck, ClipboardList, Clock, Car, Ear, Zap, CalendarDays, FileText, Settings } from "lucide-react";
+import { Search, X, LayoutDashboard, Users, Target, ClipboardCheck, ClipboardList, Clock, Car, Ear, Zap, CalendarDays, FileText, Settings, Bell, Sun } from "lucide-react";
 
 const searchItems = [
   { label: "Dashboard", description: "Overview & quick stats", page: "Dashboard", icon: LayoutDashboard, keywords: ["home", "overview", "stats"] },
