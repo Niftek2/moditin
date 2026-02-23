@@ -101,7 +101,7 @@ export default function Dashboard() {
           {firstName ? `👋 Welcome back, ${firstName}` : "👋 Welcome back"}
         </h1>
         <p className="text-sm text-[var(--modal-text-muted)] mt-1">
-          Here's your teaching overview for {monthName}.
+          Here's your overview for the month.
         </p>
       </motion.div>
 
