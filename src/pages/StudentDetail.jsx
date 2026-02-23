@@ -290,7 +290,7 @@ export default function StudentDetailPage() {
       )}
 
       {activeTab === "Service Log" && (
-        <div className="modal-card p-6">
+        <div className="modal-card p-6" id="tab-Service Log" role="tabpanel" aria-labelledby="tab-Service Log">
           <h2 className="font-bold text-[var(--modal-text)] mb-4">Service Log</h2>
           {services.length === 0 ? (
             <p className="text-sm text-[var(--modal-text-muted)] text-center py-6">No service entries yet.</p>
