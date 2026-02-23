@@ -176,11 +176,11 @@ export default function StudentDetailPage() {
           {/* Notes */}
           {(student.notes || student.warmNotes) && (
             <Collapsible>
-              <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all">
+              <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]" aria-expanded={expandedSection === "notes"} aria-controls="notes-content">
                 <span className="font-semibold text-[var(--modal-text)]">Notes</span>
-                <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" />
+                <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
               </CollapsibleTrigger>
-              <CollapsibleContent className="modal-card p-4 mt-2 space-y-3 border-t border-[var(--modal-border)]">
+              <CollapsibleContent className="modal-card p-4 mt-2 space-y-3 border-t border-[var(--modal-border)]" id="notes-content">
                 {student.warmNotes && (
                   <div>
                     <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">Warm Notes</p>
