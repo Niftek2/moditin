@@ -23,6 +23,10 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     iepAnnualReviewDate: "",
     notes: "",
     warmNotes: "",
+    communicationModality: "",
+    primaryLanguage: "",
+    readingLevelBand: "",
+    aslInstructionFocus: false,
   });
   const [piiWarnings, setPiiWarnings] = useState([]);
 
