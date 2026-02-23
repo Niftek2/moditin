@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Users, Target, Clock, Car, Headphones, CalendarDays,
+  Users, Target, Clock, Car, CalendarDays,
   ChevronRight, FileText, ClipboardList, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
