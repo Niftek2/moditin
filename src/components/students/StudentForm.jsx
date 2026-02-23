@@ -158,6 +158,61 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         />
       </div>
 
+      {/* Communication & Language Profile */}
+      <div className="border-t border-[var(--modal-border)] pt-4">
+        <h3 className="text-sm font-semibold text-white mb-4">Communication & Language Profile</h3>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text-muted)]">Communication Modality</Label>
+            <Select value={form.communicationModality || ""} onValueChange={(v) => updateField("communicationModality", v)}>
+              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+                <SelectValue placeholder="Select modality" />
+              </SelectTrigger>
+              <SelectContent>
+                {COMMUNICATION_MODALITIES.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text-muted)]">Primary Language</Label>
+            <Select value={form.primaryLanguage || ""} onValueChange={(v) => updateField("primaryLanguage", v)}>
+              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                {PRIMARY_LANGUAGES.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text-muted)]">Reading Level Band</Label>
+            <Select value={form.readingLevelBand || ""} onValueChange={(v) => updateField("readingLevelBand", v)}>
+              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+                <SelectValue placeholder="Select level" />
+              </SelectTrigger>
+              <SelectContent>
+                {READING_LEVELS.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-3 pt-2">
+            <Checkbox
+              id="aslInstructionFocus"
+              checked={form.aslInstructionFocus || false}
+              onCheckedChange={(checked) => updateField("aslInstructionFocus", checked)}
+              className="border-[var(--modal-border)]"
+            />
+            <Label htmlFor="aslInstructionFocus" className="text-[var(--modal-text-muted)] font-normal cursor-pointer">
+              ASL Instruction Focus
+            </Label>
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-end gap-3 pt-2">
         <Button type="button" variant="outline" onClick={onCancel} className="border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-white">
           Cancel
