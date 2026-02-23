@@ -16,6 +16,7 @@ import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [studentSearch, setStudentSearch] = useState("");
+  const [focusSearchResult, setFocusSearchResult] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
