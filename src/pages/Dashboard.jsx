@@ -6,7 +6,7 @@ import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
   Users, Target, Clock, Car, CalendarDays,
-  ChevronRight, FileText, ClipboardList, Plus, Ear
+  ChevronRight, FileText, ClipboardList, Plus, Ear, Zap
 } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
@@ -133,6 +133,7 @@ export default function Dashboard() {
           <QuickAction icon={FileText} label="Worksheets" page="Worksheets" delay={0.26} />
           <QuickAction icon={ClipboardList} label="Testing" page="TestingDecisions" delay={0.28} />
           <QuickAction icon={Ear} label="Ling 6 Check" page="Ling6Check" delay={0.30} />
+          <QuickAction icon={Zap} label="Interactive Activity" page="InteractiveActivities" delay={0.32} />
         </div>
       </div>
 
