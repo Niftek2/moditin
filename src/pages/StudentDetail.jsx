@@ -260,6 +260,10 @@ export default function StudentDetailPage() {
         </div>
       )}
 
+      {activeTab === "Audiology" && (
+        <AudiologySnapshotView studentId={studentId} />
+      )}
+
       {(activeTab === "Contacts" || activeTab === "Accommodations" || activeTab === "Exports") && (
         <div className="modal-card p-10 text-center text-[var(--modal-text-muted)]">
           <p className="text-sm">This section is available from the main navigation.</p>
