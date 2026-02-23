@@ -11,11 +11,14 @@ css
   --modal-bg: #F7F3FA;
   --modal-card: #FFFFFF;
   --modal-card-hover: #F9F6FD;
-  --modal-border: #E8DFF5;
+  --modal-border: #D8CDE5;
   --modal-text: #1A1028;
-  --modal-text-muted: #6F6F6F;
+  --modal-text-muted: #4A4A4A;
+  --modal-text-disabled: #A0A0A0;
   --modal-sidebar-bg: #FFFFFF;
   --modal-accent-bar: #400070;
+  --modal-focus: #0066CC;
+  --modal-focus-visible: #004499;
 }
 
 @layer base {
