@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Loader2, Copy, Check, AlertTriangle } from "lucide-react";
 import AIDisclaimer from "@/components/shared/AIDisclaimer";
+import { useSubscription } from "@/components/shared/SubscriptionGate";
 
 const ACTIVITY_TYPES = [
   "Community History",
