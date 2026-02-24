@@ -23,6 +23,7 @@ export default function WorksheetsPage() {
   const [template, setTemplate] = useState("");
   const [topic, setTopic] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
+  const [languageLevel, setLanguageLevel] = useState("Standard");
   const [loading, setLoading] = useState(false);
   const [worksheetContent, setWorksheetContent] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
@@ -47,14 +48,20 @@ export default function WorksheetsPage() {
 Template type: ${selectedTemplate?.label}
 Topic: ${topic}
 Grade level: ${gradeLevel}
+Language Level: ${languageLevel}
 
-Create worksheet content suitable for a PDF. The worksheet should be clean, educational, and engaging.
+Create worksheet content suitable for a PDF. The worksheet should be clean, educational, and visually engaging.
 Include a title, clear instructions, and 8-12 items/questions appropriate for the template type.
 DO NOT include any student identifying information.
 
+VISUAL & LANGUAGE REQUIREMENTS:
+- For each item, include a "clipartDescription" field with a brief description of relevant cartoon/child-appropriate clipart (e.g., "happy sun illustration", "colorful animal stickers")
+- Make the worksheet colorful and visual with clipart suggestions throughout
+- Adjust language complexity based on level: ${languageLevel === "Simplified" ? "use very simple vocabulary, short sentences, high-frequency words only" : languageLevel === "Standard" ? "use age-appropriate vocabulary and sentence length" : "use grade-level vocabulary with more complex sentence structures"}
+
 ${getTeacherPromptInstructions()}
 
-Return JSON with: title, instructions, items (array of objects with 'prompt' and optionally 'choices' array), footerNote, teacherPrompt (string with detailed teacher instructions for delivering this worksheet).`,
+Return JSON with: title, instructions, items (array of objects with 'prompt', optional 'choices' array, and 'clipartDescription'), footerNote, teacherPrompt (string with detailed teacher instructions for delivering this worksheet).`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -67,6 +74,7 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
               properties: {
                 prompt: { type: "string" },
                 choices: { type: "array", items: { type: "string" } },
+                clipartDescription: { type: "string", description: "Description of cartoon clipart to include with this item" },
               },
             },
           },
@@ -81,6 +89,7 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
       templateType: template,
       topic,
       gradeLevel,
+      languageLevel,
       title: result.title,
       worksheetContent: result,
       generatedDate: new Date().toISOString(),
@@ -125,6 +134,17 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text-muted)]">Language Level</Label>
+            <Select value={languageLevel} onValueChange={setLanguageLevel}>
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select level" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Simplified">Simplified</SelectItem>
+                <SelectItem value="Standard">Standard</SelectItem>
+                <SelectItem value="Advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <Button onClick={handleGenerate} disabled={!template || !topic || loading} className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
             Generate Worksheet
@@ -160,23 +180,32 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
               <div className="space-y-4">
                 {worksheetContent.items?.map((item, i) => (
                   <div key={i} className="border border-gray-200 rounded-lg p-4">
-                    <p className="font-medium text-sm">{i + 1}. {item.prompt}</p>
-                    {item.choices?.length > 0 && (
-                      <div className="mt-2 grid grid-cols-2 gap-2">
-                        {item.choices.map((c, ci) => (
-                          <label key={ci} className="flex items-center gap-2 text-sm text-gray-600">
-                            <div className="w-4 h-4 border border-gray-300 rounded" />
-                            {c}
-                          </label>
-                        ))}
+                    <div className="flex gap-4 items-start">
+                      {item.clipartDescription && (
+                        <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg border-2 border-purple-200 flex items-center justify-center text-center p-2">
+                          <p className="text-[10px] font-medium text-purple-700 leading-tight">[{item.clipartDescription}]</p>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">{i + 1}. {item.prompt}</p>
+                        {item.choices?.length > 0 && (
+                          <div className="mt-2 grid grid-cols-2 gap-2">
+                            {item.choices.map((c, ci) => (
+                              <label key={ci} className="flex items-center gap-2 text-sm text-gray-600">
+                                <div className="w-4 h-4 border border-gray-300 rounded" />
+                                {c}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                        {!item.choices?.length && (
+                          <div className="mt-3 border-b border-gray-200 pb-4">
+                            <div className="h-6 border-b border-dotted border-gray-300 mb-2" />
+                            <div className="h-6 border-b border-dotted border-gray-300" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {!item.choices?.length && (
-                      <div className="mt-3 border-b border-gray-200 pb-4">
-                        <div className="h-6 border-b border-dotted border-gray-300 mb-2" />
-                        <div className="h-6 border-b border-dotted border-gray-300" />
-                      </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
