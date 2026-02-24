@@ -115,9 +115,9 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)]"
           />
           <p className="text-[10px] text-[var(--modal-text-muted)]">Up to 4 letters only — no full school or district names</p>
-        </div>
+          </div>
 
-        <div className="space-y-2">
+          <div className="space-y-2">
           <Label className="text-[var(--modal-text)] font-semibold">IEP Start Date</Label>
           <Input
             type="date"
