@@ -114,7 +114,7 @@ IMPORTANT: ${DISCLAIMER}`,
                         <Badge className={`text-[10px] border-0 ${tool.accessType === "FreeScreening" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"}`}>
                           {tool.accessType === "FreeScreening" ? "Free" : "Standardized"}
                         </Badge>
-                        {tool.typicalAgeRange && <Badge variant="secondary" className="text-[10px] bg-white/10 text-[var(--modal-text-muted)] border-0">{tool.typicalAgeRange}</Badge>}
+                        {tool.typicalAgeRange && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{tool.typicalAgeRange}</Badge>}
                       </div>
                     </div>
                     {expanded === tool.id ? <ChevronUp className="w-4 h-4 text-[var(--modal-text-muted)]" /> : <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" />}
