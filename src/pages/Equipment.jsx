@@ -44,10 +44,10 @@ export default function EquipmentPage() {
   students.forEach(s => { studentMap[s.id] = s.studentInitials; });
 
   const statusColors = {
-    Active: "bg-green-500/20 text-green-400",
-    NeedsRepair: "bg-red-500/20 text-red-400",
-    Loaned: "bg-blue-500/20 text-blue-400",
-    Retired: "bg-gray-500/20 text-gray-400",
+    Active: "bg-green-100 text-green-700",
+    NeedsRepair: "bg-red-100 text-red-700",
+    Loaned: "bg-blue-100 text-blue-700",
+    Retired: "bg-gray-100 text-gray-600",
   };
 
   return (
@@ -77,14 +77,14 @@ export default function EquipmentPage() {
                       <HearingAidIcon size={20} strokeColor="var(--modal-purple-glow)" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white">{eq.type}</p>
+                      <p className="text-sm font-medium text-[var(--modal-text)]">{eq.type}</p>
                       <p className="text-xs text-[var(--modal-text-muted)]">{studentMap[eq.studentId] || "Unassigned"} {eq.serialNumber ? `· S/N: ${eq.serialNumber}` : ""}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={`text-[10px] border-0 ${statusColors[eq.status]}`}>{eq.status}</Badge>
                     {unresolvedCount > 0 && (
-                      <div className="flex items-center gap-1 text-red-400">
+                      <div className="flex items-center gap-1 text-red-600">
                         <AlertCircle className="w-3.5 h-3.5" />
                         <span className="text-xs">{unresolvedCount}</span>
                       </div>
@@ -106,32 +106,32 @@ export default function EquipmentPage() {
       {/* Add Equipment Dialog */}
       <Dialog open={showEquipForm} onOpenChange={setShowEquipForm}>
         <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
-          <DialogHeader><DialogTitle className="text-white">Add Equipment</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Add Equipment</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Student</Label>
+              <Label>Student</Label>
               <Select value={equipForm.studentId} onValueChange={(v) => setEquipForm(p => ({ ...p, studentId: v }))}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select student" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select student" /></SelectTrigger>
                 <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Type</Label>
+              <Label>Type</Label>
               <Select value={equipForm.type} onValueChange={(v) => setEquipForm(p => ({ ...p, type: v }))}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>{EQUIPMENT_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Description</Label>
-              <Input value={equipForm.description} onChange={(e) => setEquipForm(p => ({ ...p, description: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" placeholder="e.g., Phonak Sky M70" />
+              <Label>Description</Label>
+              <Input value={equipForm.description} onChange={(e) => setEquipForm(p => ({ ...p, description: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="e.g., Phonak Sky M70" />
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Serial Number</Label>
-              <Input value={equipForm.serialNumber} onChange={(e) => setEquipForm(p => ({ ...p, serialNumber: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
+              <Label>Serial Number</Label>
+              <Input value={equipForm.serialNumber} onChange={(e) => setEquipForm(p => ({ ...p, serialNumber: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowEquipForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
+              <Button variant="outline" onClick={() => setShowEquipForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
               <Button onClick={() => createEquipMut.mutate(equipForm)} disabled={!equipForm.studentId || !equipForm.type} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
             </div>
           </div>
@@ -141,29 +141,29 @@ export default function EquipmentPage() {
       {/* Log Check Dialog */}
       <Dialog open={showLogForm} onOpenChange={setShowLogForm}>
         <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
-          <DialogHeader><DialogTitle className="text-white">Log Equipment Check</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Equipment Check</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Date</Label>
-              <Input type="date" value={logForm.date} onChange={(e) => setLogForm(p => ({ ...p, date: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
+              <Label>Date</Label>
+              <Input type="date" value={logForm.date} onChange={(e) => setLogForm(p => ({ ...p, date: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Check Type</Label>
+              <Label>Check Type</Label>
               <Select value={logForm.checkType} onValueChange={(v) => setLogForm(p => ({ ...p, checkType: v }))}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue /></SelectTrigger>
                 <SelectContent>{CHECK_TYPES.map(t => <SelectItem key={t} value={t}>{t.replace(/([A-Z])/g, " $1").trim()}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Issue Description</Label>
-              <Textarea value={logForm.issueDescription} onChange={(e) => setLogForm(p => ({ ...p, issueDescription: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white h-20" />
+              <Label>Issue Description</Label>
+              <Textarea value={logForm.issueDescription} onChange={(e) => setLogForm(p => ({ ...p, issueDescription: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
             </div>
             <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Action Taken</Label>
-              <Input value={logForm.actionTaken} onChange={(e) => setLogForm(p => ({ ...p, actionTaken: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
+              <Label>Action Taken</Label>
+              <Input value={logForm.actionTaken} onChange={(e) => setLogForm(p => ({ ...p, actionTaken: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowLogForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
+              <Button variant="outline" onClick={() => setShowLogForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
               <Button onClick={() => createLogMut.mutate({ ...logForm, equipmentId: selectedEquip?.id })} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
             </div>
           </div>
