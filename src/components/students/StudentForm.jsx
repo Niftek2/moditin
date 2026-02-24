@@ -24,6 +24,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     iepAnnualReviewDate: "",
     notes: "",
     warmNotes: "",
+    studentGoals: "",
     communicationModality: "",
     primaryLanguage: "",
     readingLevelBand: "",
