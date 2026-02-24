@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TestTube2, Search, Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { TestTube2, Search, Sparkles, Loader2, ChevronDown, ChevronUp, X } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import AIDisclaimer from "../components/shared/AIDisclaimer";
 
@@ -20,6 +20,7 @@ export default function TestingDecisionsPage() {
   const [wizardAnswers, setWizardAnswers] = useState({});
   const [wizardResult, setWizardResult] = useState(null);
   const [wizardLoading, setWizardLoading] = useState(false);
+  const [dismissedDisclosures, setDismissedDisclosures] = useState(new Set());
 
   const { data: assessments = [] } = useQuery({
     queryKey: ["assessments"],
@@ -76,13 +77,25 @@ IMPORTANT: ${DISCLAIMER}`,
       <PageHeader title="Testing Decisions" subtitle="Assessment tools and guided decision wizard" />
 
       <div className="space-y-3 mb-6">
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-700">
-          {DISCLAIMER}
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
-          <p className="font-semibold mb-1">Important Disclosure</p>
-          <p>Modal Education has no association with the assessment tools listed in this guide and does not provide, sell, or distribute these tools. This is an informational resource only.</p>
-        </div>
+        {!dismissedDisclosures.has('disclaimer') && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-700 flex items-start justify-between gap-3">
+            <p>{DISCLAIMER}</p>
+            <button onClick={() => setDismissedDisclosures(prev => new Set([...prev, 'disclaimer']))} className="p-1 hover:bg-amber-500/20 rounded shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+        {!dismissedDisclosures.has('association') && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-semibold mb-1">Important Disclosure</p>
+              <p>Modal Education has no association with the assessment tools listed in this guide and does not provide, sell, or distribute these tools. This is an informational resource only.</p>
+            </div>
+            <button onClick={() => setDismissedDisclosures(prev => new Set([...prev, 'association']))} className="p-1 hover:bg-blue-100 rounded shrink-0">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       <Tabs defaultValue="library">
