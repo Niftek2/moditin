@@ -78,24 +78,24 @@ export default function SettingsPage() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Name *</Label>
-                  <Input value={inquiryForm.name} onChange={(e) => setInquiryForm(p => ({ ...p, name: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
-                </div>
-                <div className="space-y-2">
+                  <Input value={inquiryForm.name} onChange={(e) => setInquiryForm(p => ({ ...p, name: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Email *</Label>
-                  <Input type="email" value={inquiryForm.email} onChange={(e) => setInquiryForm(p => ({ ...p, email: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
-                </div>
-                <div className="space-y-2">
+                  <Input type="email" value={inquiryForm.email} onChange={(e) => setInquiryForm(p => ({ ...p, email: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">School/District *</Label>
-                  <Input value={inquiryForm.schoolDistrict} onChange={(e) => setInquiryForm(p => ({ ...p, schoolDistrict: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
-                </div>
-                <div className="space-y-2">
+                  <Input value={inquiryForm.schoolDistrict} onChange={(e) => setInquiryForm(p => ({ ...p, schoolDistrict: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Estimated Users</Label>
-                  <Input type="number" value={inquiryForm.estimatedUsers} onChange={(e) => setInquiryForm(p => ({ ...p, estimatedUsers: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Notes</Label>
-                <Textarea value={inquiryForm.notes} onChange={(e) => setInquiryForm(p => ({ ...p, notes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white h-20" />
+                  <Input type="number" value={inquiryForm.estimatedUsers} onChange={(e) => setInquiryForm(p => ({ ...p, estimatedUsers: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+                  </div>
+                  </div>
+                  <div className="space-y-2">
+                  <Label className="text-[var(--modal-text-muted)]">Notes</Label>
+                  <Textarea value={inquiryForm.notes} onChange={(e) => setInquiryForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
               </div>
               <Button
                 onClick={() => inquiryMutation.mutate({ ...inquiryForm, estimatedUsers: inquiryForm.estimatedUsers ? parseInt(inquiryForm.estimatedUsers) : undefined })}
