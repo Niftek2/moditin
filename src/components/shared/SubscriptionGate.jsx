@@ -51,12 +51,17 @@ export default function SubscriptionGate({ children }) {
     setLoadingCheckout(true);
     try {
       const res = await base44.functions.invoke("stripeCheckout", {
-        successUrl: window.location.href + "?subscribed=1",
-        cancelUrl: window.location.href
+        successUrl: window.location.origin + "/?subscribed=1",
+        cancelUrl: window.location.origin + "/"
       });
-      if (res.data?.url) window.location.href = res.data.url;
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        alert("Could not start checkout: " + (res.data?.error || "No checkout URL returned."));
+      }
     } catch (err) {
-      alert("Could not start checkout. Please try again.");
+      console.error("Checkout error:", err);
+      alert("Could not start checkout: " + (err?.response?.data?.error || err?.message || "Unknown error"));
     } finally {
       setLoadingCheckout(false);
     }
