@@ -67,7 +67,7 @@ export default function Dashboard() {
         transition={{ duration: 0.3 }}>
 
         <h1 className="text-3xl font-bold text-[var(--modal-text)]">
-          {firstName ? `Welcome, ${firstName}` : "Welcome"}
+          {firstName ? `Hi, ${firstName} 👋` : "Hi there 👋"}
         </h1>
         
         <DailyQuote />
