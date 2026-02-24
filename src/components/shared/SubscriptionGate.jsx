@@ -11,13 +11,15 @@ export function useSubscription() {
 export function SubscriptionProvider({ children }) {
   const [subStatus, setSubStatus] = useState(null);
   const [checking, setChecking] = useState(true);
+  const [user, setUser] = useState(null);
 
   const checkStatus = async () => {
     try {
-      const user = await base44.auth.me();
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
       const res = await base44.functions.invoke("stripeStatus", {});
       // Admins always have Pro access
-      const isAdmin = user?.role === "admin";
+      const isAdmin = currentUser?.role === "admin";
       setSubStatus({ ...res.data, isPro: isAdmin || res.data.isPro });
     } catch {
       setSubStatus({ isActive: false, isPro: false, isTrial: false, studentCount: 0 });
@@ -31,7 +33,7 @@ export function SubscriptionProvider({ children }) {
   }, []);
 
   return (
-    <SubscriptionContext.Provider value={{ subStatus, checking, refetch: checkStatus }}>
+    <SubscriptionContext.Provider value={{ subStatus, checking, refetch: checkStatus, user }}>
       {children}
     </SubscriptionContext.Provider>
   );
