@@ -86,28 +86,60 @@ export default function MileagePage() {
       )}
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
-          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Mileage</DialogTitle></DialogHeader>
-          <div className="space-y-4 mt-2">
-            <div className="space-y-2">
-              <Label>Date</Label>
-              <Input type="date" value={form.date} onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-            </div>
-            <div className="space-y-2">
-              <Label>Miles</Label>
-              <Input type="number" min="0" step="0.1" value={form.miles} onChange={(e) => setForm(p => ({ ...p, miles: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="12.5" />
-            </div>
-            <div className="space-y-2">
-              <Label>Purpose</Label>
-              <Input value={form.purpose} onChange={(e) => setForm(p => ({ ...p, purpose: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="Travel to school site" />
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
-              <Button onClick={handleSubmit} disabled={!form.miles || !form.purpose} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+         <DialogContent className="bg-white border-[var(--modal-border)] max-w-md">
+           <DialogHeader>
+             <DialogTitle className="text-lg font-bold text-[var(--modal-text)]">Log Mileage</DialogTitle>
+           </DialogHeader>
+           <div className="space-y-4">
+             <div className="space-y-2">
+               <Label className="font-semibold text-[var(--modal-text)]">Date</Label>
+               <Input 
+                 type="date" 
+                 value={form.date} 
+                 onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} 
+                 className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+               />
+             </div>
+             <div className="space-y-2">
+               <Label className="font-semibold text-[var(--modal-text)]">Miles</Label>
+               <Input 
+                 type="number" 
+                 min="0" 
+                 step="0.1" 
+                 value={form.miles} 
+                 onChange={(e) => setForm(p => ({ ...p, miles: e.target.value }))} 
+                 className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                 placeholder="12.5" 
+               />
+             </div>
+             <div className="space-y-2">
+               <Label className="font-semibold text-[var(--modal-text)]">Purpose</Label>
+               <Input 
+                 value={form.purpose} 
+                 onChange={(e) => setForm(p => ({ ...p, purpose: e.target.value }))} 
+                 className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                 placeholder="Travel to school site" 
+               />
+             </div>
+             <div className="flex justify-end gap-3 pt-4">
+               <Button 
+                 variant="outline" 
+                 onClick={() => setShowForm(false)} 
+                 className="border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-semibold hover:bg-gray-100"
+               >
+                 Cancel
+               </Button>
+               <Button 
+                 onClick={handleSubmit} 
+                 disabled={!form.miles || !form.purpose} 
+                 className="bg-[#400070] hover:bg-[#5B00A0] text-white font-semibold"
+               >
+                 Save
+               </Button>
+             </div>
+           </div>
+         </DialogContent>
+       </Dialog>
     </div>
   );
 }
