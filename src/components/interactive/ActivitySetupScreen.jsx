@@ -16,6 +16,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
   const [numItems, setNumItems] = useState("5");
   const [difficulty, setDifficulty] = useState("Developing");
   const [setting, setSetting] = useState("InPerson");
+  const [languageLevel, setLanguageLevel] = useState("Standard");
   const [loading, setLoading] = useState(false);
 
   const { data: students = [] } = useQuery({
@@ -50,10 +51,19 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       difficulty,
       numItems: parseInt(numItems),
       goalText: selectedGoal?.annualGoal || "",
+      languageLevel,
     });
+    
+    const enhancedPrompt = `${prompt}
+
+VISUAL DESIGN REQUIREMENTS:
+- Include descriptions for cartoon/child-appropriate clipart throughout (describe where clipart should appear and what it depicts)
+- Make content visually engaging with varied item formats (some with images, some with text only)
+- Use simple, colorful language appropriate for the language level: ${languageLevel}
+- Language Level: ${languageLevel === "Simplified" ? "Use very simple vocabulary, short sentences, high-frequency words only" : languageLevel === "Standard" ? "Use age-appropriate vocabulary and sentence length" : "Use grade-level vocabulary with more complex sentence structures"}`;
 
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt,
+      prompt: enhancedPrompt,
       response_json_schema: {
         type: "object",
         properties: {
@@ -68,6 +78,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
                 questionText: { type: "string" },
                 answerChoices: { type: "array", items: { type: "string" } },
                 correctAnswer: { type: "string" },
+                clipartDescription: { type: "string", description: "Optional description of relevant cartoon clipart for this item" },
               },
             },
           },
@@ -89,6 +100,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       numItems: parseInt(numItems),
       difficulty,
       setting,
+      languageLevel,
     });
   };
 
@@ -161,8 +173,8 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
           </Button>
           </div>
 
-          {/* Number of items, difficulty, setting */}
-        <div className="grid grid-cols-3 gap-3">
+          {/* Number of items, difficulty, setting, language */}
+        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label className="text-[var(--modal-text)] font-semibold">Items</Label>
             <Select value={numItems} onValueChange={setNumItems}>
@@ -187,6 +199,15 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 {["InPerson","Telepractice","Hybrid"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text)] font-semibold">Language Level</Label>
+            <Select value={languageLevel} onValueChange={setLanguageLevel}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["Simplified","Standard","Advanced"].map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
