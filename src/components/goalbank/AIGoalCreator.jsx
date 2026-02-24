@@ -371,7 +371,7 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white border-2 border-[#400070] max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[var(--modal-purple-glow)]" />
