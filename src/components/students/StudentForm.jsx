@@ -34,7 +34,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
 
   const updateField = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
-    if (field === "notes" || field === "warmNotes" || field === "studentInitials") {
+    if (field === "notes" || field === "warmNotes" || field === "studentGoals" || field === "studentInitials") {
       setPiiWarnings(checkPII(value));
     }
   };
