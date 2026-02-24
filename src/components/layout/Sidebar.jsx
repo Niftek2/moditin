@@ -51,25 +51,12 @@ export default function Sidebar({ currentPage }) {
   const navContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="px-4 py-5 flex items-center gap-3">
+      <div className="px-4 py-4 flex items-center gap-2">
         <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/6f560f8f2_modalitinerantlogo.png"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
           alt="Modal Itinerant"
-          className="w-9 h-9 object-contain shrink-0"
+          className="h-12 object-contain"
         />
-        <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/8fc967743_LogoNoScript.png"
-          alt=""
-          aria-hidden="true"
-          className="w-7 h-7 object-contain shrink-0"
-        />
-        <div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-sm font-medium text-[#400070]">MODAL</span>
-            <span className="text-sm font-bold text-[#400070]">ITINERANT</span>
-          </div>
-          <p className="text-[10px] text-[var(--modal-text-muted)] tracking-wide">Itinerant Teaching Hub</p>
-        </div>
       </div>
 
       {/* Search */}
