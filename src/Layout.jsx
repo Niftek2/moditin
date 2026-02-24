@@ -41,6 +41,7 @@ export default function Layout({ children, currentPageName }) {
                 <NotificationBell />
               </div>
               <PrivacyReminderBanner />
+              <FreemiumBannerWrapper />
 
               <AnimatePresence mode="wait">
                 <motion.div
