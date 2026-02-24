@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { CheckCircle2, Trash2, ExternalLink, Loader2, Sparkles } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
+import AudioSettings from "../components/shared/AudioSettings";
 import { useSubscription } from "../components/shared/SubscriptionGate";
 import { format, fromUnixTime } from "date-fns";
 
