@@ -46,8 +46,8 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-lg font-bold text-white">{student ? "Edit Student" : "Add Student"}</h2>
-        <Button type="button" variant="ghost" size="icon" onClick={onCancel} className="text-[var(--modal-text-muted)] hover:text-white">
+        <h2 className="text-lg font-bold text-[var(--modal-text)]">{student ? "Edit Student" : "Add Student"}</h2>
+        <Button type="button" variant="ghost" size="icon" onClick={onCancel} className="text-[var(--modal-text-muted)] hover:text-[var(--modal-text)]">
           <X className="w-5 h-5" />
         </Button>
       </div>
@@ -65,7 +65,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
               updateField("studentInitials", val);
             }}
             maxLength={6}
-            className="bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)]"
             required
           />
           <p className="text-[10px] text-[var(--modal-text-muted)]">Format: Fi.La. — first and last initial only, no full names</p>
@@ -74,7 +74,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <div className="space-y-2">
           <Label className="text-[var(--modal-text-muted)]">Grade Band *</Label>
           <Select value={form.gradeBand} onValueChange={(v) => updateField("gradeBand", v)} required>
-            <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+            <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
               <SelectValue placeholder="Select grade band" />
             </SelectTrigger>
             <SelectContent>
@@ -86,7 +86,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <div className="space-y-2">
           <Label className="text-[var(--modal-text-muted)]">Service Delivery Model *</Label>
           <Select value={form.serviceDeliveryModel} onValueChange={(v) => updateField("serviceDeliveryModel", v)} required>
-            <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+            <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
             <SelectContent>
@@ -100,7 +100,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
           <Input
             value={form.primaryEligibility}
             onChange={(e) => updateField("primaryEligibility", e.target.value)}
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
             placeholder="e.g., DHH"
           />
         </div>
@@ -112,7 +112,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             value={form.schoolCode || ""}
             onChange={(e) => updateField("schoolCode", e.target.value.slice(0, 4).toUpperCase())}
             maxLength={4}
-            className="bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)]"
           />
           <p className="text-[10px] text-[var(--modal-text-muted)]">Up to 4 letters only — no full school or district names</p>
         </div>
@@ -123,7 +123,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             type="date"
             value={form.iepStartDate}
             onChange={(e) => updateField("iepStartDate", e.target.value)}
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
           />
         </div>
 
@@ -133,7 +133,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             type="date"
             value={form.iepAnnualReviewDate}
             onChange={(e) => updateField("iepAnnualReviewDate", e.target.value)}
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
           />
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <Textarea
           value={form.notes}
           onChange={(e) => updateField("notes", e.target.value)}
-          className="bg-white/5 border-[var(--modal-border)] text-white h-20"
+          className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20"
           placeholder="General notes (no PII)"
         />
       </div>
@@ -153,20 +153,20 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <Textarea
           value={form.warmNotes}
           onChange={(e) => updateField("warmNotes", e.target.value)}
-          className="bg-white/5 border-[var(--modal-border)] text-white h-20"
+          className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20"
           placeholder="Interests, motivators, etc."
         />
       </div>
 
       {/* Communication & Language Profile */}
       <div className="border-t border-[var(--modal-border)] pt-4">
-        <h3 className="text-sm font-semibold text-white mb-4">Communication & Language Profile</h3>
+        <h3 className="text-sm font-semibold text-[var(--modal-text)] mb-4">Communication & Language Profile</h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Communication Modality</Label>
             <Select value={form.communicationModality || ""} onValueChange={(v) => updateField("communicationModality", v)}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select modality" />
               </SelectTrigger>
               <SelectContent>
@@ -178,7 +178,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Primary Language</Label>
             <Select value={form.primaryLanguage || ""} onValueChange={(v) => updateField("primaryLanguage", v)}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
@@ -190,7 +190,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Reading Level Band</Label>
             <Select value={form.readingLevelBand || ""} onValueChange={(v) => updateField("readingLevelBand", v)}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>
