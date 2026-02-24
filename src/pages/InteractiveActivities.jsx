@@ -3,11 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import ActivitySetupScreen from "../components/interactive/ActivitySetupScreen";
+import ActivityDirectionsScreen from "../components/interactive/ActivityDirectionsScreen";
 import ActivityPlayerScreen from "../components/interactive/ActivityPlayerScreen";
 import ActivitySummaryScreen from "../components/interactive/ActivitySummaryScreen";
 import DeafCultureActivityGenerator from "../components/goalbank/DeafCultureActivityGenerator";
 
-const STEPS = { SETUP: "setup", PLAYING: "playing", SUMMARY: "summary" };
+const STEPS = { SETUP: "setup", DIRECTIONS: "directions", PLAYING: "playing", SUMMARY: "summary" };
 
 export default function InteractiveActivitiesPage() {
   const [step, setStep] = useState(STEPS.SETUP);
@@ -18,6 +19,10 @@ export default function InteractiveActivitiesPage() {
 
   const handleActivityGenerated = (config) => {
     setActivityConfig(config);
+    setStep(STEPS.DIRECTIONS);
+  };
+
+  const handleDirectionsComplete = () => {
     setStep(STEPS.PLAYING);
   };
 
@@ -48,6 +53,16 @@ export default function InteractiveActivitiesPage() {
             }
           />
           <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} />
+        </>
+      )}
+
+      {step === STEPS.DIRECTIONS && activityConfig && (
+        <>
+          <PageHeader title="Activity Setup" subtitle="Review directions before starting" />
+          <ActivityDirectionsScreen
+            config={activityConfig}
+            onStart={handleDirectionsComplete}
+          />
         </>
       )}
 
