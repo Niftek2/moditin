@@ -34,8 +34,8 @@ export function SubscriptionProvider({ children }) {
   return (
     <SubscriptionContext.Provider value={{ subStatus, checking, refetch: checkStatus }}>
       {children}
-    </SubscriptionContext.Provider>
-  );
+    </SubscriptionContext.Provider>);
+
 }
 
 export default function SubscriptionGate({ children }) {
@@ -52,7 +52,7 @@ export default function SubscriptionGate({ children }) {
     try {
       const res = await base44.functions.invoke("stripeCheckout", {
         successUrl: window.location.href + "?subscribed=1",
-        cancelUrl: window.location.href,
+        cancelUrl: window.location.href
       });
       if (res.data?.url) window.location.href = res.data.url;
     } catch (err) {
@@ -66,8 +66,8 @@ export default function SubscriptionGate({ children }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--modal-bg)]">
         <Loader2 className="w-8 h-8 animate-spin text-[#400070]" />
-      </div>
-    );
+      </div>);
+
   }
 
   if (subStatus?.isActive) {
@@ -80,28 +80,28 @@ export default function SubscriptionGate({ children }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="modal-card max-w-md w-full p-8 text-center space-y-6"
-      >
+        className="modal-card max-w-md w-full p-8 text-center space-y-6">
+
         <div className="w-16 h-16 rounded-2xl bg-[#400070] flex items-center justify-center mx-auto">
           <Sparkles className="w-8 h-8 text-white" />
         </div>
 
         <div>
           <h1 className="text-2xl font-bold text-[var(--modal-text)] mb-2">Start Your Free Trial</h1>
-          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed">
-            Get full access to Modal Education Platform — SMART goal writing, session logging, interactive activities, and more.
+          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed">Get full access to Modal Itinerant— SMART goal writing, session logging, interactive activities, and more.
+
           </p>
         </div>
 
         <div className="bg-[#F7F3FA] rounded-xl p-4 space-y-2">
           {[
-            "7-day free trial — no charge today",
-            "AI-powered goal writing & activities",
-            "Session logging & service hours",
-            "Equipment tracking & reminders",
-            "Cancel anytime",
-          ].map((feature) => (
-            <div key={feature} className="flex items-center gap-2 text-sm text-[var(--modal-text)]">
+          "7-day free trial — no charge today",
+          "AI-powered goal writing & activities",
+          "Session logging & service hours",
+          "Equipment tracking & reminders",
+          "Cancel anytime"].
+          map((feature) =>
+          <div key={feature} className="flex items-center gap-2 text-sm text-[var(--modal-text)]">
               <div className="w-4 h-4 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
                 <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -109,15 +109,15 @@ export default function SubscriptionGate({ children }) {
               </div>
               {feature}
             </div>
-          ))}
+          )}
         </div>
 
         <div className="space-y-3">
           <Button
             onClick={handleSubscribe}
             disabled={loadingCheckout}
-            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12 text-base font-semibold"
-          >
+            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12 text-base font-semibold">
+
             {loadingCheckout ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
             {loadingCheckout ? "Redirecting..." : "Start Free Trial — $14.99/mo"}
           </Button>
@@ -126,6 +126,6 @@ export default function SubscriptionGate({ children }) {
           </p>
         </div>
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }
