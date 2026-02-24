@@ -88,11 +88,11 @@ Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materia
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Config */}
         <div className="modal-card p-5 space-y-4">
-          <h3 className="font-semibold text-white text-sm">Session Setup</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] text-sm">Session Setup</h3>
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Student</Label>
             <Select value={studentId} onValueChange={(v) => { setStudentId(v); setGoalId(""); }}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select student" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select student" /></SelectTrigger>
               <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials} ({s.gradeBand})</SelectItem>)}</SelectContent>
             </Select>
           </div>
@@ -100,7 +100,7 @@ Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materia
             <div className="space-y-2">
               <Label className="text-[var(--modal-text-muted)]">Goal</Label>
               <Select value={goalId} onValueChange={setGoalId}>
-                <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select goal" /></SelectTrigger>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select goal" /></SelectTrigger>
                 <SelectContent>
                   {studentGoals.filter(sg => sg.status === "Active").map(sg => (
                     <SelectItem key={sg.id} value={sg.id}>{goalMap[sg.goalId]?.annualGoal?.slice(0, 60) || "Goal"}...</SelectItem>
@@ -138,7 +138,7 @@ Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materia
               {selectedGoal && (
                 <div className="modal-card p-5">
                   <h3 className="text-xs uppercase tracking-wider text-[var(--modal-text-muted)] mb-2">Goal</h3>
-                  <p className="text-sm text-white">{selectedGoal.annualGoal}</p>
+                  <p className="text-sm text-[var(--modal-text)]">{selectedGoal.annualGoal}</p>
                   {selectedGoal.objectives?.length > 0 && (
                     <div className="mt-3">
                       <p className="text-xs text-[var(--modal-text-muted)] mb-1">Objectives</p>
