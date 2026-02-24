@@ -14,12 +14,15 @@ import StudentForm from "../components/students/StudentForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
 import { useSubscription } from "../components/shared/SubscriptionGate";
 
+const FREE_STUDENT_LIMIT = 3;
+
 export default function StudentsPage() {
   useScrollRestore("Students");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
+  const { subStatus } = useSubscription();
 
   const { data: students = [], isLoading } = useQuery({
     queryKey: ["students"],
