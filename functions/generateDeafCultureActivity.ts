@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
 PARAMETERS:
 - Grade Band: ${gradeBand}
 - Activity Type: ${activityType}
-- Reading Level: ${readingLevel || "Grade-appropriate"}
+- Reading Level: ${readingLevel || "Developing"}
 
 ACTIVITY TYPES:
 1. "Community History" - Mini-research or discussion on Deaf community history
