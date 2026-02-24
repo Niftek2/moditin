@@ -68,9 +68,9 @@ export default function ReminderForm({ reminder, onSave, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--modal-border)]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto border-2 border-[#400070]">
+        <div className="flex items-center justify-between px-6 py-4 border-b-2 border-[#400070]">
           <h2 className="text-base font-bold text-[var(--modal-text)]">{isEdit ? "Edit Reminder" : "Add Reminder"}</h2>
           <button onClick={onClose}><X className="w-5 h-5 text-[var(--modal-text-muted)]" /></button>
         </div>
