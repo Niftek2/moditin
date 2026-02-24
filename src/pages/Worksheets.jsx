@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Sparkles, Loader2, Download } from "lucide-react";
+import { FileText, Sparkles, Loader2, Download, Clock } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import AIDisclaimer from "../components/shared/AIDisclaimer";
+import WorksheetHistory from "../components/worksheets/WorksheetHistory";
 
 const TEMPLATES = [
   { value: "auditory_comprehension", label: "Auditory Comprehension" },
@@ -22,6 +24,8 @@ export default function WorksheetsPage() {
   const [gradeLevel, setGradeLevel] = useState("");
   const [loading, setLoading] = useState(false);
   const [worksheetContent, setWorksheetContent] = useState(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -57,7 +61,22 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
       },
     });
     setWorksheetContent(result);
+    // Save to history
+    await base44.entities.WorksheetLog.create({
+      templateType: template,
+      topic,
+      gradeLevel,
+      title: result.title,
+      worksheetContent: result,
+      generatedDate: new Date().toISOString(),
+    });
+    queryClient.invalidateQueries({ queryKey: ["worksheetLogs"] });
     setLoading(false);
+  };
+
+  const handleLoadFromHistory = (content) => {
+    setWorksheetContent(content);
+    setShowHistory(false);
   };
 
   return (
@@ -65,7 +84,8 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
       <PageHeader title="Worksheets" subtitle="Generate printable PDF worksheets" />
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Config */}
+        {/* Config & History */}
+        <div className="space-y-4">
         <div className="modal-card p-5 space-y-4">
           <h3 className="font-semibold text-[var(--modal-text)] text-sm">Worksheet Setup</h3>
           <div className="space-y-2">
@@ -95,6 +115,16 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
             Generate Worksheet
           </Button>
           <AIDisclaimer compact />
+        </div>
+
+        {/* History */}
+        <div className="modal-card p-5 space-y-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="w-4 h-4 text-[var(--modal-text)]" />
+            <h3 className="font-semibold text-[var(--modal-text)] text-sm">Generated Worksheets</h3>
+          </div>
+          <WorksheetHistory onLoadWorksheet={handleLoadFromHistory} />
+        </div>
         </div>
 
         {/* Preview */}
