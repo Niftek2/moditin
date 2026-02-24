@@ -75,8 +75,14 @@ IMPORTANT: ${DISCLAIMER}`,
     <div>
       <PageHeader title="Testing Decisions" subtitle="Assessment tools and guided decision wizard" />
 
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6 text-sm text-amber-700">
-        {DISCLAIMER}
+      <div className="space-y-3 mb-6">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm text-amber-700">
+          {DISCLAIMER}
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+          <p className="font-semibold mb-1">Important Disclosure</p>
+          <p>Modal Education has no association with the assessment tools listed in this guide and does not provide, sell, or distribute these tools. This is an informational resource only.</p>
+        </div>
       </div>
 
       <Tabs defaultValue="library">
