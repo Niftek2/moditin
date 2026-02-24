@@ -74,62 +74,86 @@ export default function SubscriptionGate({ children }) {
     return <>{children}</>;
   }
 
+  const benefits = [
+    "7-day free trial, no charge today",
+    "AI goal writing + activity ideas",
+    "Fast session logging + service hours",
+    "Equipment tracking + reminders",
+    "Cancel anytime",
+  ];
+
   // Paywall screen
   return (
-    <div className="min-h-screen bg-[var(--modal-bg)] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[var(--modal-bg)] flex items-start justify-center px-4 pt-6 pb-10 sm:items-center sm:pt-12">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="modal-card max-w-md w-full p-8 text-center space-y-6">
-
-        <div className="flex flex-col items-center gap-1">
+        transition={{ duration: 0.25 }}
+        className="w-full max-w-[440px]"
+      >
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-5">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
             alt="Modal Itinerant"
-            className="w-24 h-24 object-contain"
+            className="h-12 sm:h-16 object-contain mb-3"
           />
-        </div>
-
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--modal-text)] mb-2">Start Your Free Trial</h1>
-          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed">Get full access to Modal Itinerant — SMART goal writing, session logging, interactive activities, and more.
-
+          <h1 className="text-[28px] sm:text-[34px] font-bold text-[var(--modal-text)] leading-tight mb-2">
+            Start your free trial
+          </h1>
+          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed max-w-[320px]">
+            SMART goals, session notes, activities, and tracking in one place.
           </p>
         </div>
 
-        <div className="bg-[#F7F3FA] rounded-xl p-4 space-y-2">
-          {[
-          "7-day free trial — no charge today",
-          "AI-powered goal writing & activities",
-          "Session logging & service hours",
-          "Equipment tracking & reminders",
-          "Cancel anytime"].
-          map((feature) =>
-          <div key={feature} className="flex items-center gap-2 text-sm text-[var(--modal-text)]">
-              <div className="w-4 h-4 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
-                <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
+        {/* Benefits card */}
+        <div className="mb-5">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--modal-text-muted)] mb-2 px-1">
+            What you get
+          </p>
+          <div className="bg-white border border-[var(--modal-border)] rounded-2xl p-4 shadow-sm space-y-3">
+            {benefits.map((feature) => (
+              <div key={feature} className="flex items-center gap-3 text-sm text-[var(--modal-text)]">
+                <div className="w-5 h-5 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                {feature}
               </div>
-              {feature}
-            </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Trial pill */}
+        <div className="flex justify-center mb-3">
+          <span className="inline-block bg-[#EADDF5] text-[#400070] text-xs font-medium px-3 py-1 rounded-full">
+            7-day free trial
+          </span>
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={handleSubscribe}
+          disabled={loadingCheckout}
+          className="w-full bg-[#400070] hover:bg-[#5B00A0] active:bg-[#32005A] disabled:opacity-60 text-white flex flex-col items-center justify-center gap-0.5 rounded-2xl transition-colors"
+          style={{ minHeight: "56px", padding: "10px 24px" }}
+        >
+          {loadingCheckout ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <>
+              <span className="text-base font-semibold leading-tight">Start Free Trial</span>
+              <span className="text-[12px] leading-tight" style={{ opacity: 0.8 }}>$17.99/month after trial</span>
+            </>
           )}
-        </div>
+        </button>
 
-        <div className="space-y-3">
-          <Button
-            onClick={handleSubscribe}
-            disabled={loadingCheckout}
-            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12 text-base font-semibold">
-
-            {loadingCheckout ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            {loadingCheckout ? "Redirecting..." : "Start Free Trial — $17.99/mo"}
-          </Button>
-          <p className="text-xs text-[var(--modal-text-muted)]">
-            No credit card required during trial. Cancel anytime before trial ends.
-          </p>
-        </div>
+        {/* Reassurance */}
+        <p className="text-center text-xs text-[var(--modal-text-muted)] mt-3">
+          No credit card today. Cancel before day 7 to avoid charges.
+        </p>
       </motion.div>
-    </div>);
-
+    </div>
+  );
 }
