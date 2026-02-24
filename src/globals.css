@@ -3,6 +3,10 @@ css
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  overscroll-behavior: none;
+}
+
 :root {
   --modal-purple: #400070;
   --modal-purple-light: #6B21A8;
@@ -48,6 +52,12 @@ css
     color: var(--modal-text-disabled) !important;
     background-color: #F5F5F5 !important;
   }
+  /* Disable text selection on interactive UI elements */
+  button, a, nav, [role="tab"], [role="menuitem"] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   /* Focus styles for keyboard accessibility */
   button:focus-visible,
   a:focus-visible,
