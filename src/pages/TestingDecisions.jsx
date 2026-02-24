@@ -123,7 +123,7 @@ IMPORTANT: ${DISCLAIMER}`,
                 {expanded === tool.id && (
                   <div className="px-4 pb-4 space-y-3 border-t border-[var(--modal-border)] pt-3">
                     {tool.primaryPurpose && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Purpose</p><p className="text-sm text-[var(--modal-text)]">{tool.primaryPurpose}</p></div>}
-                    {tool.domainsMeasured?.length > 0 && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Domains</p><div className="flex flex-wrap gap-1 mt-1">{tool.domainsMeasured.map(d => <Badge key={d} variant="secondary" className="text-xs bg-white/10 border-0">{d}</Badge>)}</div></div>}
+                    {tool.domainsMeasured?.length > 0 && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Domains</p><div className="flex flex-wrap gap-1 mt-1">{tool.domainsMeasured.map(d => <Badge key={d} variant="secondary" className="text-xs bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{d}</Badge>)}</div></div>}
                     {tool.cautionNotes && <div><p className="text-xs font-semibold uppercase text-[var(--modal-text-muted)] mb-1">Caution</p><p className="text-sm text-amber-700">{tool.cautionNotes}</p></div>}
                   </div>
                 )}
