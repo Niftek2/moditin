@@ -138,7 +138,7 @@ IMPORTANT: ${DISCLAIMER}`,
               {wizardStep < wizardQuestions.length ? (
                 <div>
                   <p className="text-sm text-[var(--modal-text-muted)] mb-2">Question {wizardStep + 1} of {wizardQuestions.length}</p>
-                  <h3 className="text-white font-semibold mb-4">{wizardQuestions[wizardStep].label}</h3>
+                  <h3 className="font-semibold mb-4 text-[var(--modal-text)]">{wizardQuestions[wizardStep].label}</h3>
                   <div className="space-y-2">
                     {wizardQuestions[wizardStep].options.map(opt => (
                       <button key={opt} onClick={() => {
