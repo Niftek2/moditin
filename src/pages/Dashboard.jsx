@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import PullToRefresh from "../components/shared/PullToRefresh";
+import { useScrollRestore } from "../components/shared/useScrollRestore";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -16,6 +17,7 @@ import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval } from
 import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 
 export default function Dashboard() {
+  useScrollRestore("Dashboard");
   const [user, setUser] = useState(null);
   const [studentSearch, setStudentSearch] = useState("");
   const [focusSearchResult, setFocusSearchResult] = useState(false);

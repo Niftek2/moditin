@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { useScrollRestore } from "../components/shared/useScrollRestore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import StudentForm from "../components/students/StudentForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
 
 export default function StudentsPage() {
+  useScrollRestore("Students");
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
