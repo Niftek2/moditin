@@ -67,11 +67,11 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Config */}
         <div className="modal-card p-5 space-y-4">
-          <h3 className="font-semibold text-white text-sm">Worksheet Setup</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] text-sm">Worksheet Setup</h3>
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Template</Label>
             <Select value={template} onValueChange={setTemplate}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select template" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select template" /></SelectTrigger>
               <SelectContent>
                 {TEMPLATES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
               </SelectContent>
@@ -79,12 +79,12 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Topic / Theme</Label>
-            <Input value={topic} onChange={(e) => setTopic(e.target.value)} className="bg-white/5 border-[var(--modal-border)] text-white" placeholder="e.g., Animals, Weather, School" />
+            <Input value={topic} onChange={(e) => setTopic(e.target.value)} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="e.g., Animals, Weather, School" />
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Grade Level</Label>
             <Select value={gradeLevel} onValueChange={setGradeLevel}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="Select grade" /></SelectTrigger>
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select grade" /></SelectTrigger>
               <SelectContent>
                 {["PK", "K", "1-2", "3-5", "6-8", "9-12"].map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
               </SelectContent>

@@ -75,7 +75,7 @@ export default function StudentsPage() {
             placeholder="Search by initials or grade..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
+            className="pl-10 bg-white border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)]"
           />
         </div>
       )}

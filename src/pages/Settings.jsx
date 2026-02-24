@@ -31,31 +31,31 @@ export default function SettingsPage() {
       <div className="space-y-6 max-w-2xl">
         {/* Account */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-white mb-4">Account</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] mb-4">Account</h3>
           <div className="space-y-3">
             <div>
               <p className="text-xs text-[var(--modal-text-muted)]">Name</p>
-              <p className="text-sm text-white">{user?.full_name || "—"}</p>
+              <p className="text-sm text-[var(--modal-text)]">{user?.full_name || "—"}</p>
             </div>
             <div>
               <p className="text-xs text-[var(--modal-text-muted)]">Email</p>
-              <p className="text-sm text-white">{user?.email || "—"}</p>
+              <p className="text-sm text-[var(--modal-text)]">{user?.email || "—"}</p>
             </div>
           </div>
         </div>
 
         {/* Subscription */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-white mb-4">Subscription</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] mb-4">Subscription</h3>
           <div className="grid sm:grid-cols-2 gap-4 mb-4">
             <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#400070]/10">
-              <p className="text-sm font-semibold text-white">Monthly</p>
-              <p className="text-2xl font-bold text-white mt-1">$19.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
+              <p className="text-sm font-semibold text-[var(--modal-text)]">Monthly</p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mt-1">$19.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
               <p className="text-xs text-[var(--modal-text-muted)] mt-1">7-day free trial · Cancel anytime</p>
             </div>
             <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#400070]/10">
-              <p className="text-sm font-semibold text-white">Annual</p>
-              <p className="text-2xl font-bold text-white mt-1">$179.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
+              <p className="text-sm font-semibold text-[var(--modal-text)]">Annual</p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mt-1">$179.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
               <p className="text-xs text-green-400 mt-1">Save $59.89/year · 7-day free trial</p>
             </div>
           </div>
@@ -64,13 +64,13 @@ export default function SettingsPage() {
 
         {/* School Pricing Inquiry */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-white mb-2">School/District Pricing</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Pricing</h3>
           <p className="text-xs text-[var(--modal-text-muted)] mb-4">Interested in pricing for your school or district? Fill out the form below.</p>
 
           {submitted ? (
             <div className="text-center py-6">
               <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-white font-medium">Thank you!</p>
+              <p className="text-[var(--modal-text)] font-medium">Thank you!</p>
               <p className="text-xs text-[var(--modal-text-muted)]">We'll be in touch shortly.</p>
             </div>
           ) : (
