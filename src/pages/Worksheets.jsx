@@ -30,6 +30,20 @@ export default function WorksheetsPage() {
   const [showHistory, setShowHistory] = useState(false);
   const queryClient = useQueryClient();
 
+  const { data: audioSettings } = useQuery({
+    queryKey: ['userAudioSettings'],
+    queryFn: async () => {
+      try {
+        const user = await base44.auth.me();
+        if (!user?.id) return null;
+        const settings = await base44.entities.UserAudioSettings.filter({ userId: user.id });
+        return settings?.[0] || null;
+      } catch {
+        return null;
+      }
+    },
+  });
+
   const getTeacherPromptInstructions = () => {
     const baseInstructions = {
       auditory_comprehension: "Create a teacher prompt that includes: (1) a detailed passage (2-3 paragraphs) on the topic that the teacher should read aloud to students, (2) clear instructions on how to read it (pace, repetition, etc.), (3) listening strategy tips.",
