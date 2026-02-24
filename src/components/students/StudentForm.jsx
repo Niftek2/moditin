@@ -55,8 +55,8 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">Student Initials *</Label>
+         <div className="space-y-2">
+           <Label className="text-[var(--modal-text)] font-semibold">Student Initials *</Label>
           <Input
             placeholder="Fi.La."
             value={form.studentInitials}
@@ -72,7 +72,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">Grade Band *</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">Grade Band *</Label>
           <Select value={form.gradeBand} onValueChange={(v) => updateField("gradeBand", v)} required>
             <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
               <SelectValue placeholder="Select grade band" />
@@ -84,7 +84,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">Service Delivery Model *</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">Service Delivery Model *</Label>
           <Select value={form.serviceDeliveryModel} onValueChange={(v) => updateField("serviceDeliveryModel", v)} required>
             <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
               <SelectValue placeholder="Select model" />
@@ -96,7 +96,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">Primary Eligibility</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">Primary Eligibility</Label>
           <Input
             value={form.primaryEligibility}
             onChange={(e) => updateField("primaryEligibility", e.target.value)}
@@ -106,7 +106,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">School Code</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">School Code</Label>
           <Input
             placeholder="ELMW"
             value={form.schoolCode || ""}
@@ -118,7 +118,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">IEP Start Date</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">IEP Start Date</Label>
           <Input
             type="date"
             value={form.iepStartDate}
@@ -128,7 +128,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text-muted)]">IEP Annual Review Date</Label>
+          <Label className="text-[var(--modal-text)] font-semibold">IEP Annual Review Date</Label>
           <Input
             type="date"
             value={form.iepAnnualReviewDate}
@@ -139,7 +139,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[var(--modal-text-muted)]">Notes</Label>
+        <Label className="text-[var(--modal-text)] font-semibold">Notes</Label>
         <Textarea
           value={form.notes}
           onChange={(e) => updateField("notes", e.target.value)}
@@ -149,7 +149,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[var(--modal-text-muted)]">Warm Notes</Label>
+        <Label className="text-[var(--modal-text)] font-semibold">Warm Notes</Label>
         <Textarea
           value={form.warmNotes}
           onChange={(e) => updateField("warmNotes", e.target.value)}
@@ -164,7 +164,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Communication Modality</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Communication Modality</Label>
             <Select value={form.communicationModality || ""} onValueChange={(v) => updateField("communicationModality", v)}>
               <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select modality" />
@@ -176,7 +176,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Primary Language</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Primary Language</Label>
             <Select value={form.primaryLanguage || ""} onValueChange={(v) => updateField("primaryLanguage", v)}>
               <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select language" />
@@ -188,7 +188,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Reading Level Band</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Reading Level Band</Label>
             <Select value={form.readingLevelBand || ""} onValueChange={(v) => updateField("readingLevelBand", v)}>
               <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select level" />
