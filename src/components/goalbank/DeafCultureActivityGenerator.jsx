@@ -68,7 +68,7 @@ export default function DeafCultureActivityGenerator({ open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white border-2 border-[#400070] max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl rounded-2xl">
         <DialogHeader>
           <DialogTitle>Deaf Culture & Identity Activity Generator</DialogTitle>
           <DialogDescription className="text-[var(--modal-text-muted)]">
