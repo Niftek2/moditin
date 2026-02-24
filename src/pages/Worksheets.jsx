@@ -190,7 +190,10 @@ Return JSON with: title, instructions, items (array of objects with 'prompt', op
                 <TeacherPrompt prompt={worksheetContent.teacherPrompt} templateType={template} />
               )}
 
-              <p className="text-sm mb-6 text-gray-600 italic">{worksheetContent.instructions}</p>
+              <div className="flex items-start justify-between gap-2 mb-6">
+                <p className="text-sm text-gray-600 italic flex-1">{worksheetContent.instructions}</p>
+                {audioSettings?.enabled && <ReadAloudButton text={worksheetContent.instructions} rate={audioSettings.rate || 1.0} size="sm" />}
+              </div>
 
               <div className="space-y-4">
                 {worksheetContent.items?.map((item, i) => (
