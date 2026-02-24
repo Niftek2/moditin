@@ -92,7 +92,7 @@ IMPORTANT: ${DISCLAIMER}`,
               <Input placeholder="Search assessments..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-44 bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="w-44 bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
