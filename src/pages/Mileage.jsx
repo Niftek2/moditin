@@ -22,6 +22,16 @@ export default function MileagePage() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MileageEntry.create(data),
+    onMutate: async (newEntry) => {
+      await queryClient.cancelQueries({ queryKey: ["mileageEntries"] });
+      const previous = queryClient.getQueryData(["mileageEntries"]);
+      const optimistic = { ...newEntry, id: `optimistic-${Date.now()}` };
+      queryClient.setQueryData(["mileageEntries"], (old = []) => [optimistic, ...old]);
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["mileageEntries"], ctx.previous);
+    },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["mileageEntries"] }); setShowForm(false); },
   });
 

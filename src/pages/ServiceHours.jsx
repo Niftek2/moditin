@@ -59,6 +59,16 @@ export default function ServiceHoursPage() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.ServiceEntry.create(data),
+    onMutate: async (newEntry) => {
+      await queryClient.cancelQueries({ queryKey: ["serviceEntries"] });
+      const previous = queryClient.getQueryData(["serviceEntries"]);
+      const optimistic = { ...newEntry, id: `optimistic-${Date.now()}` };
+      queryClient.setQueryData(["serviceEntries"], (old = []) => [optimistic, ...old]);
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(["serviceEntries"], ctx.previous);
+    },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["serviceEntries"] }); setShowForm(false); },
   });
 
