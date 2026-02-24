@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import PullToRefresh from "../components/shared/PullToRefresh";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
@@ -18,6 +19,12 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [studentSearch, setStudentSearch] = useState("");
   const [focusSearchResult, setFocusSearchResult] = useState(false);
+  const queryClient = useQueryClient();
+  const handleRefresh = () => Promise.all([
+    queryClient.invalidateQueries({ queryKey: ["students"] }),
+    queryClient.invalidateQueries({ queryKey: ["services-dash"] }),
+    queryClient.invalidateQueries({ queryKey: ["calendarEvents-dash"] }),
+  ]);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -66,6 +73,7 @@ export default function Dashboard() {
   const recentStudents = studentSearch ? filteredStudents : students.slice(0, 5);
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6">
       {/* Header */}
       <motion.div
@@ -206,6 +214,7 @@ export default function Dashboard() {
           </div>
         }
       </motion.div>
-    </div>);
-
+    </div>
+    </PullToRefresh>
+  );
 }
