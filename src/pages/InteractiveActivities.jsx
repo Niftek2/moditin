@@ -46,13 +46,8 @@ export default function InteractiveActivitiesPage() {
           <PageHeader
             title="Interactive Activities"
             subtitle="Generate and run live, auto-scored activities during session"
-            action={
-              <Button onClick={() => setShowDeafCultureGen(true)} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl gap-2 text-sm">
-                <Sparkles className="w-4 h-4" /> Deaf Culture Activity
-              </Button>
-            }
           />
-          <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} />
+          <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} onShowDeafCultureGen={() => setShowDeafCultureGen(true)} />
         </>
       )}
 

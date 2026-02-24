@@ -9,7 +9,7 @@ import { TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS, TEMPLATE_ICONS, buildGeneration
 
 const TEMPLATES = Object.keys(TEMPLATE_LABELS);
 
-export default function ActivitySetupScreen({ onActivityGenerated }) {
+export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCultureGen }) {
   const [studentId, setStudentId] = useState("");
   const [goalId, setGoalId] = useState("");
   const [templateType, setTemplateType] = useState("");
@@ -131,9 +131,9 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
           </div>
         )}
 
-        {/* Template */}
-        <div className="space-y-2">
-          <Label className="text-[var(--modal-text)] font-semibold">Activity Template <span className="text-red-600">*</span></Label>
+        {/* Activity Topics */}
+         <div className="space-y-2">
+           <Label className="text-[var(--modal-text)] font-semibold">Activity Topics <span className="text-red-600">*</span></Label>
           <div className="grid grid-cols-2 gap-2">
             {TEMPLATES.map(t => (
               <button
@@ -152,9 +152,16 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
               </button>
             ))}
           </div>
-        </div>
+          </div>
 
-        {/* Number of items, difficulty, setting */}
+          {/* Deaf Culture Activity */}
+          <div className="space-y-2">
+          <Button onClick={onShowDeafCultureGen} variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl gap-2 text-sm py-6">
+            <Sparkles className="w-4 h-4" /> Deaf Culture Activity Generator
+          </Button>
+          </div>
+
+          {/* Number of items, difficulty, setting */}
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-2">
             <Label className="text-[var(--modal-text)] font-semibold">Items</Label>
