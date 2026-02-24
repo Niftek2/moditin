@@ -145,14 +145,21 @@ export default function DeafCultureActivityGenerator({ open, onClose }) {
 
             <AIDisclaimer />
 
+            {!isAIAllowed && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-900 font-semibold">✨ Activity Generator is a Pro feature</p>
+                <p className="text-xs text-blue-800 mt-1">Upgrade to unlock AI-powered activity generation and other advanced features.</p>
+              </div>
+            )}
+
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button
                 onClick={handleGenerate}
-                disabled={!opts.activityType || loading}
-                className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2"
+                disabled={!opts.activityType || loading || !isAIAllowed}
+                className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 Generate Activity
