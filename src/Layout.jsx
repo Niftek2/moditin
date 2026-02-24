@@ -14,6 +14,8 @@ export default function Layout({ children, currentPageName }) {
   useAndroidBack();
 
   return (
+    <SubscriptionProvider>
+    <SubscriptionGate>
     <div
       className="min-h-screen bg-[var(--modal-bg)]"
       role="application"
