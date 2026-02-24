@@ -150,6 +150,12 @@ export default function SettingsPage() {
           )}
         </div>
 
+        {/* Audio Settings */}
+        <div className="modal-card p-6">
+          <h3 className="font-semibold text-[var(--modal-text)] mb-4">Audio Settings</h3>
+          <AudioSettings />
+        </div>
+
         {/* Data Privacy */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-2">Data Privacy</h3>
