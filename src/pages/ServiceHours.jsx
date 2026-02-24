@@ -246,11 +246,11 @@ export default function ServiceHoursPage() {
 
       {/* Manual Entry Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
           <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Service Time</DialogTitle></DialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-[#F7F3FA] border border-[var(--modal-border)] mb-4">
+            <TabsList className="bg-white border border-[var(--modal-border)] mb-4">
               <TabsTrigger value="basic" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Basic Info</TabsTrigger>
               <TabsTrigger value="notes" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Session Notes</TabsTrigger>
             </TabsList>
