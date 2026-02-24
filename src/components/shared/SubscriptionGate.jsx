@@ -92,18 +92,25 @@ export default function SubscriptionGate({ children }) {
         className="w-full max-w-[440px]"
       >
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-5">
+        <div className="flex flex-col items-center text-center mb-6">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
             alt="Modal Itinerant"
-            className="h-12 sm:h-16 object-contain mb-3"
+            className="h-16 sm:h-20 object-contain mb-4"
           />
-          <h1 className="text-[28px] sm:text-[34px] font-bold text-[var(--modal-text)] leading-tight mb-2">
-            Start your free trial
+          <h1 className="text-[32px] sm:text-[38px] font-extrabold text-[var(--modal-text)] leading-tight mb-2 tracking-tight">
+            Modal Itinerant
           </h1>
-          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed max-w-[320px]">
-            SMART goals, session notes, activities, and tracking in one place.
+          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed max-w-[300px]">
+            Designed specifically for itinerant Teachers of the Deaf and Hard of Hearing.
           </p>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-[var(--modal-border)]" />
+          <span className="text-xs font-semibold uppercase tracking-widest text-[var(--modal-text-muted)]">Start your free trial</span>
+          <div className="flex-1 h-px bg-[var(--modal-border)]" />
         </div>
 
         {/* Benefits card */}
