@@ -143,8 +143,8 @@ export default function SubscriptionGate({ children }) {
         <button
           onClick={handleSubscribe}
           disabled={loadingCheckout}
-          className="w-full bg-[#400070] hover:bg-[#5B00A0] active:bg-[#32005A] disabled:opacity-60 text-white flex flex-col items-center justify-center gap-0.5 rounded-2xl transition-colors"
-          style={{ minHeight: "56px", padding: "10px 24px" }}
+          className="w-full disabled:opacity-60 text-white flex flex-col items-center justify-center gap-0.5 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+          style={{ minHeight: "56px", padding: "10px 24px", background: "linear-gradient(135deg, #400070 0%, #6B2FB9 100%)" }}
         >
           {loadingCheckout ? (
             <Loader2 className="w-5 h-5 animate-spin" />
