@@ -163,7 +163,7 @@ export default function ServiceHoursPage() {
             <div>
               <p className="text-2xl font-bold text-[var(--modal-text)] font-mono">{formatTime(timerSeconds)}</p>
               <p className="text-xs text-[var(--modal-text-muted)]">
-                {timerRunning ? "Recording..." : "Ready to start"}
+                {timerRunning ? "Session in progress" : "Ready to start"}
               </p>
             </div>
           </div>
