@@ -159,6 +159,20 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         />
       </div>
 
+      <div className="space-y-2">
+        <Label className="text-[var(--modal-text)] font-semibold">Student Goals</Label>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
+          <p className="text-xs text-blue-900 font-semibold mb-1">⚠️ Privacy Reminder</p>
+          <p className="text-xs text-blue-800">Goals should contain NO identifiable student information. Use only student initials when needed.</p>
+        </div>
+        <Textarea
+          value={form.studentGoals || ""}
+          onChange={(e) => updateField("studentGoals", e.target.value)}
+          className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20"
+          placeholder="e.g., 'Will improve listening discrimination using auditory activities...'"
+        />
+      </div>
+
       {/* Communication & Language Profile */}
       <div className="border-t border-[var(--modal-border)] pt-4">
         <h3 className="text-sm font-semibold text-[var(--modal-text)] mb-4">Communication & Language Profile</h3>
