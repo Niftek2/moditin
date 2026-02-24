@@ -44,8 +44,8 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="flex items-center justify-between mb-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-[var(--modal-text)]">{student ? "Edit Student" : "Add Student"}</h2>
         <Button type="button" variant="ghost" size="icon" onClick={onCancel} className="text-[var(--modal-text-muted)] hover:text-[var(--modal-text)]">
           <X className="w-5 h-5" />
