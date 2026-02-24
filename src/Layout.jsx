@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SubscriptionGate, { SubscriptionProvider } from "./components/shared/SubscriptionGate";
 import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "./components/layout/Sidebar";
 import BottomNav from "./components/layout/BottomNav";
