@@ -119,11 +119,39 @@ export default function NotificationBell() {
                 {visibleAppNotifs.length > 0 && (
                   <button onClick={markAll} className="text-xs text-[#400070] hover:underline font-semibold">Mark all read</button>
                 )}
+                <button onClick={() => setShowAddForm(o => !o)} title="Add reminder" className="text-[var(--modal-text-muted)] hover:text-[#400070] transition-colors">
+                  {showAddForm ? <ChevronUp className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                </button>
                 <button onClick={() => setOpen(false)}>
                   <X className="w-4 h-4 text-[var(--modal-text-muted)]" />
                 </button>
               </div>
             </div>
+
+            {showAddForm && (
+              <form onSubmit={handleAddReminder} className="px-4 py-3 border-b border-[var(--modal-border)] bg-[#F7F3FA] space-y-2">
+                <p className="text-xs font-semibold text-[#400070]">New Reminder</p>
+                <input
+                  type="text"
+                  placeholder="Reminder title..."
+                  value={newTitle}
+                  onChange={e => setNewTitle(e.target.value)}
+                  className="w-full text-xs border border-[var(--modal-border)] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-[#400070]"
+                  required
+                />
+                <input
+                  type="datetime-local"
+                  value={newDue}
+                  onChange={e => setNewDue(e.target.value)}
+                  className="w-full text-xs border border-[var(--modal-border)] rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-[#400070]"
+                  required
+                />
+                <button type="submit" disabled={addReminder.isPending}
+                  className="w-full text-xs bg-[#400070] text-white rounded-lg py-1.5 hover:bg-[#5B00A0] transition-colors font-semibold disabled:opacity-50">
+                  {addReminder.isPending ? "Adding..." : "Add Reminder"}
+                </button>
+              </form>
+            )}
 
             <div className="max-h-[28rem] overflow-y-auto">
               {totalUnread === 0 ? (
