@@ -59,6 +59,17 @@ export default function StudentsPage() {
 
   const handleRefresh = () => queryClient.invalidateQueries({ queryKey: ["students"] });
 
+  const canAddStudent = subStatus?.isPro || subStatus?.isTrial || students.length < FREE_STUDENT_LIMIT;
+
+  const handleAddStudent = () => {
+    if (!canAddStudent) {
+      alert(`You've reached the 3-student free limit. Upgrade to add unlimited students.`);
+      return;
+    }
+    setEditing(null);
+    setShowForm(true);
+  };
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div>
