@@ -10,6 +10,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
+import PullToRefresh from "../components/shared/PullToRefresh";
 
 export default function StudentsPage() {
   const [showForm, setShowForm] = useState(false);
@@ -50,7 +51,10 @@ export default function StudentsPage() {
     s.gradeBand?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleRefresh = () => queryClient.invalidateQueries({ queryKey: ["students"] });
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div>
       <PageHeader
         title="Students"
@@ -123,5 +127,6 @@ export default function StudentsPage() {
         </DialogContent>
       </Dialog>
     </div>
+    </PullToRefresh>
   );
 }
