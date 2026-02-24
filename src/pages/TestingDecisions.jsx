@@ -80,7 +80,7 @@ IMPORTANT: ${DISCLAIMER}`,
       </div>
 
       <Tabs defaultValue="library">
-        <TabsList className="bg-white/5 border border-[var(--modal-border)] mb-6">
+        <TabsList className="bg-[var(--modal-purple-pale)] border border-[var(--modal-border)] mb-6">
           <TabsTrigger value="library" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Library</TabsTrigger>
           <TabsTrigger value="wizard" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Guided Wizard</TabsTrigger>
         </TabsList>
@@ -111,7 +111,7 @@ IMPORTANT: ${DISCLAIMER}`,
                     <div>
                       <p className="text-sm font-medium text-[var(--modal-text)]">{tool.name}</p>
                       <div className="flex gap-2 mt-1">
-                        <Badge className={`text-[10px] border-0 ${tool.accessType === "FreeScreening" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"}`}>
+                        <Badge className={`text-[10px] border-0 ${tool.accessType === "FreeScreening" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
                           {tool.accessType === "FreeScreening" ? "Free" : "Standardized"}
                         </Badge>
                         {tool.typicalAgeRange && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{tool.typicalAgeRange}</Badge>}
