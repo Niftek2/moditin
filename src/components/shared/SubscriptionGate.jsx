@@ -84,7 +84,7 @@ export default function SubscriptionGate({ children }) {
 
   // Paywall screen
   return (
-    <div className="min-h-screen bg-[var(--modal-bg)] flex items-start justify-center px-4 pt-6 pb-10 sm:items-center sm:pt-12">
+    <div className="min-h-screen flex items-start justify-center px-4 pt-6 pb-10 sm:items-center sm:pt-12" style={{ background: "linear-gradient(160deg, #F7F3FA 0%, #EDE3F7 50%, #F7F3FA 100%)" }}>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
