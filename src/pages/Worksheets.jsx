@@ -9,6 +9,7 @@ import { FileText, Sparkles, Loader2, Download, Clock } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import AIDisclaimer from "../components/shared/AIDisclaimer";
 import WorksheetHistory from "../components/worksheets/WorksheetHistory";
+import TeacherPrompt from "../components/worksheets/TeacherPrompt";
 
 const TEMPLATES = [
   { value: "auditory_comprehension", label: "Auditory Comprehension" },
@@ -27,6 +28,17 @@ export default function WorksheetsPage() {
   const [showHistory, setShowHistory] = useState(false);
   const queryClient = useQueryClient();
 
+  const getTeacherPromptInstructions = () => {
+    const baseInstructions = {
+      auditory_comprehension: "Create a teacher prompt that includes: (1) a detailed passage (2-3 paragraphs) on the topic that the teacher should read aloud to students, (2) clear instructions on how to read it (pace, repetition, etc.), (3) listening strategy tips.",
+      self_advocacy_scripts: "Create a teacher prompt with conversation scripts and role-play scenarios related to the topic. Include tips on how to facilitate peer practice and model confident self-advocacy.",
+      minimal_pair_listening: "Create a teacher prompt explaining how to deliver the minimal pairs, including pronunciation guidance, demonstration techniques, and how to support students with different listening levels.",
+      vocabulary_visual: "Create a teacher prompt with suggested visual supports, demonstration techniques, and strategies for presenting the vocabulary terms effectively.",
+      listening_recall: "Create a teacher prompt with suggestions for how to present the listening materials, tips for memory support, and strategies for students to organize their recall.",
+    };
+    return baseInstructions[template] || "Create a brief teacher prompt with instructions on how to use this worksheet.";
+  };
+
   const handleGenerate = async () => {
     setLoading(true);
     const selectedTemplate = TEMPLATES.find(t => t.value === template);
@@ -40,7 +52,9 @@ Create worksheet content suitable for a PDF. The worksheet should be clean, educ
 Include a title, clear instructions, and 8-12 items/questions appropriate for the template type.
 DO NOT include any student identifying information.
 
-Return JSON with: title, instructions, items (array of objects with 'prompt' and optionally 'choices' array), footerNote.`,
+${getTeacherPromptInstructions()}
+
+Return JSON with: title, instructions, items (array of objects with 'prompt' and optionally 'choices' array), footerNote, teacherPrompt (string with detailed teacher instructions for delivering this worksheet).`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -57,6 +71,7 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
             },
           },
           footerNote: { type: "string" },
+          teacherPrompt: { type: "string" },
         },
       },
     });
@@ -135,6 +150,10 @@ Return JSON with: title, instructions, items (array of objects with 'prompt' and
               <div className="bg-[#400070] text-white rounded-xl p-4 mb-6">
                 <h1 className="text-xl font-bold">{worksheetContent.title}</h1>
               </div>
+
+              {worksheetContent.teacherPrompt && (
+                <TeacherPrompt prompt={worksheetContent.teacherPrompt} templateType={template} />
+              )}
 
               <p className="text-sm mb-6 text-gray-600 italic">{worksheetContent.instructions}</p>
 
