@@ -118,7 +118,7 @@ export default function SubscriptionGate({ children }) {
           <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--modal-text-muted)] mb-2 px-1">
             What you get
           </p>
-          <div className="bg-white border border-[var(--modal-border)] rounded-2xl p-4 shadow-sm space-y-3">
+          <div className="bg-gradient-to-br from-white to-[#F7F3FA] border border-[var(--modal-border)] rounded-2xl p-4 shadow-sm space-y-3">
             {benefits.map((feature) => (
               <div key={feature} className="flex items-center gap-3 text-sm text-[var(--modal-text)]">
                 <div className="w-5 h-5 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
