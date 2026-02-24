@@ -58,11 +58,6 @@ export default function Sidebar({ currentPage }) {
             alt="Modal Itinerant"
             className="w-9 h-9 object-contain"
           />
-          <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/8fc967743_LogoNoScript.png"
-            alt=""
-            className="w-7 h-7 object-contain"
-          />
           <div>
             <div className="flex items-baseline gap-1">
               <span className="text-sm font-medium text-[#400070]">MODAL</span>
