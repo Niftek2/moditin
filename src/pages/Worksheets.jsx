@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import PageHeader from "../components/shared/PageHeader";
 import AIDisclaimer from "../components/shared/AIDisclaimer";
 import WorksheetHistory from "../components/worksheets/WorksheetHistory";
 import TeacherPrompt from "../components/worksheets/TeacherPrompt";
+import ReadAloudButton from "../components/shared/ReadAloudButton";
 
 const TEMPLATES = [
   { value: "auditory_comprehension", label: "Auditory Comprehension" },
