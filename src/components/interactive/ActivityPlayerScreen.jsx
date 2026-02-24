@@ -10,6 +10,21 @@ import { TEMPLATE_LABELS, PROMPT_LEVELS, PROMPT_LEVEL_LABELS } from "./activityT
 export default function ActivityPlayerScreen({ config, onComplete }) {
   const { items, student, templateType, goalText } = config;
   const [currentIdx, setCurrentIdx] = useState(0);
+  
+  const { data: audioSettings } = useQuery({
+    queryKey: ['userAudioSettings'],
+    queryFn: async () => {
+      try {
+        const user = await base44.auth.me();
+        if (!user?.id) return null;
+        const settings = await base44.entities.UserAudioSettings.filter({ userId: user.id });
+        return settings?.[0] || null;
+      } catch {
+        return null;
+      }
+    },
+  });
+
   // Normalize answerChoices to extract text (handle both old string format and new object format)
   const normalizedItems = items.map(item => ({
     ...item,
