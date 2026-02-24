@@ -57,6 +57,9 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
       response_json_schema: {
         type: "object",
         properties: {
+          teacherDirections: { type: "string" },
+          studentDirections: { type: "string" },
+          passage: { type: "string" },
           items: {
             type: "array",
             items: {
@@ -75,6 +78,9 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
     setLoading(false);
     onActivityGenerated({
       items: result.items,
+      teacherDirections: result.teacherDirections,
+      studentDirections: result.studentDirections,
+      passage: result.passage,
       studentId,
       student: selectedStudent,
       studentGoalId: goalId || null,
