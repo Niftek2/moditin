@@ -101,7 +101,10 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
 
       {/* Question card */}
       <div className="modal-card p-6 mb-4">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)] mb-3">Question {currentIdx + 1}</p>
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Question {currentIdx + 1}</p>
+          {audioSettings?.enabled && <ReadAloudButton text={item.questionText} rate={audioSettings.rate || 1.0} size="sm" />}
+        </div>
         {item.questionImageUrl && (
           <div className="mb-4 flex justify-center">
             <img src={item.questionImageUrl} alt={item.questionText} className="max-h-48 rounded-lg object-contain" />
