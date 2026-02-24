@@ -67,7 +67,12 @@ export default function GoalBankPage() {
         subtitle="SMART goals for Deaf/Hard of Hearing students"
         action={
           <div className="flex gap-2">
-            <Button onClick={() => setShowAICreator(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm">
+            <Button
+              onClick={() => setShowAICreator(true)}
+              disabled={!subStatus?.isPro}
+              title={!subStatus?.isPro ? "Upgrade to Pro to use AI Goal Creator" : ""}
+              className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <Sparkles className="w-4 h-4" /> AI Goal Creator
             </Button>
 
