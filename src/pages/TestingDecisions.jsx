@@ -109,7 +109,7 @@ IMPORTANT: ${DISCLAIMER}`,
                 <button onClick={() => setExpanded(expanded === tool.id ? null : tool.id)} className="w-full p-4 text-left hover:bg-[var(--modal-card-hover)] transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-white">{tool.name}</p>
+                      <p className="text-sm font-medium text-[var(--modal-text)]">{tool.name}</p>
                       <div className="flex gap-2 mt-1">
                         <Badge className={`text-[10px] border-0 ${tool.accessType === "FreeScreening" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400"}`}>
                           {tool.accessType === "FreeScreening" ? "Free" : "Standardized"}
