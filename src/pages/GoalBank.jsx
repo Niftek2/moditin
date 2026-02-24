@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-import { Target, Search, Filter, ChevronDown, ChevronUp, Check, X, ShieldAlert, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Target, Search, Filter, ChevronDown, ChevronUp, Check, X, ShieldAlert, Sparkles, Plus } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import AIGoalCreator from "../components/goalbank/AIGoalCreator";
@@ -28,6 +30,8 @@ export default function GoalBankPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCompliance, setShowCompliance] = useState(true);
   const [showAICreator, setShowAICreator] = useState(false);
+  const [showCustomGoalForm, setShowCustomGoalForm] = useState(false);
+  const [customGoalForm, setCustomGoalForm] = useState({ annualGoal: "", domain: "", gradeBand: "", baselineLevel: "", measurementType: "" });
   const { subStatus } = useSubscription();
 
   const queryClient = useQueryClient();
@@ -53,6 +57,14 @@ export default function GoalBankPage() {
     setShowAICreator(false);
   };
 
+  const handleCustomGoalSave = async () => {
+    if (!customGoalForm.annualGoal.trim() || !customGoalForm.domain) return;
+    await base44.entities.Goal.create({ ...customGoalForm, isCustom: true });
+    queryClient.invalidateQueries({ queryKey: ["goals"] });
+    setShowCustomGoalForm(false);
+    setCustomGoalForm({ annualGoal: "", domain: "", gradeBand: "", baselineLevel: "", measurementType: "" });
+  };
+
   const filtered = goals.filter(g => {
     const matchSearch = !search || g.annualGoal?.toLowerCase().includes(search.toLowerCase()) || g.domain?.toLowerCase().includes(search.toLowerCase());
     const matchDomain = domainFilter === "all" || g.domain === domainFilter;
@@ -66,7 +78,13 @@ export default function GoalBankPage() {
         title="Goal Writing"
         subtitle="SMART goals for Deaf/Hard of Hearing students"
         action={
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              onClick={() => setShowCustomGoalForm(true)}
+              className="bg-white border border-[var(--modal-border)] text-[var(--modal-text)] hover:bg-[var(--modal-card-hover)] rounded-xl gap-2 text-sm"
+            >
+              <Plus className="w-4 h-4" /> Custom Goal
+            </Button>
             <Button
               onClick={() => setShowAICreator(true)}
               disabled={!subStatus?.isPro}
@@ -212,6 +230,78 @@ export default function GoalBankPage() {
         studentData={studentId ? students.find(s => s.id === studentId) : null}
       />
 
+      {/* Custom Goal Form Dialog */}
+      <Dialog open={showCustomGoalForm} onOpenChange={setShowCustomGoalForm}>
+        <DialogContent className="bg-white border-[var(--modal-border)] max-w-md shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-[var(--modal-text)]">Create Custom Goal</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label className="text-[var(--modal-text)]">Annual Goal</Label>
+              <Textarea
+                placeholder="Enter the annual goal text..."
+                value={customGoalForm.annualGoal}
+                onChange={(e) => setCustomGoalForm(p => ({ ...p, annualGoal: e.target.value }))}
+                className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-24"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[var(--modal-text)]">Domain</Label>
+              <Select value={customGoalForm.domain} onValueChange={(v) => setCustomGoalForm(p => ({ ...p, domain: v }))}>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
+                  <SelectValue placeholder="Select domain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DOMAINS.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text)] text-xs">Grade Band</Label>
+                <Select value={customGoalForm.gradeBand} onValueChange={(v) => setCustomGoalForm(p => ({ ...p, gradeBand: v }))}>
+                  <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
+                    <SelectValue placeholder="Grade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GRADE_BANDS.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[var(--modal-text)] text-xs">Baseline Level</Label>
+                <Select value={customGoalForm.baselineLevel} onValueChange={(v) => setCustomGoalForm(p => ({ ...p, baselineLevel: v }))}>
+                  <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
+                    <SelectValue placeholder="Level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BASELINE_LEVELS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[var(--modal-text)]">Measurement Type</Label>
+              <Select value={customGoalForm.measurementType} onValueChange={(v) => setCustomGoalForm(p => ({ ...p, measurementType: v }))}>
+                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Trials">Trials</SelectItem>
+                  <SelectItem value="Rubric">Rubric</SelectItem>
+                  <SelectItem value="Frequency">Frequency</SelectItem>
+                  <SelectItem value="Duration">Duration</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => setShowCustomGoalForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
+              <Button onClick={handleCustomGoalSave} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Create Goal</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
