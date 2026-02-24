@@ -54,9 +54,9 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
 
       {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-         <div className="space-y-2">
-           <Label className="text-[var(--modal-text)] font-semibold">Student Initials *</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-x-hidden">
+        <div className="space-y-2">
+          <Label className="text-[var(--modal-text)] font-semibold">Student Initials *</Label>
           <Input
             placeholder="Fi.La."
             value={form.studentInitials}
