@@ -102,7 +102,7 @@ export default function SubscriptionGate({ children }) {
             Modal Itinerant
           </h1>
           <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed max-w-[300px]">
-            Designed specifically for itinerant Teachers of the Deaf and Hard of Hearing.
+            Designed specifically for itinerant Teachers of the Deaf and Hard of Hearing — in person and telepractice.
           </p>
         </div>
 
