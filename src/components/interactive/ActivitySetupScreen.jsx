@@ -54,16 +54,10 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       languageLevel,
     });
     
-    const enhancedPrompt = `${prompt}
-
-VISUAL DESIGN REQUIREMENTS:
-- Include descriptions for cartoon/child-appropriate clipart throughout (describe where clipart should appear and what it depicts)
-- Make content visually engaging with varied item formats (some with images, some with text only)
-- Use simple, colorful language appropriate for the language level: ${languageLevel}
-- Language Level: ${languageLevel === "Simplified" ? "Use very simple vocabulary, short sentences, high-frequency words only" : languageLevel === "Standard" ? "Use age-appropriate vocabulary and sentence length" : "Use grade-level vocabulary with more complex sentence structures"}`;
+    // No need for additional enhancement - buildGenerationPrompt now handles it all
 
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: enhancedPrompt,
+      prompt,
       response_json_schema: {
         type: "object",
         properties: {
