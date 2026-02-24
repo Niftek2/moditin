@@ -89,7 +89,7 @@ export default function SubscriptionGate({ children }) {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="w-full max-w-[440px]"
+        className="w-full max-w-[440px] bg-white rounded-3xl shadow-xl p-6 sm:p-8"
       >
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-6">
