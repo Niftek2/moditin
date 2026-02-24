@@ -11,6 +11,8 @@ import { useAndroidBack } from "./components/shared/useAndroidBack";
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
+  useDarkMode();
+  useAndroidBack();
 
   return (
     <div
