@@ -153,7 +153,7 @@ IMPORTANT: ${DISCLAIMER}`,
                 </div>
               ) : (
                 <div className="text-center py-6">
-                  <h3 className="text-white font-semibold mb-4">Ready to generate recommendations</h3>
+                  <h3 className="font-semibold mb-4 text-[var(--modal-text)]">Ready to generate recommendations</h3>
                   <Button onClick={handleWizardSubmit} disabled={wizardLoading} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
                     {wizardLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                     Get Recommendations
