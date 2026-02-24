@@ -69,7 +69,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             required
           />
           <p className="text-[10px] text-[var(--modal-text-muted)]">Format: Fi.La. — first and last initial only, no full names</p>
-        </div>
+          </div>
 
         <div className="space-y-2">
           <Label className="text-[var(--modal-text)] font-semibold">Grade Band *</Label>
