@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, X, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
+import ReadAloudButton from "../shared/ReadAloudButton";
 import { TEMPLATE_LABELS, PROMPT_LEVELS, PROMPT_LEVEL_LABELS } from "./activityTemplates";
 
 export default function ActivityPlayerScreen({ config, onComplete }) {
