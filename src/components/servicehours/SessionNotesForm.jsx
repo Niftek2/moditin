@@ -30,7 +30,7 @@ function ChipGroup({ label, options, selected, onChange, multi = true }) {
             className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
               selected.includes?.(opt) || selected === opt
                 ? "bg-[#400070] text-white"
-                : "bg-white/5 border border-[var(--modal-border)] text-[var(--modal-text)] hover:border-[#400070]"
+                : "bg-white border border-[var(--modal-border)] text-[var(--modal-text)] hover:border-[#400070]"
             }`}
           >
             {opt}
@@ -118,7 +118,7 @@ Input data:
             value={skillsTargeted}
             onChange={(e) => setSkillsTargeted(e.target.value)}
             placeholder="e.g., 2-step directions in quiet setting"
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
           />
         </div>
 
@@ -144,7 +144,7 @@ Input data:
             value={dataResult}
             onChange={(e) => setDataResult(e.target.value)}
             placeholder="e.g., 80% accuracy, 7/10 trials correct"
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
           />
         </div>
 
@@ -156,7 +156,7 @@ Input data:
             value={nextStep}
             onChange={(e) => setNextStep(e.target.value)}
             placeholder="One sentence describing the next step"
-            className="bg-white/5 border-[var(--modal-border)] text-white"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
           />
         </div>
 
@@ -164,7 +164,7 @@ Input data:
           <div className="space-y-2">
             <label className="text-sm font-medium text-[var(--modal-text)]">Link to Goals (optional)</label>
             <Select value={linkedGoals[0] || ""} onValueChange={(v) => setLinkedGoals(v ? [v] : [])}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Select a goal" />
               </SelectTrigger>
               <SelectContent>
@@ -204,7 +204,7 @@ Input data:
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="AI-generated or manual session summary..."
-            className="bg-white/5 border-[var(--modal-border)] text-white h-24"
+            className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-24"
           />
         </div>
       </div>

@@ -157,8 +157,8 @@ export default function ServiceHoursPage() {
       <div className="modal-card p-5 mb-6">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex items-center gap-3 flex-1">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${timerRunning ? "bg-red-500/20" : "bg-[#400070]/20"}`}>
-              <Timer className={`w-6 h-6 ${timerRunning ? "text-red-400" : "text-[var(--modal-purple-glow)]"}`} />
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${timerRunning ? "bg-red-100" : "bg-[#EADDF5]"}`}>
+              <Timer className={`w-6 h-6 ${timerRunning ? "text-red-600" : "text-[var(--modal-purple-glow)]"}`} />
             </div>
             <div>
               <p className="text-2xl font-bold text-[var(--modal-text)] font-mono">{formatTime(timerSeconds)}</p>
@@ -169,7 +169,7 @@ export default function ServiceHoursPage() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Select value={timerCategory} onValueChange={setTimerCategory}>
-              <SelectTrigger className="w-36 bg-white/5 border-[var(--modal-border)] text-white text-xs">
+              <SelectTrigger className="w-36 bg-white border-[var(--modal-border)] text-[var(--modal-text)] text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -177,7 +177,7 @@ export default function ServiceHoursPage() {
               </SelectContent>
             </Select>
             <Select value={timerStudentId} onValueChange={setTimerStudentId}>
-              <SelectTrigger className="w-32 bg-white/5 border-[var(--modal-border)] text-white text-xs">
+              <SelectTrigger className="w-32 bg-white border-[var(--modal-border)] text-[var(--modal-text)] text-xs">
                 <SelectValue placeholder="Student" />
               </SelectTrigger>
               <SelectContent>
@@ -202,7 +202,7 @@ export default function ServiceHoursPage() {
 
       {/* Monthly Summary */}
       <div className="flex items-center gap-3 mb-6">
-        <Input type="month" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-48 bg-white/5 border-[var(--modal-border)] text-white" />
+        <Input type="month" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-48 bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
         <div className="modal-card px-4 py-2">
           <span className="text-xs text-[var(--modal-text-muted)]">Total: </span>
           <span className="text-sm font-bold text-[var(--modal-text)]">{(totalMinutes / 60).toFixed(1)} hours</span>
@@ -247,34 +247,34 @@ export default function ServiceHoursPage() {
       {/* Manual Entry Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle className="text-white">Log Service Time</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Service Time</DialogTitle></DialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white/5 border border-[var(--modal-border)] mb-4">
+            <TabsList className="bg-[#F7F3FA] border border-[var(--modal-border)] mb-4">
               <TabsTrigger value="basic" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Basic Info</TabsTrigger>
               <TabsTrigger value="notes" className="data-[state=active]:bg-[#400070] data-[state=active]:text-white">Session Notes</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-4 mt-2">
               <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Date</Label>
-                <Input type="date" value={form.date} onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" />
+                <Label>Date</Label>
+                <Input type="date" value={form.date} onChange={(e) => setForm(p => ({ ...p, date: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Category</Label>
+                <Label>Category</Label>
                 <Select value={form.category} onValueChange={(v) => setForm(p => ({ ...p, category: v }))}>
-                  <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue /></SelectTrigger>
                   <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_LABELS[c]}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Minutes</Label>
-                <Input type="number" min="1" value={form.minutes} onChange={(e) => setForm(p => ({ ...p, minutes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white" placeholder="30" />
+                <Label>Minutes</Label>
+                <Input type="number" min="1" value={form.minutes} onChange={(e) => setForm(p => ({ ...p, minutes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="30" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Student (optional)</Label>
+                <Label>Student (optional)</Label>
                 <Select value={form.studentId} onValueChange={(v) => setForm(p => ({ ...p, studentId: v }))}>
-                  <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue placeholder="None" /></SelectTrigger>
+                  <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="None" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value={null}>None</SelectItem>
                     {students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials}</SelectItem>)}
@@ -282,11 +282,11 @@ export default function ServiceHoursPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">General Notes</Label>
-                <Textarea value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="bg-white/5 border-[var(--modal-border)] text-white h-20" />
+                <Label>General Notes</Label>
+                <Textarea value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
               </div>
               <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Cancel</Button>
+                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
                 <Button onClick={handleManualSubmit} disabled={!form.minutes} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save Entry</Button>
               </div>
             </TabsContent>
@@ -294,7 +294,7 @@ export default function ServiceHoursPage() {
             <TabsContent value="notes">
               <SessionNotesForm studentGoals={studentGoals} />
               <div className="flex justify-end gap-3 mt-6">
-                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)]">Close</Button>
+                <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Close</Button>
               </div>
             </TabsContent>
           </Tabs>

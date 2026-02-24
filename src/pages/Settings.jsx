@@ -56,7 +56,7 @@ export default function SettingsPage() {
             <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#400070]/10">
               <p className="text-sm font-semibold text-[var(--modal-text)]">Annual</p>
               <p className="text-2xl font-bold text-[var(--modal-text)] mt-1">$179.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
-              <p className="text-xs text-green-400 mt-1">Save $59.89/year · 7-day free trial</p>
+              <p className="text-xs text-green-700 mt-1">Save $59.89/year · 7-day free trial</p>
             </div>
           </div>
           <p className="text-xs text-[var(--modal-text-muted)]">After cancellation, you retain read-only export access for 30 days.</p>

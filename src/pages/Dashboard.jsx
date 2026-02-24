@@ -182,7 +182,7 @@ export default function Dashboard() {
             value={studentSearch}
             onChange={(e) => setStudentSearch(e.target.value)}
             aria-label="Search students by name or initials"
-            className="pl-10 bg-white/5 border-[var(--modal-border)] rounded-xl h-12" />
+            className="pl-10 bg-white border-[var(--modal-border)] rounded-xl h-12" />
 
         </div>
 

@@ -194,16 +194,16 @@ export default function MyDay() {
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/70 ${colors.text}`}>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white ${colors.text}`}>
                       {EVENT_TYPE_LABELS[e.eventType]}
                     </span>
                     {e.setting && e.setting !== "NotApplicable" && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/60 text-[var(--modal-text-muted)]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-[var(--modal-text-muted)]">
                         {e.setting === "InPerson" ? "In-Person" : e.setting}
                       </span>
                     )}
                     {e.driveTimeIncluded && e.driveTimeMinutes > 0 && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/60 text-[var(--modal-text-muted)] flex items-center gap-0.5">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-[var(--modal-text-muted)] flex items-center gap-0.5">
                         <Car className="w-2.5 h-2.5" />{e.driveTimeMinutes}m
                       </span>
                     )}
