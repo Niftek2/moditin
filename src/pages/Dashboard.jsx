@@ -41,6 +41,13 @@ export default function Dashboard() {
   });
 
   const now = new Date();
+  const iepsThisMonth = students.filter((s) => {
+    const reviewDate = s.iepAnnualReviewDate;
+    if (!reviewDate) return false;
+    const d = parseISO(reviewDate);
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  }).length;
+
   const todayEvents = calendarEvents.
   filter((e) => isToday(parseISO(e.startDateTime))).
   sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
