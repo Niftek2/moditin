@@ -37,32 +37,35 @@ export const PROMPT_LEVEL_LABELS = {
   VisualCue: "Visual Cue",
 };
 
-export function buildGenerationPrompt({ templateType, gradeBand, difficulty, numItems, goalText }) {
+export function buildGenerationPrompt({ templateType, gradeBand, difficulty, numItems, goalText, languageLevel }) {
   const goalContext = goalText ? `Loosely align to this goal: "${goalText}".` : "";
+  const languageNote = languageLevel === "Simplified" ? "Use very simple words and short sentences." : languageLevel === "Advanced" ? "Use grade-level academic vocabulary." : "Use age-appropriate vocabulary.";
+  
   const templates = {
-    AuditoryDiscrimination: `Create ${numItems} minimal pair auditory discrimination items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item shows 2-4 word choices (minimal pairs like "bat/pat" or "ship/chip"). The correct answer is one of the choices. Keep it age-appropriate. ${goalContext}`,
-    ListeningComprehension: `Create ${numItems} listening comprehension items for a DHH student in grade band ${gradeBand} at ${difficulty} level. First, create a passage (2-3 paragraphs) on an age-appropriate topic. Then create ${numItems} comprehension questions based on that passage. Each item has a question as the questionText and 3-4 multiple choice answers. ${goalContext}`,
-    SelfAdvocacy: `Create ${numItems} self-advocacy scenario items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item is a real-life scenario (e.g., "The teacher is talking and your hearing aid whistles. What do you do?") with 3 response options. ${goalContext}`,
-    VocabularyVisual: `Create ${numItems} vocabulary items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item asks about the meaning or use of a word with 3-4 choices. Keep words age-appropriate and academically relevant. ${goalContext}`,
-    FollowingDirections: `Create ${numItems} following directions items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item gives 3-4 steps out of order and asks which is the correct sequence, or asks a comprehension question about a direction. ${goalContext}`,
-    EquipmentKnowledge: `Create ${numItems} hearing equipment knowledge items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item is a "What do you do if..." scenario about hearing aids, CIs, or FM systems, with 3 answer choices. ${goalContext}`,
+    AuditoryDiscrimination: `Create ${numItems} visual minimal pair auditory discrimination items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item presents a minimal pair (like "bat/pat") as TWO IMAGES/OBJECTS plus the spoken words. For each item: include a description of what clipart/images to show (e.g., "show a picture of a bat and a pat of butter"), the two words to compare, and which is correct. ${languageNote} ${goalContext}`,
+    ListeningComprehension: `Create ${numItems} HIGHLY VISUAL listening comprehension items for a DHH student in grade band ${gradeBand} at ${difficulty} level. First, create a SHORT, SIMPLE 2-3 sentence passage on a visual topic (animals, food, playground, weather, etc.). For EACH comprehension item: (1) include a clipartDescription of a relevant image to display, (2) ask a simple visual/factual question about the passage, (3) provide 3-4 picture-based answer choices (describe the images). Emphasize visuals over text. ${languageNote} ${goalContext}`,
+    SelfAdvocacy: `Create ${numItems} VISUAL self-advocacy scenario items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item: (1) describes a real-life situation with a clipartDescription (e.g., "You are in class and can't hear. Show an image of a confused student in a classroom."), (2) asks what the student should do/say, (3) provides 3 picture-supported response options with clipart descriptions. Make scenarios relatable and visual. ${languageNote} ${goalContext}`,
+    VocabularyVisual: `Create ${numItems} VISUAL vocabulary items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item: (1) shows ONE main image of a concrete object/action (clipartDescription), (2) asks "What is this?" or "What does this word mean?", (3) provides 3-4 answer choices with icons/clipart for each (clipartDescription for each choice). Focus on concrete, picturable vocabulary. ${languageNote} ${goalContext}`,
+    FollowingDirections: `Create ${numItems} VISUAL following directions items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item: (1) presents 3-4 PICTURE SEQUENCES showing steps in order, (2) shows them OUT OF ORDER and asks the student to identify the correct sequence, OR asks a simple question about the picture sequence (e.g., "What comes first?"), (3) each answer choice has a clipartDescription. Use simple, concrete actions. ${languageNote} ${goalContext}`,
+    EquipmentKnowledge: `Create ${numItems} VISUAL equipment knowledge items for a DHH student in grade band ${gradeBand} at ${difficulty} level. Each item: (1) shows an image of a hearing device issue (clipartDescription), (2) asks "What should you do?", (3) provides 3 picture-supported answer choices with clipart descriptions showing the correct action. Make scenarios visual and solution-focused. ${languageNote} ${goalContext}`,
   };
 
-  return `You are an expert Teacher of the Deaf and Hard of Hearing (TODHH). ${templates[templateType]}
+  return `You are an expert Teacher of the Deaf and Hard of Hearing (TODHH) creating highly VISUAL, image-based activities. ${templates[templateType]}
 
 Return exactly one JSON object with the following structure:
 {
-  "teacherDirections": "Clear, visual instructions for the teacher on how to deliver this activity. Include pacing, prompting strategies, and accommodations. Use emoji/symbols to break up sections (🎯 Objective, 👂 How to Deliver, 💡 Tips, etc.)",
-  "studentDirections": "Clear, simple directions for the student on what they will do. Use emoji/symbols to make it visual and easy to follow. Use simple language and encouraging tone.",
-  "passage": "For ListeningComprehension: the 2-3 paragraph passage. For other types: null or omit.",
+  "teacherDirections": "Brief visual instructions for delivering this PICTURE-BASED activity. Include: 🎯 What to do, 👂 How to deliver with visuals, 💡 Accommodation tips. Emphasize showing images and visual supports.",
+  "studentDirections": "Simple, 1-2 sentence directions using emoji and visuals. Example: '👀 Look at the pictures. 👂 Listen. 🖐️ Point to the right one.' Keep text minimal.",
+  "passage": "For ListeningComprehension only: a SHORT (2-3 sentences max) passage about a visual topic. For other types: null or omit.",
   "items": [
     {
-      "questionText": "the question or scenario (keep it clear and concise)",
-      "answerChoices": ["option1", "option2", "option3"],
-      "correctAnswer": "must exactly match one of the answerChoices"
+      "questionText": "Simple, SHORT question (keep under 10 words if possible). Refer to the images/visuals.",
+      "answerChoices": ["visual option 1", "visual option 2", "visual option 3"],
+      "correctAnswer": "must exactly match one of the answerChoices",
+      "clipartDescription": "IMPORTANT: Describe the main visual/image for this item (e.g., 'colorful picture of a cat sleeping', 'two images side-by-side: a bat and a ball')"
     }
   ]
 }
 
-Make items engaging and appropriate. No student names or identifying info.`;
+CRITICAL: Make this activity VISUAL FIRST. Minimize text. Every item should be picture-based or scenario-based with image support. Include clipartDescriptions for EVERY item. No student names or identifying info.`;
 }
