@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Sparkles, Loader2, Copy, Check, RefreshCw, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import AIDisclaimer from "@/components/shared/AIDisclaimer";
+import { useSubscription } from "@/components/shared/SubscriptionGate";
 
 const DOMAINS_LSL = ["Auditory Skills", "Language Skills", "Self-Advocacy Skills"];
 const DOMAINS_ASL = ["ASL Discourse", "ASL Vocabulary & Conceptual Understanding", "Self-Advocacy & Deaf Identity", "Code-Switching (ASL to English)"];
