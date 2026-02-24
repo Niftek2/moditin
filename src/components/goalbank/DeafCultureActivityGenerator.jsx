@@ -23,6 +23,9 @@ export default function DeafCultureActivityGenerator({ open, onClose }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [copied, setCopied] = useState(false);
+  const { subStatus } = useSubscription();
+
+  const isAIAllowed = subStatus?.isPro;
 
   const [opts, setOpts] = useState({
     gradeBand: "3–5",
