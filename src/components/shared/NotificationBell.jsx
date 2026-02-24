@@ -6,8 +6,28 @@ import { format, parseISO, addMinutes, isPast, isToday } from "date-fns";
 
 export default function NotificationBell() {
   const [open, setOpen] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDue, setNewDue] = useState("");
   const qc = useQueryClient();
   const now = new Date();
+
+  const addReminder = useMutation({
+    mutationFn: (data) => base44.entities.PersonalReminder.create(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["reminders-bell"] });
+      qc.invalidateQueries({ queryKey: ["reminders"] });
+      setNewTitle("");
+      setNewDue("");
+      setShowAddForm(false);
+    },
+  });
+
+  const handleAddReminder = (e) => {
+    e.preventDefault();
+    if (!newTitle || !newDue) return;
+    addReminder.mutate({ title: newTitle, dueDateTime: new Date(newDue).toISOString(), status: "Pending", priority: "Medium" });
+  };
 
   const { data: appNotifications = [] } = useQuery({
     queryKey: ["appNotifications"],
