@@ -80,6 +80,23 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       },
     });
 
+    // Save to ActivityLog for reuse
+    await base44.entities.ActivityLog.create({
+      templateType,
+      title: `${TEMPLATE_LABELS[templateType]} - ${selectedStudent?.gradeBand} ${difficulty}`,
+      gradeBand: selectedStudent?.gradeBand || "3-5",
+      difficulty,
+      languageLevel,
+      activityContent: {
+        items: result.items,
+        teacherDirections: result.teacherDirections,
+        studentDirections: result.studentDirections,
+        passage: result.passage,
+      },
+      linkedGoalText: selectedGoal?.annualGoal,
+      generatedDate: new Date().toISOString(),
+    });
+
     setLoading(false);
     onActivityGenerated({
       items: result.items,
