@@ -67,19 +67,40 @@ export default function SettingsPage() {
         {/* Subscription */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-4">Subscription</h3>
-          <div className="grid sm:grid-cols-2 gap-4 mb-4">
-            <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#400070]/10">
-              <p className="text-sm font-semibold text-[var(--modal-text)]">Monthly</p>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mt-1">$19.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
-              <p className="text-xs text-[var(--modal-text-muted)] mt-1">7-day free trial · Cancel anytime</p>
+          {subStatus?.isActive ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
+                <div className="w-10 h-10 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Pro — Active</p>
+                  <p className="text-xs text-[var(--modal-text-muted)]">
+                    {subStatus.isTrial
+                      ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
+                      : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={handleManageBilling}
+                disabled={loadingPortal}
+                variant="outline"
+                className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2"
+              >
+                {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                Manage Billing
+              </Button>
             </div>
-            <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#400070]/10">
-              <p className="text-sm font-semibold text-[var(--modal-text)]">Annual</p>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mt-1">$179.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
-              <p className="text-xs text-green-700 mt-1">Save $59.89/year · 7-day free trial</p>
+          ) : (
+            <div className="space-y-3">
+              <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#F7F3FA]">
+                <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Pro — $14.99/mo</p>
+                <p className="text-xs text-[var(--modal-text-muted)] mt-1">7-day free trial · Cancel anytime</p>
+              </div>
+              <p className="text-xs text-[var(--modal-text-muted)]">You currently don't have an active subscription.</p>
             </div>
-          </div>
-          <p className="text-xs text-[var(--modal-text-muted)]">After cancellation, you retain read-only export access for 30 days.</p>
+          )}
         </div>
 
         {/* School Pricing Inquiry */}
