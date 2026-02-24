@@ -82,13 +82,17 @@ export default function SubscriptionGate({ children }) {
         animate={{ opacity: 1, y: 0 }}
         className="modal-card max-w-md w-full p-8 text-center space-y-6">
 
-        <div className="w-16 h-16 rounded-2xl bg-[#400070] flex items-center justify-center mx-auto">
-          <Sparkles className="w-8 h-8 text-white" />
+        <div className="flex flex-col items-center gap-1">
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
+            alt="Modal Itinerant"
+            className="w-24 h-24 object-contain"
+          />
         </div>
 
         <div>
           <h1 className="text-2xl font-bold text-[var(--modal-text)] mb-2">Start Your Free Trial</h1>
-          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed">Get full access to Modal Itinerant— SMART goal writing, session logging, interactive activities, and more.
+          <p className="text-[var(--modal-text-muted)] text-sm leading-relaxed">Get full access to Modal Itinerant — SMART goal writing, session logging, interactive activities, and more.
 
           </p>
         </div>
