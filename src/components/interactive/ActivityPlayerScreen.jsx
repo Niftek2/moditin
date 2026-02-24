@@ -113,26 +113,31 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
         <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
 
         {/* Answer buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {item.answerChoices?.map((choiceText, i) => {
-            const choiceObj = items[currentIdx]?.answerChoices?.[i]; // Get original object for image
-            const isSelected = current.selectedAnswer === choiceText;
-            const isCorrect = choiceText === item.correctAnswer;
-            let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all text-base flex items-center gap-3 ";
-            if (isSelected && isCorrect) btnClass += "border-green-400 bg-green-50 text-green-800";
-            else if (isSelected && !isCorrect) btnClass += "border-[#C4A8E8] bg-[#F7F3FA] text-[#400070]";
-            else if (current.selectedAnswer && isCorrect) btnClass += "border-green-300 bg-green-50/50 text-green-700";
-            else btnClass += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+           {item.answerChoices?.map((choiceText, i) => {
+             const choiceObj = items[currentIdx]?.answerChoices?.[i]; // Get original object for image
+             const isSelected = current.selectedAnswer === choiceText;
+             const isCorrect = choiceText === item.correctAnswer;
+             let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all text-base flex items-center gap-3 ";
+             if (isSelected && isCorrect) btnClass += "border-green-400 bg-green-50 text-green-800";
+             else if (isSelected && !isCorrect) btnClass += "border-[#C4A8E8] bg-[#F7F3FA] text-[#400070]";
+             else if (current.selectedAnswer && isCorrect) btnClass += "border-green-300 bg-green-50/50 text-green-700";
+             else btnClass += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
 
-            return (
-              <button key={i} type="button" onClick={() => selectAnswer(choiceText)} className={btnClass}>
-                <span className="text-[var(--modal-text-muted)] text-sm font-semibold">{String.fromCharCode(65+i)}.</span>
-                {choiceObj?.imageUrl && <img src={choiceObj.imageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />}
-                <span>{choiceText}</span>
-              </button>
-            );
-          })}
-        </div>
+             return (
+               <div key={i} className="flex items-center gap-2">
+                 <button type="button" onClick={() => selectAnswer(choiceText)} className={btnClass + "flex-1"}>
+                   <span className="text-[var(--modal-text-muted)] text-sm font-semibold">{String.fromCharCode(65+i)}.</span>
+                   {choiceObj?.imageUrl && <img src={choiceObj.imageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />}
+                   <span>{choiceText}</span>
+                 </button>
+                 {audioSettings?.enabled && audioSettings?.speakChoices && (
+                   <ReadAloudButton text={choiceText} rate={audioSettings.rate || 1.0} size="icon" />
+                 )}
+               </div>
+             );
+           })}
+         </div>
       </div>
 
       {/* Prompt Level */}
