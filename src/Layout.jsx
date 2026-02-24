@@ -59,5 +59,7 @@ export default function Layout({ children, currentPageName }) {
       <StickyTermsFooter />
       {!agreed && <TermsAgreementModal onAgree={() => setAgreed(true)} />}
     </div>
+    </SubscriptionGate>
+    </SubscriptionProvider>
   );
 }
