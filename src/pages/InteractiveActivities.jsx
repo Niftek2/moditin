@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import ActivitySetupScreen from "../components/interactive/ActivitySetupScreen";
 import ActivityPlayerScreen from "../components/interactive/ActivityPlayerScreen";
 import ActivitySummaryScreen from "../components/interactive/ActivitySummaryScreen";
+import DeafCultureActivityGenerator from "../components/goalbank/DeafCultureActivityGenerator";
 
 const STEPS = { SETUP: "setup", PLAYING: "playing", SUMMARY: "summary" };
 
