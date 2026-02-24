@@ -27,7 +27,6 @@ export default function GoalBankPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showCompliance, setShowCompliance] = useState(true);
   const [showAICreator, setShowAICreator] = useState(false);
-  const [showDeafCultureGen, setShowDeafCultureGen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -69,9 +68,7 @@ export default function GoalBankPage() {
             <Button onClick={() => setShowAICreator(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm">
               <Sparkles className="w-4 h-4" /> AI Goal Creator
             </Button>
-            <Button onClick={() => setShowDeafCultureGen(true)} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-[#400070] rounded-xl gap-2 text-sm">
-              <Sparkles className="w-4 h-4" /> Deaf Culture Activity
-            </Button>
+
           </div>
         }
       />
@@ -208,10 +205,7 @@ export default function GoalBankPage() {
         studentData={studentId ? students.find(s => s.id === studentId) : null}
       />
 
-      <DeafCultureActivityGenerator
-        open={showDeafCultureGen}
-        onClose={() => setShowDeafCultureGen(false)}
-      />
+
     </div>
   );
 }

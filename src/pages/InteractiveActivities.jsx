@@ -11,6 +11,7 @@ const STEPS = { SETUP: "setup", PLAYING: "playing", SUMMARY: "summary" };
 
 export default function InteractiveActivitiesPage() {
   const [step, setStep] = useState(STEPS.SETUP);
+  const [showDeafCultureGen, setShowDeafCultureGen] = useState(false);
   const [activityConfig, setActivityConfig] = useState(null);
   const [completedResponses, setCompletedResponses] = useState([]);
   const [durationMinutes, setDurationMinutes] = useState(0);
@@ -37,7 +38,15 @@ export default function InteractiveActivitiesPage() {
     <div>
       {step === STEPS.SETUP && (
         <>
-          <PageHeader title="Interactive Activities" subtitle="Generate and run live, auto-scored activities during session" />
+          <PageHeader
+            title="Interactive Activities"
+            subtitle="Generate and run live, auto-scored activities during session"
+            action={
+              <Button onClick={() => setShowDeafCultureGen(true)} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl gap-2 text-sm">
+                <Sparkles className="w-4 h-4" /> Deaf Culture Activity
+              </Button>
+            }
+          />
           <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} />
         </>
       )}
@@ -64,6 +73,10 @@ export default function InteractiveActivitiesPage() {
           />
         </>
       )}
+      <DeafCultureActivityGenerator
+        open={showDeafCultureGen}
+        onClose={() => setShowDeafCultureGen(false)}
+      />
     </div>
   );
 }
