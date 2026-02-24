@@ -12,6 +12,7 @@ import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
+import { useSubscription } from "../components/shared/SubscriptionGate";
 
 export default function StudentsPage() {
   useScrollRestore("Students");

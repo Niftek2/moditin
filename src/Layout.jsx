@@ -7,7 +7,8 @@ import StickyTermsFooter from "./components/shared/StickyTermsFooter";
 import PrivacyReminderBanner from "./components/shared/PrivacyReminderBanner";
 import NotificationBell from "./components/shared/NotificationBell";
 import { useAndroidBack } from "./components/shared/useAndroidBack";
-import SubscriptionGate, { SubscriptionProvider } from "./components/shared/SubscriptionGate";
+import SubscriptionGate, { SubscriptionProvider, useSubscription } from "./components/shared/SubscriptionGate";
+import FreemiumBanner from "./components/shared/FreemiumBanner";
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
