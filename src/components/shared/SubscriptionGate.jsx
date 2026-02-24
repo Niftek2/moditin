@@ -14,8 +14,11 @@ export function SubscriptionProvider({ children }) {
 
   const checkStatus = async () => {
     try {
+      const user = await base44.auth.me();
       const res = await base44.functions.invoke("stripeStatus", {});
-      setSubStatus(res.data);
+      // Admins always have Pro access
+      const isAdmin = user?.role === "admin";
+      setSubStatus({ ...res.data, isPro: isAdmin || res.data.isPro });
     } catch {
       setSubStatus({ isActive: false, isPro: false, isTrial: false, studentCount: 0 });
     } finally {
