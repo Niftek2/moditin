@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
-const PRICE_ID = "price_1T4AmgIIBns0bpM5Ehf9k8VG";
+const PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla";
 
 Deno.serve(async (req) => {
   try {
