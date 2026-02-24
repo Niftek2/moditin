@@ -89,7 +89,7 @@ IMPORTANT: ${DISCLAIMER}`,
           <div className="flex gap-3 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--modal-text-muted)]" />
-              <Input placeholder="Search assessments..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-white/5 border-[var(--modal-border)] text-white" />
+              <Input placeholder="Search assessments..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-44 bg-white/5 border-[var(--modal-border)] text-white">
