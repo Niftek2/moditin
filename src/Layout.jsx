@@ -6,6 +6,8 @@ import TermsAgreementModal, { hasAgreedToTerms } from "./components/shared/Terms
 import StickyTermsFooter from "./components/shared/StickyTermsFooter";
 import PrivacyReminderBanner from "./components/shared/PrivacyReminderBanner";
 import NotificationBell from "./components/shared/NotificationBell";
+import { useDarkMode } from "./components/shared/useDarkMode";
+import { useAndroidBack } from "./components/shared/useAndroidBack";
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
