@@ -99,7 +99,7 @@ export default function GoalBankPage() {
               placeholder="Search goals..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-white/5 border-[var(--modal-border)] text-white placeholder:text-[var(--modal-text-muted)]/50"
+              className="pl-10 bg-white border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)]"
             />
           </div>
           <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-2">
@@ -110,7 +110,7 @@ export default function GoalBankPage() {
         {showFilters && (
           <div className="flex flex-wrap gap-3 modal-card p-4">
             <Select value={domainFilter} onValueChange={setDomainFilter}>
-              <SelectTrigger className="w-48 bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="w-48 bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Domain" />
               </SelectTrigger>
               <SelectContent>
@@ -119,7 +119,7 @@ export default function GoalBankPage() {
               </SelectContent>
             </Select>
             <Select value={gradeFilter} onValueChange={setGradeFilter}>
-              <SelectTrigger className="w-32 bg-white/5 border-[var(--modal-border)] text-white">
+              <SelectTrigger className="w-32 bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
                 <SelectValue placeholder="Grade" />
               </SelectTrigger>
               <SelectContent>
@@ -147,12 +147,12 @@ export default function GoalBankPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white leading-relaxed">{goal.annualGoal}</p>
+                    <p className="text-sm text-[var(--modal-text)] leading-relaxed">{goal.annualGoal}</p>
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       <Badge className="text-[10px] bg-[#400070]/30 text-[var(--modal-purple-glow)] border-0">{goal.domain}</Badge>
-                      {goal.gradeBand && <Badge variant="secondary" className="text-[10px] bg-white/10 text-[var(--modal-text-muted)] border-0">{goal.gradeBand}</Badge>}
-                      {goal.baselineLevel && <Badge variant="secondary" className="text-[10px] bg-white/10 text-[var(--modal-text-muted)] border-0">{goal.baselineLevel}</Badge>}
-                      {goal.measurementType && <Badge variant="secondary" className="text-[10px] bg-white/10 text-[var(--modal-text-muted)] border-0">{goal.measurementType}</Badge>}
+                      {goal.gradeBand && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.gradeBand}</Badge>}
+                      {goal.baselineLevel && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.baselineLevel}</Badge>}
+                      {goal.measurementType && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.measurementType}</Badge>}
                     </div>
                   </div>
                   {expanded === goal.id ? <ChevronUp className="w-4 h-4 text-[var(--modal-text-muted)] shrink-0 mt-1" /> : <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)] shrink-0 mt-1" />}
