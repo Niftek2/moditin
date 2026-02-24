@@ -123,7 +123,7 @@ export default function SubscriptionGate({ children }) {
             className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12 text-base font-semibold">
 
             {loadingCheckout ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-            {loadingCheckout ? "Redirecting..." : "Start Free Trial — $14.99/mo"}
+            {loadingCheckout ? "Redirecting..." : "Start Free Trial — $17.99/mo"}
           </Button>
           <p className="text-xs text-[var(--modal-text-muted)]">
             No credit card required during trial. Cancel anytime before trial ends.

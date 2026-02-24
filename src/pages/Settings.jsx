@@ -95,7 +95,7 @@ export default function SettingsPage() {
           ) : (
             <div className="space-y-3">
               <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#F7F3FA]">
-                <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Pro — $14.99/mo</p>
+                <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Itinerant — $17.99/mo or $179/yr</p>
                 <p className="text-xs text-[var(--modal-text-muted)] mt-1">7-day free trial · Cancel anytime</p>
               </div>
               <p className="text-xs text-[var(--modal-text-muted)]">You currently don't have an active subscription.</p>
