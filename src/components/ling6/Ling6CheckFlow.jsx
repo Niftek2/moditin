@@ -12,6 +12,7 @@ export default function Ling6CheckFlow({ session, student, onComplete }) {
   // completedSounds: Set of sounds marked done
   const [completedSounds, setCompletedSounds] = useState(new Set());
   const [selectedSound, setSelectedSound] = useState(null);
+  const [selectedResponse, setSelectedResponse] = useState({});
 
   const getSoundStatus = (sound) => {
     const soundTrials = trials[sound];
@@ -38,6 +39,14 @@ export default function Ling6CheckFlow({ session, student, onComplete }) {
   const handleMarkComplete = (sound) => {
     setCompletedSounds(prev => new Set([...prev, sound]));
     setSelectedSound(null);
+  };
+
+  const handleResponseSelect = (sound, responseType) => {
+    setSelectedResponse(prev => ({ ...prev, [sound]: responseType }));
+    // Save the trial with the response
+    handleSaveTrial(sound, 1, { responseType, promptLevel: "Independent", confidence: "Sure", responseDetail: "" });
+    // Mark as complete
+    handleMarkComplete(sound);
   };
 
   const allTrialsList = Object.entries(trials).flatMap(([sound, ts]) =>
@@ -72,19 +81,48 @@ export default function Ling6CheckFlow({ session, student, onComplete }) {
           </div>
         )}
 
-        {/* Sound grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-          {LING6_SOUNDS.map((sound) => (
-            <SoundTile
-              key={sound}
-              sound={sound}
-              status={getSoundStatus(sound)}
-              isSelected={selectedSound === sound}
-              onClick={() => setSelectedSound(selectedSound === sound ? null : sound)}
-              deliveryMethod={session.deliveryMethod}
-            />
-          ))}
-        </div>
+        {/* Sound grid with response buttons */}
+         <div className="space-y-4 mb-6">
+           {LING6_SOUNDS.map((sound) => (
+             <div key={sound} className="border border-[var(--modal-border)] rounded-2xl p-4">
+               <SoundTile
+                 sound={sound}
+                 status={getSoundStatus(sound)}
+                 isSelected={false}
+                 onClick={() => {}}
+                 deliveryMethod={session.deliveryMethod}
+               />
+               {!completedSounds.has(sound) && (
+                 <div className="grid grid-cols-2 gap-2 mt-4">
+                   <button
+                     onClick={() => handleResponseSelect(sound, "Identified")}
+                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-green-500 text-white hover:bg-green-600 transition-all"
+                   >
+                     ✓ Identified
+                   </button>
+                   <button
+                     onClick={() => handleResponseSelect(sound, "Detected")}
+                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-yellow-400 text-white hover:bg-yellow-500 transition-all"
+                   >
+                     ◎ Detected
+                   </button>
+                   <button
+                     onClick={() => handleResponseSelect(sound, "NoResponse")}
+                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-gray-400 text-white hover:bg-gray-500 transition-all"
+                   >
+                     — No Response
+                   </button>
+                   <button
+                     onClick={() => handleResponseSelect(sound, "Incorrect")}
+                     className="px-3 py-2 rounded-lg text-sm font-semibold bg-red-400 text-white hover:bg-red-500 transition-all"
+                   >
+                     ✗ Incorrect
+                   </button>
+                 </div>
+               )}
+             </div>
+           ))}
+         </div>
 
         <div className="flex items-center justify-between">
           <p className="text-sm text-[var(--modal-text-muted)]">
@@ -100,40 +138,7 @@ export default function Ling6CheckFlow({ session, student, onComplete }) {
         </div>
       </div>
 
-      {/* Right: trial panel (desktop slide-in, mobile bottom overlay handled via selectedSound) */}
-      {selectedSound && (
-        <>
-          {/* Desktop right panel */}
-          <div className="hidden lg:block w-80 shrink-0 border border-[var(--modal-border)] rounded-2xl overflow-hidden" style={{ maxHeight: "600px" }}>
-            <TrialPanel
-              sound={selectedSound}
-              deliveryMethod={session.deliveryMethod}
-              existingTrials={trials[selectedSound] || []}
-              onSaveTrial={handleSaveTrial}
-              onMarkComplete={handleMarkComplete}
-              onClose={() => setSelectedSound(null)}
-            />
-          </div>
 
-          {/* Mobile bottom sheet overlay */}
-          <div className="lg:hidden fixed inset-0 z-40 bg-black/40" onClick={() => setSelectedSound(null)}>
-            <div
-              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl overflow-hidden"
-              style={{ maxHeight: "80vh" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <TrialPanel
-                sound={selectedSound}
-                deliveryMethod={session.deliveryMethod}
-                existingTrials={trials[selectedSound] || []}
-                onSaveTrial={handleSaveTrial}
-                onMarkComplete={handleMarkComplete}
-                onClose={() => setSelectedSound(null)}
-              />
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
