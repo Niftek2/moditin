@@ -29,7 +29,13 @@ export default function Dashboard() {
   ]);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    base44.auth.me().then((u) => {
+      setUser(u);
+      // Redirect to onboarding if no full_name set
+      if (u && !u.full_name) {
+        window.location.href = "/Onboarding";
+      }
+    }).catch(() => {});
   }, []);
 
   const firstName = user?.full_name?.split(" ")[0] || "";
