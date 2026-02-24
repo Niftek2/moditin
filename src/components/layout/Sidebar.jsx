@@ -54,7 +54,7 @@ export default function Sidebar({ currentPage }) {
       <div className="px-6 py-7">
         <div className="flex items-center gap-3">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/6f560f8f2_modalitinerantlogo.png"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/8fc967743_LogoNoScript.png"
             alt="Modal Itinerant"
             className="w-9 h-9 object-contain"
           />
