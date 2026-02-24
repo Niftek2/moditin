@@ -8,10 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Plus, ClipboardList, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Plus, ClipboardList, AlertCircle, Wrench } from "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
+import TroubleshootingWizard from "../components/equipment/TroubleshootingWizard";
 
 const EQUIPMENT_TYPES = ["Hearing Aids", "Cochlear Implants", "FM/DM", "Soundfield", "Accessories", "Batteries", "Chargers", "Earmolds", "Loaners"];
 const STATUSES = ["Active", "NeedsRepair", "Loaned", "Retired"];
@@ -20,7 +21,9 @@ const CHECK_TYPES = ["DailyCheck", "WeeklyCheck", "IssueReport", "Repair", "Repl
 export default function EquipmentPage() {
   const [showEquipForm, setShowEquipForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [selectedEquip, setSelectedEquip] = useState(null);
+  const [selectedStudentForWizard, setSelectedStudentForWizard] = useState(null);
   const [equipForm, setEquipForm] = useState({ studentId: "", type: "", description: "", serialNumber: "", status: "Active", reminderSchedule: "None" });
   const [logForm, setLogForm] = useState({ date: new Date().toISOString().split("T")[0], checkType: "DailyCheck", issueDescription: "", actionTaken: "", resolved: false });
 
@@ -29,6 +32,7 @@ export default function EquipmentPage() {
   const { data: equipment = [] } = useQuery({ queryKey: ["equipment"], queryFn: () => base44.entities.Equipment.list() });
   const { data: students = [] } = useQuery({ queryKey: ["students"], queryFn: () => base44.entities.Student.list() });
   const { data: logs = [] } = useQuery({ queryKey: ["equipLogs"], queryFn: () => base44.entities.EquipmentLog.list("-date", 100) });
+  const { data: troubleshootSessions = [] } = useQuery({ queryKey: ["troubleshootSessions"], queryFn: () => base44.entities.EquipmentTroubleshootSession.list("-created_date", 100) });
 
   const createEquipMut = useMutation({
     mutationFn: (data) => base44.entities.Equipment.create(data),
@@ -38,6 +42,15 @@ export default function EquipmentPage() {
   const createLogMut = useMutation({
     mutationFn: (data) => base44.entities.EquipmentLog.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["equipLogs"] }); setShowLogForm(false); },
+  });
+
+  const createTroubleshootMut = useMutation({
+    mutationFn: (data) => base44.functions.invoke('equipmentTroubleshoot', { action: 'createSession', sessionData: data, studentId: selectedStudentForWizard }),
+    onSuccess: () => { 
+      queryClient.invalidateQueries({ queryKey: ["troubleshootSessions"] }); 
+      setShowWizard(false);
+      setSelectedStudentForWizard(null);
+    },
   });
 
   const studentMap = {};
@@ -93,10 +106,13 @@ export default function EquipmentPage() {
                 </div>
                 {eq.description && <p className="text-xs text-[var(--modal-text-muted)] mb-3 ml-13">{eq.description}</p>}
                 <div className="flex gap-2 mt-2">
-                  <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1" onClick={() => { setSelectedEquip(eq); setLogForm({ ...logForm, date: new Date().toISOString().split("T")[0] }); setShowLogForm(true); }}>
-                    <ClipboardList className="w-3.5 h-3.5" /> Log Check
-                  </Button>
-                </div>
+                   <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1" onClick={() => { setSelectedEquip(eq); setLogForm({ ...logForm, date: new Date().toISOString().split("T")[0] }); setShowLogForm(true); }}>
+                     <ClipboardList className="w-3.5 h-3.5" /> Log Check
+                   </Button>
+                   <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1" onClick={() => { setSelectedStudentForWizard(eq.studentId); setShowWizard(true); }}>
+                     <Wrench className="w-3.5 h-3.5" /> Troubleshoot
+                   </Button>
+                 </div>
               </div>
             );
           })}
@@ -169,6 +185,15 @@ export default function EquipmentPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
+
+      {/* Troubleshooting Wizard Modal */}
+      {showWizard && selectedStudentForWizard && (
+        <TroubleshootingWizard
+          studentInitials={students.find(s => s.id === selectedStudentForWizard)?.studentInitials || ""}
+          onComplete={(sessionData) => createTroubleshootMut.mutate(sessionData)}
+          onCancel={() => { setShowWizard(false); setSelectedStudentForWizard(null); }}
+        />
+      )}
+      </div>
+      );
+      }
