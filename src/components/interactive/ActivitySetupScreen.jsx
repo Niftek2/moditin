@@ -58,6 +58,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
 
     const result = await base44.integrations.Core.InvokeLLM({
       prompt,
+      add_context_from_internet: true,
       response_json_schema: {
         type: "object",
         properties: {
@@ -70,15 +71,47 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
               type: "object",
               properties: {
                 questionText: { type: "string" },
-                answerChoices: { type: "array", items: { type: "string" } },
                 correctAnswer: { type: "string" },
-                clipartDescription: { type: "string", description: "Optional description of relevant cartoon clipart for this item" },
+                clipartDescription: { type: "string", description: "A detailed description for generating a cartoon image that represents this question" },
+                answerChoices: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      text: { type: "string" },
+                      clipartDescription: { type: "string", description: "A detailed description for generating a cartoon image that represents this answer choice" }
+                    },
+                    required: ["text"]
+                  }
+                }
               },
+              required: ["questionText", "correctAnswer", "answerChoices"]
             },
           },
         },
+        required: ["teacherDirections", "studentDirections", "items"]
       },
     });
+
+    // Generate images for each item and answer choice
+    const itemsWithImages = await Promise.all(result.items.map(async (item) => {
+      const answerChoicesWithImages = await Promise.all(item.answerChoices.map(async (choice) => {
+        let imageUrl = null;
+        if (choice.clipartDescription) {
+          const imageResult = await base44.integrations.Core.GenerateImage({ prompt: choice.clipartDescription });
+          imageUrl = imageResult.url;
+        }
+        return { ...choice, imageUrl };
+      }));
+
+      let questionImageUrl = null;
+      if (item.clipartDescription) {
+        const imageResult = await base44.integrations.Core.GenerateImage({ prompt: item.clipartDescription });
+        questionImageUrl = imageResult.url;
+      }
+
+      return { ...item, answerChoices: answerChoicesWithImages, questionImageUrl };
+    }));
 
     // Save to ActivityLog for reuse
     await base44.entities.ActivityLog.create({
@@ -88,7 +121,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       difficulty,
       languageLevel,
       activityContent: {
-        items: result.items,
+        items: itemsWithImages,
         teacherDirections: result.teacherDirections,
         studentDirections: result.studentDirections,
         passage: result.passage,
@@ -99,7 +132,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
 
     setLoading(false);
     onActivityGenerated({
-      items: result.items,
+      items: itemsWithImages,
       teacherDirections: result.teacherDirections,
       studentDirections: result.studentDirections,
       passage: result.passage,

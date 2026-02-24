@@ -8,7 +8,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
   const { items, student, templateType, goalText } = config;
   const [currentIdx, setCurrentIdx] = useState(0);
   const [responses, setResponses] = useState(
-    items.map((item, i) => ({ itemNumber: i + 1, questionText: item.questionText, answerChoices: item.answerChoices, correctAnswer: item.correctAnswer, selectedAnswer: null, isCorrect: null, promptLevel: null, responseLatencySeconds: 0 }))
+    items.map((item, i) => ({ itemNumber: i + 1, questionText: item.questionText, answerChoices: item.answerChoices.map(c => c.text || c), correctAnswer: item.correctAnswer, selectedAnswer: null, isCorrect: null, promptLevel: null, responseLatencySeconds: 0 }))
   );
   const [startTime] = useState(Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -21,11 +21,11 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
   const current = responses[currentIdx];
   const item = items[currentIdx];
 
-  const selectAnswer = (choice) => {
-    const isCorrect = choice === item.correctAnswer;
+  const selectAnswer = (choiceText) => {
+    const isCorrect = choiceText === item.correctAnswer;
     setResponses(prev => {
       const updated = [...prev];
-      updated[currentIdx] = { ...updated[currentIdx], selectedAnswer: choice, isCorrect };
+      updated[currentIdx] = { ...updated[currentIdx], selectedAnswer: choiceText, isCorrect };
       return updated;
     });
   };
@@ -78,23 +78,30 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
       {/* Question card */}
       <div className="modal-card p-6 mb-4">
         <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)] mb-3">Question {currentIdx + 1}</p>
+        {item.questionImageUrl && (
+          <div className="mb-4 flex justify-center">
+            <img src={item.questionImageUrl} alt={item.questionText} className="max-h-48 rounded-lg object-contain" />
+          </div>
+        )}
         <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
 
         {/* Answer buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {item.answerChoices?.map((choice, i) => {
-            const isSelected = current.selectedAnswer === choice;
-            const isCorrect = choice === item.correctAnswer;
-            let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all text-base ";
+            const choiceText = choice.text || choice;
+            const isSelected = current.selectedAnswer === choiceText;
+            const isCorrect = choiceText === item.correctAnswer;
+            let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all text-base flex items-center gap-3 ";
             if (isSelected && isCorrect) btnClass += "border-green-400 bg-green-50 text-green-800";
             else if (isSelected && !isCorrect) btnClass += "border-[#C4A8E8] bg-[#F7F3FA] text-[#400070]";
             else if (current.selectedAnswer && isCorrect) btnClass += "border-green-300 bg-green-50/50 text-green-700";
             else btnClass += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
 
             return (
-              <button key={i} type="button" onClick={() => selectAnswer(choice)} className={btnClass}>
-                <span className="text-[var(--modal-text-muted)] text-sm mr-2">{String.fromCharCode(65+i)}.</span>
-                {choice}
+              <button key={i} type="button" onClick={() => selectAnswer(choiceText)} className={btnClass}>
+                <span className="text-[var(--modal-text-muted)] text-sm font-semibold">{String.fromCharCode(65+i)}.</span>
+                {choice.imageUrl && <img src={choice.imageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />}
+                <span>{choiceText}</span>
               </button>
             );
           })}
