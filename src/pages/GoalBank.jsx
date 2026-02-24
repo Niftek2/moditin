@@ -149,7 +149,7 @@ export default function GoalBankPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-[var(--modal-text)] leading-relaxed">{goal.annualGoal}</p>
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      <Badge className="text-[10px] bg-[#400070]/30 text-[var(--modal-purple-glow)] border-0">{goal.domain}</Badge>
+                      <Badge className="text-[10px] bg-[#EADDF5] text-[#400070] border-0">{goal.domain}</Badge>
                       {goal.gradeBand && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.gradeBand}</Badge>}
                       {goal.baselineLevel && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.baselineLevel}</Badge>}
                       {goal.measurementType && <Badge variant="secondary" className="text-[10px] bg-[var(--modal-purple-pale)] text-[var(--modal-text)] border-0">{goal.measurementType}</Badge>}
