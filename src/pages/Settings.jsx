@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { Settings, ExternalLink, Loader2, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Trash2 } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
+import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
   const [inquiryForm, setInquiryForm] = useState({ name: "", email: "", schoolDistrict: "", estimatedUsers: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
@@ -108,14 +110,32 @@ export default function SettingsPage() {
 
         {/* Data Privacy */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-white mb-2">Data Privacy</h3>
+          <h3 className="font-semibold text-[var(--modal-text)] mb-2">Data Privacy</h3>
           <p className="text-xs text-[var(--modal-text-muted)]">
             All student data is stored using initials only (e.g., Aa.Bb.). Full names, dates of birth, addresses, 
             student IDs, school names, and district names are strictly prohibited. Modal Itinerant includes PII detection 
             guardrails to help protect student privacy.
           </p>
         </div>
+
+        {/* Delete Account */}
+        <div className="modal-card p-6 border border-red-200">
+          <h3 className="font-semibold text-red-600 mb-2">Danger Zone</h3>
+          <p className="text-xs text-[var(--modal-text-muted)] mb-4">
+            Permanently delete your account and all associated data. This cannot be undone.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteDialog(true)}
+            className="border-red-300 text-red-600 hover:bg-red-50 gap-2"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete Account
+          </Button>
+        </div>
       </div>
+
+      <DeleteAccountDialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)} />
     </div>
   );
 }
