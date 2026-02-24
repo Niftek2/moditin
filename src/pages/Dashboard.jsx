@@ -98,8 +98,8 @@ export default function Dashboard() {
             <p className="text-xs text-[var(--modal-text-muted)] mt-1">Sessions</p>
           </div>
           <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-            <p className="text-2xl font-bold text-[#6B2FB9]" aria-label="Notes due">—</p>
-            <p className="text-xs text-[var(--modal-text-muted)] mt-1">Notes Due</p>
+            <p className="text-2xl font-bold text-[#6B2FB9]" aria-label="IEPs due this month">{iepsThisMonth}</p>
+            <p className="text-xs text-[var(--modal-text-muted)] mt-1">IEPs This Month</p>
           </div>
           <div className="text-center p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
             <p className="text-lg font-bold text-[#6B2FB9]" aria-label="Next appointment">{nextEvent ? format(parseISO(nextEvent.startDateTime), "h:mm a") : "—"}</p>
