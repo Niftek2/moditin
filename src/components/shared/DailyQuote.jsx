@@ -73,6 +73,7 @@ export default function DailyQuote() {
 
   return (
     <div className="mt-3 p-4 border-l-4 border-[#6B2FB9] bg-[#F7F3FA] rounded-lg text-center" role="region" aria-live="polite" aria-label="Daily motivational quote">
+      <p className="text-xs font-semibold uppercase tracking-wide text-[#6B2FB9] mb-2">Today's Reminder</p>
       <p className="text-base font-medium italic text-[#400070] leading-relaxed">
         "{quote}"
       </p>
