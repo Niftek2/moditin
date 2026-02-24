@@ -9,9 +9,13 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // Get student count for freemium limit
+    const students = await base44.entities.Student.list();
+    const studentCount = students.length;
+
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length === 0) {
-      return Response.json({ status: 'none', isActive: false });
+      return Response.json({ status: 'none', isActive: false, isPro: false, isTrial: false, studentCount });
     }
 
     const subscriptions = await stripe.subscriptions.list({
@@ -21,18 +25,22 @@ Deno.serve(async (req) => {
     });
 
     if (subscriptions.data.length === 0) {
-      return Response.json({ status: 'none', isActive: false });
+      return Response.json({ status: 'none', isActive: false, isPro: false, isTrial: false, studentCount });
     }
 
     const sub = subscriptions.data[0];
     const isActive = sub.status === 'active' || sub.status === 'trialing';
+    const isTrial = sub.status === 'trialing';
+    const isPro = sub.status === 'active';
 
     return Response.json({
       status: sub.status,
       isActive,
-      isTrial: sub.status === 'trialing',
+      isPro,
+      isTrial,
       trialEnd: sub.trial_end,
       currentPeriodEnd: sub.current_period_end,
+      studentCount,
     });
   } catch (error) {
     console.error('Stripe status error:', error);
