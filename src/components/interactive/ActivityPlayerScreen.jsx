@@ -7,8 +7,14 @@ import { TEMPLATE_LABELS, PROMPT_LEVELS, PROMPT_LEVEL_LABELS } from "./activityT
 export default function ActivityPlayerScreen({ config, onComplete }) {
   const { items, student, templateType, goalText } = config;
   const [currentIdx, setCurrentIdx] = useState(0);
+  // Normalize answerChoices to extract text (handle both old string format and new object format)
+  const normalizedItems = items.map(item => ({
+    ...item,
+    answerChoices: item.answerChoices.map(c => (typeof c === 'string' ? c : c.text))
+  }));
+
   const [responses, setResponses] = useState(
-    items.map((item, i) => ({ itemNumber: i + 1, questionText: item.questionText, answerChoices: item.answerChoices.map(c => c.text || c), correctAnswer: item.correctAnswer, selectedAnswer: null, isCorrect: null, promptLevel: null, responseLatencySeconds: 0 }))
+    normalizedItems.map((item, i) => ({ itemNumber: i + 1, questionText: item.questionText, answerChoices: item.answerChoices, correctAnswer: item.correctAnswer, selectedAnswer: null, isCorrect: null, promptLevel: null, responseLatencySeconds: 0 }))
   );
   const [startTime] = useState(Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -19,7 +25,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
   }, [startTime]);
 
   const current = responses[currentIdx];
-  const item = items[currentIdx];
+  const item = normalizedItems[currentIdx];
 
   const selectAnswer = (choiceText) => {
     const isCorrect = choiceText === item.correctAnswer;
@@ -41,7 +47,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
   const canAdvance = current.selectedAnswer && current.promptLevel;
 
   const handleNext = () => {
-    if (currentIdx < items.length - 1) setCurrentIdx(currentIdx + 1);
+    if (currentIdx < normalizedItems.length - 1) setCurrentIdx(currentIdx + 1);
     else handleFinish();
   };
 
@@ -51,7 +57,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
 
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
-  const progress = ((currentIdx + 1) / items.length) * 100;
+  const progress = ((currentIdx + 1) / normalizedItems.length) * 100;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -66,7 +72,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
           <span className="flex items-center gap-1 text-xs text-[var(--modal-text-muted)]">
             <Clock className="w-3.5 h-3.5" /> {mins}:{secs.toString().padStart(2,"0")}
           </span>
-          <span className="text-sm font-semibold text-[#6B2FB9]">Item {currentIdx + 1} of {items.length}</span>
+          <span className="text-sm font-semibold text-[#6B2FB9]">Item {currentIdx + 1} of {normalizedItems.length}</span>
         </div>
       </div>
 
@@ -87,8 +93,8 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
 
         {/* Answer buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {item.answerChoices?.map((choice, i) => {
-            const choiceText = choice.text || choice;
+          {item.answerChoices?.map((choiceText, i) => {
+            const choiceObj = items[currentIdx]?.answerChoices?.[i]; // Get original object for image
             const isSelected = current.selectedAnswer === choiceText;
             const isCorrect = choiceText === item.correctAnswer;
             let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all text-base flex items-center gap-3 ";
@@ -100,7 +106,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
             return (
               <button key={i} type="button" onClick={() => selectAnswer(choiceText)} className={btnClass}>
                 <span className="text-[var(--modal-text-muted)] text-sm font-semibold">{String.fromCharCode(65+i)}.</span>
-                {choice.imageUrl && <img src={choice.imageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />}
+                {choiceObj?.imageUrl && <img src={choiceObj.imageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />}
                 <span>{choiceText}</span>
               </button>
             );
@@ -153,7 +159,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
           disabled={!canAdvance}
           className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-1"
         >
-          {currentIdx === items.length - 1 ? "Finish" : "Next"} <ChevronRight className="w-4 h-4" />
+          {currentIdx === normalizedItems.length - 1 ? "Finish" : "Next"} <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
 
