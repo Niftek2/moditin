@@ -164,7 +164,7 @@ IMPORTANT: ${DISCLAIMER}`,
           ) : (
             <div className="space-y-4">
               <div className="modal-card p-6">
-                <h3 className="text-white font-semibold mb-4">Recommended Assessments</h3>
+                <h3 className="font-semibold mb-4 text-[var(--modal-text)]">Recommended Assessments</h3>
                 <div className="space-y-3">
                   {wizardResult.recommendations?.map((rec, i) => (
                     <div key={i} className="p-3 rounded-xl bg-white/5 border border-[var(--modal-border)]">
