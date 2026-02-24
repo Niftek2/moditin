@@ -45,15 +45,16 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-4 modal-card">
-      <div className="flex items-center justify-between mb-4">
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl flex flex-col max-h-[90vh] modal-card">
+      <div className="flex items-center justify-between p-6 pb-4 border-b-2 border-[var(--modal-border)]">
         <h2 className="text-xl font-bold text-[var(--modal-text)]">{student ? "Edit Student" : "Add Student"}</h2>
         <Button type="button" variant="ghost" size="icon" onClick={onCancel} className="text-[var(--modal-text)] hover:text-[var(--modal-text-muted)]">
           <X className="w-5 h-5" />
         </Button>
       </div>
 
-      {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-x-hidden">
         <div className="space-y-2">
@@ -228,7 +229,9 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-6 border-t-2 border-[var(--modal-border)] mt-6">
+      </div>
+
+      <div className="flex justify-end gap-3 p-6 border-t-2 border-[var(--modal-border)] bg-gray-50 rounded-b-2xl">
         <Button type="button" variant="outline" onClick={onCancel} className="border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-semibold hover:bg-gray-100">
           Cancel
         </Button>
