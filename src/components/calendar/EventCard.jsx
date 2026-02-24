@@ -52,7 +52,7 @@ export default function EventCard({ event, onClick, compact = false }) {
           )}
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
-          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-white/60 ${colors.text}`}>
+          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-white ${colors.text}`}>
             {SETTING_LABELS[event.setting]}
           </span>
           {event.driveTimeIncluded && event.driveTimeMinutes > 0 && (
