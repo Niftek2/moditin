@@ -214,7 +214,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       </div>
 
       <div className="flex justify-end gap-3 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel} className="border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-white">
+        <Button type="button" variant="outline" onClick={onCancel} className="border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-[var(--modal-text)]">
           Cancel
         </Button>
         <Button type="submit" className="bg-[#400070] hover:bg-[#5B00A0] text-white">
