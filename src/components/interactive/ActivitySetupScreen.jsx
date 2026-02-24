@@ -99,7 +99,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
       <div className="modal-card p-6 space-y-4">
         {/* Student */}
         <div className="space-y-2">
-          <Label>Student <span className="text-red-400">*</span></Label>
+          <Label className="text-[var(--modal-text)] font-semibold">Student <span className="text-red-600">*</span></Label>
           <Select value={studentId} onValueChange={v => { setStudentId(v); setGoalId(""); }}>
             <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
             <SelectContent>
@@ -111,7 +111,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
         {/* Goal */}
         {studentId && (
           <div className="space-y-2">
-            <Label>Link to Goal <span className="text-[10px] font-normal text-[var(--modal-text-muted)]">(optional)</span></Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Link to Goal <span className="text-[10px] font-normal text-[var(--modal-text-muted)]">(optional)</span></Label>
             <Select value={goalId} onValueChange={setGoalId}>
               <SelectTrigger><SelectValue placeholder="Select active goal" /></SelectTrigger>
               <SelectContent>
@@ -127,7 +127,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
 
         {/* Template */}
         <div className="space-y-2">
-          <Label>Activity Template <span className="text-red-400">*</span></Label>
+          <Label className="text-[var(--modal-text)] font-semibold">Activity Template <span className="text-red-600">*</span></Label>
           <div className="grid grid-cols-2 gap-2">
             {TEMPLATES.map(t => (
               <button
@@ -151,7 +151,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
         {/* Number of items, difficulty, setting */}
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-2">
-            <Label>Items</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Items</Label>
             <Select value={numItems} onValueChange={setNumItems}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -160,7 +160,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Difficulty</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Difficulty</Label>
             <Select value={difficulty} onValueChange={setDifficulty}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -169,7 +169,7 @@ export default function ActivitySetupScreen({ onActivityGenerated }) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Setting</Label>
+            <Label className="text-[var(--modal-text)] font-semibold">Setting</Label>
             <Select value={setting} onValueChange={setSetting}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
