@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Library } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import ActivitySetupScreen from "../components/interactive/ActivitySetupScreen";
 import ActivityDirectionsScreen from "../components/interactive/ActivityDirectionsScreen";
 import ActivityPlayerScreen from "../components/interactive/ActivityPlayerScreen";
 import ActivitySummaryScreen from "../components/interactive/ActivitySummaryScreen";
 import DeafCultureActivityGenerator from "../components/goalbank/DeafCultureActivityGenerator";
+import ActivityHistory from "../components/interactive/ActivityHistory";
 
-const STEPS = { SETUP: "setup", DIRECTIONS: "directions", PLAYING: "playing", SUMMARY: "summary" };
+const STEPS = { SETUP: "setup", DIRECTIONS: "directions", PLAYING: "playing", SUMMARY: "summary", BROWSE: "browse" };
 
 export default function InteractiveActivitiesPage() {
   const [step, setStep] = useState(STEPS.SETUP);
@@ -16,6 +17,7 @@ export default function InteractiveActivitiesPage() {
   const [activityConfig, setActivityConfig] = useState(null);
   const [completedResponses, setCompletedResponses] = useState([]);
   const [durationMinutes, setDurationMinutes] = useState(0);
+  const [showBrowse, setShowBrowse] = useState(false);
 
   const handleActivityGenerated = (config) => {
     setActivityConfig(config);
@@ -32,6 +34,21 @@ export default function InteractiveActivitiesPage() {
     setStep(STEPS.SUMMARY);
   };
 
+  const handleSelectSavedActivity = (savedActivity) => {
+    setActivityConfig({
+      items: savedActivity.activityContent.items,
+      teacherDirections: savedActivity.activityContent.teacherDirections,
+      studentDirections: savedActivity.activityContent.studentDirections,
+      passage: savedActivity.activityContent.passage,
+      templateType: savedActivity.templateType,
+      difficulty: savedActivity.difficulty,
+      languageLevel: savedActivity.languageLevel,
+      gradeBand: savedActivity.gradeBand,
+    });
+    setShowBrowse(false);
+    setStep(STEPS.DIRECTIONS);
+  };
+
   const handleStartNew = () => {
     setActivityConfig(null);
     setCompletedResponses([]);
@@ -46,8 +63,17 @@ export default function InteractiveActivitiesPage() {
           <PageHeader
             title="Interactive Activities"
             subtitle="Generate and run live, auto-scored activities during session"
+            action={
+              <Button onClick={() => setShowBrowse(!showBrowse)} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] gap-2">
+                <Library className="w-4 h-4" /> Browse Saved
+              </Button>
+            }
           />
-          <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} onShowDeafCultureGen={() => setShowDeafCultureGen(true)} />
+          {showBrowse ? (
+            <ActivityHistory onSelectActivity={handleSelectSavedActivity} />
+          ) : (
+            <ActivitySetupScreen onActivityGenerated={handleActivityGenerated} onShowDeafCultureGen={() => setShowDeafCultureGen(true)} />
+          )}
         </>
       )}
 
