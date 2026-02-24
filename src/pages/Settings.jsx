@@ -16,6 +16,24 @@ export default function SettingsPage() {
   const [inquiryForm, setInquiryForm] = useState({ name: "", email: "", schoolDistrict: "", estimatedUsers: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const { subStatus } = useSubscription();
+
+  const handleManageBilling = async () => {
+    if (window.self !== window.top) {
+      alert("Billing portal is only available from the published app.");
+      return;
+    }
+    setLoadingPortal(true);
+    try {
+      const res = await base44.functions.invoke("stripePortal", { returnUrl: window.location.href });
+      if (res.data?.url) window.location.href = res.data.url;
+    } catch {
+      alert("Could not open billing portal. Please try again.");
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
