@@ -37,11 +37,20 @@ GENERATE A STRUCTURED ACTIVITY with:
 - Reflection Questions (2-3 open-ended questions)
 - Suggested Duration
 
+READING LEVEL LANGUAGE GUIDANCE:
+- Emergent: Very short, simple sentences (3-5 words). Basic, concrete vocabulary. Primarily picture-supported descriptions. Almost no abstract concepts.
+- Early: Short sentences (5-8 words). Common sight words and simple vocabulary. Very concrete and familiar topics. Minimal multisyllabic words.
+- Developing: Simple to moderate sentence length. Grade 2-4 vocabulary. Some abstract concepts introduced with context. Clear, direct language.
+- Expanding: Compound/complex sentences. Grade 5-7 vocabulary. Abstract concepts explained with examples. Academic language introduced.
+- Academic: Sophisticated sentence structures. Grade 8+ vocabulary. Nuanced abstract concepts. Domain-specific terminology appropriate.
+
+YOU MUST write all activity text (objective, procedure steps, reflection questions) at the ${readingLevel || "Developing"} reading level. This is critical — the actual wording of the activity content must match this level.
+
 RULES:
 1. Do NOT embed or link to videos.
 2. Do NOT include copyrighted materials; use placeholders for resources.
 3. Use placeholder "XX" for student name.
-4. Adjust language complexity per reading level.
+4. ALL WRITTEN CONTENT must match the reading level specified above.
 5. Activities should affirm Deaf culture and identity, not frame it as deficit.
 6. Include practical applications relevant to classroom/school life.
 
