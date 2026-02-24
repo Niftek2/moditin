@@ -104,8 +104,8 @@ export default function EquipmentPage() {
       )}
 
       {/* Add Equipment Dialog */}
-      <Dialog open={showEquipForm} onOpenChange={setShowEquipForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
+       <Dialog open={showEquipForm} onOpenChange={setShowEquipForm}>
+         <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md shadow-2xl">
           <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Add Equipment</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
@@ -140,7 +140,7 @@ export default function EquipmentPage() {
 
       {/* Log Check Dialog */}
       <Dialog open={showLogForm} onOpenChange={setShowLogForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md">
+        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md shadow-2xl">
           <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Equipment Check</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
