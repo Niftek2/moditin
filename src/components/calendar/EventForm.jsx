@@ -88,8 +88,8 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Event Type */}
-          <div>
-            <label className="text-sm font-semibold mb-1 block">Event Type</label>
+           <div>
+             <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Event Type</label>
             <div className="flex flex-wrap gap-2">
               {Object.entries(EVENT_TYPE_LABELS).map(([val, label]) => (
                 <button type="button" key={val}
@@ -106,14 +106,14 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
 
           {/* Title */}
           <div>
-            <label className="text-sm font-semibold mb-1 block">Title</label>
+            <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Title</label>
             <Input value={form.title} onChange={e => set("title", e.target.value)} required placeholder="e.g. Service session" />
           </div>
 
           {/* Student */}
           {students?.length > 0 && (
             <div>
-              <label className="text-sm font-semibold mb-1 block">Student (optional)</label>
+              <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Student (optional)</label>
               <Select value={form.studentId} onValueChange={v => set("studentId", v)}>
                 <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
                 <SelectContent>
@@ -129,12 +129,12 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
           {/* Date/Time */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-semibold mb-1 block">Start</label>
+              <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Start</label>
               <input type="datetime-local" value={form.startDateTime} onChange={e => set("startDateTime", e.target.value)}
                 required className="w-full border border-[var(--modal-border)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#6B2FB9]" />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">End</label>
+              <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">End</label>
               <input type="datetime-local" value={form.endDateTime} onChange={e => set("endDateTime", e.target.value)}
                 required className="w-full border border-[var(--modal-border)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#6B2FB9]" />
             </div>
@@ -142,7 +142,7 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
 
           {/* Setting */}
           <div>
-            <label className="text-sm font-semibold mb-1 block">Setting</label>
+            <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Setting</label>
             <div className="flex gap-2">
               {["InPerson", "Telepractice", "Hybrid", "NotApplicable"].map(s => (
                 <button type="button" key={s}
@@ -160,7 +160,7 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
           {/* Drive Time (InPerson/Hybrid only) */}
           {needsDrive && (
             <div>
-              <label className="text-sm font-semibold mb-1 block">Drive time from previous appointment (min)</label>
+              <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Drive time from previous appointment (min)</label>
               <div className="flex flex-wrap gap-2">
                 {DRIVE_CHIPS.map(m => (
                   <button type="button" key={m}
@@ -182,13 +182,13 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
 
           {/* Location */}
           <div>
-            <label className="text-sm font-semibold mb-1 block">Location <span className="text-[var(--modal-text-muted)] font-normal">(generic label only)</span></label>
+            <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Location <span className="text-[var(--modal-text-muted)] font-normal text-xs">(generic label only)</span></label>
             <Input value={form.locationLabel} onChange={e => set("locationLabel", e.target.value)} placeholder="e.g. 'School A' or 'Home'" />
           </div>
 
           {/* Notes */}
           <div>
-            <label className="text-sm font-semibold mb-1 block">Notes <span className="text-[var(--modal-text-muted)] font-normal">(no identifying info)</span></label>
+            <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Notes <span className="text-[var(--modal-text-muted)] font-normal text-xs">(no identifying info)</span></label>
             <Textarea value={form.notes} onChange={e => set("notes", e.target.value)} rows={2} placeholder="Optional session notes..." />
           </div>
 
@@ -197,7 +197,7 @@ export default function EventForm({ event, students, initialDate, onSave, onCanc
 
           {/* Reminders */}
           <div>
-            <label className="text-sm font-semibold mb-1 block">Reminders</label>
+            <label className="text-sm font-bold text-[var(--modal-text)] mb-1 block">Reminders</label>
             <div className="flex flex-wrap gap-2">
               {REMINDER_OPTIONS.map(r => (
                 <button type="button" key={r.value}
