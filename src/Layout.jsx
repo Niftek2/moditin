@@ -10,6 +10,12 @@ import { useAndroidBack } from "./components/shared/useAndroidBack";
 import SubscriptionGate, { SubscriptionProvider, useSubscription } from "./components/shared/SubscriptionGate";
 import FreemiumBanner from "./components/shared/FreemiumBanner";
 
+function FreemiumBannerWrapper() {
+  const { subStatus } = useSubscription();
+  if (!subStatus || subStatus.isPro) return null;
+  return <FreemiumBanner subStatus={subStatus} />;
+}
+
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
   useAndroidBack();
