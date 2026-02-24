@@ -167,9 +167,9 @@ IMPORTANT: ${DISCLAIMER}`,
                 <h3 className="font-semibold mb-4 text-[var(--modal-text)]">Recommended Assessments</h3>
                 <div className="space-y-3">
                   {wizardResult.recommendations?.map((rec, i) => (
-                    <div key={i} className="p-3 rounded-xl bg-white/5 border border-[var(--modal-border)]">
+                    <div key={i} className="p-3 rounded-xl bg-[var(--modal-card-hover)] border border-[var(--modal-border)]">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium text-white">{rec.toolName}</span>
+                        <span className="text-sm font-medium text-[var(--modal-text)]">{rec.toolName}</span>
                         <Badge className="text-[10px] bg-[#400070]/30 text-[var(--modal-purple-glow)] border-0">Priority {rec.priority}</Badge>
                       </div>
                       <p className="text-sm text-[var(--modal-text)]">{rec.rationale}</p>
