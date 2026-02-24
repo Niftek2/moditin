@@ -77,7 +77,7 @@ export default function StudentsPage() {
         title="Students"
         subtitle={`${students.length} student${students.length !== 1 ? "s" : ""} on your caseload`}
         action={
-          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
+          <Button onClick={handleAddStudent} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
             <Plus className="w-4 h-4" /> Add Student
           </Button>
         }
