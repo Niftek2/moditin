@@ -112,7 +112,7 @@ Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materia
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Service Model</Label>
             <Select value={serviceModel} onValueChange={setServiceModel}>
-              <SelectTrigger className="bg-white/5 border-[var(--modal-border)] text-white"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="InPerson">In Person</SelectItem>
                 <SelectItem value="Telepractice">Telepractice</SelectItem>
@@ -122,7 +122,7 @@ Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materia
           </div>
           <div className="space-y-2">
             <Label className="text-[var(--modal-text-muted)]">Session Length (min)</Label>
-            <Input type="number" value={sessionLength} onChange={(e) => setSessionLength(e.target.value)} className="bg-white/5 border-[var(--modal-border)] text-white" />
+            <Input type="number" value={sessionLength} onChange={(e) => setSessionLength(e.target.value)} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
           </div>
           <Button onClick={handleGenerate} disabled={!studentId || !goalId || loading} className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
