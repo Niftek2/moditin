@@ -198,9 +198,10 @@ export default function SettingsPage() {
                     <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
                     {label}
                   </li>
-                ))}
-              </ul>
-            </div>
+                  ))}
+                  </ul>
+                  <p className="text-xs text-[var(--modal-text-muted)] mt-3">...and so much more</p>
+                  </div>
           </div>
 
           {/* Active subscription info */}
