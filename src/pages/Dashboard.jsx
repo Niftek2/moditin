@@ -31,14 +31,13 @@ export default function Dashboard() {
   useEffect(() => {
     base44.auth.me().then((u) => {
       setUser(u);
-      // Redirect to onboarding if no full_name set
-      if (u && !u.full_name) {
+      if (u && !u.firstName) {
         window.location.href = "/Onboarding";
       }
     }).catch(() => {});
   }, []);
 
-  const firstName = user?.full_name?.split(" ")[0] || "";
+  const firstName = user?.firstName || "";
 
   const { data: students = [] } = useQuery({
     queryKey: ["students"],
