@@ -22,7 +22,28 @@ export default function SettingsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(null);
   const { subStatus } = useSubscription();
+
+  const handleCheckout = async (priceId) => {
+    if (window.self !== window.top) {
+      alert("Checkout is only available from the published app.");
+      return;
+    }
+    setLoadingCheckout(priceId);
+    try {
+      const res = await base44.functions.invoke("stripeCheckout", {
+        successUrl: window.location.href + "?subscribed=1",
+        cancelUrl: window.location.href,
+        priceId,
+      });
+      if (res.data?.url) window.location.href = res.data.url;
+    } catch {
+      alert("Could not open checkout. Please try again.");
+    } finally {
+      setLoadingCheckout(null);
+    }
+  };
 
   const handleManageBilling = async () => {
     if (window.self !== window.top) {
