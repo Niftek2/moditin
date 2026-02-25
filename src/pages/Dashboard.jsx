@@ -233,33 +233,69 @@ export default function Dashboard() {
         </div>
 
         {/* Student List */}
-        {recentStudents.length === 0 ?
+        {displayedStudents.length === 0 ?
         <div className="text-center py-8 text-[var(--modal-text-muted)]">
             <p className="text-sm">No students yet</p>
           </div> :
 
-        <div className="space-y-2" role="list">
-            {recentStudents.map((s) =>
-          <Link
-            key={s.id}
-            to={createPageUrl(`StudentDetail?id=${s.id}`)}
-            className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
-            role="listitem"
-            aria-label={`${s.studentInitials}, ${s.communicationModality || 'unknown modality'}`}>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="students">
+            {(provided, snapshot) => (
+              <div 
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="space-y-2" 
+                role="list"
+              >
+                {displayedStudents.map((s, idx) => {
+                  const color = getColorForStudent(s.colorTag || 'pastel-gray');
+                  return (
+                    <Draggable key={s.id} draggableId={s.id} index={idx}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          className={snapshot.isDragging ? "opacity-50" : ""}
+                        >
+                          <Link
+                            to={createPageUrl(`StudentDetail?id=${s.id}`)}
+                            className="modal-card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                            style={{ borderLeft: `4px solid ${color.border}` }}
+                            role="listitem"
+                            aria-label={`${s.studentInitials}, ${s.communicationModality || 'unknown modality'}`}>
 
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-[#400070] text-white flex items-center justify-center font-bold text-sm shrink-0" aria-hidden="true">
-                    {s.studentInitials?.charAt(0) || "?"}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-[var(--modal-text)] truncate">{s.studentInitials}</p>
-                    <p className="text-xs text-[var(--modal-text-muted)]">{s.communicationModality || "—"} • {s.readingLevelBand || "—"}</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" aria-hidden="true" />
-              </Link>
-          )}
-          </div>
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div 
+                                {...provided.dragHandleProps}
+                                className="text-[var(--modal-text-muted)] hover:text-[var(--modal-text)] shrink-0 cursor-grab active:cursor-grabbing"
+                                aria-hidden="true"
+                              >
+                                <GripVertical className="w-4 h-4" />
+                              </div>
+                              <div 
+                                className="w-10 h-10 rounded-full text-white flex items-center justify-center font-bold text-sm shrink-0" 
+                                style={{ backgroundColor: color.text, color: color.bg }}
+                                aria-hidden="true"
+                              >
+                                {s.studentInitials?.charAt(0) || "?"}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold text-[var(--modal-text)] truncate">{s.studentInitials}</p>
+                                <p className="text-xs text-[var(--modal-text-muted)]">{s.communicationModality || "—"} • {s.readingLevelBand || "—"}</p>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-[var(--modal-border)] shrink-0" aria-hidden="true" />
+                          </Link>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         }
       </motion.div>
     </div>
