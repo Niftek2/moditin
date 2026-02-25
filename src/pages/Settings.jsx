@@ -69,17 +69,58 @@ export default function SettingsPage() {
       <div className="space-y-6 max-w-2xl">
         {/* Account */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-4">Account</h3>
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs text-[var(--modal-text-muted)]">Name</p>
-              <p className="text-sm text-[var(--modal-text)]">{user?.full_name || "—"}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[var(--modal-text-muted)]">Email</p>
-              <p className="text-sm text-[var(--modal-text)]">{user?.email || "—"}</p>
-            </div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-[var(--modal-text)]">Account</h3>
+            {!editingProfile && (
+              <Button variant="ghost" size="sm" onClick={() => setEditingProfile(true)} className="gap-1 text-[#400070] hover:text-[#5B00A0] h-8 px-2">
+                <Pencil className="w-3.5 h-3.5" /> Edit
+              </Button>
+            )}
           </div>
+
+          {editingProfile ? (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-[var(--modal-text-muted)]">First Name</Label>
+                <Input
+                  value={profileForm.firstName}
+                  onChange={(e) => setProfileForm(p => ({ ...p, firstName: e.target.value }))}
+                  placeholder="Your first name"
+                  className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[var(--modal-text-muted)]">Email</Label>
+                <Input value={profileForm.email} disabled className="bg-gray-50 border-[var(--modal-border)] text-[var(--modal-text-muted)]" />
+                <p className="text-xs text-[var(--modal-text-muted)]">Email cannot be changed here</p>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSaveProfile} disabled={savingProfile || !profileForm.firstName.trim()} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
+                  {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Save
+                </Button>
+                <Button variant="outline" onClick={() => { setEditingProfile(false); setProfileForm({ firstName: user?.firstName || "", email: user?.email || "" }); }} className="border-[var(--modal-border)]">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {profileSaved && (
+                <div className="flex items-center gap-2 text-green-600 text-sm">
+                  <CheckCircle2 className="w-4 h-4" /> Profile updated!
+                </div>
+              )}
+              <div>
+                <p className="text-xs text-[var(--modal-text-muted)]">First Name</p>
+                <p className="text-sm text-[var(--modal-text)]">{user?.firstName || "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[var(--modal-text-muted)]">Email</p>
+                <p className="text-sm text-[var(--modal-text)]">{user?.email || "—"}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Subscription */}
