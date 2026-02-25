@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, X, Clock, Volume2 } from "lucide-react";
@@ -7,10 +7,167 @@ import { base44 } from "@/api/base44Client";
 import ReadAloudButton from "../shared/ReadAloudButton";
 import { TEMPLATE_LABELS, PROMPT_LEVELS, PROMPT_LEVEL_LABELS } from "./activityTemplates";
 
+// ---------- Speak helper ----------
+function speakText(text, rate = 1.0) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = rate;
+  window.speechSynthesis.speak(utt);
+}
+
+// ---------- Auditory Discrimination Player ----------
+function AuditoryDiscriminationItem({ item, current, audioRate, onSelectAnswer }) {
+  const [played, setPlayed] = useState(false);
+  const wordToSay = item.soundToSay || item.correctAnswer;
+
+  const handlePlay = useCallback(() => {
+    speakText(wordToSay, audioRate);
+    setPlayed(true);
+  }, [wordToSay, audioRate]);
+
+  // Reset played state when item changes
+  useEffect(() => { setPlayed(false); }, [item.questionText]);
+
+  return (
+    <div className="modal-card p-6 mb-4">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)] mb-3">Listen &amp; Click</p>
+
+      {/* Big play button */}
+      <div className="flex flex-col items-center mb-8">
+        <button
+          onClick={handlePlay}
+          className="w-24 h-24 rounded-full bg-[#400070] hover:bg-[#5B00A0] text-white flex flex-col items-center justify-center gap-1 shadow-lg transition-all active:scale-95"
+        >
+          <Volume2 className="w-10 h-10" />
+          <span className="text-xs font-semibold">Play</span>
+        </button>
+        <p className="text-xs text-[var(--modal-text-muted)] mt-3">Teacher clicks Play, then student points to the word they heard</p>
+      </div>
+
+      {/* Word choice buttons */}
+      <div className="grid grid-cols-2 gap-4">
+        {(item.answerChoices || []).map((choice, i) => {
+          const isSelected = current.selectedAnswer === choice;
+          const isCorrect = choice === item.correctAnswer;
+          let cls = "p-6 rounded-2xl border-2 text-center text-2xl font-bold transition-all ";
+          if (isSelected && isCorrect) cls += "border-green-400 bg-green-50 text-green-800";
+          else if (isSelected && !isCorrect) cls += "border-orange-300 bg-orange-50 text-orange-800";
+          else if (current.selectedAnswer && isCorrect) cls += "border-green-300 bg-green-50/50 text-green-700";
+          else cls += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
+
+          return (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <button type="button" onClick={() => onSelectAnswer(choice)} className={cls + " w-full"}>
+                {choice}
+              </button>
+              <ReadAloudButton text={choice} rate={audioRate} size="sm" />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Vocabulary Visual Item ----------
+function VocabularyVisualItem({ item, current, audioRate, onSelectAnswer }) {
+  const [imgError, setImgError] = useState(false);
+  const imageUrl = item.questionImageUrl || item.imageUrl;
+
+  return (
+    <div className="modal-card p-6 mb-4">
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Vocabulary</p>
+        <ReadAloudButton text={item.questionText} rate={audioRate} size="sm" />
+      </div>
+
+      {/* Image */}
+      {imageUrl && !imgError && (
+        <div className="flex justify-center mb-4">
+          <img
+            src={imageUrl}
+            alt={item.vocabularyWord || item.correctAnswer}
+            className="rounded-xl object-cover w-full max-w-xs h-44 border border-[var(--modal-border)]"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
+
+      <p className="text-xl font-semibold text-[var(--modal-text)] mb-4 text-center">{item.questionText}</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {(item.answerChoices || []).map((choice, i) => {
+          const isSelected = current.selectedAnswer === choice;
+          const isCorrect = choice === item.correctAnswer;
+          let cls = "p-4 rounded-2xl border-2 text-center font-semibold transition-all ";
+          if (isSelected && isCorrect) cls += "border-green-400 bg-green-50 text-green-800";
+          else if (isSelected && !isCorrect) cls += "border-orange-300 bg-orange-50 text-orange-800";
+          else if (current.selectedAnswer && isCorrect) cls += "border-green-300 bg-green-50/50 text-green-700";
+          else cls += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
+
+          return (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <button type="button" onClick={() => onSelectAnswer(choice)} className={cls + " w-full"}>
+                {choice}
+              </button>
+              <ReadAloudButton text={choice} rate={audioRate} size="sm" />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Standard Item (Comprehension, SelfAdvocacy, FollowingDirections, Equipment) ----------
+function StandardItem({ item, current, audioRate, onSelectAnswer }) {
+  return (
+    <div className="modal-card p-6 mb-4">
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Question</p>
+        <ReadAloudButton text={item.questionText} rate={audioRate} size="sm" />
+      </div>
+
+      {/* Scenario label for equipment */}
+      {item.scenario && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-800 italic">
+          🎧 {item.scenario}
+        </div>
+      )}
+
+      <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
+
+      <div className="grid grid-cols-1 gap-3">
+        {(item.answerChoices || []).map((choice, i) => {
+          const isSelected = current.selectedAnswer === choice;
+          const isCorrect = choice === item.correctAnswer;
+          let cls = "p-4 rounded-2xl border-2 text-left font-medium transition-all flex items-center gap-3 w-full ";
+          if (isSelected && isCorrect) cls += "border-green-400 bg-green-50 text-green-800";
+          else if (isSelected && !isCorrect) cls += "border-orange-300 bg-orange-50 text-orange-800";
+          else if (current.selectedAnswer && isCorrect) cls += "border-green-300 bg-green-50/50 text-green-700";
+          else cls += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
+
+          return (
+            <div key={i} className="flex items-center gap-2">
+              <button type="button" onClick={() => onSelectAnswer(choice)} className={cls}>
+                <span className="text-[var(--modal-text-muted)] text-sm font-bold min-w-[1.5rem]">{String.fromCharCode(65+i)}.</span>
+                <span className="text-base leading-snug">{choice}</span>
+              </button>
+              <ReadAloudButton text={choice} rate={audioRate} size="icon" />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Main Player ----------
 export default function ActivityPlayerScreen({ config, onComplete }) {
   const { items, student, templateType, goalText } = config;
   const [currentIdx, setCurrentIdx] = useState(0);
-  
+
   const { data: audioSettings } = useQuery({
     queryKey: ['userAudioSettings'],
     queryFn: async () => {
@@ -19,29 +176,22 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
         if (!user?.id) return null;
         const settings = await base44.entities.UserAudioSettings.filter({ userId: user.id });
         return settings?.[0] || null;
-      } catch {
-        return null;
-      }
+      } catch { return null; }
     },
   });
 
-  // Normalize answerChoices — always extract plain text string
+  const audioRate = audioSettings?.rate || 1.0;
+
+  // Normalize answerChoices to plain strings
   const extractChoiceText = (c) => {
     if (typeof c === 'string') {
-      // Sometimes the LLM returns a JSON string — try to parse it
       try {
         const parsed = JSON.parse(c);
-        if (parsed && typeof parsed === 'object') {
-          return parsed.text || parsed.label || parsed.value || Object.values(parsed).join('');
-        }
+        if (parsed && typeof parsed === 'object') return parsed.text || parsed.label || Object.values(parsed).join('');
         return c;
-      } catch {
-        return c;
-      }
+      } catch { return c; }
     }
-    if (c && typeof c === 'object') {
-      return c.text || c.label || c.value || '';
-    }
+    if (c && typeof c === 'object') return c.text || c.label || c.value || '';
     return String(c ?? '');
   };
 
@@ -52,7 +202,16 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
   }));
 
   const [responses, setResponses] = useState(
-    normalizedItems.map((item, i) => ({ itemNumber: i + 1, questionText: item.questionText, answerChoices: item.answerChoices, correctAnswer: item.correctAnswer, selectedAnswer: null, isCorrect: null, promptLevel: null, responseLatencySeconds: 0 }))
+    normalizedItems.map((item, i) => ({
+      itemNumber: i + 1,
+      questionText: item.questionText,
+      answerChoices: item.answerChoices,
+      correctAnswer: item.correctAnswer,
+      selectedAnswer: null,
+      isCorrect: null,
+      promptLevel: null,
+      responseLatencySeconds: 0
+    }))
   );
   const [startTime] = useState(Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -89,13 +248,18 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
     else handleFinish();
   };
 
-  const handleFinish = () => {
-    onComplete(responses, Math.round(elapsed / 60));
-  };
+  const handleFinish = () => onComplete(responses, Math.round(elapsed / 60));
 
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
   const progress = ((currentIdx + 1) / normalizedItems.length) * 100;
+
+  const renderItem = () => {
+    const props = { item, current, audioRate, onSelectAnswer: selectAnswer };
+    if (templateType === "AuditoryDiscrimination") return <AuditoryDiscriminationItem {...props} />;
+    if (templateType === "VocabularyVisual") return <VocabularyVisualItem {...props} />;
+    return <StandardItem {...props} />;
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -119,37 +283,18 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
         <div className="h-full bg-[#6B2FB9] rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* Question card */}
-      <div className="modal-card p-6 mb-4">
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Question {currentIdx + 1}</p>
-          <ReadAloudButton text={item.questionText} rate={audioSettings?.rate || 1.0} size="sm" />
+      {/* Passage for listening comprehension — shown above questions */}
+      {templateType === "ListeningComprehension" && config.passage && currentIdx === 0 && (
+        <div className="modal-card p-4 mb-4 bg-amber-50 border-amber-200">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold text-amber-700 uppercase tracking-wide">📖 Story Passage</p>
+            <ReadAloudButton text={config.passage} rate={audioRate} size="sm" />
+          </div>
+          <p className="text-sm text-amber-900 leading-relaxed italic">{config.passage}</p>
         </div>
-        <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
+      )}
 
-        {/* Answer buttons — text only */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {(item.answerChoices || []).map((choiceText, i) => {
-            const isSelected = current.selectedAnswer === choiceText;
-            const isCorrect = choiceText === item.correctAnswer;
-            let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all flex items-center gap-3 w-full ";
-            if (isSelected && isCorrect) btnClass += "border-green-400 bg-green-50 text-green-800";
-            else if (isSelected && !isCorrect) btnClass += "border-[#C4A8E8] bg-[#F7F3FA] text-[#400070]";
-            else if (current.selectedAnswer && isCorrect) btnClass += "border-green-300 bg-green-50/50 text-green-700";
-            else btnClass += "border-[var(--modal-border)] bg-white hover:border-[#6B2FB9] hover:bg-[#F7F3FA] text-[var(--modal-text)]";
-
-            return (
-              <div key={i} className="flex items-center gap-2">
-                <button type="button" onClick={() => selectAnswer(choiceText)} className={btnClass}>
-                  <span className="text-[var(--modal-text-muted)] text-sm font-bold min-w-[1.5rem]">{String.fromCharCode(65+i)}.</span>
-                  <span className="text-base leading-snug">{choiceText}</span>
-                </button>
-                <ReadAloudButton text={choiceText} rate={audioSettings?.rate || 1.0} size="icon" />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {renderItem()}
 
       {/* Prompt Level */}
       <div className="modal-card p-4 mb-4">
