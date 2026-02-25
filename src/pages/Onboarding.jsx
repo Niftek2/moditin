@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 
