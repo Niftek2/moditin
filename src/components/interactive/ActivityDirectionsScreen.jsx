@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Play } from "lucide-react";
 
 export default function ActivityDirectionsScreen({ config, onStart }) {
-  const { teacherDirections, studentDirections, passage, student, templateType } = config;
+  const { teacherDirections, studentDirections, passage, student, templateType, criticalElements, topic } = config;
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
