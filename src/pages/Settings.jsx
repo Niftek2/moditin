@@ -158,15 +158,18 @@ export default function SettingsPage() {
               </div>
               <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$0<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
               <ul className="space-y-1.5 text-xs text-[var(--modal-text-muted)]">
-                {[
-                  ["3 students", true],
-                  ["Service hour logging", true],
-                  ["Mileage tracking", true],
-                  ["Ling 6 sound check", true],
-                  ["Goal bank", false],
-                  ["Interactive activities", false],
-                  ["Worksheets", false],
-                ].map(([label, included]) => (
+                 {[
+                   ["3 students", true],
+                   ["Calendar & scheduling", true],
+                   ["Service hour logging", true],
+                   ["Mileage tracking", true],
+                   ["Ling 6 sound check", true],
+                   ["Goal bank", false],
+                   ["Interactive activities", false],
+                   ["Worksheets", false],
+                   ["Equipment troubleshooting wizard", false],
+                   ["Testing guided wizard", false],
+                 ].map(([label, included]) => (
                   <li key={label} className="flex items-center gap-2">
                     {included ? <Check className="w-3.5 h-3.5 text-green-500 shrink-0" /> : <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />}
                     <span className={included ? "text-[var(--modal-text)]" : ""}>{label}</span>
