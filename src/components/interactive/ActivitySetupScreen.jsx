@@ -113,10 +113,13 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       return { ...item, answerChoices: answerChoicesWithImages, questionImageUrl };
     }));
 
+    // Strip emoji/surrogate characters to avoid utf-8 encoding errors
+    const stripEmoji = (str) => str ? str.replace(/[^\x00-\x7F\u00A0-\u024F\u1E00-\u1EFF]/g, '').trim() : str;
+
     // Save to ActivityLog for reuse
     await base44.entities.ActivityLog.create({
       templateType,
-      title: `${TEMPLATE_LABELS[templateType]} - ${selectedStudent?.gradeBand} ${difficulty}`,
+      title: stripEmoji(`${TEMPLATE_LABELS[templateType]} - ${selectedStudent?.gradeBand} ${difficulty}`),
       gradeBand: selectedStudent?.gradeBand || "3-5",
       difficulty,
       languageLevel,
