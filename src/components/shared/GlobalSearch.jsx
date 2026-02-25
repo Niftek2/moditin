@@ -75,7 +75,7 @@ export default function GlobalSearch({ onNavigate }) {
       {/* Modal overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
+          className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
           onClick={() => setOpen(false)}
         >
           <div
