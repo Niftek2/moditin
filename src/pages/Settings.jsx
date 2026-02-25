@@ -147,38 +147,90 @@ export default function SettingsPage() {
         {/* Subscription */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-4">Subscription</h3>
-          {subStatus?.isActive ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-                <div className="w-10 h-10 rounded-full bg-[#400070] flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Pro — Active</p>
-                  <p className="text-xs text-[var(--modal-text-muted)]">
-                    {subStatus.isTrial
-                      ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
-                      : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
-                  </p>
-                </div>
+
+          {/* Plan comparison cards */}
+          <div className="grid sm:grid-cols-2 gap-4 mb-4">
+            {/* Free Plan */}
+            <div className={`rounded-xl border-2 p-4 ${!subStatus?.isPro ? "border-[#400070] bg-[#F7F3FA]" : "border-[var(--modal-border)] bg-white"}`}>
+              <div className="flex items-center justify-between mb-1">
+                <p className="font-semibold text-[var(--modal-text)]">Free</p>
+                {!subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
               </div>
-              <Button
-                onClick={handleManageBilling}
-                disabled={loadingPortal}
-                variant="outline"
-                className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2"
-              >
-                {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-                Manage Billing
-              </Button>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$0<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
+              <ul className="space-y-1.5 text-xs text-[var(--modal-text-muted)]">
+                {[
+                  ["Up to 5 students", true],
+                  ["Service hour logging", true],
+                  ["Goal bank", true],
+                  ["Unlimited students", false],
+                  ["Interactive activities", false],
+                  ["Ling 6 check", false],
+                  ["Worksheets", false],
+                  ["Mileage tracking", false],
+                ].map(([label, included]) => (
+                  <li key={label} className="flex items-center gap-2">
+                    {included ? <Check className="w-3.5 h-3.5 text-green-500 shrink-0" /> : <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />}
+                    <span className={included ? "text-[var(--modal-text)]" : ""}>{label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="p-4 rounded-xl border border-[var(--modal-border)] bg-[#F7F3FA]">
-                <p className="text-sm font-semibold text-[var(--modal-text)]">Modal Itinerant — $17.99/mo or $179/yr</p>
-                <p className="text-xs text-[var(--modal-text-muted)] mt-1">7-day free trial · Cancel anytime</p>
+
+            {/* Pro Plan */}
+            <div className={`rounded-xl border-2 p-4 ${subStatus?.isPro ? "border-[#400070] bg-[#F7F3FA]" : "border-[var(--modal-border)] bg-white"}`}>
+              <div className="flex items-center justify-between mb-1">
+                <p className="font-semibold text-[var(--modal-text)] flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-[#400070]" /> Pro</p>
+                {subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
               </div>
-              <p className="text-xs text-[var(--modal-text-muted)]">You currently don't have an active subscription.</p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
+              <ul className="space-y-1.5 text-xs">
+                {[
+                  "Up to 5 students",
+                  "Service hour logging",
+                  "Goal bank",
+                  "Unlimited students",
+                  "Interactive activities",
+                  "Ling 6 check",
+                  "Worksheets",
+                  "Mileage tracking",
+                ].map((label) => (
+                  <li key={label} className="flex items-center gap-2 text-[var(--modal-text)]">
+                    <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                    {label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Active subscription info */}
+          {subStatus?.isActive && (
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)] mb-4 text-sm">
+              <Sparkles className="w-4 h-4 text-[#400070] shrink-0" />
+              <p className="text-[var(--modal-text)]">
+                {subStatus.isTrial
+                  ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
+                  : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
+              </p>
+            </div>
+          )}
+
+          {/* Action buttons */}
+          {subStatus?.isPro ? (
+            <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
+              {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+              Manage Billing
+            </Button>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => handleCheckout("price_1T4B1rG8v8oKpU6mPPumccla")} disabled={!!loadingCheckout} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
+                {loadingCheckout === "price_1T4B1rG8v8oKpU6mPPumccla" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                Start Free Trial · $17.99/mo
+              </Button>
+              <Button onClick={() => handleCheckout("price_1T4B2AG8v8oKpU6mJlR8EZad")} disabled={!!loadingCheckout} variant="outline" className="border-[#400070] text-[#400070] hover:bg-[#F7F3FA] gap-2">
+                {loadingCheckout === "price_1T4B2AG8v8oKpU6mJlR8EZad" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                Annual · $179/yr
+              </Button>
             </div>
           )}
         </div>
