@@ -14,6 +14,9 @@ const CATEGORIES = ["Classroom Access", "Instructional Delivery", "Hearing Techn
 
 export default function AccommodationsPage() {
   const [selectedStudent, setSelectedStudent] = useState("");
+  const [showCustomDialog, setShowCustomDialog] = useState(false);
+  const [customAccName, setCustomAccName] = useState("");
+  const [customAccNotes, setCustomAccNotes] = useState("");
   const queryClient = useQueryClient();
 
   const { data: students = [] } = useQuery({
