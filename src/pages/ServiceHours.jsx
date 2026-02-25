@@ -73,6 +73,20 @@ export default function ServiceHoursPage() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["serviceEntries"] }); setShowForm(false); },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ServiceEntry.update(id, data),
+    onSuccess: () => { 
+      queryClient.invalidateQueries({ queryKey: ["serviceEntries"] }); 
+      setShowForm(false);
+      setEditingId(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.ServiceEntry.delete(id),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["serviceEntries"] }); },
+  });
+
   useEffect(() => {
     if (timerRunning) {
       intervalRef.current = setInterval(() => setTimerSeconds(s => s + 1), 1000);
