@@ -1,30 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Shield } from "lucide-react";
 
 const TERMS_KEY = "modal_itinerant_terms_agreed_v1";
-
-const checkboxItems = [
-  { id: "noAdvice", label: "I understand this App does not provide medical or legal advice." },
-  { id: "noStudentPII", label: "I will not enter identifiable student information (full names, DOB, addresses, IDs, school/district names, or records)." },
-  { id: "noRefunds", label: "I understand subscriptions are non-refundable." },
-  { id: "arbitration", label: "I agree to mandatory arbitration and waive class action rights." },
-  { id: "indemnify", label: "I agree to indemnify and hold harmless Modal Education, LLC." },
-];
 
 export function hasAgreedToTerms() {
   return localStorage.getItem(TERMS_KEY) === "true";
 }
 
 export default function TermsAgreementModal({ onAgree }) {
-  const [checked, setChecked] = useState({});
-
-  const allChecked = checkboxItems.every((item) => checked[item.id]);
-
-  const toggle = (id) => setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
-
   const handleAgree = () => {
     localStorage.setItem(TERMS_KEY, "true");
     onAgree();
@@ -124,27 +109,11 @@ export default function TermsAgreementModal({ onAgree }) {
           </div>
         </ScrollArea>
 
-        {/* Acknowledgments */}
+        {/* Footer */}
         <div className="px-6 py-5 border-t border-[var(--modal-border)] bg-[#F7F3FA] rounded-b-2xl shrink-0">
-          <p className="text-sm font-semibold text-[var(--modal-text)] mb-3">
-            Required Acknowledgments — please check all boxes to continue:
-          </p>
-          <div className="space-y-3 mb-5">
-            {checkboxItems.map((item) => (
-              <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
-                <Checkbox
-                  checked={!!checked[item.id]}
-                  onCheckedChange={() => toggle(item.id)}
-                  className="mt-0.5 shrink-0 border-[#400070] data-[state=checked]:bg-[#400070] data-[state=checked]:text-white"
-                />
-                <span className="text-sm text-[var(--modal-text)] leading-snug">{item.label}</span>
-              </label>
-            ))}
-          </div>
           <Button
             onClick={handleAgree}
-            disabled={!allChecked}
-            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-11 text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-11 text-base font-semibold"
           >
             I Agree — Continue to Modal Itinerant
           </Button>
