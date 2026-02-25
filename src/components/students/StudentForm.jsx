@@ -13,6 +13,16 @@ const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
 const COMMUNICATION_MODALITIES = ["LSL", "ASL", "Bilingual ASL/English", "Total Communication", "Other"];
 const PRIMARY_LANGUAGES = ["ASL", "English", "ASL/English Bilingual", "Other"];
 const READING_LEVELS = ["Emergent (PreK-K)", "Early (1-2)", "Developing (3-5)", "Expanding (6-8)", "Academic (9-12)"];
+const COLOR_OPTIONS = [
+  { value: "red", label: "Red", bg: "bg-red-100", dot: "bg-red-500" },
+  { value: "orange", label: "Orange", bg: "bg-orange-100", dot: "bg-orange-500" },
+  { value: "yellow", label: "Yellow", bg: "bg-yellow-100", dot: "bg-yellow-500" },
+  { value: "green", label: "Green", bg: "bg-green-100", dot: "bg-green-500" },
+  { value: "blue", label: "Blue", bg: "bg-blue-100", dot: "bg-blue-500" },
+  { value: "purple", label: "Purple", bg: "bg-purple-100", dot: "bg-purple-500" },
+  { value: "pink", label: "Pink", bg: "bg-pink-100", dot: "bg-pink-500" },
+  { value: "gray", label: "Gray", bg: "bg-gray-100", dot: "bg-gray-500" },
+];
 
 export default function StudentForm({ student, onSubmit, onCancel }) {
   const [form, setForm] = useState(student || {
@@ -35,6 +45,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     primaryLanguage: "",
     readingLevelBand: "",
     aslInstructionFocus: false,
+    colorTag: "gray",
   });
   const [piiWarnings, setPiiWarnings] = useState([]);
 
@@ -315,8 +326,30 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
               ASL Instruction Focus
             </Label>
           </div>
-        </div>
-      </div>
+          </div>
+          </div>
+
+          {/* Color Tag */}
+          <div className="border-t-2 border-[var(--modal-border)] pt-6 mt-6">
+          <Label className="text-[var(--modal-text)] font-semibold text-sm mb-3 block">Color Tag</Label>
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+          {COLOR_OPTIONS.map(color => (
+            <button
+              key={color.value}
+              type="button"
+              onClick={() => updateField("colorTag", color.value)}
+              className={`p-3 rounded-lg border-2 transition-all ${
+                form.colorTag === color.value
+                  ? `${color.bg} border-[#400070]`
+                  : `${color.bg} border-transparent hover:border-[var(--modal-border)]`
+              }`}
+              title={color.label}
+            >
+              <div className={`w-3 h-3 rounded-full mx-auto ${color.dot}`} />
+            </button>
+          ))}
+          </div>
+          </div>
 
       </div>
 
