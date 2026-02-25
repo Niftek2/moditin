@@ -179,7 +179,7 @@ Return JSON with: title, instructions, items (array of objects with 'prompt', op
           </div>
           <Button onClick={handleGenerate} disabled={!template || !topic || loading} className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            Generate Worksheet
+            {loading ? "Generating..." : "Generate Worksheet"}
           </Button>
           <AIDisclaimer compact />
         </div>
