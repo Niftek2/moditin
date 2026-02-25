@@ -125,11 +125,6 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
           <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Question {currentIdx + 1}</p>
           {audioSettings?.enabled && <ReadAloudButton text={item.questionText} rate={audioSettings.rate || 1.0} size="sm" />}
         </div>
-        {item.questionImageUrl && (
-          <div className="mb-4 flex justify-center">
-            <img src={item.questionImageUrl} alt={item.questionText} className="max-h-48 rounded-lg object-contain" />
-          </div>
-        )}
         <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
 
         {/* Answer buttons — text only */}
