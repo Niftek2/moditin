@@ -13,8 +13,9 @@ import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
+import ActivityHistory from "../components/labeling/ActivityHistory";
 
-const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Contacts", "Exports"];
+const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
@@ -362,6 +363,12 @@ export default function StudentDetailPage() {
       {activeTab === "Interactive" && (
         <div id="tab-Interactive" role="tabpanel" aria-labelledby="tab-Interactive">
           <StudentInteractiveHistory studentId={studentId} />
+        </div>
+      )}
+
+      {activeTab === "Activities" && (
+        <div id="tab-Activities" role="tabpanel" aria-labelledby="tab-Activities">
+          <ActivityHistory studentId={studentId} />
         </div>
       )}
 
