@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight, Activity } from
+  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight, Activity, GripVertical } from
 "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import DailyQuote from "../components/shared/DailyQuote";
 import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval } from "date-fns";
 import { EVENT_COLORS } from "../components/calendar/calendarUtils";
+import { getColorForStudent } from "../components/utils/colorMapping";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
