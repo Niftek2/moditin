@@ -181,15 +181,14 @@ export default function SettingsPage() {
                 <p className="font-semibold text-[var(--modal-text)] flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-[#400070]" /> Pro</p>
                 {subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
               </div>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span> or $179<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
               <ul className="space-y-1.5 text-xs">
                 {[
-                  "Up to 5 students",
+                  "Add your whole caseload",
                   "Service hour logging",
                   "Goal bank",
-                  "Unlimited students",
                   "Interactive activities",
-                  "Ling 6 check",
+                  "Ling 6 sound check",
                   "Worksheets",
                   "Mileage tracking",
                 ].map((label) => (
