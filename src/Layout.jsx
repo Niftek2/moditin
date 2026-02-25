@@ -40,8 +40,8 @@ export default function Layout({ children, currentPageName }) {
 
           <main className="lg:pl-64 pt-1" id="main-content">
             <div
-              className="p-4 pt-16 lg:pt-8 lg:p-8 pb-24 lg:pb-10 max-w-7xl mx-auto"
-              style={{ paddingBottom: "calc(5rem + env(safe-area-inset-bottom))" }}
+              className="p-4 pt-16 lg:pt-8 lg:p-8 pb-10 lg:pb-10 max-w-7xl mx-auto"
+              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
               <div className="flex justify-end mb-4 -mt-2">
                 <NotificationBell />
