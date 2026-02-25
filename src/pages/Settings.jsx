@@ -41,8 +41,21 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    base44.auth.me().then((u) => {
+      setUser(u);
+      setProfileForm({ firstName: u?.firstName || "", email: u?.email || "" });
+    }).catch(() => {});
   }, []);
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    await base44.auth.updateMe({ firstName: profileForm.firstName.trim() });
+    setUser(u => ({ ...u, firstName: profileForm.firstName.trim() }));
+    setSavingProfile(false);
+    setProfileSaved(true);
+    setEditingProfile(false);
+    setTimeout(() => setProfileSaved(false), 3000);
+  };
 
   const inquiryMutation = useMutation({
     mutationFn: (data) => base44.entities.SchoolInquiry.create(data),
