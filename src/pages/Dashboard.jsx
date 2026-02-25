@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight } from
+  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight, Activity } from
 "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
@@ -164,8 +164,12 @@ export default function Dashboard() {
             <Zap className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Interactive Activities</p>
           </Link>
-        </div>
-      </motion.div>
+          <Link to={createPageUrl("LabelingActivities")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <Activity className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
+            <p className="text-sm font-bold text-[var(--modal-text)]">Labeling Activities</p>
+          </Link>
+          </div>
+          </motion.div>
 
       {/* BLOCK C: MY STUDENTS */}
       <motion.div
