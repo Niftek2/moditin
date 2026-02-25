@@ -98,15 +98,32 @@ Return JSON with: title, instructions, items (array of objects with 'prompt', op
         },
       },
     });
-    setWorksheetContent(result);
+    // Generate AI images for each item
+    const itemsWithImages = await Promise.all(result.items.map(async (item) => {
+      if (item.clipartDescription) {
+        try {
+          const imageResult = await base44.integrations.Core.GenerateImage({
+            prompt: `Child-friendly colorful cartoon illustration: ${item.clipartDescription}. Simple, clean, educational clipart style.`
+          });
+          return { ...item, imageUrl: imageResult.url };
+        } catch {
+          return item;
+        }
+      }
+      return item;
+    }));
+
+    const finalContent = { ...result, items: itemsWithImages };
+    setWorksheetContent(finalContent);
+
     // Save to history
     await base44.entities.WorksheetLog.create({
       templateType: template,
       topic,
       gradeLevel,
       languageLevel,
-      title: result.title,
-      worksheetContent: result,
+      title: finalContent.title,
+      worksheetContent: finalContent,
       generatedDate: new Date().toISOString(),
     });
     queryClient.invalidateQueries({ queryKey: ["worksheetLogs"] });
