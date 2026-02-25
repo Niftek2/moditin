@@ -83,14 +83,38 @@ export default function Dashboard() {
   filter((e) => new Date(e.startDateTime) > now).
   sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0];
 
+  // Handle drag end for student reordering
+  const handleDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+    if (source.index === destination.index) return;
+
+    const reordered = Array.from(displayedStudents);
+    const [moved] = reordered.splice(source.index, 1);
+    reordered.splice(destination.index, 0, moved);
+
+    // Update display order
+    Promise.all(reordered.map((s, idx) => 
+      base44.entities.Student.update(s.id, { displayOrder: idx })
+    )).catch(err => console.error("Failed to update student order:", err));
+  };
+
   // Filtered students for recent view
   const filteredStudents = students.filter((s) =>
   s.studentInitials?.toLowerCase().includes(studentSearch.toLowerCase()) ||
   s.gradeBand?.toLowerCase().includes(studentSearch.toLowerCase())
-  ).slice(0, 5);
+  );
 
-  // Get "recent" students (last 5 by creation)
-  const recentStudents = studentSearch ? filteredStudents : students.slice(0, 5);
+  // Get "recent" students sorted by displayOrder
+  const displayedStudents = studentSearch 
+    ? filteredStudents.slice(0, 5)
+    : filteredStudents
+        .sort((a, b) => {
+          const orderA = a.displayOrder ?? students.indexOf(a);
+          const orderB = b.displayOrder ?? students.indexOf(b);
+          return orderA - orderB;
+        })
+        .slice(0, 5);
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
