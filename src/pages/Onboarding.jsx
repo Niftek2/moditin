@@ -14,8 +14,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     base44.auth.me().then((u) => {
-      if (u?.full_name) {
-        // User already has a full name, skip onboarding
+      if (u?.firstName) {
         navigate("/");
       } else {
         setUser(u);
@@ -25,11 +24,11 @@ export default function Onboarding() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!fullName.trim()) return;
+    if (!firstName.trim()) return;
 
     setLoading(true);
     try {
-      await base44.auth.updateMe({ full_name: fullName });
+      await base44.auth.updateMe({ firstName: firstName.trim() });
       navigate("/");
     } catch (err) {
       console.error(err);
