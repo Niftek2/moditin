@@ -141,7 +141,7 @@ export default function MyDay() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-[var(--modal-text)]">
-              {greetText}{user?.full_name ? `, ${user.full_name.split(" ")[0]}` : ""}!
+              {greetText}!
             </h1>
             <p className="text-sm text-[var(--modal-text-muted)]">
               {format(now, "EEEE, MMMM d, yyyy")}
