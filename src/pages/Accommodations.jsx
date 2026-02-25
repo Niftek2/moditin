@@ -4,7 +4,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ClipboardCheck } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ClipboardCheck, Plus } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 
 const CATEGORIES = ["Classroom Access", "Instructional Delivery", "Hearing Technology", "Assessments", "Communication Supports", "Environmental", "Other"];
