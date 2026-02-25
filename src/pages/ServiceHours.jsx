@@ -26,6 +26,7 @@ export default function ServiceHoursPage() {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timerCategory, setTimerCategory] = useState("DirectService");
   const [timerStudentId, setTimerStudentId] = useState("");
+  const [editingId, setEditingId] = useState(null);
   const intervalRef = useRef(null);
 
   const [form, setForm] = useState({
