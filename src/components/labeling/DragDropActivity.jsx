@@ -63,27 +63,41 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#400070] to-[#6B2FB9] text-white p-4 rounded-t-2xl">
-        <h2 className="text-2xl font-bold text-center">{activityConfig.title}</h2>
+      <div className="bg-gradient-to-r from-[#400070] to-[#6B2FB9] text-white p-3 sm:p-4 rounded-t-2xl">
+        <h2 className="text-xl sm:text-2xl font-bold text-center">{activityConfig.title}</h2>
       </div>
 
       {/* Instructions */}
-      <div className="bg-[var(--modal-bg)] px-4 py-3 text-center border-b border-[var(--modal-border)]">
-        <p className="text-[var(--modal-text-muted)] text-sm">Drag each label to the appropriate box.</p>
+      <div className="bg-[var(--modal-bg)] px-4 py-2 sm:py-3 text-center border-b border-[var(--modal-border)]">
+        <p className="text-[var(--modal-text-muted)] text-xs sm:text-sm">Drag each label to the appropriate box.</p>
       </div>
 
-      {/* Activity Area */}
-      <div className="flex-1 relative overflow-hidden bg-white p-4 sm:p-8" data-drop-zones>
-        {/* Device Image */}
-        <div className="flex items-center justify-center h-full min-h-96">
-          <img
-            src={activityConfig.imageUrl}
-            alt={activityConfig.title}
-            className="h-full max-h-96 w-auto object-contain"
-          />
-        </div>
+      {/* Device Image Area */}
+      <div className="flex-1 overflow-auto bg-white flex items-center justify-center p-3 sm:p-6" data-drop-zones>
+        <img
+          src={activityConfig.imageUrl}
+          alt={activityConfig.title}
+          className="max-w-full max-h-full w-auto h-auto object-contain"
+        />
+        
+        {/* Completion Overlay */}
+        {isComplete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 bg-green-500/20 flex items-center justify-center rounded-t-2xl"
+          >
+            <div className="bg-white rounded-2xl p-6 text-center shadow-2xl">
+              <p className="text-2xl font-bold text-green-600">Perfect!</p>
+            </div>
+          </motion.div>
+        )}
+      </div>
 
-        {/* Draggable Labels */}
+      {/* Draggable Labels Area */}
+      <div className="relative min-h-32 sm:min-h-40 bg-[var(--modal-bg)] p-3 sm:p-4 border-t border-[var(--modal-border)] overflow-hidden">
+        <p className="text-xs sm:text-sm text-[var(--modal-text-muted)] font-semibold mb-2">Drag labels here:</p>
+        
         {labels.map(label => (
           <motion.button
             key={label.tempId}
@@ -95,17 +109,17 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
             onMouseEnter={() => setDraggedLabel(label.tempId)}
             onMouseLeave={() => setDraggedLabel(null)}
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: droppedLabels[label.id] ? 0.5 : 1 }}
+            animate={{ opacity: droppedLabels[label.id] ? 0.3 : 1, y: 0 }}
             className={`
-              absolute min-h-[44px] px-4 py-2 rounded-2xl font-semibold text-sm
+              absolute min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-sm
               border-2 border-[#400070] bg-white text-[#400070]
               cursor-grab active:cursor-grabbing select-none
-              transition-all touch-none
-              ${draggedLabel === label.tempId ? "shadow-lg z-50" : ""}
-              ${droppedLabels[label.id] ? "opacity-50 cursor-not-allowed" : "hover:shadow-md"}
+              transition-all touch-none whitespace-nowrap
+              ${draggedLabel === label.tempId ? "shadow-lg z-50 scale-105" : ""}
+              ${droppedLabels[label.id] ? "opacity-30 cursor-not-allowed" : "hover:shadow-md hover:scale-102"}
             `}
             style={{
-              bottom: "1rem",
+              bottom: "0.75rem",
               left: `${label.x}%`,
             }}
             disabled={droppedLabels[label.id]}
@@ -113,23 +127,10 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
             {label.name}
           </motion.button>
         ))}
-
-        {/* Completion Overlay */}
-        {isComplete && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 bg-green-500/20 flex items-center justify-center"
-          >
-            <div className="bg-white rounded-2xl p-6 text-center shadow-2xl">
-              <p className="text-2xl font-bold text-green-600">Perfect!</p>
-            </div>
-          </motion.div>
-        )}
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-[var(--modal-bg)] px-4 py-3 border-t border-[var(--modal-border)]">
+      <div className="bg-white px-3 sm:px-4 py-2 sm:py-3 border-t border-[var(--modal-border)] rounded-b-2xl">
         <div className="flex items-center justify-between mb-2">
           <p className="text-xs font-semibold text-[var(--modal-text)]">
             Progress: {Object.keys(droppedLabels).length} / {activityConfig.labels.length}
