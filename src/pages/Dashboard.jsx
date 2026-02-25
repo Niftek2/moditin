@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [studentSearch, setStudentSearch] = useState("");
   const [focusSearchResult, setFocusSearchResult] = useState(false);
+  const [studentOrder, setStudentOrder] = useState([]);
   const queryClient = useQueryClient();
   const handleRefresh = () => Promise.all([
     queryClient.invalidateQueries({ queryKey: ["students"] }),
@@ -45,6 +46,16 @@ export default function Dashboard() {
     queryKey: ["students"],
     queryFn: () => base44.entities.Student.list()
   });
+
+  // Initialize studentOrder from displayOrder or ID order
+  useEffect(() => {
+    const ordered = [...students].sort((a, b) => {
+      const orderA = a.displayOrder ?? students.indexOf(a);
+      const orderB = b.displayOrder ?? students.indexOf(b);
+      return orderA - orderB;
+    });
+    setStudentOrder(ordered.map(s => s.id));
+  }, [students]);
 
   const { data: services = [] } = useQuery({
     queryKey: ["services-dash"],
