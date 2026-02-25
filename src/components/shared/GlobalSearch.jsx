@@ -61,7 +61,7 @@ export default function GlobalSearch({ onNavigate }) {
   }, []);
 
   return (
-    <>
+    <div className="relative">
       {/* Search trigger button */}
       <button
         onClick={() => setOpen(true)}
@@ -72,16 +72,12 @@ export default function GlobalSearch({ onNavigate }) {
         <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] text-[var(--modal-text-muted)] bg-white border border-[var(--modal-border)] rounded px-1.5 py-0.5">⌘K</kbd>
       </button>
 
-      {/* Modal overlay */}
+      {/* Dropdown panel — stays within sidebar */}
       {open && (
-        <div
-          className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[var(--modal-border)] overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <>
+          {/* Invisible backdrop to close on outside click */}
+          <div className="fixed inset-0 z-[9998]" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 right-0 top-full mt-1 z-[9999] bg-white rounded-2xl shadow-2xl border border-[var(--modal-border)] overflow-hidden">
             {/* Input */}
             <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--modal-border)]">
               <Search className="w-5 h-5 text-[#6B2FB9] shrink-0" />
@@ -100,7 +96,7 @@ export default function GlobalSearch({ onNavigate }) {
             </div>
 
             {/* Results */}
-            <div className="max-h-80 overflow-y-auto py-2">
+            <div className="max-h-72 overflow-y-auto py-2">
               {results.length === 0 ? (
                 <p className="text-center text-sm text-[var(--modal-text-muted)] py-8">No results found</p>
               ) : (
@@ -126,8 +122,8 @@ export default function GlobalSearch({ onNavigate }) {
               )}
             </div>
           </div>
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 }
