@@ -12,6 +12,7 @@ export default function CompletionScreen({
   onClose 
 }) {
   const [linking, setLinking] = useState(false);
+  const [correctLabels, setCorrectLabels] = useState(0);
 
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -26,7 +27,7 @@ export default function CompletionScreen({
   const handleAddToSession = async () => {
     setLinking(true);
     try {
-      const summary = `---\nLabeling Activity: ${getActivityTitle()}\nIdentified ${result.correctLabels}/${result.totalLabels} components.\nIncorrect attempts: ${result.incorrectAttempts}\nDuration: ${formatDuration(result.durationSeconds)}.\n---`;
+      const summary = `---\nLabeling Activity: ${getActivityTitle()}\nIdentified ${correctLabels}/${result.totalLabels} components.\nDuration: ${formatDuration(result.durationSeconds)}.\n---`;
 
       // Search for existing session
       const sessions = await base44.entities.ServiceEntry.filter({
@@ -70,9 +71,8 @@ export default function CompletionScreen({
         sessionDate,
         startTime,
         durationMinutes: Math.ceil(result.durationSeconds / 60),
-        correctLabels: result.correctLabels,
+        correctLabels,
         totalLabels: result.totalLabels,
-        incorrectAttempts: result.incorrectAttempts,
         durationSeconds: result.durationSeconds,
         linkedToSession: true,
         sessionId,
@@ -95,9 +95,8 @@ export default function CompletionScreen({
         sessionDate,
         startTime,
         durationMinutes: Math.ceil(result.durationSeconds / 60),
-        correctLabels: result.correctLabels,
+        correctLabels,
         totalLabels: result.totalLabels,
-        incorrectAttempts: result.incorrectAttempts,
         durationSeconds: result.durationSeconds,
         linkedToSession: false,
         sessionId: null,
@@ -118,18 +117,24 @@ export default function CompletionScreen({
       </div>
 
       {/* Summary */}
-      <div className="space-y-3 bg-[var(--modal-bg)] rounded-xl p-4">
+      <div className="space-y-4 bg-[var(--modal-bg)] rounded-xl p-4">
         <div className="flex justify-between items-center">
           <span className="text-[var(--modal-text-muted)] text-sm">Activity</span>
           <span className="font-semibold text-[var(--modal-text)]">{getActivityTitle()}</span>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-[var(--modal-text-muted)] text-sm">Correct Labels</span>
-          <span className="font-bold text-lg text-[#400070]">{result.correctLabels} / {result.totalLabels}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-[var(--modal-text-muted)] text-sm">Incorrect Attempts</span>
-          <span className="font-semibold text-[var(--modal-text)]">{result.incorrectAttempts}</span>
+        <div className="space-y-2">
+          <label className="text-[var(--modal-text-muted)] text-sm">How many labels were correct?</label>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              min="0"
+              max={result.totalLabels}
+              value={correctLabels}
+              onChange={(e) => setCorrectLabels(Math.min(Math.max(parseInt(e.target.value) || 0, 0), result.totalLabels))}
+              className="w-16 px-3 py-2 border-2 border-[var(--modal-border)] rounded-lg font-semibold text-[#400070] text-center"
+            />
+            <span className="text-[var(--modal-text)] font-semibold">/ {result.totalLabels}</span>
+          </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-[var(--modal-text-muted)] text-sm">Duration</span>
