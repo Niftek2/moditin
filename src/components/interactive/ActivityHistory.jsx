@@ -85,6 +85,14 @@ export default function ActivityHistory({ onSelectActivity }) {
               <RotateCcw className="w-3 h-3" />
               Reuse
             </Button>
+            <Button
+              onClick={() => handleDelete(activity.id)}
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:bg-red-50"
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
             <span className="text-xs text-[var(--modal-text-muted)] ml-auto flex items-center">
               {new Date(activity.created_date).toLocaleDateString()}
             </span>
