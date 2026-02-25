@@ -46,6 +46,28 @@ export default function AccommodationsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["studentAccommodations"] }),
   });
 
+  const createCustomMutation = useMutation({
+    mutationFn: async (data) => {
+      const customAccommodation = await base44.entities.Accommodation.create({
+        category: "Other",
+        name: data.name,
+        description: data.notes,
+      });
+      await base44.entities.StudentAccommodation.create({
+        studentId: selectedStudent,
+        accommodationId: customAccommodation.id,
+        notes: data.notes,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["studentAccommodations"] });
+      queryClient.invalidateQueries({ queryKey: ["accommodations"] });
+      setCustomAccName("");
+      setCustomAccNotes("");
+      setShowCustomDialog(false);
+    },
+  });
+
   const assignedIds = new Set(studentAccommodations.map(sa => sa.accommodationId));
   const saMap = {};
   studentAccommodations.forEach(sa => { saMap[sa.accommodationId] = sa.id; });
