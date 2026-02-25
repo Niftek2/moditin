@@ -181,6 +181,88 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         />
       </div>
 
+      {/* IEP Service Minutes */}
+      <div className="border-t-2 border-[var(--modal-border)] pt-6 mt-2">
+        <h3 className="text-base font-bold text-[var(--modal-text)] mb-4">IEP Service Minutes</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          {/* Direct */}
+          <div className="space-y-2 sm:col-span-2">
+            <Label className="text-[var(--modal-text)] font-semibold text-sm">Direct Services</Label>
+            <div className="flex gap-2 items-start flex-wrap">
+              <div className="flex-shrink-0 w-28">
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Minutes"
+                  value={form.directMinutes || ""}
+                  onChange={(e) => updateField("directMinutes", e.target.value ? parseInt(e.target.value) : "")}
+                  className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                />
+              </div>
+              <div className="flex-1 min-w-[130px]">
+                <Select value={form.directMinutesFrequency || ""} onValueChange={(v) => updateField("directMinutesFrequency", v)}>
+                  <SelectTrigger className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium">
+                    <SelectValue placeholder="Frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["Daily", "Weekly", "Monthly", "Annually", "Other"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              {form.directMinutesFrequency === "Other" && (
+                <div className="w-full">
+                  <Input
+                    placeholder="Describe frequency..."
+                    value={form.directMinutesFrequencyOther || ""}
+                    onChange={(e) => updateField("directMinutesFrequencyOther", e.target.value)}
+                    className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Indirect */}
+          <div className="space-y-2 sm:col-span-2">
+            <Label className="text-[var(--modal-text)] font-semibold text-sm">Indirect Services</Label>
+            <div className="flex gap-2 items-start flex-wrap">
+              <div className="flex-shrink-0 w-28">
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Minutes"
+                  value={form.indirectMinutes || ""}
+                  onChange={(e) => updateField("indirectMinutes", e.target.value ? parseInt(e.target.value) : "")}
+                  className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                />
+              </div>
+              <div className="flex-1 min-w-[130px]">
+                <Select value={form.indirectMinutesFrequency || ""} onValueChange={(v) => updateField("indirectMinutesFrequency", v)}>
+                  <SelectTrigger className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium">
+                    <SelectValue placeholder="Frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["Daily", "Weekly", "Monthly", "Annually", "Other"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              {form.indirectMinutesFrequency === "Other" && (
+                <div className="w-full">
+                  <Input
+                    placeholder="Describe frequency..."
+                    value={form.indirectMinutesFrequencyOther || ""}
+                    onChange={(e) => updateField("indirectMinutesFrequencyOther", e.target.value)}
+                    className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       {/* Communication & Language Profile */}
       <div className="border-t-2 border-[var(--modal-border)] pt-6 mt-6">
         <h3 className="text-base font-bold text-[var(--modal-text)] mb-4">Communication & Language Profile</h3>
