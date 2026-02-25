@@ -69,7 +69,7 @@ export default function Onboarding() {
 
           <Button
             type="submit"
-            disabled={loading || !fullName.trim()}
+            disabled={loading || !firstName.trim()}
             className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white h-12 rounded-xl font-semibold gap-2"
           >
             {loading ? (
