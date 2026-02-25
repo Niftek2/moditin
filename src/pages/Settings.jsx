@@ -159,14 +159,13 @@ export default function SettingsPage() {
               <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$0<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
               <ul className="space-y-1.5 text-xs text-[var(--modal-text-muted)]">
                 {[
-                  ["Up to 5 students", true],
+                  ["3 students", true],
                   ["Service hour logging", true],
-                  ["Goal bank", true],
-                  ["Unlimited students", false],
+                  ["Mileage tracking", true],
+                  ["Ling 6 sound check", true],
+                  ["Goal bank", false],
                   ["Interactive activities", false],
-                  ["Ling 6 check", false],
                   ["Worksheets", false],
-                  ["Mileage tracking", false],
                 ].map(([label, included]) => (
                   <li key={label} className="flex items-center gap-2">
                     {included ? <Check className="w-3.5 h-3.5 text-green-500 shrink-0" /> : <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />}
