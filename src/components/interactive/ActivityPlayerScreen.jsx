@@ -25,14 +25,30 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
     },
   });
 
-  // Normalize answerChoices — extract display text from string or object format
+  // Normalize answerChoices — always extract plain text string
+  const extractChoiceText = (c) => {
+    if (typeof c === 'string') {
+      // Sometimes the LLM returns a JSON string — try to parse it
+      try {
+        const parsed = JSON.parse(c);
+        if (parsed && typeof parsed === 'object') {
+          return parsed.text || parsed.label || parsed.value || Object.values(parsed).join('');
+        }
+        return c;
+      } catch {
+        return c;
+      }
+    }
+    if (c && typeof c === 'object') {
+      return c.text || c.label || c.value || '';
+    }
+    return String(c ?? '');
+  };
+
   const normalizedItems = items.map(item => ({
     ...item,
-    answerChoices: (item.answerChoices || []).map(c => {
-      if (typeof c === 'string') return c;
-      if (c && typeof c === 'object') return c.text || c.label || c.value || JSON.stringify(c);
-      return String(c);
-    })
+    answerChoices: (item.answerChoices || []).map(extractChoiceText).filter(Boolean),
+    correctAnswer: extractChoiceText(item.correctAnswer),
   }));
 
   const [responses, setResponses] = useState(
