@@ -57,20 +57,20 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
       {/* Main Activity Area */}
       <div className="flex-1 flex flex-col gap-4 p-3 sm:p-6 bg-[var(--modal-bg)] overflow-auto relative">
         {/* Answer Key Button */}
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-3 left-3 z-10">
           <button
             onClick={() => setShowAnswerKey(!showAnswerKey)}
-            className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-[#400070] text-[#400070] rounded-lg font-semibold text-sm hover:bg-[var(--modal-bg)] transition-all shadow-md"
+            className="flex items-center gap-1 px-2 py-1 bg-white border-2 border-[#400070] text-[#400070] rounded-lg font-semibold text-xs hover:bg-[var(--modal-bg)] transition-all shadow-md"
           >
             {showAnswerKey ? (
               <>
-                <EyeOff className="w-4 h-4" />
-                Hide Answer
+                <EyeOff className="w-3 h-3" />
+                Hide
               </>
             ) : (
               <>
-                <Eye className="w-4 h-4" />
-                See Answer
+                <Eye className="w-3 h-3" />
+                Answer
               </>
             )}
           </button>
