@@ -3,9 +3,17 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Sparkles, Zap } from "lucide-react";
-import { TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS, TEMPLATE_ICONS, buildGenerationPrompt } from "./activityTemplates";
+import {
+  TEMPLATE_LABELS,
+  TEMPLATE_DESCRIPTIONS,
+  TEMPLATE_ICONS,
+  TEMPLATE_SUPPORTS_TOPIC,
+  TEMPLATE_SUPPORTS_CRITICAL_ELEMENTS,
+  buildGenerationPrompt
+} from "./activityTemplates";
 
 const TEMPLATES = Object.keys(TEMPLATE_LABELS);
 
@@ -17,6 +25,8 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
   const [difficulty, setDifficulty] = useState("Developing");
   const [setting, setSetting] = useState("InPerson");
   const [languageLevel, setLanguageLevel] = useState("Standard");
+  const [topic, setTopic] = useState("");
+  const [criticalElements, setCriticalElements] = useState("2");
   const [loading, setLoading] = useState(false);
 
   const { data: students = [] } = useQuery({
@@ -38,7 +48,6 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
   const selectedStudent = students.find(s => s.id === studentId);
   const goalMap = {};
   goals.forEach(g => { goalMap[g.id] = g; });
-
   const selectedGoal = goalId ? goalMap[studentGoals.find(sg => sg.id === goalId)?.goalId] : null;
 
   const handleGenerate = async () => {
@@ -52,13 +61,12 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       numItems: parseInt(numItems),
       goalText: selectedGoal?.annualGoal || "",
       languageLevel,
+      topic: TEMPLATE_SUPPORTS_TOPIC[templateType] ? topic : undefined,
+      criticalElements: TEMPLATE_SUPPORTS_CRITICAL_ELEMENTS[templateType] ? parseInt(criticalElements) : undefined,
     });
-    
-    // No need for additional enhancement - buildGenerationPrompt now handles it all
 
     const result = await base44.integrations.Core.InvokeLLM({
       prompt,
-      add_context_from_internet: true,
       response_json_schema: {
         type: "object",
         properties: {
@@ -72,18 +80,13 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
               properties: {
                 questionText: { type: "string" },
                 correctAnswer: { type: "string" },
-                clipartDescription: { type: "string", description: "A detailed description for generating a cartoon image that represents this question" },
-                answerChoices: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      text: { type: "string" },
-                      clipartDescription: { type: "string", description: "A detailed description for generating a cartoon image that represents this answer choice" }
-                    },
-                    required: ["text"]
-                  }
-                }
+                soundToSay: { type: "string" },
+                vocabularyWord: { type: "string" },
+                imageSearchQuery: { type: "string" },
+                scenario: { type: "string" },
+                directionText: { type: "string" },
+                criticalElementCount: { type: "integer" },
+                answerChoices: { type: "array", items: { type: "string" } }
               },
               required: ["questionText", "correctAnswer", "answerChoices"]
             },
@@ -93,46 +96,27 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       },
     });
 
-    // Generate images for each item and answer choice (skip for SelfAdvocacy — text only)
-    const itemsWithImages = await Promise.all(result.items.map(async (item) => {
-      if (templateType === "SelfAdvocacy") {
-        // No images for self-advocacy — normalize answerChoices to plain strings
-        const answerChoices = (item.answerChoices || []).map(c =>
-          typeof c === "object" ? (c.text || c.label || "") : c
-        );
-        return { ...item, answerChoices, questionImageUrl: null };
-      }
+    // For VocabularyVisual: fetch real images via Unsplash-style URLs
+    let itemsProcessed = result.items;
+    if (templateType === "VocabularyVisual") {
+      itemsProcessed = result.items.map(item => {
+        const query = encodeURIComponent(item.imageSearchQuery || item.vocabularyWord || item.correctAnswer || "");
+        // Use a simple placeholder image service with the query as seed
+        const imageUrl = `https://source.unsplash.com/400x300/?${query}`;
+        return { ...item, questionImageUrl: imageUrl };
+      });
+    }
 
-      const answerChoicesWithImages = await Promise.all(item.answerChoices.map(async (choice) => {
-        let imageUrl = null;
-        if (choice.clipartDescription) {
-          const imageResult = await base44.integrations.Core.GenerateImage({ prompt: choice.clipartDescription });
-          imageUrl = imageResult.url;
-        }
-        return { ...choice, imageUrl };
-      }));
-
-      let questionImageUrl = null;
-      if (item.clipartDescription) {
-        const imageResult = await base44.integrations.Core.GenerateImage({ prompt: item.clipartDescription });
-        questionImageUrl = imageResult.url;
-      }
-
-      return { ...item, answerChoices: answerChoicesWithImages, questionImageUrl };
-    }));
-
-    // Strip emoji/surrogate characters to avoid utf-8 encoding errors
     const stripEmoji = (str) => str ? str.replace(/[^\x00-\x7F\u00A0-\u024F\u1E00-\u1EFF]/g, '').trim() : str;
 
-    // Save to ActivityLog for reuse
     await base44.entities.ActivityLog.create({
       templateType,
-      title: stripEmoji(`${TEMPLATE_LABELS[templateType]} - ${selectedStudent?.gradeBand} ${difficulty}`),
+      title: stripEmoji(`${TEMPLATE_LABELS[templateType]} - ${selectedStudent?.gradeBand} ${difficulty}${topic ? ` (${topic})` : ""}`),
       gradeBand: selectedStudent?.gradeBand || "3-5",
       difficulty,
       languageLevel,
       activityContent: {
-        items: itemsWithImages,
+        items: itemsProcessed,
         teacherDirections: result.teacherDirections,
         studentDirections: result.studentDirections,
         passage: result.passage,
@@ -143,7 +127,7 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
 
     setLoading(false);
     onActivityGenerated({
-      items: itemsWithImages,
+      items: itemsProcessed,
       teacherDirections: result.teacherDirections,
       studentDirections: result.studentDirections,
       passage: result.passage,
@@ -156,6 +140,8 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       difficulty,
       setting,
       languageLevel,
+      topic,
+      criticalElements: parseInt(criticalElements),
     });
   };
 
@@ -198,15 +184,15 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
           </div>
         )}
 
-        {/* Activity Topics */}
-         <div className="space-y-2">
-           <Label className="text-[var(--modal-text)] font-semibold">Activity Topics <span className="text-red-600">*</span></Label>
+        {/* Activity Type */}
+        <div className="space-y-2">
+          <Label className="text-[var(--modal-text)] font-semibold">Activity Type <span className="text-red-600">*</span></Label>
           <div className="grid grid-cols-2 gap-2">
             {TEMPLATES.map(t => (
               <button
                 key={t}
                 type="button"
-                onClick={() => setTemplateType(t)}
+                onClick={() => { setTemplateType(t); setTopic(""); }}
                 className={`text-left p-3 rounded-xl border text-xs transition-all ${
                   templateType === t
                     ? "border-[#6B2FB9] bg-[#EADDF5] text-[#400070]"
@@ -219,16 +205,53 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
               </button>
             ))}
           </div>
-          </div>
+        </div>
 
-          {/* Deaf Culture Activity */}
+        {/* Topic/Theme (for supported templates) */}
+        {templateType && TEMPLATE_SUPPORTS_TOPIC[templateType] && (
           <div className="space-y-2">
+            <Label className="text-[var(--modal-text)] font-semibold">
+              {templateType === "ListeningComprehension" ? "Story Topic / Theme" : "Vocabulary Theme"}{" "}
+              <span className="text-[10px] font-normal text-[var(--modal-text-muted)]">(optional)</span>
+            </Label>
+            <Input
+              placeholder={
+                templateType === "ListeningComprehension"
+                  ? "e.g. going to the beach, animals, seasons..."
+                  : "e.g. farm animals, kitchen items, sports..."
+              }
+              value={topic}
+              onChange={e => setTopic(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* Critical Elements (for Following Directions) */}
+        {templateType === "FollowingDirections" && (
+          <div className="space-y-2">
+            <Label className="text-[var(--modal-text)] font-semibold">Critical Elements per Direction</Label>
+            <Select value={criticalElements} onValueChange={setCriticalElements}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["1", "2", "3", "4"].map(n => (
+                  <SelectItem key={n} value={n}>{n} critical element{n !== "1" ? "s" : ""}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[10px] text-[var(--modal-text-muted)]">
+              Each critical element is a specific attribute the student must remember (e.g. color, shape, size, location).
+            </p>
+          </div>
+        )}
+
+        {/* Deaf Culture Activity */}
+        <div className="space-y-2">
           <Button onClick={onShowDeafCultureGen} variant="outline" className="w-full border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] rounded-xl gap-2 text-sm py-6">
             <Sparkles className="w-4 h-4" /> Deaf Culture Activity Generator
           </Button>
-          </div>
+        </div>
 
-          {/* Number of items, difficulty, setting, language */}
+        {/* Settings row */}
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label className="text-[var(--modal-text)] font-semibold">Items</Label>
