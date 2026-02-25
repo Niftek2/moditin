@@ -10,7 +10,8 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { successUrl, cancelUrl } = await req.json();
+    const { successUrl, cancelUrl, priceId: requestedPriceId } = await req.json();
+    const priceId = requestedPriceId || PRICE_ID;
 
     // Check if customer already exists
     const existingCustomers = await stripe.customers.list({ email: user.email, limit: 1 });
