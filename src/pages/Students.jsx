@@ -60,6 +60,7 @@ export default function StudentsPage() {
 
   const handleRefresh = () => queryClient.invalidateQueries({ queryKey: ["students"] });
 
+  const isFreeLimitExceeded = !subStatus?.isPro && !subStatus?.isTrial && students.length > FREE_STUDENT_LIMIT;
   const canAddStudent = subStatus?.isPro || subStatus?.isTrial || students.length < FREE_STUDENT_LIMIT;
 
   const handleAddStudent = () => {
@@ -69,6 +70,18 @@ export default function StudentsPage() {
     }
     setEditing(null);
     setShowForm(true);
+  };
+
+  const handleUpgradeFromModal = async () => {
+    if (window.self !== window.top) {
+      alert("Checkout is only available from the published app, not the preview.");
+      return;
+    }
+    const res = await base44.functions.invoke("stripeCheckout", {
+      successUrl: window.location.origin + "/?subscribed=1",
+      cancelUrl: window.location.origin + "/",
+    });
+    if (res.data?.url) window.location.href = res.data.url;
   };
 
   return (
