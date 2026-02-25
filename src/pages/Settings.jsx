@@ -188,6 +188,7 @@ export default function SettingsPage() {
               <ul className="space-y-1.5 text-xs">
                 {[
                   "Add your whole caseload",
+                  "Calendar & scheduling",
                   "Service hour logging",
                   "Goal bank with AI-assisted writing",
                   "Interactive activities",
