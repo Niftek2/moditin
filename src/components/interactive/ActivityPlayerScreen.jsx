@@ -123,7 +123,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
       <div className="modal-card p-6 mb-4">
         <div className="flex items-start justify-between gap-2 mb-3">
           <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--modal-text-muted)]">Question {currentIdx + 1}</p>
-          {audioSettings?.enabled && <ReadAloudButton text={item.questionText} rate={audioSettings.rate || 1.0} size="sm" />}
+          <ReadAloudButton text={item.questionText} rate={audioSettings?.rate || 1.0} size="sm" />
         </div>
         <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
 
