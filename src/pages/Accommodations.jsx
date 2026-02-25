@@ -163,6 +163,50 @@ export default function AccommodationsPage() {
           ))}
         </div>
       )}
+
+      <Dialog open={showCustomDialog} onOpenChange={setShowCustomDialog}>
+        <DialogContent className="bg-white">
+          <DialogHeader>
+            <DialogTitle>Add Custom Accommodation</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-[var(--modal-text)] mb-2">
+                Accommodation Name
+              </label>
+              <Input
+                placeholder="e.g., Extra time for assessments"
+                value={customAccName}
+                onChange={(e) => setCustomAccName(e.target.value)}
+                className="bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[var(--modal-text)] mb-2">
+                Notes (optional)
+              </label>
+              <Textarea
+                placeholder="Add any implementation notes or details..."
+                value={customAccNotes}
+                onChange={(e) => setCustomAccNotes(e.target.value)}
+                className="bg-white"
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCustomDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => createCustomMutation.mutate({ name: customAccName, notes: customAccNotes })}
+              disabled={!customAccName.trim()}
+            >
+              Add Accommodation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
