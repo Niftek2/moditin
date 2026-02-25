@@ -25,10 +25,14 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
     },
   });
 
-  // Normalize answerChoices to extract text (handle both old string format and new object format)
+  // Normalize answerChoices — extract display text from string or object format
   const normalizedItems = items.map(item => ({
     ...item,
-    answerChoices: item.answerChoices.map(c => (typeof c === 'string' ? c : c.text))
+    answerChoices: (item.answerChoices || []).map(c => {
+      if (typeof c === 'string') return c;
+      if (c && typeof c === 'object') return c.text || c.label || c.value || JSON.stringify(c);
+      return String(c);
+    })
   }));
 
   const [responses, setResponses] = useState(
