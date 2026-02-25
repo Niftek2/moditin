@@ -76,50 +76,11 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
       <div className="flex-1 relative overflow-hidden bg-white p-4 sm:p-8" data-drop-zones>
         {/* Device Image */}
         <div className="flex items-center justify-center h-full min-h-96">
-          {activityConfig.id === "hearingAid" ? (
-            <svg viewBox="0 0 400 500" className="h-full max-h-96 w-auto" role="img" aria-label="Hearing aid illustration">
-              {/* Earhook */}
-              <path d="M 180 50 Q 150 80 150 140" stroke="#400070" strokeWidth="12" fill="none" strokeLinecap="round" />
-              {/* Main body */}
-              <rect x="130" y="140" width="80" height="140" rx="15" fill="#E8D4F8" stroke="#400070" strokeWidth="3" />
-              {/* Control buttons */}
-              <circle cx="210" cy="160" r="12" fill="#400070" />
-              <circle cx="210" cy="190" r="12" fill="#400070" />
-              <circle cx="210" cy="220" r="12" fill="#400070" />
-              {/* Microphone opening */}
-              <ellipse cx="160" cy="280" rx="15" ry="20" fill="#A0A0A0" stroke="#400070" strokeWidth="2" />
-              {/* Earmold */}
-              <path d="M 170 280 Q 165 320 160 350 Q 158 365 165 370 Q 172 365 170 350 Q 175 320 180 280" fill="#E8D4F8" stroke="#400070" strokeWidth="3" />
-              {/* Battery compartment */}
-              <rect x="140" y="400" width="50" height="60" rx="8" fill="#D4C5E8" stroke="#400070" strokeWidth="2" />
-              <line x1="140" y1="420" x2="190" y2="420" stroke="#400070" strokeWidth="1" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 400 500" className="h-full max-h-96 w-auto" role="img" aria-label="Cochlear implant illustration">
-              {/* Coil magnet */}
-              <circle cx="320" cy="60" r="35" fill="#E8D4F8" stroke="#400070" strokeWidth="3" />
-              <circle cx="320" cy="60" r="20" fill="#400070" />
-              {/* Control buttons on coil */}
-              <circle cx="310" cy="75" r="6" fill="white" />
-              <circle cx="330" cy="75" r="6" fill="white" />
-              {/* Processor body */}
-              <rect x="260" y="120" width="120" height="160" rx="20" fill="#E8D4F8" stroke="#400070" strokeWidth="3" />
-              {/* Microphone */}
-              <ellipse cx="280" cy="155" rx="12" ry="18" fill="#A0A0A0" stroke="#400070" strokeWidth="2" />
-              {/* Control buttons on processor */}
-              <circle cx="310" cy="155" r="10" fill="#400070" />
-              <circle cx="310" cy="185" r="10" fill="#400070" />
-              <circle cx="310" cy="215" r="10" fill="#400070" />
-              {/* LED indicator */}
-              <circle cx="290" cy="245" r="8" fill="#00FF00" stroke="#400070" strokeWidth="2" />
-              {/* Cable/connector */}
-              <path d="M 310 280 Q 300 320 290 360" stroke="#400070" strokeWidth="8" fill="none" strokeLinecap="round" />
-              {/* Battery pack */}
-              <rect x="250" y="380" width="60" height="80" rx="10" fill="#D4C5E8" stroke="#400070" strokeWidth="2" />
-              <line x1="250" y1="410" x2="310" y2="410" stroke="#400070" strokeWidth="1" />
-              <line x1="250" y1="440" x2="310" y2="440" stroke="#400070" strokeWidth="1" />
-            </svg>
-          )}
+          <img
+            src={activityConfig.imageUrl}
+            alt={activityConfig.title}
+            className="h-full max-h-96 w-auto object-contain"
+          />
         </div>
 
         {/* Draggable Labels */}

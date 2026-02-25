@@ -1,15 +1,17 @@
+
 export const LABELING_ACTIVITIES = {
   hearingAid: {
     id: "hearingAid",
     title: "Label the Hearing Aid",
     description: "Identify the parts of a hearing aid",
+    imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/6c7c30a63_hearingaid.png",
     labels: [
-      { id: "earhook", name: "EARHOOK", correctPosition: { top: "15%", right: "28%" } },
+      { id: "earhook", name: "EARHOOK", correctPosition: { top: "20%", left: "25%" } },
       { id: "controlButtons", name: "CONTROL BUTTONS", correctPosition: { top: "22%", right: "5%" } },
-      { id: "microphone", name: "MICROPHONE", correctPosition: { top: "38%", right: "12%" } },
-      { id: "amplifier", name: "AMPLIFIER", correctPosition: { top: "50%", right: "5%" } },
-      { id: "tubing", name: "TUBING", correctPosition: { top: "35%", left: "15%" } },
-      { id: "earmold", name: "EARMOLD", correctPosition: { bottom: "22%", left: "12%" } },
+      { id: "tubing", name: "TUBING", correctPosition: { top: "40%", left: "12%" } },
+      { id: "microphone", name: "MICROPHONE", correctPosition: { top: "40%", right: "8%" } },
+      { id: "amplifier", name: "AMPLIFIER", correctPosition: { top: "55%", right: "8%" } },
+      { id: "earmold", name: "EARMOLD", correctPosition: { bottom: "25%", left: "15%" } },
       { id: "compartment", name: "COMPARTMENT", correctPosition: { bottom: "12%", right: "8%" } },
     ],
   },
@@ -17,13 +19,14 @@ export const LABELING_ACTIVITIES = {
     id: "cochlearImplant",
     title: "Label the Cochlear Implant",
     description: "Identify the parts of a cochlear implant",
+    imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/707df5261_LABELcochlearimplant.png",
     labels: [
-      { id: "coilMagnet", name: "COIL/MAGNET", correctPosition: { top: "8%", right: "18%" } },
-      { id: "controlButtons", name: "CONTROL BUTTONS", correctPosition: { top: "20%", right: "12%" } },
-      { id: "microphone", name: "MICROPHONE", correctPosition: { top: "45%", left: "8%" } },
-      { id: "soundProcessor", name: "SOUND PROCESSOR", correctPosition: { top: "65%", left: "12%" } },
-      { id: "batteryPack", name: "BATTERY PACK", correctPosition: { bottom: "35%", left: "10%" } },
-      { id: "cable", name: "CABLE", correctPosition: { bottom: "15%", right: "12%" } },
+      { id: "coilMagnet", name: "COIL/MAGNET", correctPosition: { top: "18%", right: "12%" } },
+      { id: "controlButtons", name: "CONTROL BUTTONS", correctPosition: { top: "28%", right: "10%" } },
+      { id: "microphone", name: "MICROPHONE", correctPosition: { top: "32%", left: "20%" } },
+      { id: "soundProcessor", name: "SOUND PROCESSOR", correctPosition: { top: "55%", left: "18%" } },
+      { id: "batteryPack", name: "BATTERY PACK", correctPosition: { bottom: "28%", left: "20%" } },
+      { id: "cable", name: "CABLE", correctPosition: { bottom: "18%", right: "12%" } },
     ],
   },
 };
