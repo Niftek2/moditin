@@ -144,9 +144,7 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
                   <span className="text-[var(--modal-text-muted)] text-sm font-bold min-w-[1.5rem]">{String.fromCharCode(65+i)}.</span>
                   <span className="text-base leading-snug">{choiceText}</span>
                 </button>
-                {audioSettings?.enabled && audioSettings?.speakChoices && (
-                  <ReadAloudButton text={choiceText} rate={audioSettings.rate || 1.0} size="icon" />
-                )}
+                <ReadAloudButton text={choiceText} rate={audioSettings?.rate || 1.0} size="icon" />
               </div>
             );
           })}
