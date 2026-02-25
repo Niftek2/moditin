@@ -69,81 +69,91 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
 
       {/* Instructions */}
       <div className="bg-[var(--modal-bg)] px-4 py-2 sm:py-3 text-center border-b border-[var(--modal-border)]">
-        <p className="text-[var(--modal-text-muted)] text-xs sm:text-sm">Drag each label to the appropriate box.</p>
+        <p className="text-[var(--modal-text-muted)] text-xs sm:text-sm">Drag each label to the appropriate box on the image.</p>
       </div>
 
-      {/* Device Image Area */}
-      <div className="flex-1 overflow-auto bg-white flex items-center justify-center p-3 sm:p-6" data-drop-zones>
-        <img
-          src={activityConfig.imageUrl}
-          alt={activityConfig.title}
-          className="max-w-full max-h-full w-auto h-auto object-contain"
-        />
-        
-        {/* Completion Overlay */}
-        {isComplete && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 bg-green-500/20 flex items-center justify-center rounded-t-2xl"
-          >
-            <div className="bg-white rounded-2xl p-6 text-center shadow-2xl">
-              <p className="text-2xl font-bold text-green-600">Perfect!</p>
-            </div>
-          </motion.div>
-        )}
-      </div>
+      {/* Main Activity Area */}
+      <div className="flex-1 flex flex-col gap-4 p-3 sm:p-6 bg-[var(--modal-bg)] overflow-auto">
+        {/* Image with Drop Zones */}
+        <div className="relative flex-1 bg-white rounded-xl overflow-hidden flex items-center justify-center">
+          <img
+            src={activityConfig.imageUrl}
+            alt={activityConfig.title}
+            className="max-w-full max-h-full w-auto h-auto object-contain"
+          />
+          
+          {/* Drop Zone Indicators (invisible targets) */}
+          {activityConfig.labels.map(label => (
+            <div
+              key={`zone-${label.id}`}
+              className="absolute pointer-events-none"
+              style={{
+                ...label.correctPosition,
+                width: "120px",
+                height: "50px",
+              }}
+            />
+          ))}
 
-      {/* Draggable Labels Area */}
-      <div className="relative min-h-32 sm:min-h-40 bg-[var(--modal-bg)] p-3 sm:p-4 border-t border-[var(--modal-border)] overflow-hidden">
-        <p className="text-xs sm:text-sm text-[var(--modal-text-muted)] font-semibold mb-2">Drag labels here:</p>
-        
-        {labels.map(label => (
-          <motion.button
-            key={label.tempId}
-            drag
-            dragMomentum={false}
-            onDragEnd={(event, info) => {
-              handleDragEnd(label.tempId, label, info.x, info.y);
-            }}
-            onMouseEnter={() => setDraggedLabel(label.tempId)}
-            onMouseLeave={() => setDraggedLabel(null)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: droppedLabels[label.id] ? 0.3 : 1, y: 0 }}
-            className={`
-              absolute min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-sm
-              border-2 border-[#400070] bg-white text-[#400070]
-              cursor-grab active:cursor-grabbing select-none
-              transition-all touch-none whitespace-nowrap
-              ${draggedLabel === label.tempId ? "shadow-lg z-50 scale-105" : ""}
-              ${droppedLabels[label.id] ? "opacity-30 cursor-not-allowed" : "hover:shadow-md hover:scale-102"}
-            `}
-            style={{
-              bottom: "0.75rem",
-              left: `${label.x}%`,
-            }}
-            disabled={droppedLabels[label.id]}
-          >
-            {label.name}
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Progress Bar */}
-      <div className="bg-white px-3 sm:px-4 py-2 sm:py-3 border-t border-[var(--modal-border)] rounded-b-2xl">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-[var(--modal-text)]">
-            Progress: {Object.keys(droppedLabels).length} / {activityConfig.labels.length}
-          </p>
-          {incorrectAttempts > 0 && (
-            <p className="text-xs text-[var(--modal-text-muted)]">Attempts: {incorrectAttempts}</p>
+          {/* Completion Overlay */}
+          {isComplete && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute inset-0 bg-green-500/20 flex items-center justify-center"
+            >
+              <div className="bg-white rounded-2xl p-6 text-center shadow-2xl">
+                <p className="text-2xl font-bold text-green-600">Perfect!</p>
+              </div>
+            </motion.div>
           )}
         </div>
-        <div className="w-full bg-[var(--modal-border)] rounded-full h-2">
-          <div
-            className="bg-[#400070] h-2 rounded-full transition-all"
-            style={{ width: `${(Object.keys(droppedLabels).length / activityConfig.labels.length) * 100}%` }}
-          />
+
+        {/* Draggable Labels Bank */}
+        <div className="bg-white rounded-xl p-3 sm:p-4 border-2 border-[var(--modal-border)]">
+          <p className="text-xs sm:text-sm text-[var(--modal-text-muted)] font-semibold mb-3">Drag labels onto the image:</p>
+          <div className="flex flex-wrap gap-2">
+            {labels.map(label => (
+              <motion.button
+                key={label.tempId}
+                drag
+                dragMomentum={false}
+                onDragEnd={(event, info) => {
+                  handleDragEnd(label.tempId, label, info.x, info.y);
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: droppedLabels[label.id] ? 0.3 : 1 }}
+                className={`
+                  min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm
+                  border-2 border-[#400070] bg-white text-[#400070]
+                  cursor-grab active:cursor-grabbing select-none
+                  transition-all touch-none
+                  ${droppedLabels[label.id] ? "opacity-30 cursor-not-allowed" : "hover:shadow-md"}
+                `}
+                disabled={droppedLabels[label.id]}
+              >
+                {label.name}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="bg-white rounded-xl p-3 border-2 border-[var(--modal-border)]">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-[var(--modal-text)]">
+              Progress: {Object.keys(droppedLabels).length} / {activityConfig.labels.length}
+            </p>
+            {incorrectAttempts > 0 && (
+              <p className="text-xs text-[var(--modal-text-muted)]">Attempts: {incorrectAttempts}</p>
+            )}
+          </div>
+          <div className="w-full bg-[var(--modal-border)] rounded-full h-2">
+            <div
+              className="bg-[#400070] h-2 rounded-full transition-all"
+              style={{ width: `${(Object.keys(droppedLabels).length / activityConfig.labels.length) * 100}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
