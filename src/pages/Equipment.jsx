@@ -121,33 +121,33 @@ export default function EquipmentPage() {
 
       {/* Add Equipment Dialog */}
        <Dialog open={showEquipForm} onOpenChange={setShowEquipForm}>
-         <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md shadow-2xl">
-          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Add Equipment</DialogTitle></DialogHeader>
+         <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Add Equipment</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
               <Label>Student</Label>
               <Select value={equipForm.studentId} onValueChange={(v) => setEquipForm(p => ({ ...p, studentId: v }))}>
-                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select student" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
                 <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Type</Label>
               <Select value={equipForm.type} onValueChange={(v) => setEquipForm(p => ({ ...p, type: v }))}>
-                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>{EQUIPMENT_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Description</Label>
-              <Input value={equipForm.description} onChange={(e) => setEquipForm(p => ({ ...p, description: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" placeholder="e.g., Phonak Sky M70" />
+              <Input value={equipForm.description} onChange={(e) => setEquipForm(p => ({ ...p, description: e.target.value }))} placeholder="e.g., Phonak Sky M70" />
             </div>
             <div className="space-y-2">
               <Label>Serial Number</Label>
-              <Input value={equipForm.serialNumber} onChange={(e) => setEquipForm(p => ({ ...p, serialNumber: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+              <Input value={equipForm.serialNumber} onChange={(e) => setEquipForm(p => ({ ...p, serialNumber: e.target.value }))} />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowEquipForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
+              <Button variant="outline" onClick={() => setShowEquipForm(false)}>Cancel</Button>
               <Button onClick={() => createEquipMut.mutate(equipForm)} disabled={!equipForm.studentId || !equipForm.type} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
             </div>
           </div>
@@ -156,30 +156,30 @@ export default function EquipmentPage() {
 
       {/* Log Check Dialog */}
       <Dialog open={showLogForm} onOpenChange={setShowLogForm}>
-        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-md shadow-2xl">
-          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Equipment Check</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Log Equipment Check</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
               <Label>Date</Label>
-              <Input type="date" value={logForm.date} onChange={(e) => setLogForm(p => ({ ...p, date: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+              <Input type="date" value={logForm.date} onChange={(e) => setLogForm(p => ({ ...p, date: e.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label>Check Type</Label>
               <Select value={logForm.checkType} onValueChange={(v) => setLogForm(p => ({ ...p, checkType: v }))}>
-                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue /></SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{CHECK_TYPES.map(t => <SelectItem key={t} value={t}>{t.replace(/([A-Z])/g, " $1").trim()}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Issue Description</Label>
-              <Textarea value={logForm.issueDescription} onChange={(e) => setLogForm(p => ({ ...p, issueDescription: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
+              <Textarea value={logForm.issueDescription} onChange={(e) => setLogForm(p => ({ ...p, issueDescription: e.target.value }))} className="h-20" />
             </div>
             <div className="space-y-2">
               <Label>Action Taken</Label>
-              <Input value={logForm.actionTaken} onChange={(e) => setLogForm(p => ({ ...p, actionTaken: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
+              <Input value={logForm.actionTaken} onChange={(e) => setLogForm(p => ({ ...p, actionTaken: e.target.value }))} />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowLogForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>
+              <Button variant="outline" onClick={() => setShowLogForm(false)}>Cancel</Button>
               <Button onClick={() => createLogMut.mutate({ ...logForm, equipmentId: selectedEquip?.id })} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
             </div>
           </div>
