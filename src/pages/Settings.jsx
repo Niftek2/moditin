@@ -227,8 +227,8 @@ export default function SettingsPage() {
                 {loadingCheckout === "price_1T4B1rG8v8oKpU6mPPumccla" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 Start Free Trial · $17.99/mo
               </Button>
-              <Button onClick={() => handleCheckout("price_1T4B2AG8v8oKpU6mJlR8EZad")} disabled={!!loadingCheckout} variant="outline" className="border-[#400070] text-[#400070] hover:bg-[#F7F3FA] gap-2">
-                {loadingCheckout === "price_1T4B2AG8v8oKpU6mJlR8EZad" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              <Button onClick={() => handleCheckout("price_1T4B1rG8v8oKpU6my9bQBS46")} disabled={!!loadingCheckout} variant="outline" className="border-[#400070] text-[#400070] hover:bg-[#F7F3FA] gap-2">
+                {loadingCheckout === "price_1T4B1rG8v8oKpU6my9bQBS46" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                 Annual · $179/yr
               </Button>
             </div>
