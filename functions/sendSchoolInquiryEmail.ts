@@ -21,7 +21,7 @@ Estimated Users: ${estimatedUsers || 'Not provided'}
 Notes:
 ${notes || 'No notes provided'}`;
 
-    await base44.integrations.Core.SendEmail({
+    await base44.asServiceRole.integrations.Core.SendEmail({
       to: 'contact@modalmath.com',
       subject: `School Inquiry Modal Itinerant - ${schoolDistrict || name}`,
       body: emailBody,
