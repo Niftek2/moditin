@@ -23,14 +23,38 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
     setLabels(initialLabels);
   }, [activityConfig]);
 
-  const checkProximity = (x, y, targetPos) => {
-    const rect = document.querySelector("[data-drop-zones]");
-    if (!rect) return false;
+  const checkProximity = (dragX, dragY, targetPos) => {
+    const imageContainer = document.querySelector("[data-drop-zones]");
+    if (!imageContainer) return false;
+
+    const containerRect = imageContainer.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    const containerHeight = containerRect.height;
+
+    // Calculate target position in pixels
+    let targetPixelX, targetPixelY;
     
-    const targetX = parseInt(targetPos.right || targetPos.left || 0);
-    const targetY = parseInt(targetPos.top || targetPos.bottom || 0);
+    if (targetPos.left) {
+      targetPixelX = (parseFloat(targetPos.left) / 100) * containerWidth;
+    } else if (targetPos.right) {
+      targetPixelX = containerWidth - (parseFloat(targetPos.right) / 100) * containerWidth;
+    }
     
-    return Math.abs(x - targetX) < SNAP_DISTANCE && Math.abs(y - targetY) < SNAP_DISTANCE;
+    if (targetPos.top) {
+      targetPixelY = (parseFloat(targetPos.top) / 100) * containerHeight;
+    } else if (targetPos.bottom) {
+      targetPixelY = containerHeight - (parseFloat(targetPos.bottom) / 100) * containerHeight;
+    }
+
+    // Convert drag coordinates to be relative to image container
+    const dragPixelX = dragX - containerRect.left;
+    const dragPixelY = dragY - containerRect.top;
+
+    // Check if within snap distance
+    return (
+      Math.abs(dragPixelX - targetPixelX) < SNAP_DISTANCE && 
+      Math.abs(dragPixelY - targetPixelY) < SNAP_DISTANCE
+    );
   };
 
   const handleDragEnd = (tempId, label, finalX, finalY) => {
