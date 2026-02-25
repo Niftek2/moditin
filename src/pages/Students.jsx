@@ -17,6 +17,17 @@ import StudentLimitModal from "../components/students/StudentLimitModal";
 
 const FREE_STUDENT_LIMIT = 3;
 
+const COLOR_MAP = {
+  red: { bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" },
+  orange: { bg: "bg-orange-100", text: "text-orange-700", dot: "bg-orange-500" },
+  yellow: { bg: "bg-yellow-100", text: "text-yellow-700", dot: "bg-yellow-500" },
+  green: { bg: "bg-green-100", text: "text-green-700", dot: "bg-green-500" },
+  blue: { bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-500" },
+  purple: { bg: "bg-purple-100", text: "text-purple-700", dot: "bg-purple-500" },
+  pink: { bg: "bg-pink-100", text: "text-pink-700", dot: "bg-pink-500" },
+  gray: { bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-500" },
+};
+
 export default function StudentsPage() {
   useScrollRestore("Students");
   const [showForm, setShowForm] = useState(false);
@@ -126,11 +137,14 @@ export default function StudentsPage() {
         />
       ) : (
         <div className="grid gap-3">
-          {filtered.map((student) => (
-            <div key={student.id} className="modal-card p-4 flex items-center justify-between hover:bg-[var(--modal-card-hover)] transition-all group">
+          {filtered.map((student) => {
+            const colorTag = student.colorTag || "gray";
+            const colors = COLOR_MAP[colorTag];
+            return (
+            <div key={student.id} className={`${colors.bg} modal-card p-4 flex items-center justify-between hover:shadow-md transition-all group border-l-4 ${colors.dot}`}>
               <Link to={createPageUrl(`StudentDetail?id=${student.id}`)} className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-[#400070]/30 flex items-center justify-center shrink-0">
-                  <span className="text-sm font-bold text-[var(--modal-purple-glow)]">{student.studentInitials?.slice(0, 2) || "?"}</span>
+                <div className={`w-11 h-11 rounded-xl ${colors.bg} flex items-center justify-center shrink-0 border border-current`}>
+                  <span className={`text-sm font-bold ${colors.text}`}>{student.studentInitials?.slice(0, 2) || "?"}</span>
                 </div>
                 <div className="min-w-0">
                   <p className="text-[var(--modal-text)] font-semibold">{student.studentInitials}</p>
@@ -154,8 +168,9 @@ export default function StudentsPage() {
               <Link to={createPageUrl(`StudentDetail?id=${student.id}`)}>
                 <ChevronRight className="w-4 h-4 text-[var(--modal-text-muted)] ml-2" />
               </Link>
-            </div>
-          ))}
+              </div>
+              );
+              })}
         </div>
       )}
 
