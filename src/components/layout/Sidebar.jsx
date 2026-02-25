@@ -18,7 +18,8 @@ import {
   Ear,
   Zap,
   Bell,
-  Sun
+  Sun,
+  Activity
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
@@ -38,6 +39,7 @@ const navItems = [
   { name: "Equipment", icon: null, page: "Equipment" },
   { name: "Listening Check", icon: Ear, page: "Ling6Check" },
   { name: "Activities", icon: Zap, page: "InteractiveActivities" },
+  { name: "Labeling Activities", icon: Activity, page: "LabelingActivities" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
 ];
 
