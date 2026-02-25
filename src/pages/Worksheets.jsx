@@ -216,9 +216,13 @@ Return JSON with: title, instructions, items (array of objects with 'prompt', op
                 {worksheetContent.items?.map((item, i) => (
                     <div key={i} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex gap-4 items-start">
-                        {item.clipartDescription && (
-                          <div className="flex-shrink-0 w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-50 rounded-lg border-2 border-purple-200 flex items-center justify-center text-center p-2">
-                            <p className="text-[10px] font-medium text-purple-700 leading-tight">[{item.clipartDescription}]</p>
+                        {(item.imageUrl || item.clipartDescription) && (
+                          <div className="flex-shrink-0 w-24 h-24 rounded-lg border-2 border-purple-200 overflow-hidden bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center">
+                            {item.imageUrl ? (
+                              <img src={item.imageUrl} alt={item.clipartDescription} className="w-full h-full object-cover" />
+                            ) : (
+                              <p className="text-[10px] font-medium text-purple-700 leading-tight text-center p-2">[{item.clipartDescription}]</p>
+                            )}
                           </div>
                         )}
                         <div className="flex-1">
