@@ -1,9 +1,24 @@
 import React from "react";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const NTH_LABELS = ["", "first", "second", "third", "fourth", "fifth"];
+
+function getNthWeekdayLabel(startDateTime) {
+  if (!startDateTime) return null;
+  const d = new Date(startDateTime);
+  if (isNaN(d)) return null;
+  const dayOfWeek = d.getDay();
+  const dayOfMonth = d.getDate();
+  const nth = Math.ceil(dayOfMonth / 7);
+  if (nth < 1 || nth > 5) return null;
+  return { nth, dayOfWeek, label: `every ${NTH_LABELS[nth]} ${DAY_FULL[dayOfWeek]}` };
+}
 
 export default function RecurrenceFields({ form, set }) {
-  const { recurrenceType, recurrenceDaysOfWeek = [], recurrenceDayOfMonth, recurrenceInterval = 1, recurrenceEndDate } = form;
+  const { recurrenceType, recurrenceDaysOfWeek = [], recurrenceDayOfMonth, recurrenceInterval = 1, recurrenceEndDate, recurrenceMonthlyMode } = form;
+
+  const nthInfo = getNthWeekdayLabel(form.startDateTime);
 
   const toggleDay = (d) => {
     const days = recurrenceDaysOfWeek.includes(d)
