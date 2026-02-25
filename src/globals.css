@@ -112,8 +112,15 @@ html, body {
   /* Badge text always dark enough */
   .text-muted-foreground { color: #555 !important; }
 
-  /* Ensure dialog/sheet text is dark */
-  [role="dialog"] { color: var(--modal-text); }
+  /* Ensure dialog/sheet text is dark and background is always solid white */
+  [role="dialog"] { 
+    color: var(--modal-text); 
+    background-color: #ffffff !important;
+  }
+  /* Ensure dialog overlay is fully opaque */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
 
   /* Table cells */
   td, th { color: var(--modal-text); font-size: 0.95rem; }
