@@ -13,6 +13,14 @@ export default function ActivityDirectionsScreen({ config, onStart }) {
         <p className="text-sm text-[var(--modal-text-muted)]">Review directions before starting</p>
       </div>
 
+      {/* Context badges */}
+      {(topic || criticalElements) && (
+        <div className="flex flex-wrap gap-2 justify-center">
+          {topic && <span className="px-3 py-1 rounded-full bg-[#EADDF5] text-[#400070] text-xs font-semibold">Theme: {topic}</span>}
+          {criticalElements && <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">{criticalElements} Critical Element{criticalElements > 1 ? "s" : ""}</span>}
+        </div>
+      )}
+
       {/* Teacher Directions */}
       {teacherDirections && (
         <div className="modal-card p-6">
