@@ -134,7 +134,7 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: droppedLabels[label.id] ? 0.5 : 1 }}
                 className={`
-                  min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm
+                  min-h-[32px] px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg font-semibold text-xs
                   border-2 cursor-grab active:cursor-grabbing select-none
                   transition-all touch-none
                   ${droppedLabels[label.id] 
