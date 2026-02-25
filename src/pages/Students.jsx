@@ -13,6 +13,7 @@ import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
 import { useSubscription } from "../components/shared/SubscriptionGate";
+import StudentLimitModal from "../components/students/StudentLimitModal";
 
 const FREE_STUDENT_LIMIT = 3;
 
