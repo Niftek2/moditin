@@ -91,19 +91,63 @@ export default function RecurrenceFields({ form, set }) {
             </div>
           )}
 
-          {/* Monthly: day of month */}
+          {/* Monthly: day of month OR nth weekday */}
           {recurrenceType === "Monthly" && (
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-semibold shrink-0">On day</label>
-              <input
-                type="number"
-                min="1"
-                max="31"
-                value={recurrenceDayOfMonth || ""}
-                onChange={e => set("recurrenceDayOfMonth", Math.min(31, Math.max(1, parseInt(e.target.value) || 1)))}
-                className="w-16 border border-[var(--modal-border)] rounded-xl px-2 py-1.5 text-sm text-center focus:outline-none focus:border-[#6B2FB9]"
-              />
-              <span className="text-sm text-[var(--modal-text-muted)]">of the month</span>
+            <div className="space-y-2">
+              {/* Mode toggle */}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => set("recurrenceMonthlyMode", "dayOfMonth")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                    (!recurrenceMonthlyMode || recurrenceMonthlyMode === "dayOfMonth")
+                      ? "bg-[#400070] text-white border-[#400070]"
+                      : "bg-white text-[var(--modal-text-muted)] border-[var(--modal-border)] hover:border-[#400070]"
+                  }`}
+                >
+                  Day of month
+                </button>
+                {nthInfo && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      set("recurrenceMonthlyMode", "nthWeekday");
+                      set("recurrenceNthWeekday", nthInfo.nth);
+                      set("recurrenceWeekday", nthInfo.dayOfWeek);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                      recurrenceMonthlyMode === "nthWeekday"
+                        ? "bg-[#400070] text-white border-[#400070]"
+                        : "bg-white text-[var(--modal-text-muted)] border-[var(--modal-border)] hover:border-[#400070]"
+                    }`}
+                  >
+                    {nthInfo.label}
+                  </button>
+                )}
+              </div>
+
+              {/* Day of month input */}
+              {(!recurrenceMonthlyMode || recurrenceMonthlyMode === "dayOfMonth") && (
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-semibold shrink-0">On day</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="31"
+                    value={recurrenceDayOfMonth || ""}
+                    onChange={e => set("recurrenceDayOfMonth", Math.min(31, Math.max(1, parseInt(e.target.value) || 1)))}
+                    className="w-16 border border-[var(--modal-border)] rounded-xl px-2 py-1.5 text-sm text-center focus:outline-none focus:border-[#6B2FB9]"
+                  />
+                  <span className="text-sm text-[var(--modal-text-muted)]">of the month</span>
+                </div>
+              )}
+
+              {/* Nth weekday display */}
+              {recurrenceMonthlyMode === "nthWeekday" && nthInfo && (
+                <p className="text-sm text-[#400070] font-medium bg-[#EADDF5] rounded-lg px-3 py-2">
+                  Repeats {nthInfo.label} of each month
+                </p>
+              )}
             </div>
           )}
 
