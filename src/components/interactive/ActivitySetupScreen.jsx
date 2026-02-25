@@ -93,8 +93,16 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
       },
     });
 
-    // Generate images for each item and answer choice
+    // Generate images for each item and answer choice (skip for SelfAdvocacy — text only)
     const itemsWithImages = await Promise.all(result.items.map(async (item) => {
+      if (templateType === "SelfAdvocacy") {
+        // No images for self-advocacy — normalize answerChoices to plain strings
+        const answerChoices = (item.answerChoices || []).map(c =>
+          typeof c === "object" ? (c.text || c.label || "") : c
+        );
+        return { ...item, answerChoices, questionImageUrl: null };
+      }
+
       const answerChoicesWithImages = await Promise.all(item.answerChoices.map(async (choice) => {
         let imageUrl = null;
         if (choice.clipartDescription) {
