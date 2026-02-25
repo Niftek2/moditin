@@ -181,16 +181,18 @@ export default function SettingsPage() {
                 <p className="font-semibold text-[var(--modal-text)] flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-[#400070]" /> Pro</p>
                 {subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
               </div>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span> or $179<span className="text-sm font-normal text-[var(--modal-text-muted)]">/yr</span></p>
+              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span> <span className="text-xs text-[var(--modal-text-muted)]">or $179/yr</span></p>
               <ul className="space-y-1.5 text-xs">
                 {[
                   "Add your whole caseload",
                   "Service hour logging",
-                  "Goal bank",
+                  "Goal bank with AI-assisted writing",
                   "Interactive activities",
                   "Ling 6 sound check",
                   "Worksheets",
                   "Mileage tracking",
+                  "Equipment troubleshooting wizard",
+                  "Testing guided wizard",
                 ].map((label) => (
                   <li key={label} className="flex items-center gap-2 text-[var(--modal-text)]">
                     <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
