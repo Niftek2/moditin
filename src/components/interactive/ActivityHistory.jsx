@@ -8,13 +8,19 @@ import { TEMPLATE_LABELS, TEMPLATE_ICONS } from "./activityTemplates";
 import EmptyState from "../shared/EmptyState";
 
 export default function ActivityHistory({ onSelectActivity }) {
-  const { data: activities = [] } = useQuery({
+  const { data: activities = [], refetch } = useQuery({
     queryKey: ["activityLog"],
     queryFn: () => base44.entities.ActivityLog.list("-created_date", 100),
   });
 
   const handleReuse = (activity) => {
     onSelectActivity(activity);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this activity?")) return;
+    await base44.entities.ActivityLog.delete(id);
+    refetch();
   };
 
   const getDifficultyColor = (difficulty) => {
