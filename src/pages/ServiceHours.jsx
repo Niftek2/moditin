@@ -114,14 +114,45 @@ export default function ServiceHoursPage() {
   };
 
   const handleManualSubmit = () => {
-    createMutation.mutate({
-      ...form,
-      minutes: parseInt(form.minutes),
-      entryMethod: "Manual",
-      monthKey: form.date.slice(0, 7),
-    });
+    if (editingId) {
+      updateMutation.mutate({
+        id: editingId,
+        data: {
+          ...form,
+          minutes: parseInt(form.minutes),
+          entryMethod: "Manual",
+          monthKey: form.date.slice(0, 7),
+        }
+      });
+    } else {
+      createMutation.mutate({
+        ...form,
+        minutes: parseInt(form.minutes),
+        entryMethod: "Manual",
+        monthKey: form.date.slice(0, 7),
+      });
+    }
     setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "" });
     setActiveTab("basic");
+  };
+
+  const handleEditEntry = (entry) => {
+    setForm({
+      date: entry.date,
+      category: entry.category,
+      minutes: entry.minutes.toString(),
+      studentId: entry.studentId || "",
+      notes: entry.notes || "",
+      sessionNotes: entry.sessionNotes || "",
+    });
+    setEditingId(entry.id);
+    setShowForm(true);
+  };
+
+  const handleDeleteEntry = (id) => {
+    if (window.confirm("Delete this entry?")) {
+      deleteMutation.mutate(id);
+    }
   };
 
   const monthEntries = entries.filter(e => e.monthKey === selectedMonth);
