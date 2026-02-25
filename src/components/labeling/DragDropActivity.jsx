@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Check, X } from "lucide-react";
 
 const SNAP_DISTANCE = 80;
 
 export default function DragDropActivity({ activityConfig, onComplete }) {
   const [labels, setLabels] = useState([]);
   const [droppedLabels, setDroppedLabels] = useState({});
+  const [labelStatus, setLabelStatus] = useState({});
   const [incorrectAttempts, setIncorrectAttempts] = useState(0);
   const [startTime] = useState(Date.now());
   const [draggedLabel, setDraggedLabel] = useState(null);
@@ -36,8 +38,18 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
 
     if (isCorrect) {
       setDroppedLabels(prev => ({ ...prev, [label.id]: true }));
+      setLabelStatus(prev => ({ ...prev, [label.id]: 'correct' }));
     } else {
       setIncorrectAttempts(prev => prev + 1);
+      setLabelStatus(prev => ({ ...prev, [label.id]: 'incorrect' }));
+      // Clear incorrect status after 1 second so they can try again
+      setTimeout(() => {
+        setLabelStatus(prev => {
+          const updated = { ...prev };
+          delete updated[label.id];
+          return updated;
+        });
+      }, 1000);
     }
 
     setDraggedLabel(null);
