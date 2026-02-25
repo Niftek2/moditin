@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 const SNAP_DISTANCE = 80;
 
@@ -8,6 +8,7 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
   const [labels, setLabels] = useState([]);
   const [droppedLabels, setDroppedLabels] = useState({});
   const [startTime] = useState(Date.now());
+  const [showAnswerKey, setShowAnswerKey] = useState(false);
 
   useEffect(() => {
     // Initialize labels in random positions at bottom
@@ -54,14 +55,42 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
       </div>
 
       {/* Main Activity Area */}
-      <div className="flex-1 flex flex-col gap-4 p-3 sm:p-6 bg-[var(--modal-bg)] overflow-auto">
+      <div className="flex-1 flex flex-col gap-4 p-3 sm:p-6 bg-[var(--modal-bg)] overflow-auto relative">
+        {/* Answer Key Button */}
+        <div className="absolute top-4 right-4 z-10">
+          <button
+            onClick={() => setShowAnswerKey(!showAnswerKey)}
+            className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-[#400070] text-[#400070] rounded-lg font-semibold text-sm hover:bg-[var(--modal-bg)] transition-all shadow-md"
+          >
+            {showAnswerKey ? (
+              <>
+                <EyeOff className="w-4 h-4" />
+                Hide Answer
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4" />
+                See Answer
+              </>
+            )}
+          </button>
+        </div>
+
         {/* Image with Drop Zones */}
         <div className="relative flex-1 bg-white rounded-xl overflow-hidden flex items-center justify-center">
-          <img
-            src={activityConfig.imageUrl}
-            alt={activityConfig.title}
-            className="max-w-full max-h-full w-auto h-auto object-contain"
-          />
+          {showAnswerKey ? (
+            <img
+              src={activityConfig.answerKeyUrl}
+              alt="Answer Key"
+              className="max-w-full max-h-full w-auto h-auto object-contain"
+            />
+          ) : (
+            <img
+              src={activityConfig.imageUrl}
+              alt={activityConfig.title}
+              className="max-w-full max-h-full w-auto h-auto object-contain"
+            />
+          )}
           
           {/* Drop Zone Indicators (invisible targets) */}
           {activityConfig.labels.map(label => (
