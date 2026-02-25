@@ -123,11 +123,11 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
 
         {/* Draggable Labels Bank */}
         <div className="bg-white rounded-xl p-3 sm:p-4 border-2 border-[var(--modal-border)]">
-          <p className="text-xs sm:text-sm text-[var(--modal-text-muted)] font-semibold mb-3">Drag labels onto the image:</p>
-          <div className="flex flex-wrap gap-2">
-            {labels.map(label => (
+        <p className="text-xs sm:text-sm text-[var(--modal-text-muted)] font-semibold mb-3">Drag labels onto the image:</p>
+        <div className="flex flex-wrap gap-2">
+          {labels.map(label => (
+            <div key={label.tempId} className="relative">
               <motion.button
-                key={label.tempId}
                 drag
                 dragMomentum={false}
                 onDragEnd={(event, info) => {
@@ -137,17 +137,42 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
                 animate={{ opacity: droppedLabels[label.id] ? 0.3 : 1 }}
                 className={`
                   min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm
-                  border-2 border-[#400070] bg-white text-[#400070]
-                  cursor-grab active:cursor-grabbing select-none
+                  border-2 cursor-grab active:cursor-grabbing select-none
                   transition-all touch-none
-                  ${droppedLabels[label.id] ? "opacity-30 cursor-not-allowed" : "hover:shadow-md"}
+                  ${droppedLabels[label.id] 
+                    ? "opacity-30 cursor-not-allowed border-green-500 bg-green-50 text-green-700" 
+                    : labelStatus[label.id] === 'incorrect'
+                    ? "border-red-500 bg-red-50 text-red-700"
+                    : "border-[#400070] bg-white text-[#400070] hover:shadow-md"
+                  }
                 `}
                 disabled={droppedLabels[label.id]}
               >
                 {label.name}
               </motion.button>
-            ))}
-          </div>
+
+              {/* Feedback Icon */}
+              {droppedLabels[label.id] && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1"
+                >
+                  <Check className="w-4 h-4 text-white" />
+                </motion.div>
+              )}
+              {labelStatus[label.id] === 'incorrect' && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </motion.div>
+              )}
+            </div>
+          ))}
+        </div>
         </div>
 
         {/* Progress Bar */}
