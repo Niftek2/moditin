@@ -7,10 +7,7 @@ const SNAP_DISTANCE = 80;
 export default function DragDropActivity({ activityConfig, onComplete }) {
   const [labels, setLabels] = useState([]);
   const [droppedLabels, setDroppedLabels] = useState({});
-  const [labelStatus, setLabelStatus] = useState({});
-  const [incorrectAttempts, setIncorrectAttempts] = useState(0);
   const [startTime] = useState(Date.now());
-  const [draggedLabel, setDraggedLabel] = useState(null);
 
   useEffect(() => {
     // Initialize labels in random positions at bottom
@@ -23,60 +20,10 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
     setLabels(initialLabels);
   }, [activityConfig]);
 
-  const checkProximity = (dragX, dragY, targetPos) => {
-    const imageContainer = document.querySelector("[data-drop-zones]");
-    if (!imageContainer) return false;
 
-    const containerRect = imageContainer.getBoundingClientRect();
-    const containerWidth = containerRect.width;
-    const containerHeight = containerRect.height;
 
-    // Calculate target position in pixels
-    let targetPixelX, targetPixelY;
-    
-    if (targetPos.left) {
-      targetPixelX = (parseFloat(targetPos.left) / 100) * containerWidth;
-    } else if (targetPos.right) {
-      targetPixelX = containerWidth - (parseFloat(targetPos.right) / 100) * containerWidth;
-    }
-    
-    if (targetPos.top) {
-      targetPixelY = (parseFloat(targetPos.top) / 100) * containerHeight;
-    } else if (targetPos.bottom) {
-      targetPixelY = containerHeight - (parseFloat(targetPos.bottom) / 100) * containerHeight;
-    }
-
-    // Convert drag coordinates to be relative to image container
-    const dragPixelX = dragX - containerRect.left;
-    const dragPixelY = dragY - containerRect.top;
-
-    // Check if within snap distance
-    return (
-      Math.abs(dragPixelX - targetPixelX) < SNAP_DISTANCE && 
-      Math.abs(dragPixelY - targetPixelY) < SNAP_DISTANCE
-    );
-  };
-
-  const handleDragEnd = (tempId, label, finalX, finalY) => {
-    const isCorrect = checkProximity(finalX, finalY, label.correctPosition);
-
-    if (isCorrect) {
-      setDroppedLabels(prev => ({ ...prev, [label.id]: true }));
-      setLabelStatus(prev => ({ ...prev, [label.id]: 'correct' }));
-    } else {
-      setIncorrectAttempts(prev => prev + 1);
-      setLabelStatus(prev => ({ ...prev, [label.id]: 'incorrect' }));
-      // Clear incorrect status after 1 second so they can try again
-      setTimeout(() => {
-        setLabelStatus(prev => {
-          const updated = { ...prev };
-          delete updated[label.id];
-          return updated;
-        });
-      }, 1000);
-    }
-
-    setDraggedLabel(null);
+  const handleDragEnd = (tempId, label) => {
+    setDroppedLabels(prev => ({ ...prev, [label.id]: true }));
   };
 
   const isComplete = Object.keys(droppedLabels).length === activityConfig.labels.length;
@@ -87,14 +34,12 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
       setTimeout(() => {
         onComplete({
           activityType: activityConfig.id,
-          correctLabels: Object.keys(droppedLabels).length,
           totalLabels: activityConfig.labels.length,
-          incorrectAttempts,
           durationSeconds: Math.round(duration),
         });
       }, 600);
     }
-  }, [isComplete, incorrectAttempts, startTime, activityConfig, droppedLabels, onComplete]);
+  }, [isComplete, startTime, activityConfig, droppedLabels, onComplete]);
 
   return (
     <div className="flex flex-col h-full">
@@ -136,10 +81,10 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="absolute inset-0 bg-green-500/20 flex items-center justify-center"
+              className="absolute inset-0 bg-blue-500/20 flex items-center justify-center"
             >
               <div className="bg-white rounded-2xl p-6 text-center shadow-2xl">
-                <p className="text-2xl font-bold text-green-600">Perfect!</p>
+                <p className="text-2xl font-bold text-blue-600">All labels placed!</p>
               </div>
             </motion.div>
           )}
@@ -155,45 +100,22 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
                 drag
                 dragMomentum={false}
                 onDragEnd={(event, info) => {
-                  handleDragEnd(label.tempId, label, info.x, info.y);
+                  handleDragEnd(label.tempId, label);
                 }}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: droppedLabels[label.id] ? 0.3 : 1 }}
+                animate={{ opacity: droppedLabels[label.id] ? 0.5 : 1 }}
                 className={`
                   min-h-[40px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm
                   border-2 cursor-grab active:cursor-grabbing select-none
                   transition-all touch-none
                   ${droppedLabels[label.id] 
-                    ? "opacity-30 cursor-not-allowed border-green-500 bg-green-50 text-green-700" 
-                    : labelStatus[label.id] === 'incorrect'
-                    ? "border-red-500 bg-red-50 text-red-700"
+                    ? "opacity-50 border-gray-400 bg-gray-100 text-gray-600" 
                     : "border-[#400070] bg-white text-[#400070] hover:shadow-md"
                   }
                 `}
-                disabled={droppedLabels[label.id]}
               >
                 {label.name}
               </motion.button>
-
-              {/* Feedback Icon */}
-              {droppedLabels[label.id] && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1"
-                >
-                  <Check className="w-4 h-4 text-white" />
-                </motion.div>
-              )}
-              {labelStatus[label.id] === 'incorrect' && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
-                >
-                  <X className="w-4 h-4 text-white" />
-                </motion.div>
-              )}
             </div>
           ))}
         </div>
@@ -201,14 +123,9 @@ export default function DragDropActivity({ activityConfig, onComplete }) {
 
         {/* Progress Bar */}
         <div className="bg-white rounded-xl p-3 border-2 border-[var(--modal-border)]">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold text-[var(--modal-text)]">
-              Progress: {Object.keys(droppedLabels).length} / {activityConfig.labels.length}
-            </p>
-            {incorrectAttempts > 0 && (
-              <p className="text-xs text-[var(--modal-text-muted)]">Attempts: {incorrectAttempts}</p>
-            )}
-          </div>
+          <p className="text-xs font-semibold text-[var(--modal-text)] mb-2">
+            Progress: {Object.keys(droppedLabels).length} / {activityConfig.labels.length}
+          </p>
           <div className="w-full bg-[var(--modal-border)] rounded-full h-2">
             <div
               className="bg-[#400070] h-2 rounded-full transition-all"
