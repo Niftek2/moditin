@@ -54,11 +54,11 @@ export default function Onboarding() {
               What's your first name? *
             </Label>
             <Input
-              id="fullName"
+              id="firstName"
               type="text"
               placeholder="e.g., Jane"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               required
               disabled={loading}
               className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-12 rounded-xl"
