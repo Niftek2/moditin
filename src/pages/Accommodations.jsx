@@ -111,6 +111,12 @@ export default function AccommodationsPage() {
         </div>
       ) : (
         <div className="space-y-6">
+          <div className="flex justify-end">
+            <Button onClick={() => setShowCustomDialog(true)} className="gap-2" variant="outline">
+              <Plus className="w-4 h-4" />
+              Add Custom Accommodation
+            </Button>
+          </div>
           {CATEGORIES.map(category => (
             <section key={category} className="modal-card p-5" aria-labelledby={`category-${category.replace(/\s+/g, "-").toLowerCase()}`}>
               <h3
