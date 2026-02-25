@@ -132,11 +132,9 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
         )}
         <p className="text-xl font-semibold text-[var(--modal-text)] mb-6 leading-relaxed">{item.questionText}</p>
 
-        {/* Answer buttons */}
+        {/* Answer buttons — text only */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {(item.answerChoices || []).map((choiceText, i) => {
-            const choiceObj = items[currentIdx]?.answerChoices?.[i];
-            const choiceImageUrl = choiceObj?.imageUrl || null;
             const isSelected = current.selectedAnswer === choiceText;
             const isCorrect = choiceText === item.correctAnswer;
             let btnClass = "p-4 rounded-2xl border-2 text-left font-medium transition-all flex items-center gap-3 w-full ";
@@ -149,9 +147,6 @@ export default function ActivityPlayerScreen({ config, onComplete }) {
               <div key={i} className="flex items-center gap-2">
                 <button type="button" onClick={() => selectAnswer(choiceText)} className={btnClass}>
                   <span className="text-[var(--modal-text-muted)] text-sm font-bold min-w-[1.5rem]">{String.fromCharCode(65+i)}.</span>
-                  {choiceImageUrl && (
-                    <img src={choiceImageUrl} alt={choiceText} className="h-12 w-12 object-contain rounded-md flex-shrink-0" />
-                  )}
                   <span className="text-base leading-snug">{choiceText}</span>
                 </button>
                 {audioSettings?.enabled && audioSettings?.speakChoices && (
