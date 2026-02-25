@@ -1,10 +1,10 @@
-
 export const LABELING_ACTIVITIES = {
   hearingAid: {
     id: "hearingAid",
     title: "Label the Hearing Aid",
     description: "Identify the parts of a hearing aid",
     imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/e5d5fe917_HAImage.png",
+    answerKeyUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/414e97865_hearingaid.png",
     labels: [
       { id: "microphone", name: "MICROPHONE", correctPosition: { top: "20%", left: "28%" } },
       { id: "controlButtons", name: "CONTROL BUTTONS", correctPosition: { top: "16%", right: "12%" } },
@@ -20,6 +20,7 @@ export const LABELING_ACTIVITIES = {
     title: "Label the Cochlear Implant",
     description: "Identify the parts of a cochlear implant",
     imageUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/fe61a45a8_CIimage.png",
+    answerKeyUrl: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/e58bd87af_LABELcochlearimplant.png",
     labels: [
       { id: "coilMagnet", name: "COIL/MAGNET", correctPosition: { top: "16%", right: "8%" } },
       { id: "controlButtons", name: "CONTROL BUTTONS", correctPosition: { top: "22%", right: "22%" } },
