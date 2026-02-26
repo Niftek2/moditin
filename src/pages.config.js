@@ -68,6 +68,9 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
+import IosLogin from './pages/IosLogin';
+import IosSignup from './pages/IosSignup';
+import IosSubscribeRequired from './pages/IosSubscribeRequired';
 import __Layout from './Layout.jsx';
 
 
@@ -93,6 +96,9 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
+    "IosLogin": IosLogin,
+    "IosSignup": IosSignup,
+    "IosSubscribeRequired": IosSubscribeRequired,
 }
 
 export const pagesConfig = {
