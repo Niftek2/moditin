@@ -168,8 +168,8 @@ export default function EquipmentPage() {
               <Input value={equipForm.serialNumber} onChange={(e) => setEquipForm(p => ({ ...p, serialNumber: e.target.value }))} />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowEquipForm(false)}>Cancel</Button>
-              <Button onClick={() => createEquipMut.mutate(equipForm)} disabled={!equipForm.studentId || !equipForm.type} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
+              <Button variant="outline" onClick={() => { setShowEquipForm(false); setEditingEquip(null); }}>Cancel</Button>
+              <Button onClick={() => editingEquip ? updateEquipMut.mutate({ id: editingEquip.id, data: equipForm }) : createEquipMut.mutate(equipForm)} disabled={!equipForm.studentId || !equipForm.type} className="bg-[#400070] hover:bg-[#5B00A0] text-white">Save</Button>
             </div>
           </div>
         </DialogContent>
