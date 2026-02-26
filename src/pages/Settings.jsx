@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle2, Trash2, ExternalLink, Loader2, Sparkles, Pencil, Check, X } from "lucide-react";
+import { CheckCircle2, Trash2, ExternalLink, Loader2, Pencil } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
@@ -22,7 +22,7 @@ export default function SettingsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [loadingPortal, setLoadingPortal] = useState(false);
-  const [loadingCheckout, setLoadingCheckout] = useState(null);
+  const [loadingPortal, setLoadingPortal] = useState(false);
   const { subStatus } = useSubscription();
 
   const handleCheckout = async (priceId) => {
