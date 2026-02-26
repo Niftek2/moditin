@@ -10,7 +10,7 @@ const PRIORITY_STYLES = {
 
 const SNOOZE_OPTIONS = [5, 10, 30, 60];
 
-export default function ReminderCard({ reminder, onComplete, onSnooze, onEdit, compact = false }) {
+export default function ReminderCard({ reminder, onComplete, onSnooze, onEdit, onDelete, compact = false }) {
   const due = parseISO(reminder.dueDateTime);
   const isOverdue = isPast(due) && reminder.status === "Pending";
   const isSnoozed = reminder.status === "Snoozed";
