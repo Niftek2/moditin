@@ -12,27 +12,37 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check for active Stripe subscription
     let isEntitled = false;
+
+    // Check for active Stripe subscription
     try {
-      // List all subscriptions for this customer email
       const subscriptions = await stripe.subscriptions.list({
         limit: 100,
       });
 
-      // Find subscription matching this user's email
       const userSubscription = subscriptions.data.find(sub => {
         return sub.metadata?.user_email === user.email || 
-               sub.customer === user.email; // Fallback if customer ID is email
+               sub.customer === user.email;
       });
 
-      // Check if subscription is active (not canceled or incomplete)
       if (userSubscription && ['active', 'trialing'].includes(userSubscription.status)) {
         isEntitled = true;
       }
     } catch (stripeError) {
       console.error('Stripe subscription check error:', stripeError);
-      // If Stripe check fails, assume not entitled (safe default)
+    }
+
+    // Check for active Apple subscription
+    if (!isEntitled && user.appleSubscription) {
+      try {
+        const expirationDate = new Date(user.appleSubscription.expirationDate);
+        const now = new Date();
+        if (expirationDate > now) {
+          isEntitled = true;
+        }
+      } catch (appleError) {
+        console.error('Apple subscription check error:', appleError);
+      }
     }
 
     return Response.json({ isEntitled });
