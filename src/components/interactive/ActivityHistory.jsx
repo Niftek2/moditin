@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,8 @@ import { TEMPLATE_LABELS, TEMPLATE_ICONS } from "./activityTemplates";
 import EmptyState from "../shared/EmptyState";
 
 export default function ActivityHistory({ onSelectActivity }) {
-  const [currentUser, setCurrentUser] = React.useState(null);
-  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const { data: activities = [], refetch } = useQuery({
     queryKey: ["activityLog", currentUser?.id],

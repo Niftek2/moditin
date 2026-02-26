@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export default function WorksheetHistory({ onLoadWorksheet }) {
   const [expandedId, setExpandedId] = useState(null);
-  const [currentUser, setCurrentUser] = React.useState(null);
-  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const { data: worksheets = [], isLoading, refetch } = useQuery({
     queryKey: ["worksheetLogs", currentUser?.id],
