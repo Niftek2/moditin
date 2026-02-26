@@ -21,9 +21,9 @@ export default function StudentDetailPage() {
   const studentId = params.get("id");
   const defaultTab = params.get("tab") || "Overview";
   const [activeTab, setActiveTab] = useState(defaultTab);
-  const [expandedSection, setExpandedSection] = useCollapsibleState(null);
-  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
-  React.useEffect(() => {
+  const [expandedSection, setExpandedSection] = useState(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  useEffect(() => {
     base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
   }, []);
 
