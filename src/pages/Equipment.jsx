@@ -120,12 +120,18 @@ export default function EquipmentPage() {
                   </div>
                 </div>
                 {eq.description && <p className="text-xs text-[var(--modal-text-muted)] mb-3 ml-13">{eq.description}</p>}
-                <div className="flex gap-2 mt-2">
+                <div className="flex gap-2 mt-2 flex-wrap">
                    <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1" onClick={() => { setSelectedEquip(eq); setLogForm({ ...logForm, date: new Date().toISOString().split("T")[0] }); setShowLogForm(true); }}>
                      <ClipboardList className="w-3.5 h-3.5" /> Log Check
                    </Button>
                    <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1" onClick={() => { setSelectedStudentForWizard(eq.studentId); setShowWizard(true); }}>
                      <Wrench className="w-3.5 h-3.5" /> Troubleshoot
+                   </Button>
+                   <Button size="sm" variant="outline" className="text-xs border-[var(--modal-border)] text-[var(--modal-text-muted)] gap-1 ml-auto" onClick={() => { setEditingEquip(eq); setEquipForm({ studentId: eq.studentId, type: eq.type, description: eq.description || "", serialNumber: eq.serialNumber || "", status: eq.status || "Active", reminderSchedule: eq.reminderSchedule || "None" }); setShowEquipForm(true); }}>
+                     <Pencil className="w-3.5 h-3.5" /> Edit
+                   </Button>
+                   <Button size="sm" variant="outline" className="text-xs border-red-200 text-red-600 gap-1" onClick={() => { if (confirm("Delete this equipment?")) deleteEquipMut.mutate(eq.id); }}>
+                     <Trash2 className="w-3.5 h-3.5" /> Delete
                    </Button>
                  </div>
               </div>
