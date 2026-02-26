@@ -13,6 +13,11 @@ export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
   useAndroidBack();
 
+  // /join page renders without the full app shell
+  if (currentPageName === "Join") {
+    return <>{children}</>;
+  }
+
   return (
     <SubscriptionProvider>
       <SubscriptionGate>
