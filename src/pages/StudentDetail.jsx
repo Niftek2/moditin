@@ -31,8 +31,8 @@ export default function StudentDetailPage() {
   const { data: student } = useQuery({
     queryKey: ["student", studentId],
     queryFn: async () => {
-      const students = await base44.entities.Student.list();
-      return students.find(s => s.id === studentId);
+      const results = await base44.entities.Student.filter({ id: studentId });
+      return results[0] || null;
     },
     enabled: !!studentId,
   });
