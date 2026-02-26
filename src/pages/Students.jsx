@@ -36,9 +36,15 @@ export default function StudentsPage() {
   const queryClient = useQueryClient();
   const { subStatus } = useSubscription();
 
+  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
+  React.useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
+
   const { data: students = [], isLoading } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list("-created_date"),
+    queryKey: ["students", currentUserEmail],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }, "-created_date"),
+    enabled: !!currentUserEmail,
   });
 
   const createMutation = useMutation({
