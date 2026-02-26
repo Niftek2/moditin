@@ -9,8 +9,8 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Get student count for freemium limit
-    const students = await base44.entities.Student.list();
+    // Get student count for freemium limit (only this user's students)
+    const students = await base44.entities.Student.filter({ created_by: user.email });
     const studentCount = students.length;
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
