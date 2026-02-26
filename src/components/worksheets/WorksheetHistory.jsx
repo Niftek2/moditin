@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 
 export default function WorksheetHistory({ onLoadWorksheet }) {
   const [expandedId, setExpandedId] = useState(null);
+  const [currentUser, setCurrentUser] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const { data: worksheets = [], isLoading, refetch } = useQuery({
-    queryKey: ["worksheetLogs"],
-    queryFn: () => base44.entities.WorksheetLog.list("-created_date", 50),
+    queryKey: ["worksheetLogs", currentUser?.id],
+    queryFn: () => base44.entities.WorksheetLog.filter({ created_by: currentUser?.email }, "-created_date", 50),
+    enabled: !!currentUser?.id,
   });
 
   const handleDelete = async (id) => {

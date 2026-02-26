@@ -8,9 +8,13 @@ import { TEMPLATE_LABELS, TEMPLATE_ICONS } from "./activityTemplates";
 import EmptyState from "../shared/EmptyState";
 
 export default function ActivityHistory({ onSelectActivity }) {
+  const [currentUser, setCurrentUser] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+
   const { data: activities = [], refetch } = useQuery({
-    queryKey: ["activityLog"],
-    queryFn: () => base44.entities.ActivityLog.list("-created_date", 100),
+    queryKey: ["activityLog", currentUser?.id],
+    queryFn: () => base44.entities.ActivityLog.filter({ created_by: currentUser?.email }, "-created_date", 100),
+    enabled: !!currentUser?.id,
   });
 
   const handleReuse = (activity) => {

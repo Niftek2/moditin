@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import { Target, Search, Filter, ChevronDown, ChevronUp, Check, X, ShieldAlert, 
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import AIGoalCreator from "../components/goalbank/AIGoalCreator";
-import { useEffect, useState } from "react";
 
 const DOMAINS = ["Auditory Skills", "Self-Advocacy", "Speech", "Receptive Language", "Expressive Language", "Pragmatics", "Literacy Access", "Hearing Equipment Use", "Classroom Listening"];
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
@@ -26,24 +25,27 @@ export default function GoalBankPage() {
   const [domainFilter, setDomainFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
   const [expanded, setExpanded] = useState(null);
-
   const [showFilters, setShowFilters] = useState(false);
   const [showCompliance, setShowCompliance] = useState(true);
   const [showAICreator, setShowAICreator] = useState(false);
   const [showCustomGoalForm, setShowCustomGoalForm] = useState(false);
   const [customGoalForm, setCustomGoalForm] = useState({ annualGoal: "", domain: "", gradeBand: "", baselineLevel: "", measurementType: "" });
-  const { subStatus } = useSubscription();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const queryClient = useQueryClient();
 
   const { data: goals = [], isLoading } = useQuery({
-    queryKey: ["goals"],
-    queryFn: () => base44.entities.Goal.list("-created_date", 200),
+    queryKey: ["goals", currentUser?.id],
+    queryFn: () => base44.entities.Goal.filter({ created_by: currentUser?.email }, "-created_date", 200),
+    enabled: !!currentUser?.id,
   });
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
+    enabled: !!currentUser?.email,
   });
 
   const assignMutation = useMutation({
@@ -87,13 +89,10 @@ export default function GoalBankPage() {
             </Button>
             <Button
               onClick={() => setShowAICreator(true)}
-              disabled={!subStatus?.isPro}
-              title={!subStatus?.isPro ? "Upgrade to Pro to use AI Goal Creator" : ""}
-              className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2 text-sm"
             >
               <Sparkles className="w-4 h-4" /> AI Goal Creator
             </Button>
-
           </div>
         }
       />
@@ -152,10 +151,8 @@ export default function GoalBankPage() {
         )}
       </div>
 
-      {/* Results count */}
       <p className="text-xs text-[var(--modal-text-muted)] mb-4">{filtered.length} goal{filtered.length !== 1 ? "s" : ""} found</p>
 
-      {/* Goals List */}
       {filtered.length === 0 && !isLoading ? (
         <EmptyState icon={Target} title="No goals found" description="Try adjusting your filters or generate a new goal with AI." />
       ) : (
@@ -230,7 +227,6 @@ export default function GoalBankPage() {
         studentData={studentId ? students.find(s => s.id === studentId) : null}
       />
 
-      {/* Custom Goal Form Dialog */}
       <Dialog open={showCustomGoalForm} onOpenChange={setShowCustomGoalForm}>
         <DialogContent className="bg-white border-[var(--modal-border)] max-w-md shadow-2xl">
           <DialogHeader>
@@ -302,7 +298,6 @@ export default function GoalBankPage() {
           </div>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
