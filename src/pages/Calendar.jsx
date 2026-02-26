@@ -27,14 +27,21 @@ export default function CalendarPage() {
 
   const qc = useQueryClient();
 
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, []);
+
   const { data: events = [] } = useQuery({
-    queryKey: ["calendarEvents"],
-    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 200),
+    queryKey: ["calendarEvents", currentUser?.email],
+    queryFn: () => base44.entities.CalendarEvent.filter({ created_by: currentUser?.email }, "-startDateTime", 200),
+    enabled: !!currentUser?.email,
   });
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
+    enabled: !!currentUser?.email,
   });
 
   const createEvent = useMutation({
