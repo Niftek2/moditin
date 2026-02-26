@@ -43,8 +43,9 @@ export default function Dashboard() {
   const firstName = user?.firstName || "";
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list()
+    queryKey: ["students", user?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: user?.email }),
+    enabled: !!user?.email,
   });
 
   // Initialize studentOrder from displayOrder or ID order
