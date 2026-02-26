@@ -47,6 +47,18 @@ export default function Sidebar({ currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
+    // Clear all caches on logout
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch {}
+    try {
+      if (window.indexedDB && window.indexedDB.databases) {
+        window.indexedDB.databases().then(dbs => {
+          dbs.forEach(db => window.indexedDB.deleteDatabase(db.name));
+        }).catch(() => {});
+      }
+    } catch {}
     base44.auth.logout();
   };
 
