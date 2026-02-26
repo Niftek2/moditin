@@ -33,9 +33,9 @@ export default function CalendarPage() {
   }, []);
 
   const { data: events = [] } = useQuery({
-    queryKey: ["calendarEvents", currentUser?.email],
+    queryKey: ["calendarEvents", currentUser?.id],
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: currentUser?.email }, "-startDateTime", 200),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.id,
   });
 
   const { data: students = [] } = useQuery({
