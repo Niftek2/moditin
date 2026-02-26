@@ -34,7 +34,7 @@ export default function Layout({ children, currentPageName }) {
         const user = await base44.auth.me();
         if (!user) {
           // Not logged in, redirect to iOS login
-          navigate("/ios/login");
+          navigate("/IosLogin", { replace: true });
           return;
         }
 
@@ -43,14 +43,14 @@ export default function Layout({ children, currentPageName }) {
 
         if (!isEntitled) {
           setIosBlocked(true);
-          navigate("/ios/subscribe-required", { replace: true });
+          navigate("/IosSubscribeRequired", { replace: true });
         } else {
           setIosBlocked(false);
         }
       } catch (error) {
         console.error("Error checking iOS entitlement:", error);
         setIosBlocked(true);
-        navigate("/ios/subscribe-required", { replace: true });
+        navigate("/IosSubscribeRequired", { replace: true });
       }
     };
 

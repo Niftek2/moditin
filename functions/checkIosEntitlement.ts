@@ -32,13 +32,15 @@ Deno.serve(async (req) => {
       console.error('Stripe subscription check error:', stripeError);
     }
 
-    // Check for active Apple subscription
+    // Check for active Apple subscription (iOS only)
     if (!isEntitled && user.appleSubscription) {
       try {
-        const expirationDate = new Date(user.appleSubscription.expirationDate);
-        const now = new Date();
-        if (expirationDate > now) {
-          isEntitled = true;
+        if (user.appleSubscription.isActive === true) {
+          const expirationDate = new Date(user.appleSubscription.expirationDate);
+          const now = new Date();
+          if (expirationDate > now) {
+            isEntitled = true;
+          }
         }
       } catch (appleError) {
         console.error('Apple subscription check error:', appleError);
