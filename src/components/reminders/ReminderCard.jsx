@@ -1,6 +1,6 @@
 import React from "react";
 import { format, parseISO, isPast, isToday } from "date-fns";
-import { Check, Clock, Pencil, RotateCcw } from "lucide-react";
+import { Check, Clock, Pencil, RotateCcw, Trash2 } from "lucide-react";
 
 const PRIORITY_STYLES = {
   High: { dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
