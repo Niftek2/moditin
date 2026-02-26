@@ -20,7 +20,7 @@ const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { useState as useCollapsibleState } from "react";
+const useCollapsibleState = useState;
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
