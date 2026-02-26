@@ -150,8 +150,8 @@ export default function Sidebar({ currentPage }) {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
-          <div className="w-64 h-full bg-white border-r border-[var(--modal-border)]" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-[#6F6F6F] hover:text-[#400070]">
+          <div className="w-72 h-full bg-white border-r border-[var(--modal-border)] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-[#6F6F6F] hover:text-[#400070] z-10">
               <X className="w-5 h-5" />
             </button>
             {navContent}
