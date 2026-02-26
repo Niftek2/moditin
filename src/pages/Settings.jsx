@@ -146,98 +146,18 @@ export default function SettingsPage() {
 
         {/* Subscription */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-4">Subscription</h3>
-
-          {/* Plan comparison cards */}
-          <div className="grid sm:grid-cols-2 gap-4 mb-4">
-            {/* Free Plan */}
-            <div className={`rounded-xl border-2 p-4 ${!subStatus?.isPro ? "border-[#400070] bg-[#F7F3FA]" : "border-[var(--modal-border)] bg-white"}`}>
-              <div className="flex items-center justify-between mb-1">
-                <p className="font-semibold text-[var(--modal-text)]">Free</p>
-                {!subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
-              </div>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$0<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span></p>
-              <ul className="space-y-1.5 text-xs text-[var(--modal-text-muted)]">
-                 {[
-                   ["3 students", true],
-                   ["Calendar & scheduling", true],
-                   ["Service hour logging", true],
-                   ["Mileage tracking", true],
-                   ["Ling 6 sound check", true],
-                   ["Goal bank", false],
-                   ["Interactive activities", false],
-                   ["Worksheets", false],
-                   ["Equipment troubleshooting wizard", false],
-                   ["Testing guided wizard", false],
-                 ].map(([label, included]) => (
-                  <li key={label} className="flex items-center gap-2">
-                    {included ? <Check className="w-3.5 h-3.5 text-green-500 shrink-0" /> : <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />}
-                    <span className={included ? "text-[var(--modal-text)]" : ""}>{label}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Pro Plan */}
-            <div className={`rounded-xl border-2 p-4 ${subStatus?.isPro ? "border-[#400070] bg-[#F7F3FA]" : "border-[var(--modal-border)] bg-white"}`}>
-              <div className="flex items-center justify-between mb-1">
-                <p className="font-semibold text-[var(--modal-text)] flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-[#400070]" /> Pro</p>
-                {subStatus?.isPro && <span className="text-xs bg-[#400070] text-white px-2 py-0.5 rounded-full">Current Plan</span>}
-              </div>
-              <p className="text-2xl font-bold text-[var(--modal-text)] mb-3">$17.99<span className="text-sm font-normal text-[var(--modal-text-muted)]">/mo</span> <span className="text-xs text-[var(--modal-text-muted)]">or $179/yr</span></p>
-              <ul className="space-y-1.5 text-xs">
-                {[
-                  "Add your whole caseload",
-                  "Calendar & scheduling",
-                  "Service hour logging",
-                  "Goal bank with AI-assisted writing",
-                  "Interactive activities",
-                  "Ling 6 sound check",
-                  "Worksheets",
-                  "Mileage tracking",
-                  "Equipment troubleshooting wizard",
-                  "Testing guided wizard",
-                ].map((label) => (
-                  <li key={label} className="flex items-center gap-2 text-[var(--modal-text)]">
-                    <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
-                    {label}
-                  </li>
-                  ))}
-                  </ul>
-                  <p className="text-xs text-[var(--modal-text-muted)] mt-3">...and so much more</p>
-                  </div>
-          </div>
-
-          {/* Active subscription info */}
+          <h3 className="font-semibold text-[var(--modal-text)] mb-2">Subscription</h3>
           {subStatus?.isActive && (
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)] mb-4 text-sm">
-              <Sparkles className="w-4 h-4 text-[#400070] shrink-0" />
-              <p className="text-[var(--modal-text)]">
-                {subStatus.isTrial
-                  ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
-                  : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
-              </p>
-            </div>
+            <p className="text-sm text-[var(--modal-text-muted)] mb-4">
+              {subStatus.isTrial
+                ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
+                : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
+            </p>
           )}
-
-          {/* Action buttons */}
-          {subStatus?.isPro ? (
-            <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
-              {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-              Manage Billing
-            </Button>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={() => handleCheckout("price_1T4B1rG8v8oKpU6mPPumccla")} disabled={!!loadingCheckout} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
-                {loadingCheckout === "price_1T4B1rG8v8oKpU6mPPumccla" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                Start Free Trial · $17.99/mo
-              </Button>
-              <Button onClick={() => handleCheckout("price_1T4B1rG8v8oKpU6my9bQBS46")} disabled={!!loadingCheckout} variant="outline" className="border-[#400070] text-[#400070] hover:bg-[#F7F3FA] gap-2">
-                {loadingCheckout === "price_1T4B1rG8v8oKpU6my9bQBS46" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                Annual · $179/yr
-              </Button>
-            </div>
-          )}
+          <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
+            {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+            Manage Subscription
+          </Button>
         </div>
 
         {/* School Pricing Inquiry */}
