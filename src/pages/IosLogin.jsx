@@ -125,17 +125,7 @@ export default function IosLoginPage() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm">
-          <p className="text-[#6B5E80]">
-            Don't have an account?{" "}
-            <a
-              href="/ios/signup"
-              className="text-[#400070] hover:text-[#5B00A0] font-semibold"
-            >
-              Create one
-            </a>
-          </p>
-        </div>
+
       </div>
     </div>
   );
