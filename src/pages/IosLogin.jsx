@@ -28,11 +28,11 @@ export default function IosLoginPage() {
 
     try {
       await base44.auth.login(email, password);
-      
+
       // Check if user is entitled
       const res = await base44.functions.invoke("checkIosEntitlement");
       const isEntitled = res?.data?.isEntitled || false;
-      
+
       if (isEntitled) {
         navigate("/Dashboard", { replace: true });
       } else {
@@ -53,26 +53,26 @@ export default function IosLoginPage() {
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
             alt="Modal Itinerant"
-            className="h-14 object-contain mx-auto mb-4"
-          />
+            className="h-14 object-contain mx-auto mb-4" />
+
           <h1 className="text-2xl font-bold text-[#1A1028]">Log in</h1>
-          <p className="text-sm text-[#6B5E80] mt-1">iOS app</p>
+          
         </div>
 
         {/* Account created message */}
-        {showAccountCreatedMsg && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+        {showAccountCreatedMsg &&
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-green-800">
               Account created. To continue, subscribe with Apple in the app.
             </p>
           </div>
-        )}
+        }
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+        {error &&
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-red-800">{error}</p>
           </div>
-        )}
+        }
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-2">
@@ -88,8 +88,8 @@ export default function IosLoginPage() {
               required
               disabled={loading}
               className="bg-white border-[#D8CCE8] text-[#1A1028] h-12 rounded-xl"
-              autoFocus
-            />
+              autoFocus />
+
           </div>
 
           <div className="space-y-2">
@@ -104,23 +104,23 @@ export default function IosLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
-              className="bg-white border-[#D8CCE8] text-[#1A1028] h-12 rounded-xl"
-            />
+              className="bg-white border-[#D8CCE8] text-[#1A1028] h-12 rounded-xl" />
+
           </div>
 
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white h-12 rounded-xl font-semibold gap-2"
-          >
-            {loading ? (
-              <>
+            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white h-12 rounded-xl font-semibold gap-2">
+
+            {loading ?
+            <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Logging in...
-              </>
-            ) : (
-              "Log in"
-            )}
+              </> :
+
+            "Log in"
+            }
           </Button>
         </form>
 
@@ -129,13 +129,13 @@ export default function IosLoginPage() {
             Don't have an account?{" "}
             <a
               href="/IosSignup"
-              className="text-[#400070] hover:text-[#5B00A0] font-semibold"
-            >
+              className="text-[#400070] hover:text-[#5B00A0] font-semibold">
+
               Sign up
             </a>
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
