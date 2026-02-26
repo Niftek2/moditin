@@ -283,14 +283,22 @@ export default function ServiceHoursPage() {
         <div className="modal-card overflow-hidden">
           <div className="divide-y divide-[var(--modal-border)]">
             {monthEntries.map(entry => (
-              <div key={entry.id} className="p-4 flex items-center justify-between">
-                <div>
+              <div key={entry.id} className="p-4 flex items-center justify-between gap-3">
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--modal-text)]">{CATEGORY_LABELS[entry.category] || entry.category}</p>
                   <p className="text-xs text-[var(--modal-text-muted)]">
                     {entry.date} {entry.studentId ? `· ${studentMap[entry.studentId] || ""}` : ""} {entry.entryMethod ? `· ${entry.entryMethod}` : ""}
                   </p>
                 </div>
-                <span className="text-sm font-medium text-[var(--modal-purple-glow)]">{entry.minutes} min</span>
+                <span className="text-sm font-medium text-[var(--modal-purple-glow)] shrink-0">{entry.minutes} min</span>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => handleEditEntry(entry)} className="text-[var(--modal-text-muted)] hover:text-[#6B2FB9] transition-colors p-1">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => handleDeleteEntry(entry.id)} className="text-[var(--modal-text-muted)] hover:text-red-500 transition-colors p-1">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
