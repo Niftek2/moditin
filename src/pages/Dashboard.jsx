@@ -59,13 +59,15 @@ export default function Dashboard() {
   }, [students]);
 
   const { data: services = [] } = useQuery({
-    queryKey: ["services-dash"],
-    queryFn: () => base44.entities.ServiceEntry.list("-created_date", 50)
+    queryKey: ["services-dash", user?.email],
+    queryFn: () => base44.entities.ServiceEntry.filter({ created_by: user?.email }, "-created_date", 50),
+    enabled: !!user?.email,
   });
 
   const { data: calendarEvents = [] } = useQuery({
-    queryKey: ["calendarEvents-dash"],
-    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 100)
+    queryKey: ["calendarEvents-dash", user?.email],
+    queryFn: () => base44.entities.CalendarEvent.filter({ created_by: user?.email }, "-startDateTime", 100),
+    enabled: !!user?.email,
   });
 
   const now = new Date();
