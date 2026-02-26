@@ -9,8 +9,11 @@ export default function NotificationBell() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDue, setNewDue] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   const qc = useQueryClient();
   const now = new Date();
+
+  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const addReminder = useMutation({
     mutationFn: (data) => base44.entities.PersonalReminder.create(data),
