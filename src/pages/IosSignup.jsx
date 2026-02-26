@@ -31,17 +31,12 @@ export default function IosSignupPage() {
     setError("");
 
     try {
+      // Create account using the correct auth method
       await base44.auth.signup(email, password);
       
-      // Check if user is entitled (typically won't be right after signup)
-      const res = await base44.functions.invoke("checkIosEntitlement");
-      const isEntitled = res?.data?.isEntitled || false;
-      
-      if (isEntitled) {
-        navigate("/Dashboard", { replace: true });
-      } else {
-        navigate("/ios/subscribe-required", { replace: true });
-      }
+      // Immediately redirect to subscribe-required (Apple paywall)
+      // All new iOS users must subscribe
+      navigate("/IosSubscribeRequired", { replace: true });
     } catch (err) {
       setError(err?.message || "Signup failed. Please try again.");
     } finally {
@@ -140,7 +135,7 @@ export default function IosSignupPage() {
           <p className="text-[#6B5E80]">
             Already have an account?{" "}
             <a
-              href="/ios/login"
+              href="/IosLogin"
               className="text-[#400070] hover:text-[#5B00A0] font-semibold"
             >
               Log in

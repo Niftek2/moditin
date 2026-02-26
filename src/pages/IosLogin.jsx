@@ -36,7 +36,7 @@ export default function IosLoginPage() {
       if (isEntitled) {
         navigate("/Dashboard", { replace: true });
       } else {
-        navigate("/ios/subscribe-required", { replace: true });
+        navigate("/IosSubscribeRequired", { replace: true });
       }
     } catch (err) {
       setError(err?.message || "Login failed. Please check your email and password.");
@@ -128,7 +128,7 @@ export default function IosLoginPage() {
           <p className="text-[#6B5E80]">
             Don't have an account?{" "}
             <a
-              href="/ios/signup"
+              href="/IosSignup"
               className="text-[#400070] hover:text-[#5B00A0] font-semibold"
             >
               Sign up

@@ -4,16 +4,38 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { base44 } from "@/api/base44Client";
 
 export default function PageNotFound() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If in iOS mode, redirect to subscribe-required page
-    const isIosMode = typeof window !== "undefined" && window.ModalApp?.platform === "ios";
-    if (isIosMode) {
-      navigate("/ios/subscribe-required", { replace: true });
-    }
+    const handleIosRedirect = async () => {
+      const isIosMode = typeof window !== "undefined" && window.ModalApp?.platform === "ios";
+      if (!isIosMode) return;
+
+      try {
+        const user = await base44.auth.me();
+        if (!user) {
+          // Not logged in, go to iOS login
+          navigate("/IosLogin", { replace: true });
+        } else {
+          // Logged in, check entitlement
+          const res = await base44.functions.invoke("checkIosEntitlement");
+          const isEntitled = res?.data?.isEntitled || false;
+          if (isEntitled) {
+            navigate("/Dashboard", { replace: true });
+          } else {
+            navigate("/IosSubscribeRequired", { replace: true });
+          }
+        }
+      } catch (error) {
+        console.error("Error in iOS 404 redirect:", error);
+        navigate("/IosSubscribeRequired", { replace: true });
+      }
+    };
+
+    handleIosRedirect();
   }, [navigate]);
 
   return (

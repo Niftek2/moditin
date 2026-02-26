@@ -8,7 +8,7 @@ export default function IosSubscribeRequiredPage() {
   };
 
   const handleAlreadySubscribed = () => {
-    window.location.href = "/ios/login";
+    window.location.href = "modalapp://restore";
   };
 
   return (
