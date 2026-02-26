@@ -27,10 +27,13 @@ export default function Reminders() {
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const qc = useQueryClient();
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const { data: reminders = [], isLoading } = useQuery({
-    queryKey: ["reminders"],
-    queryFn: () => base44.entities.PersonalReminder.list("-dueDateTime", 200),
+    queryKey: ["reminders", currentUser?.id],
+    queryFn: () => base44.entities.PersonalReminder.filter({ created_by: currentUser?.email }, "-dueDateTime", 200),
+    enabled: !!currentUser?.id,
   });
 
   const createMutation = useMutation({

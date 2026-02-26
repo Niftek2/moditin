@@ -19,6 +19,9 @@ const STATUSES = ["Active", "NeedsRepair", "Loaned", "Retired"];
 const CHECK_TYPES = ["DailyCheck", "WeeklyCheck", "IssueReport", "Repair", "Replacement"];
 
 export default function EquipmentPage() {
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+
   const [showEquipForm, setShowEquipForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
@@ -29,10 +32,10 @@ export default function EquipmentPage() {
 
   const queryClient = useQueryClient();
 
-  const { data: equipment = [] } = useQuery({ queryKey: ["equipment"], queryFn: () => base44.entities.Equipment.list() });
-  const { data: students = [] } = useQuery({ queryKey: ["students"], queryFn: () => base44.entities.Student.list() });
-  const { data: logs = [] } = useQuery({ queryKey: ["equipLogs"], queryFn: () => base44.entities.EquipmentLog.list("-date", 100) });
-  const { data: troubleshootSessions = [] } = useQuery({ queryKey: ["troubleshootSessions"], queryFn: () => base44.entities.EquipmentTroubleshootSession.list("-created_date", 100) });
+  const { data: equipment = [] } = useQuery({ queryKey: ["equipment", currentUser?.id], queryFn: () => base44.entities.Equipment.filter({ created_by: currentUser?.email }), enabled: !!currentUser?.id });
+  const { data: students = [] } = useQuery({ queryKey: ["students", currentUser?.email], queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }), enabled: !!currentUser?.email });
+  const { data: logs = [] } = useQuery({ queryKey: ["equipLogs", currentUser?.id], queryFn: () => base44.entities.EquipmentLog.filter({ created_by: currentUser?.email }, "-date", 100), enabled: !!currentUser?.id });
+  const { data: troubleshootSessions = [] } = useQuery({ queryKey: ["troubleshootSessions", currentUser?.id], queryFn: () => base44.entities.EquipmentTroubleshootSession.filter({ created_by: currentUser?.email }, "-created_date", 100), enabled: !!currentUser?.id });
 
   const createEquipMut = useMutation({
     mutationFn: (data) => base44.entities.Equipment.create(data),
