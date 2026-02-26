@@ -23,9 +23,13 @@ export default function Ling6CheckPage() {
   const [saving, setSaving] = useState(false);
   const queryClient = useQueryClient();
 
+  const [currentUser, setCurrentUser] = React.useState(null);
+  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser.email }),
+    enabled: !!currentUser?.email,
   });
 
   const selectedStudent = students.find(s => s.id === selectedStudentId);
