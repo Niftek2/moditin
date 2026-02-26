@@ -13,6 +13,7 @@ import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import AIGoalCreator from "../components/goalbank/AIGoalCreator";
 import { useSubscription } from "../components/shared/SubscriptionGate";
+import { useEffect } from "react";
 
 const DOMAINS = ["Auditory Skills", "Self-Advocacy", "Speech", "Receptive Language", "Expressive Language", "Pragmatics", "Literacy Access", "Hearing Equipment Use", "Classroom Listening"];
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
