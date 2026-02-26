@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,7 @@ import { Target, Search, Filter, ChevronDown, ChevronUp, Check, X, ShieldAlert, 
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import AIGoalCreator from "../components/goalbank/AIGoalCreator";
-import { useSubscription } from "../components/shared/SubscriptionGate";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DOMAINS = ["Auditory Skills", "Self-Advocacy", "Speech", "Receptive Language", "Expressive Language", "Pragmatics", "Literacy Access", "Hearing Equipment Use", "Classroom Listening"];
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
