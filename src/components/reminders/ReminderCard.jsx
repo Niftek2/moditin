@@ -31,11 +31,18 @@ export default function ReminderCard({ reminder, onComplete, onSnooze, onEdit, o
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm font-semibold text-[var(--modal-text)] leading-snug">{reminder.title}</p>
-            {onEdit && (
-              <button onClick={() => onEdit(reminder)} className="shrink-0 text-[var(--modal-text-muted)] hover:text-[#6B2FB9] transition-colors">
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <div className="flex items-center gap-2 shrink-0">
+              {onEdit && (
+                <button onClick={() => onEdit(reminder)} className="text-[var(--modal-text-muted)] hover:text-[#6B2FB9] transition-colors">
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              )}
+              {onDelete && (
+                <button onClick={() => onDelete(reminder)} className="text-[var(--modal-text-muted)] hover:text-red-500 transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Meta row */}
