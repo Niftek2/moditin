@@ -37,9 +37,21 @@ export default function EquipmentPage() {
   const { data: logs = [] } = useQuery({ queryKey: ["equipLogs", currentUser?.id], queryFn: () => base44.entities.EquipmentLog.filter({ created_by: currentUser?.email }, "-date", 100), enabled: !!currentUser?.id });
   const { data: troubleshootSessions = [] } = useQuery({ queryKey: ["troubleshootSessions", currentUser?.id], queryFn: () => base44.entities.EquipmentTroubleshootSession.filter({ created_by: currentUser?.email }, "-created_date", 100), enabled: !!currentUser?.id });
 
+  const [editingEquip, setEditingEquip] = useState(null);
+
   const createEquipMut = useMutation({
     mutationFn: (data) => base44.entities.Equipment.create(data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["equipment"] }); setShowEquipForm(false); },
+  });
+
+  const updateEquipMut = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Equipment.update(id, data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["equipment"] }); setShowEquipForm(false); setEditingEquip(null); },
+  });
+
+  const deleteEquipMut = useMutation({
+    mutationFn: (id) => base44.entities.Equipment.delete(id),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["equipment"] }); },
   });
 
   const createLogMut = useMutation({
