@@ -97,14 +97,16 @@ export default function StudentLimitModal({ students, onStudentsKept, onUpgrade 
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Keep Selected Students
           </Button>
-          <Button
-            onClick={onUpgrade}
-            variant="outline"
-            className="w-full rounded-xl border-[#400070] text-[#400070] hover:bg-[#EADDF5] flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            Upgrade to Keep All
-          </Button>
+          {!isIosPlatform() && (
+            <Button
+              onClick={onUpgrade}
+              variant="outline"
+              className="w-full rounded-xl border-[#400070] text-[#400070] hover:bg-[#EADDF5] flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              Upgrade to Keep All
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
