@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" subtitle="Account and subscription management" />
+      <PageHeader title="Settings" subtitle="Account settings" />
 
       <div className="space-y-6 max-w-2xl">
         {/* Account */}
@@ -103,28 +103,27 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Subscription — hidden on iOS native app */}
-        {!isIosPlatform() && (
-          <div className="modal-card p-6">
-            <h3 className="font-semibold text-[var(--modal-text)] mb-2">Subscription</h3>
-            {subStatus?.isActive && (
-              <p className="text-sm text-[var(--modal-text-muted)] mb-4">
-                {subStatus.isTrial
-                  ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
-                  : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
-              </p>
-            )}
-            <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
-              {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-              Manage Subscription
-            </Button>
-          </div>
-        )}
-
-        {/* School Pricing Inquiry */}
+        {/* Manage Account */}
         <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Pricing</h3>
-          <p className="text-xs text-[var(--modal-text-muted)] mb-4">Interested in pricing for your school or district? Fill out the form below.</p>
+          <h3 className="font-semibold text-[var(--modal-text)] mb-2">Manage Account</h3>
+          <p className="text-xs text-[var(--modal-text-muted)] mb-4">Manage your billing and subscription from the Stripe portal.</p>
+          <Button
+            onClick={async () => {
+              if (window.self !== window.top) { alert("Billing portal is only available from the published app."); return; }
+              const res = await base44.functions.invoke("stripePortal", { returnUrl: window.location.href });
+              if (res.data?.url) window.location.href = res.data.url;
+            }}
+            variant="outline"
+            className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2"
+          >
+            <ExternalLink className="w-4 h-4" /> Manage Account
+          </Button>
+        </div>
+
+        {/* School Inquiry */}
+        <div className="modal-card p-6">
+          <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Inquiry</h3>
+          <p className="text-xs text-[var(--modal-text-muted)] mb-4">Interested in options for your school or district? Fill out the form below.</p>
 
           {submitted ? (
             <div className="text-center py-6">
