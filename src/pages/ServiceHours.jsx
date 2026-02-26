@@ -42,14 +42,21 @@ export default function ServiceHoursPage() {
 
   const queryClient = useQueryClient();
 
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, []);
+
   const { data: entries = [] } = useQuery({
-    queryKey: ["serviceEntries"],
-    queryFn: () => base44.entities.ServiceEntry.list("-date", 500),
+    queryKey: ["serviceEntries", currentUser?.email],
+    queryFn: () => base44.entities.ServiceEntry.filter({ created_by: currentUser?.email }, "-date", 500),
+    enabled: !!currentUser?.email,
   });
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
+    enabled: !!currentUser?.email,
   });
 
   const { data: studentGoals = [] } = useQuery({
