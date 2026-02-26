@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Plus, Bell, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Plus, Bell, ShieldAlert, CheckCircle2, Trash2 } from "lucide-react";
 import { isPast, parseISO, addDays, addWeeks, addMonths, isToday, isFuture } from "date-fns";
 import ReminderForm from "../components/reminders/ReminderForm";
 import ReminderCard from "../components/reminders/ReminderCard";
