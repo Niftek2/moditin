@@ -48,8 +48,9 @@ export default function StudentDetailPage() {
   });
 
   const { data: goals = [] } = useQuery({
-    queryKey: ["goals"],
-    queryFn: () => base44.entities.Goal.list(),
+    queryKey: ["goals", currentUserEmail],
+    queryFn: () => base44.entities.Goal.filter({ created_by: currentUserEmail }),
+    enabled: !!currentUserEmail,
   });
 
   const { data: equipment = [] } = useQuery({
