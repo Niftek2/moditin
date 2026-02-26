@@ -48,18 +48,21 @@ export default function MyDay() {
   useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
 
   const { data: calendarEvents = [] } = useQuery({
-    queryKey: ["calendarEvents-myday"],
-    queryFn: () => base44.entities.CalendarEvent.list("-startDateTime", 200),
+    queryKey: ["calendarEvents-myday", user?.email],
+    queryFn: () => base44.entities.CalendarEvent.filter({ created_by: user.email }, "-startDateTime", 200),
+    enabled: !!user?.email,
   });
 
   const { data: reminders = [] } = useQuery({
-    queryKey: ["reminders"],
-    queryFn: () => base44.entities.PersonalReminder.list("-dueDateTime", 200),
+    queryKey: ["reminders", user?.email],
+    queryFn: () => base44.entities.PersonalReminder.filter({ created_by: user.email }, "-dueDateTime", 200),
+    enabled: !!user?.email,
   });
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", user?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: user.email }),
+    enabled: !!user?.email,
   });
 
   const createReminderMutation = useMutation({
