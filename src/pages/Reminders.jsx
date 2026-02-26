@@ -66,6 +66,12 @@ export default function Reminders() {
     qc.invalidateQueries({ queryKey: ["reminders"] });
   };
 
+  const handleDelete = async (reminder) => {
+    if (!window.confirm("Delete this reminder?")) return;
+    await base44.entities.PersonalReminder.delete(reminder.id);
+    qc.invalidateQueries({ queryKey: ["reminders"] });
+  };
+
   const handleSnooze = async (reminder, mins) => {
     const snoozeUntil = new Date(Date.now() + mins * 60000).toISOString();
     await base44.entities.PersonalReminder.update(reminder.id, { status: "Snoozed", snoozeUntil });
