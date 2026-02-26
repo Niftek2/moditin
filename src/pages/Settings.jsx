@@ -5,10 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle2, Trash2, Loader2, Pencil } from "lucide-react";
+import { CheckCircle2, Trash2, ExternalLink, Loader2, Pencil } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
+import { useSubscription } from "../components/shared/SubscriptionGate";
+import { format, fromUnixTime } from "date-fns";
+import { isIosPlatform } from "../components/shared/platformUtils";
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
@@ -19,6 +22,24 @@ export default function SettingsPage() {
   const [inquiryForm, setInquiryForm] = useState({ name: "", email: "", schoolDistrict: "", estimatedUsers: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const { subStatus } = useSubscription();
+
+  const handleManageBilling = async () => {
+    if (window.self !== window.top) {
+      alert("Billing portal is only available from the published app.");
+      return;
+    }
+    setLoadingPortal(true);
+    try {
+      const res = await base44.functions.invoke("stripePortal", { returnUrl: window.location.href });
+      if (res.data?.url) window.location.href = res.data.url;
+    } catch {
+      alert("Could not open billing portal. Please try again.");
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
 
   useEffect(() => {
     base44.auth.me().then((u) => {
@@ -44,7 +65,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" subtitle="Account management" />
+      <PageHeader title="Settings" subtitle="Account and subscription management" />
 
       <div className="space-y-6 max-w-2xl">
         {/* Account */}
@@ -103,6 +124,24 @@ export default function SettingsPage() {
           )}
         </div>
 
+        {/* Subscription — hidden on iOS native app */}
+        {!isIosPlatform() && (
+          <div className="modal-card p-6">
+            <h3 className="font-semibold text-[var(--modal-text)] mb-2">Subscription</h3>
+            {subStatus?.isActive && (
+              <p className="text-sm text-[var(--modal-text-muted)] mb-4">
+                {subStatus.isTrial
+                  ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
+                  : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
+              </p>
+            )}
+            <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
+              {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+              Manage Subscription
+            </Button>
+          </div>
+        )}
+
         {/* School Pricing Inquiry */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Pricing</h3>
@@ -120,23 +159,23 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Name *</Label>
                   <Input value={inquiryForm.name} onChange={(e) => setInquiryForm(p => ({ ...p, name: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                </div>
-                <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Email *</Label>
                   <Input type="email" value={inquiryForm.email} onChange={(e) => setInquiryForm(p => ({ ...p, email: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                </div>
-                <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">School/District *</Label>
                   <Input value={inquiryForm.schoolDistrict} onChange={(e) => setInquiryForm(p => ({ ...p, schoolDistrict: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                </div>
-                <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                   <Label className="text-[var(--modal-text-muted)]">Estimated Users</Label>
                   <Input type="number" value={inquiryForm.estimatedUsers} onChange={(e) => setInquiryForm(p => ({ ...p, estimatedUsers: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[var(--modal-text-muted)]">Notes</Label>
-                <Textarea value={inquiryForm.notes} onChange={(e) => setInquiryForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
+                  </div>
+                  </div>
+                  <div className="space-y-2">
+                  <Label className="text-[var(--modal-text-muted)]">Notes</Label>
+                  <Textarea value={inquiryForm.notes} onChange={(e) => setInquiryForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
               </div>
               <Button
                 onClick={() => inquiryMutation.mutate({ ...inquiryForm, estimatedUsers: inquiryForm.estimatedUsers ? parseInt(inquiryForm.estimatedUsers) : undefined })}
