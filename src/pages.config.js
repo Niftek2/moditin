@@ -54,6 +54,9 @@ import Dashboard from './pages/Dashboard';
 import Equipment from './pages/Equipment';
 import GoalBank from './pages/GoalBank';
 import InteractiveActivities from './pages/InteractiveActivities';
+import IosLogin from './pages/IosLogin';
+import IosSignup from './pages/IosSignup';
+import IosSubscribeRequired from './pages/IosSubscribeRequired';
 import Join from './pages/Join';
 import LabelingActivities from './pages/LabelingActivities';
 import Ling6Check from './pages/Ling6Check';
@@ -68,9 +71,6 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import IosLogin from './pages/IosLogin';
-import IosSignup from './pages/IosSignup';
-import IosSubscribeRequired from './pages/IosSubscribeRequired';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +82,9 @@ export const PAGES = {
     "Equipment": Equipment,
     "GoalBank": GoalBank,
     "InteractiveActivities": InteractiveActivities,
+    "IosLogin": IosLogin,
+    "IosSignup": IosSignup,
+    "IosSubscribeRequired": IosSubscribeRequired,
     "Join": Join,
     "LabelingActivities": LabelingActivities,
     "Ling6Check": Ling6Check,
@@ -96,9 +99,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "IosLogin": IosLogin,
-    "IosSignup": IosSignup,
-    "IosSubscribeRequired": IosSubscribeRequired,
 }
 
 export const pagesConfig = {
