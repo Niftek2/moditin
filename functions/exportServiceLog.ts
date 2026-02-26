@@ -12,10 +12,10 @@ Deno.serve(async (req) => {
 
     const { month, studentId } = await req.json();
 
-    const entries = await base44.asServiceRole.entities.ServiceEntry.filter({ monthKey: month });
+    const entries = await base44.entities.ServiceEntry.filter({ monthKey: month, created_by: user.email });
     const filteredEntries = studentId ? entries.filter(e => e.studentId === studentId) : entries;
 
-    const students = await base44.asServiceRole.entities.Student.list();
+    const students = await base44.entities.Student.filter({ created_by: user.email });
     const studentMap = {};
     students.forEach(s => { studentMap[s.id] = s.studentInitials; });
 
