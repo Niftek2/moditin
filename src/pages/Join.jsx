@@ -3,8 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, Sparkles, ArrowRight } from "lucide-react";
 
-const MONTHLY_PRICE_ID = "price_1RBn4dFBDOBNQRNjxS3uW7kd"; // $17.99/month
-const ANNUAL_PRICE_ID = "price_1RBn4dFBDOBNQRNjE3OJf2w1";  // $170/year — update if needed
+const MONTHLY_PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla"; // $17.99/month
+const ANNUAL_PRICE_ID = "price_1T4B1rG8v8oKpU6my9bQBS46";  // $179/year
 
 export default function JoinPage() {
   const [plan, setPlan] = useState("monthly");
@@ -75,7 +75,7 @@ export default function JoinPage() {
             <span className={`absolute -top-2 -right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
               plan === "annual" ? "bg-green-400 text-white" : "bg-green-100 text-green-700"
             }`}>
-              Save 21%
+              Save 16%
             </span>
           </button>
         </div>
@@ -84,15 +84,15 @@ export default function JoinPage() {
         <div className="bg-white rounded-2xl border border-[#D8CCE8] shadow-md p-6 mb-6">
           <div className="flex items-end gap-1 mb-1">
             <span className="text-4xl font-bold text-[#1A1028]">
-              {plan === "annual" ? "$170" : "$17.99"}
+              {plan === "annual" ? "$179" : "$17.99"}
             </span>
             <span className="text-[#6B5E80] mb-1">
               {plan === "annual" ? "/year" : "/month"}
             </span>
-          </div>
-          {plan === "annual" && (
-            <p className="text-xs text-[#6B5E80] mb-3">That's ~$14.17/month, billed annually</p>
-          )}
+            </div>
+            {plan === "annual" && (
+            <p className="text-xs text-[#6B5E80] mb-3">That's ~$14.92/month, billed annually</p>
+            )}
           <p className="text-sm font-semibold text-[#400070] mb-4">
             7-day free trial included
           </p>
