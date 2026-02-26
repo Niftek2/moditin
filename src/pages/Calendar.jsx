@@ -4,7 +4,6 @@ import { base44 } from "@/api/base44Client";
 import { format, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, parseISO } from "date-fns";
 const _addDays = addDays;
 const _addMonths = addMonths;
-import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import DayView from "../components/calendar/DayView";
 import WeekView from "../components/calendar/WeekView";
