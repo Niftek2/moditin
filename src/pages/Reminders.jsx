@@ -151,6 +151,7 @@ export default function Reminders() {
               onComplete={tab !== "Completed" ? handleComplete : null}
               onSnooze={tab !== "Completed" ? handleSnooze : null}
               onEdit={(r) => { setEditTarget(r); setShowForm(true); }}
+              onDelete={handleDelete}
             />
           ))}
         </div>
