@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function PageNotFound() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // If in iOS mode, redirect to subscribe-required page
+    const isIosMode = typeof window !== "undefined" && window.ModalApp?.platform === "ios";
+    if (isIosMode) {
+      navigate("/ios/subscribe-required", { replace: true });
+    }
+  }, [navigate]);
+
   return (
     <div className="min-h-screen bg-[#0B0713] flex items-center justify-center p-6">
       <div className="text-center">
