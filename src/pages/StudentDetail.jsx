@@ -1,26 +1,20 @@
 import React, { useState } from "react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import {
-  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap
-} from "lucide-react";
-import HearingAidIcon from "../components/shared/HearingAidIcon";
+import { ArrowLeft, Target, Clock, Plus, Zap, ChevronDown } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 import ActivityHistory from "../components/labeling/ActivityHistory";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
-
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
-const useCollapsibleState = useState;
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
