@@ -200,7 +200,7 @@ export default function ServiceHoursPage() {
         title="Service Hours"
         subtitle="Track and report your service time"
         action={
-          <Button onClick={() => setShowForm(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
+          <Button onClick={() => { setEditingId(null); setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "" }); setShowForm(true); }} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
             <Plus className="w-4 h-4" /> Log Time
           </Button>
         }
@@ -308,7 +308,7 @@ export default function ServiceHoursPage() {
       {/* Manual Entry Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="bg-white border-[var(--modal-border)] max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl z-50">
-          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">Log Service Time</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-[var(--modal-text)]">{editingId ? "Edit Service Entry" : "Log Service Time"}</DialogTitle></DialogHeader>
           
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="bg-white border border-[var(--modal-border)] mb-4">
