@@ -140,10 +140,10 @@ export default function EquipmentPage() {
         </div>
       )}
 
-      {/* Add Equipment Dialog */}
-       <Dialog open={showEquipForm} onOpenChange={setShowEquipForm}>
+      {/* Add/Edit Equipment Dialog */}
+       <Dialog open={showEquipForm} onOpenChange={(open) => { setShowEquipForm(open); if (!open) setEditingEquip(null); }}>
          <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Add Equipment</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingEquip ? "Edit Equipment" : "Add Equipment"}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="space-y-2">
               <Label>Student</Label>
