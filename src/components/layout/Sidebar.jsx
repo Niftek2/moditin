@@ -63,7 +63,7 @@ export default function Sidebar({ currentPage }) {
   };
 
   const navContent = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Logo */}
       <div className="px-4 py-4 flex items-center gap-2">
         <img
