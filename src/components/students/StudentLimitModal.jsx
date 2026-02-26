@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles, Users, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { isIosPlatform } from "../shared/platformUtils";
 
 const FREE_STUDENT_LIMIT = 3;
 
