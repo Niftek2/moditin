@@ -41,8 +41,9 @@ export default function FreemiumBanner({ subStatus }) {
   const studentCount = subStatus?.studentCount ?? 0;
   const atLimit = !isTrial && !subStatus?.isPro && studentCount >= 3;
 
-  // Don't show banner if pro
+  // Don't show banner if pro or on iOS native app
   if (subStatus?.isPro) return null;
+  if (isIosPlatform()) return null;
 
   return (
     <div className={`mb-4 rounded-xl px-4 py-3 flex items-center justify-between gap-3 text-sm ${
