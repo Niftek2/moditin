@@ -103,23 +103,6 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Manage Account */}
-        <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-2">Manage Account</h3>
-          <p className="text-xs text-[var(--modal-text-muted)] mb-4">Manage your billing and subscription from the Stripe portal.</p>
-          <Button
-            onClick={async () => {
-              if (window.self !== window.top) { alert("Billing portal is only available from the published app."); return; }
-              const res = await base44.functions.invoke("stripePortal", { returnUrl: window.location.href });
-              if (res.data?.url) window.location.href = res.data.url;
-            }}
-            variant="outline"
-            className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2"
-          >
-            <ExternalLink className="w-4 h-4" /> Manage Account
-          </Button>
-        </div>
-
         {/* School Inquiry */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Inquiry</h3>
