@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Bell, X, Check, Clock, AlertCircle, Plus, ChevronUp } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -9,11 +9,8 @@ export default function NotificationBell() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newDue, setNewDue] = useState("");
-  const [currentUser, setCurrentUser] = useState(null);
   const qc = useQueryClient();
   const now = new Date();
-
-  React.useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
 
   const addReminder = useMutation({
     mutationFn: (data) => base44.entities.PersonalReminder.create(data),
@@ -33,16 +30,14 @@ export default function NotificationBell() {
   };
 
   const { data: appNotifications = [] } = useQuery({
-    queryKey: ["appNotifications", currentUser?.email],
-    queryFn: () => base44.entities.AppNotification.filter({ created_by: currentUser.email }, "-triggerDateTime", 50),
-    enabled: !!currentUser?.email,
+    queryKey: ["appNotifications"],
+    queryFn: () => base44.entities.AppNotification.list("-triggerDateTime", 50),
     refetchInterval: 60000,
   });
 
   const { data: reminders = [] } = useQuery({
-    queryKey: ["reminders-bell", currentUser?.email],
-    queryFn: () => base44.entities.PersonalReminder.filter({ created_by: currentUser.email }, "-dueDateTime", 100),
-    enabled: !!currentUser?.email,
+    queryKey: ["reminders-bell"],
+    queryFn: () => base44.entities.PersonalReminder.list("-dueDateTime", 100),
     refetchInterval: 60000,
   });
 

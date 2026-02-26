@@ -1,36 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
-import { ArrowLeft, Target, Clock, Plus, Zap, ChevronDown } from "lucide-react";
+import {
+  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap
+} from "lucide-react";
+import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 import ActivityHistory from "../components/labeling/ActivityHistory";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
+
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
+import { useState as useCollapsibleState } from "react";
 
 export default function StudentDetailPage() {
   const params = new URLSearchParams(window.location.search);
   const studentId = params.get("id");
   const defaultTab = params.get("tab") || "Overview";
   const [activeTab, setActiveTab] = useState(defaultTab);
-  const [expandedSection, setExpandedSection] = useState(null);
-  const [currentUserEmail, setCurrentUserEmail] = useState(null);
-  useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
+  const [expandedSection, setExpandedSection] = useCollapsibleState(null);
 
   const { data: student } = useQuery({
     queryKey: ["student", studentId],
     queryFn: async () => {
-      const results = await base44.entities.Student.filter({ id: studentId });
-      return results[0] || null;
+      const students = await base44.entities.Student.list();
+      return students.find(s => s.id === studentId);
     },
     enabled: !!studentId,
   });
@@ -42,9 +44,8 @@ export default function StudentDetailPage() {
   });
 
   const { data: goals = [] } = useQuery({
-    queryKey: ["goals", currentUserEmail],
-    queryFn: () => base44.entities.Goal.filter({ created_by: currentUserEmail }),
-    enabled: !!currentUserEmail,
+    queryKey: ["goals"],
+    queryFn: () => base44.entities.Goal.list(),
   });
 
   const { data: equipment = [] } = useQuery({

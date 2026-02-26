@@ -19,15 +19,9 @@ export default function AccommodationsPage() {
   const [customAccNotes, setCustomAccNotes] = useState("");
   const queryClient = useQueryClient();
 
-  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
-  React.useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
-
   const { data: students = [] } = useQuery({
-    queryKey: ["students", currentUserEmail],
-    queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }),
-    enabled: !!currentUserEmail,
+    queryKey: ["students"],
+    queryFn: () => base44.entities.Student.list(),
   });
 
   const { data: accommodations = [] } = useQuery({

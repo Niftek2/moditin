@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -17,34 +17,17 @@ export default function ActivityPlannerPage() {
   const [sessionLength, setSessionLength] = useState("30");
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState(null);
-  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
-
-  React.useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
 
   const queryClient = useQueryClient();
 
-  const { data: students = [] } = useQuery({
-    queryKey: ["students", currentUserEmail],
-    queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }),
-    enabled: !!currentUserEmail,
-  });
+  const { data: students = [] } = useQuery({ queryKey: ["students"], queryFn: () => base44.entities.Student.list() });
   const { data: studentGoals = [] } = useQuery({
     queryKey: ["studentGoals", studentId],
     queryFn: () => base44.entities.StudentGoal.filter({ studentId }),
     enabled: !!studentId,
   });
-  const { data: goals = [] } = useQuery({
-    queryKey: ["goals", currentUserEmail],
-    queryFn: () => base44.entities.Goal.filter({ created_by: currentUserEmail }, "-created_date", 200),
-    enabled: !!currentUserEmail,
-  });
-  const { data: plans = [] } = useQuery({
-    queryKey: ["activityPlans", currentUserEmail],
-    queryFn: () => base44.entities.ActivityPlan.filter({ created_by: currentUserEmail }, "-created_date", 50),
-    enabled: !!currentUserEmail,
-  });
+  const { data: goals = [] } = useQuery({ queryKey: ["goals"], queryFn: () => base44.entities.Goal.list("-created_date", 200) });
+  const { data: plans = [] } = useQuery({ queryKey: ["activityPlans"], queryFn: () => base44.entities.ActivityPlan.list("-created_date", 50) });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.ActivityPlan.create(data),
