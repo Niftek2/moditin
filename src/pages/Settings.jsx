@@ -124,21 +124,23 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Subscription */}
-        <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-2">Subscription</h3>
-          {subStatus?.isActive && (
-            <p className="text-sm text-[var(--modal-text-muted)] mb-4">
-              {subStatus.isTrial
-                ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
-                : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
-            </p>
-          )}
-          <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
-            {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
-            Manage Subscription
-          </Button>
-        </div>
+        {/* Subscription — hidden on iOS native app */}
+        {!isIosPlatform() && (
+          <div className="modal-card p-6">
+            <h3 className="font-semibold text-[var(--modal-text)] mb-2">Subscription</h3>
+            {subStatus?.isActive && (
+              <p className="text-sm text-[var(--modal-text-muted)] mb-4">
+                {subStatus.isTrial
+                  ? `Free trial ends ${format(fromUnixTime(subStatus.trialEnd), "MMM d, yyyy")}`
+                  : `Renews ${format(fromUnixTime(subStatus.currentPeriodEnd), "MMM d, yyyy")}`}
+              </p>
+            )}
+            <Button onClick={handleManageBilling} disabled={loadingPortal} variant="outline" className="border-[var(--modal-border)] text-[var(--modal-text)] hover:text-[#400070] gap-2">
+              {loadingPortal ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+              Manage Subscription
+            </Button>
+          </div>
+        )}
 
         {/* School Pricing Inquiry */}
         <div className="modal-card p-6">
