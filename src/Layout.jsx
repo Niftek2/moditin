@@ -13,34 +13,49 @@ import SubscriptionGate, { SubscriptionProvider } from "./components/shared/Subs
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
+  const [iosBlocked, setIosBlocked] = useState(false);
   const navigate = useNavigate();
   useAndroidBack();
 
-  // Global iOS route guard
+  // Detect iOS mode from wrapper
+  const isIosMode = typeof window !== "undefined" && window.ModalApp?.platform === "ios";
+
+  // Global iOS entitlement guard (covers ALL routes when in iOS mode)
   useEffect(() => {
     const checkIosEntitlement = async () => {
-      // Only check iOS routes
-      if (!currentPageName?.startsWith("Ios")) {
+      // Only guard when in iOS mode and not on auth/iOS-specific pages
+      const authPages = ["Join", "IosLogin", "IosSignup", "IosSubscribeRequired"];
+      if (!isIosMode || authPages.includes(currentPageName)) {
+        setIosBlocked(false);
         return;
       }
 
       try {
         const user = await base44.auth.me();
-        if (!user) return; // Not logged in, auth will handle redirect
+        if (!user) {
+          // Not logged in, redirect to iOS login
+          navigate("/ios/login");
+          return;
+        }
 
         const res = await base44.functions.invoke("checkIosEntitlement");
         const isEntitled = res?.data?.isEntitled || false;
 
         if (!isEntitled) {
-          navigate("/ios/subscribe-required");
+          setIosBlocked(true);
+          navigate("/ios/subscribe-required", { replace: true });
+        } else {
+          setIosBlocked(false);
         }
       } catch (error) {
         console.error("Error checking iOS entitlement:", error);
+        setIosBlocked(true);
+        navigate("/ios/subscribe-required", { replace: true });
       }
     };
 
     checkIosEntitlement();
-  }, [currentPageName, navigate]);
+  }, [currentPageName, isIosMode, navigate]);
 
   // /join page renders without the full app shell
   if (currentPageName === "Join") {
@@ -50,6 +65,11 @@ export default function Layout({ children, currentPageName }) {
   // iOS pages bypass the main app shell
   if (currentPageName?.startsWith("Ios")) {
     return <>{children}</>;
+  }
+
+  // Block rendering of protected content if iOS user is not entitled
+  if (isIosMode && iosBlocked) {
+    return null;
   }
 
   return (
