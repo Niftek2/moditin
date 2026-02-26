@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { base44 } from "@/api/base44Client";
 import Sidebar from "./components/layout/Sidebar";
 import BottomNav from "./components/layout/BottomNav";
 import TermsAgreementModal, { hasAgreedToTerms } from "./components/shared/TermsAgreementModal";
@@ -11,10 +13,42 @@ import SubscriptionGate, { SubscriptionProvider } from "./components/shared/Subs
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
+  const navigate = useNavigate();
   useAndroidBack();
+
+  // Global iOS route guard
+  useEffect(() => {
+    const checkIosEntitlement = async () => {
+      // Only check iOS routes
+      if (!currentPageName?.startsWith("Ios")) {
+        return;
+      }
+
+      try {
+        const user = await base44.auth.me();
+        if (!user) return; // Not logged in, auth will handle redirect
+
+        const res = await base44.functions.invoke("checkIosEntitlement");
+        const isEntitled = res?.data?.isEntitled || false;
+
+        if (!isEntitled) {
+          navigate("/ios/subscribe-required");
+        }
+      } catch (error) {
+        console.error("Error checking iOS entitlement:", error);
+      }
+    };
+
+    checkIosEntitlement();
+  }, [currentPageName, navigate]);
 
   // /join page renders without the full app shell
   if (currentPageName === "Join") {
+    return <>{children}</>;
+  }
+
+  // iOS pages bypass the main app shell
+  if (currentPageName?.startsWith("Ios")) {
     return <>{children}</>;
   }
 
