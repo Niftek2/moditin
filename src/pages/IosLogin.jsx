@@ -28,16 +28,15 @@ export default function IosLoginPage() {
 
     try {
       await base44.auth.login(email, password);
-      const user = await base44.auth.me();
       
       // Check if user is entitled
       const res = await base44.functions.invoke("checkIosEntitlement");
       const isEntitled = res?.data?.isEntitled || false;
       
       if (isEntitled) {
-        navigate("/Dashboard");
+        navigate("/Dashboard", { replace: true });
       } else {
-        navigate("/ios/subscribe-required");
+        navigate("/ios/subscribe-required", { replace: true });
       }
     } catch (err) {
       setError(err?.message || "Login failed. Please check your email and password.");
