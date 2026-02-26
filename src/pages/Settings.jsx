@@ -11,6 +11,7 @@ import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
 import { useSubscription } from "../components/shared/SubscriptionGate";
 import { format, fromUnixTime } from "date-fns";
+import { isIosPlatform } from "../components/shared/platformUtils";
 
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
