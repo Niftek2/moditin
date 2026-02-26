@@ -32,7 +32,16 @@ export default function IosSignupPage() {
 
     try {
       await base44.auth.signup(email, password);
-      navigate("/ios/login?created=1");
+      
+      // Check if user is entitled (typically won't be right after signup)
+      const res = await base44.functions.invoke("checkIosEntitlement");
+      const isEntitled = res?.data?.isEntitled || false;
+      
+      if (isEntitled) {
+        navigate("/Dashboard", { replace: true });
+      } else {
+        navigate("/ios/subscribe-required", { replace: true });
+      }
     } catch (err) {
       setError(err?.message || "Signup failed. Please try again.");
     } finally {
