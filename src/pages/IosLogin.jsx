@@ -53,7 +53,7 @@ export default function IosLoginPage() {
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
             alt="Modal Itinerant"
-            className="h-14 object-contain mx-auto mb-4" />
+            className="h-24 object-contain mx-auto mb-4" />
 
           <h1 className="text-2xl font-bold text-[#1A1028]">Log in</h1>
           
