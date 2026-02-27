@@ -7,7 +7,7 @@ const SECTIONS = {
       title: "1. Agreement to Terms",
       content: [
         'Modal Itinerant (\u201cApp\u201d) is owned and operated by Modal Education, LLC (\u201cCompany,\u201d \u201cwe,\u201d \u201cus,\u201d or \u201cour\u201d).',
-        "By accessing, registering for, subscribing to, or using the App, you ("User") agree to be legally bound by these Terms. If you do not agree, you must not use the App.",
+        'By accessing, registering for, subscribing to, or using the App, you (\u201cUser\u201d) agree to be legally bound by these Terms. If you do not agree, you must not use the App.',
         "By using the App, you represent that you are at least 18 years old, authorized to use the App in a professional capacity, and understand and accept the limitations described below.",
       ],
     },
