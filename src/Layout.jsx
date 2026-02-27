@@ -58,8 +58,8 @@ export default function Layout({ children, currentPageName }) {
     checkIosEntitlement();
   }, [currentPageName, isIosMode, navigate]);
 
-  // /join page renders without the full app shell
-  if (currentPageName === "Join") {
+  // Pages that render without the full app shell (no auth required)
+  if (["Join", "PrivacyPolicy"].includes(currentPageName)) {
     return <>{children}</>;
   }
 
