@@ -33,14 +33,16 @@ export default function NotificationBell() {
   };
 
   const { data: appNotifications = [] } = useQuery({
-    queryKey: ["appNotifications"],
-    queryFn: () => base44.entities.AppNotification.list("-triggerDateTime", 50),
+    queryKey: ["appNotifications", currentUser?.email],
+    queryFn: () => base44.entities.AppNotification.filter({ created_by: currentUser?.email }, "-triggerDateTime", 50),
+    enabled: !!currentUser?.email,
     refetchInterval: 60000,
   });
 
   const { data: reminders = [] } = useQuery({
-    queryKey: ["reminders-bell"],
-    queryFn: () => base44.entities.PersonalReminder.list("-dueDateTime", 100),
+    queryKey: ["reminders-bell", currentUser?.email],
+    queryFn: () => base44.entities.PersonalReminder.filter({ created_by: currentUser?.email }, "-dueDateTime", 100),
+    enabled: !!currentUser?.email,
     refetchInterval: 60000,
   });
 
