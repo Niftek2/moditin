@@ -63,8 +63,8 @@ export default function Layout({ children, currentPageName }) {
     return <>{children}</>;
   }
 
-  // iOS pages bypass the main app shell
-  if (currentPageName?.startsWith("Ios")) {
+  // iOS pages bypass the main app shell (no sidebar/nav)
+  if (["IosLogin", "IosPostAuth", "IosSubscribeRequired"].includes(currentPageName)) {
     return <>{children}</>;
   }
 
