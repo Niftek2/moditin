@@ -17,15 +17,17 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   useAndroidBack();
 
-  // Detect iOS mode from wrapper
-  const isIosMode = typeof window !== "undefined" && window.ModalApp?.platform === "ios";
+  // Detect iOS mode from wrapper or query param
+  const isIosMode = typeof window !== "undefined" && (
+    window.ModalApp?.platform === "ios" ||
+    new URLSearchParams(window.location.search).get("platform") === "ios"
+  );
 
   // Global iOS entitlement guard (covers ALL routes when in iOS mode)
   useEffect(() => {
     const checkIosEntitlement = async () => {
-      // Only guard when in iOS mode and not on auth/iOS-specific pages
-      const authPages = ["Join", "IosLogin", "IosSignup", "IosSubscribeRequired"];
-      if (!isIosMode || authPages.includes(currentPageName)) {
+      const iosPassthroughPages = ["IosLogin", "IosPostAuth", "IosSubscribeRequired"];
+      if (!isIosMode || iosPassthroughPages.includes(currentPageName)) {
         setIosBlocked(false);
         return;
       }
@@ -33,7 +35,6 @@ export default function Layout({ children, currentPageName }) {
       try {
         const user = await base44.auth.me();
         if (!user) {
-          // Not logged in, redirect to iOS login
           navigate("/IosLogin", { replace: true });
           return;
         }
