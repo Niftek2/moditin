@@ -46,9 +46,12 @@ const navItems = [
 
 export default function Sidebar({ currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
-    // Clear all caches on logout
+    // Purge all in-memory cached query data before logout
+    queryClient.clear();
+    // Clear all persistent caches
     try {
       localStorage.clear();
       sessionStorage.clear();
