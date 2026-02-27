@@ -64,6 +64,7 @@ import Ling6Check from './pages/Ling6Check';
 import Mileage from './pages/Mileage';
 import MyDay from './pages/MyDay';
 import Onboarding from './pages/Onboarding';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Reminders from './pages/Reminders';
 import ServiceHours from './pages/ServiceHours';
 import Settings from './pages/Settings';
@@ -72,7 +73,6 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import PrivacyPolicy from './pages/PrivacyPolicy';
 import __Layout from './Layout.jsx';
 
 
@@ -94,6 +94,7 @@ export const PAGES = {
     "Mileage": Mileage,
     "MyDay": MyDay,
     "Onboarding": Onboarding,
+    "PrivacyPolicy": PrivacyPolicy,
     "Reminders": Reminders,
     "ServiceHours": ServiceHours,
     "Settings": Settings,
@@ -102,7 +103,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "PrivacyPolicy": PrivacyPolicy,
 }
 
 export const pagesConfig = {
