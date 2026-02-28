@@ -29,8 +29,6 @@ export default function StudentsPage() {
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
-  const { subStatus } = useSubscription();
-
   const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
   React.useEffect(() => {
     base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
