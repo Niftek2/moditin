@@ -245,10 +245,6 @@ export default function AIGoalCreator({ open, onClose, onSave, studentData }) {
   const [highlight, setHighlight] = useState(false);
   const [expandAdvanced, setExpandAdvanced] = useState(false);
   const [aslMode, setAslMode] = useState(false);
-  const { subStatus } = useSubscription();
-
-  const isAIAllowed = subStatus?.isPro;
-
   // Auto-detect ASL mode from student data
   React.useEffect(() => {
     if (studentData?.communicationModality?.includes("ASL")) {
