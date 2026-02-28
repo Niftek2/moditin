@@ -77,13 +77,6 @@ export default function StudentsPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      {isFreeLimitExceeded && (
-        <StudentLimitModal
-          students={students}
-          onStudentsKept={() => queryClient.invalidateQueries({ queryKey: ["students"] })}
-          onUpgrade={handleUpgradeFromModal}
-        />
-      )}
     <div>
       <PageHeader
         title="Students"
