@@ -12,6 +12,7 @@ import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
+
 const COLOR_MAP = {
   red: { bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" },
   orange: { bg: "bg-orange-100", text: "text-orange-700", dot: "bg-orange-500" },
