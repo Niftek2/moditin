@@ -48,6 +48,11 @@ export default function StudentsPage() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["students"] }); setShowForm(false); },
   });
 
+  const bulkCreateMutation = useMutation({
+    mutationFn: (rows) => base44.entities.Student.bulkCreate(rows),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["students"] }); setShowBulkForm(false); },
+  });
+
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Student.update(id, data),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["students"] }); setEditing(null); setShowForm(false); },
