@@ -183,6 +183,8 @@ export default function SettingsPage() {
           )}
         </div>
 
+        }
+
         {/* School Inquiry */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Inquiry</h3>
