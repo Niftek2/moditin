@@ -8,6 +8,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12", "Transition", "Adult"];
 const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
+const COLOR_OPTIONS = [
+  { value: "red", dot: "bg-red-500" },
+  { value: "orange", dot: "bg-orange-500" },
+  { value: "yellow", dot: "bg-yellow-500" },
+  { value: "green", dot: "bg-green-500" },
+  { value: "blue", dot: "bg-blue-500" },
+  { value: "purple", dot: "bg-purple-500" },
+  { value: "pink", dot: "bg-pink-500" },
+  { value: "gray", dot: "bg-gray-400" },
+];
 
 const emptyRow = () => ({
   studentInitials: "",
