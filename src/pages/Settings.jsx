@@ -128,6 +128,54 @@ export default function SettingsPage() {
           )}
         </div>
 
+        {/* Subscription */}
+        <div className="modal-card p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-[#400070]" />
+            <h3 className="font-semibold text-[var(--modal-text)]">Subscription</h3>
+          </div>
+          {subStatus?.isActive ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${subStatus.isTrial ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}>
+                  {subStatus.isTrial ? "Trial" : "Active"}
+                </span>
+                {subStatus.trialEnd && subStatus.isTrial && (
+                  <span className="text-xs text-[var(--modal-text-muted)]">
+                    Trial ends {new Date(subStatus.trialEnd * 1000).toLocaleDateString()}
+                  </span>
+                )}
+                {subStatus.currentPeriodEnd && !subStatus.isTrial && (
+                  <span className="text-xs text-[var(--modal-text-muted)]">
+                    Renews {new Date(subStatus.currentPeriodEnd * 1000).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+              <Button
+                onClick={handleManageBilling}
+                disabled={portalLoading}
+                variant="outline"
+                className="gap-2 border-[var(--modal-border)] text-[#400070]"
+              >
+                {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                Manage Billing
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-[var(--modal-text-muted)]">Get full access to Modal Itinerant for <strong className="text-[var(--modal-text)]">$14.99/month</strong> with a 7-day free trial.</p>
+              <Button
+                onClick={handleSubscribe}
+                disabled={subLoading}
+                className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2"
+              >
+                {subLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                Start Free Trial
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* School Inquiry */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Inquiry</h3>
