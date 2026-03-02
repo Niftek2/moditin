@@ -17,9 +17,8 @@ export default function JoinPage() {
     setLoading(true);
     setError("");
     try {
-      const priceId = plan === "annual" ? ANNUAL_PRICE_ID : MONTHLY_PRICE_ID;
       const res = await base44.functions.invoke("stripeCheckout", {
-        priceId,
+        priceId: MONTHLY_PRICE_ID,
         successUrl: window.location.origin + "/Dashboard",
         cancelUrl: window.location.href,
       });
