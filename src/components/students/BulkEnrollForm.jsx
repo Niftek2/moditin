@@ -64,19 +64,20 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
       </div>
 
       {/* Column Headers */}
-      <div className="px-6 pt-4 pb-2 grid grid-cols-[1fr_1fr_1fr_1fr_auto_2rem] gap-2 items-center">
+      <div className="px-6 pt-4 pb-2 grid grid-cols-[1fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center">
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Initials *</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Grade Band</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Delivery Model</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">IEP Annual Review</Label>
-        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide text-center">Triennial?</Label>
+        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide text-center">3yr?</Label>
+        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Color</Label>
         <div />
       </div>
 
       {/* Rows */}
       <div className="flex-1 overflow-y-auto px-6 space-y-2 pb-4">
         {rows.map((row, i) => (
-          <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_1fr_auto_2rem] gap-2 items-center">
+          <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center">
             <Input
               placeholder="Fi.La."
               value={row.studentInitials}
