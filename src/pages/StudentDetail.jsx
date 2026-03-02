@@ -16,8 +16,9 @@ import StudentInteractiveHistory from "../components/interactive/StudentInteract
 import ActivityHistory from "../components/labeling/ActivityHistory";
 import GoalBankModal from "../components/goalbank/GoalBankModal";
 import StudentContactsSection from "../components/students/StudentContactsSection";
+import StudentScheduleSection from "../components/students/StudentScheduleSection";
 
-const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
+const TABS = ["Overview", "Details", "Goals", "Accommodations", "Schedule", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
