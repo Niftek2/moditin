@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X } from "lucide-react";
 import PIIWarning, { checkPII } from "../shared/PIIGuard";
 
-const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
+const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12", "Transition", "Adult"];
 const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
 const COMMUNICATION_MODALITIES = ["LSL", "ASL", "Bilingual ASL/English", "Total Communication", "Other"];
 const PRIMARY_LANGUAGES = ["ASL", "English", "ASL/English Bilingual", "Other"];
