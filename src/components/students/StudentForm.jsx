@@ -289,6 +289,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
 
         </div>
       </div>
+      )}
 
       {/* Communication & Language Profile */}
       <div className="border-t-2 border-[var(--modal-border)] pt-6 mt-6">
