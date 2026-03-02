@@ -92,8 +92,8 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             </div>
 
         <div className="space-y-2">
-          <Label className="text-[var(--modal-text)] font-semibold text-sm">Grade Band *</Label>
-          <Select value={form.gradeBand} onValueChange={(v) => updateField("gradeBand", v)} required>
+          <Label className="text-[var(--modal-text)] font-semibold text-sm">Grade Band</Label>
+          <Select value={form.gradeBand} onValueChange={(v) => updateField("gradeBand", v)}>
             <SelectTrigger className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium">
               <SelectValue placeholder="Select grade band" />
             </SelectTrigger>
