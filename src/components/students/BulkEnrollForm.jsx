@@ -4,6 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Plus, Trash2 } from "lucide-react";
+import { differenceInMonths, parseISO } from "date-fns";
+
+// Returns true if the annual review date falls roughly 3 years from today (within ±6 months)
+function isTriennial(dateStr) {
+  if (!dateStr) return false;
+  const months = differenceInMonths(parseISO(dateStr), new Date());
+  return months >= 30 && months <= 42;
+}
 
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12", "Transition", "Adult"];
 const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
