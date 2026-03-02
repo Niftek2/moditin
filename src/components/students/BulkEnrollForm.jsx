@@ -115,17 +115,28 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
                 className="border-2 border-[var(--modal-border)]"
               />
             </div>
-            <div className="flex items-center gap-0.5">
-              {COLOR_OPTIONS.map(color => (
+            <Popover>
+              <PopoverTrigger asChild>
                 <button
-                  key={color.value}
                   type="button"
-                  onClick={() => updateRow(i, "colorTag", color.value)}
-                  className={`w-5 h-5 rounded-full transition-all border-2 ${row.colorTag === color.value ? "border-[#400070] scale-110" : "border-transparent hover:border-gray-300"} ${color.dot}`}
-                  title={color.value}
+                  className={`w-6 h-6 rounded-full border-2 border-[var(--modal-border)] hover:border-[#400070] transition-all ${COLOR_OPTIONS.find(c => c.value === (row.colorTag || "gray"))?.dot}`}
+                  title="Pick color"
                 />
-              ))}
-            </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2" align="center">
+                <div className="flex gap-1.5">
+                  {COLOR_OPTIONS.map(color => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => updateRow(i, "colorTag", color.value)}
+                      className={`w-6 h-6 rounded-full border-2 transition-all ${row.colorTag === color.value ? "border-[#400070] scale-110" : "border-transparent hover:border-gray-400"} ${color.dot}`}
+                      title={color.value}
+                    />
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button
               type="button"
               variant="ghost"
