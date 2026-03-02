@@ -33,7 +33,9 @@ export default function SettingsPage() {
       setUser(u);
       setProfileForm({ firstName: u?.firstName || "", email: u?.email || "" });
     }).catch(() => {});
-    base44.functions.invoke("stripeStatus", {}).then(res => setSubStatus(res.data)).catch(() => {});
+    if (!isIosMode) {
+      base44.functions.invoke("stripeStatus", {}).then(res => setSubStatus(res.data)).catch(() => {});
+    }
   }, []);
 
   const handleSaveProfile = async () => {
