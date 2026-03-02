@@ -10,6 +10,11 @@ import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
 
+const isIosMode = typeof window !== "undefined" && (
+  window.ModalApp?.platform === "ios" ||
+  new URLSearchParams(window.location.search).get("platform") === "ios"
+);
+
 export default function SettingsPage() {
   const [user, setUser] = useState(null);
   const [editingProfile, setEditingProfile] = useState(false);
