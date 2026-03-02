@@ -167,6 +167,16 @@ export default function StudentsPage() {
           <StudentForm student={editing} onSubmit={handleSubmit} onCancel={() => { setShowForm(false); setEditing(null); }} />
         </DialogContent>
       </Dialog>
+
+      <Dialog open={showBulkForm} onOpenChange={setShowBulkForm}>
+        <DialogContent className="bg-[var(--modal-card)] border-[var(--modal-border)] max-w-2xl">
+          <BulkEnrollForm
+            onSubmit={(rows) => bulkCreateMutation.mutate(rows)}
+            onCancel={() => setShowBulkForm(false)}
+            isSaving={bulkCreateMutation.isPending}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
     </PullToRefresh>
   );
