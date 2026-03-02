@@ -54,18 +54,19 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
       </div>
 
       {/* Column Headers */}
-      <div className="px-6 pt-4 pb-2 grid grid-cols-[1fr_1fr_1fr_1fr_2rem] gap-2 items-center">
+      <div className="px-6 pt-4 pb-2 grid grid-cols-[1fr_1fr_1fr_1fr_auto_2rem] gap-2 items-center">
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Initials *</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Grade Band</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Delivery Model</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">IEP Annual Review</Label>
+        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide text-center">Triennial?</Label>
         <div />
       </div>
 
       {/* Rows */}
       <div className="flex-1 overflow-y-auto px-6 space-y-2 pb-4">
         {rows.map((row, i) => (
-          <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_1fr_2rem] gap-2 items-center">
+          <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_1fr_auto_2rem] gap-2 items-center">
             <Input
               placeholder="Fi.La."
               value={row.studentInitials}
@@ -89,16 +90,18 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
                 {SERVICE_MODELS.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
               </SelectContent>
             </Select>
-            <div className="flex items-center gap-1.5">
-              <Input
-                type="date"
-                value={row.iepAnnualReviewDate || ""}
-                onChange={(e) => updateRow(i, "iepAnnualReviewDate", e.target.value)}
-                className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium h-9 text-sm"
+            <Input
+              type="date"
+              value={row.iepAnnualReviewDate || ""}
+              onChange={(e) => updateRow(i, "iepAnnualReviewDate", e.target.value)}
+              className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium h-9 text-sm"
+            />
+            <div className="flex justify-center items-center px-1" title="Check if this IEP is a 3-year re-evaluation (triennial)">
+              <Checkbox
+                checked={row.isTriennial || false}
+                onCheckedChange={(v) => updateRow(i, "isTriennial", v)}
+                className="border-2 border-[var(--modal-border)]"
               />
-              {isTriennial(row.iepAnnualReviewDate) && (
-                <span className="shrink-0 text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-300 rounded-full px-1.5 py-0.5 whitespace-nowrap" title="3-Year Re-Evaluation (Triennial)">3yr</span>
-              )}
             </div>
             <Button
               type="button"
