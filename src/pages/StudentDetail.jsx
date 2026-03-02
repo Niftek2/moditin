@@ -98,11 +98,9 @@ export default function StudentDetailPage() {
             <p className="text-xs text-[var(--modal-text-muted)] mb-4">
               {studentGoals.length === 0 ? "No goals assigned" : `Last updated: ${studentGoals[0]?.updated_date ? new Date(studentGoals[0].updated_date).toLocaleDateString() : "—"}`}
             </p>
-            <Link to={createPageUrl(`GoalBank?studentId=${studentId}`)} className="w-full">
-              <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12" aria-label="Add a new goal for this student">
-                <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add Goal
-              </Button>
-            </Link>
+            <Button onClick={() => setShowGoalBank(true)} className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12" aria-label="Add a new goal for this student">
+              <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Add Goal
+            </Button>
           </div>
 
           {/* Card 2: Sessions */}
