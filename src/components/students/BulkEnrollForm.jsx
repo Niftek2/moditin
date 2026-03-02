@@ -114,6 +114,17 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
                 className="border-2 border-[var(--modal-border)]"
               />
             </div>
+            <div className="flex items-center gap-0.5">
+              {COLOR_OPTIONS.map(color => (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => updateRow(i, "colorTag", color.value)}
+                  className={`w-5 h-5 rounded-full transition-all border-2 ${row.colorTag === color.value ? "border-[#400070] scale-110" : "border-transparent hover:border-gray-300"} ${color.dot}`}
+                  title={color.value}
+                />
+              ))}
+            </div>
             <Button
               type="button"
               variant="ghost"
