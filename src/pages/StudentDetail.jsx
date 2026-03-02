@@ -83,6 +83,26 @@ export default function StudentDetailPage() {
         subtitle={`${student.gradeBand} · ${student.serviceDeliveryModel} · ${student.primaryEligibility || "No eligibility set"}`}
       />
 
+      {/* Tab Navigation */}
+      <div className="flex gap-1.5 overflow-x-auto pb-2 mb-6 scrollbar-thin" role="tablist" aria-label="Student information sections">
+        {TABS.map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            role="tab"
+            aria-selected={activeTab === tab}
+            aria-controls={`tab-${tab}`}
+            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC] ${
+              activeTab === tab
+                ? "bg-[#400070] text-white"
+                : "bg-white text-[var(--modal-text)] border border-[var(--modal-border)] hover:border-[#6B2FB9] hover:text-[#6B2FB9]"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* 3 Main Cards: Overview */}
       {activeTab === "Overview" && (
         <div className="space-y-4 mb-6">
