@@ -171,7 +171,7 @@ export default function SettingsPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-[var(--modal-text-muted)]">Get full access to Modal Itinerant for <strong className="text-[var(--modal-text)]">$14.99/month</strong> with a 7-day free trial.</p>
+              <p className="text-sm text-[var(--modal-text-muted)]">Get full access to Modal Itinerant for <strong className="text-[var(--modal-text)]">$17.99/month</strong> with a 7-day free trial.</p>
               <Button
                 onClick={handleSubscribe}
                 disabled={subLoading}
