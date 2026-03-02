@@ -46,6 +46,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     readingLevelBand: "",
     aslInstructionFocus: false,
     colorTag: "gray",
+    consultOnly: false,
   });
   const [piiWarnings, setPiiWarnings] = useState([]);
 
