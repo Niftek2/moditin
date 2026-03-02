@@ -35,14 +35,14 @@ export default function JoinPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F7F3FA] to-[#EADDF5] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/f8b2256fa_modalitinerantlogo2.png"
             alt="Modal Itinerant"
-            className="h-14 object-contain mx-auto mb-4"
+            className="h-24 object-contain mx-auto mb-4"
           />
           <h1 className="text-2xl font-bold text-[#1A1028]">Start your free trial</h1>
           <p className="text-sm text-[#6B5E80] mt-1">7 days free, then $17.99/month</p>
