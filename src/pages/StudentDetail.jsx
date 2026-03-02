@@ -374,6 +374,12 @@ export default function StudentDetailPage() {
         </div>
       )}
 
+      {activeTab === "Schedule" && (
+        <div id="tab-Schedule" role="tabpanel" aria-labelledby="tab-Schedule">
+          <StudentScheduleSection studentId={studentId} student={student} />
+        </div>
+      )}
+
       {activeTab === "Contacts" && (
         <div id="tab-Contacts" role="tabpanel" aria-labelledby="tab-Contacts">
           <StudentContactsSection studentId={studentId} />
