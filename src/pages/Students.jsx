@@ -28,6 +28,7 @@ const COLOR_MAP = {
 export default function StudentsPage() {
   useScrollRestore("Students");
   const [showForm, setShowForm] = useState(false);
+  const [showBulkForm, setShowBulkForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
