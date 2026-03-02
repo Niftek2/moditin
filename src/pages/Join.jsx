@@ -4,10 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Check, Sparkles, ArrowRight } from "lucide-react";
 
 const MONTHLY_PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla"; // $17.99/month
-const ANNUAL_PRICE_ID = "price_1T4B1rG8v8oKpU6my9bQBS46";  // $179/year
 
 export default function JoinPage() {
-  const [plan, setPlan] = useState("monthly");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
