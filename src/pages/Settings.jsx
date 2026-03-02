@@ -136,7 +136,8 @@ export default function SettingsPage() {
         </div>
 
         {/* Subscription — hidden on iOS (managed via App Store) */}
-        {!isIosMode && <div className="modal-card p-6">
+        {!isIosMode && (
+        <div className="modal-card p-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[#400070]" />
             <h3 className="font-semibold text-[var(--modal-text)]">Subscription</h3>
