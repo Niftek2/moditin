@@ -45,51 +45,15 @@ export default function JoinPage() {
             className="h-14 object-contain mx-auto mb-4"
           />
           <h1 className="text-2xl font-bold text-[#1A1028]">Start your free trial</h1>
-          <p className="text-sm text-[#6B5E80] mt-1">7 days free, then choose your plan</p>
-        </div>
-
-        {/* Plan toggle */}
-        <div className="flex bg-white rounded-2xl p-1.5 border border-[#D8CCE8] shadow-sm mb-6">
-          <button
-            onClick={() => setPlan("monthly")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-              plan === "monthly"
-                ? "bg-[#400070] text-white shadow"
-                : "text-[#6B5E80] hover:text-[#400070]"
-            }`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setPlan("annual")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all relative ${
-              plan === "annual"
-                ? "bg-[#400070] text-white shadow"
-                : "text-[#6B5E80] hover:text-[#400070]"
-            }`}
-          >
-            Annual
-            <span className={`absolute -top-2 -right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-              plan === "annual" ? "bg-green-400 text-white" : "bg-green-100 text-green-700"
-            }`}>
-              Save 16%
-            </span>
-          </button>
+          <p className="text-sm text-[#6B5E80] mt-1">7 days free, then $17.99/month</p>
         </div>
 
         {/* Pricing card */}
         <div className="bg-white rounded-2xl border border-[#D8CCE8] shadow-md p-6 mb-6">
           <div className="flex items-end gap-1 mb-1">
-            <span className="text-4xl font-bold text-[#1A1028]">
-              {plan === "annual" ? "$179" : "$17.99"}
-            </span>
-            <span className="text-[#6B5E80] mb-1">
-              {plan === "annual" ? "/year" : "/month"}
-            </span>
-            </div>
-            {plan === "annual" && (
-            <p className="text-xs text-[#6B5E80] mb-3">That's ~$14.92/month, billed annually</p>
-            )}
+            <span className="text-4xl font-bold text-[#1A1028]">$17.99</span>
+            <span className="text-[#6B5E80] mb-1">/month</span>
+          </div>
           <p className="text-sm font-semibold text-[#400070] mb-4">
             7-day free trial included
           </p>
