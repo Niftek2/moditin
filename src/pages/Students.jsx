@@ -90,9 +90,14 @@ export default function StudentsPage() {
         title="Students"
         subtitle={`${students.length} student${students.length !== 1 ? "s" : ""} on your caseload`}
         action={
-          <Button onClick={handleAddStudent} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
-            <Plus className="w-4 h-4" /> Add Student
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowBulkForm(true)} variant="outline" className="border-2 border-[#400070] text-[#400070] hover:bg-[#400070] hover:text-white rounded-xl gap-2">
+              <Plus className="w-4 h-4" /> Bulk Enroll
+            </Button>
+            <Button onClick={handleAddStudent} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
+              <Plus className="w-4 h-4" /> Add Student
+            </Button>
+          </div>
         }
       />
 
