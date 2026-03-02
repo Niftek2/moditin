@@ -11,6 +11,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
+import BulkEnrollForm from "../components/students/BulkEnrollForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
 
 const COLOR_MAP = {
