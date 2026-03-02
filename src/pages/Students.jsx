@@ -124,8 +124,10 @@ export default function StudentsPage() {
                   <p className="text-[var(--modal-text)] font-semibold">{student.studentInitials}</p>
                   <div className="flex items-center gap-2 text-xs text-[var(--modal-text-muted)]">
                     <span>{student.gradeBand}</span>
-                    <span>·</span>
-                    <span>{student.serviceDeliveryModel}</span>
+                    {student.serviceDeliveryModel && <><span>·</span><span>{student.serviceDeliveryModel}</span></>}
+                    {student.consultOnly && (
+                      <span className="bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full text-[10px]">Consult Only</span>
+                    )}
                   </div>
                 </div>
               </Link>

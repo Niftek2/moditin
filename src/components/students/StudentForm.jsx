@@ -193,7 +193,22 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         />
       </div>
 
+      {/* Consult Only */}
+      <div className="flex items-center gap-3 pt-2">
+        <Checkbox
+          id="consultOnly"
+          checked={form.consultOnly || false}
+          onCheckedChange={(checked) => updateField("consultOnly", checked)}
+          className="border-2 border-[var(--modal-border)]"
+        />
+        <Label htmlFor="consultOnly" className="text-[var(--modal-text)] font-medium cursor-pointer">
+          Consult Only
+        </Label>
+        <span className="text-xs text-[var(--modal-text-muted)]">(no direct service minutes required)</span>
+      </div>
+
       {/* IEP Service Minutes */}
+      {!form.consultOnly && (
       <div className="border-t-2 border-[var(--modal-border)] pt-6 mt-2">
         <h3 className="text-base font-bold text-[var(--modal-text)] mb-4">IEP Service Minutes</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
