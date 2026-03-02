@@ -40,7 +40,7 @@ export function SubscriptionProvider({ children }) {
 }
 
 export default function SubscriptionGate({ children }) {
-  const { checking } = useSubscription();
+  const { checking, subStatus, user } = useSubscription();
 
   if (checking) {
     return (
@@ -50,6 +50,11 @@ export default function SubscriptionGate({ children }) {
     );
   }
 
-  // Always render children — freemium access is handled per-feature
+  // If not subscribed (and not admin), redirect to Join page
+  if (subStatus && !subStatus.isPro && user?.role !== "admin") {
+    window.location.href = "/Join";
+    return null;
+  }
+
   return <>{children}</>;
 }
