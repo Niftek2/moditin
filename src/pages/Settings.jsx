@@ -41,6 +41,27 @@ export default function SettingsPage() {
     setTimeout(() => setProfileSaved(false), 3000);
   };
 
+  const handleSubscribe = async () => {
+    if (window.self !== window.top) {
+      alert("Checkout only works from the published app. Please open the app directly.");
+      return;
+    }
+    setSubLoading(true);
+    const res = await base44.functions.invoke("stripeCheckout", {
+      successUrl: window.location.href,
+      cancelUrl: window.location.href,
+    });
+    setSubLoading(false);
+    if (res.data?.url) window.location.href = res.data.url;
+  };
+
+  const handleManageBilling = async () => {
+    setPortalLoading(true);
+    const res = await base44.functions.invoke("stripePortal", { returnUrl: window.location.href });
+    setPortalLoading(false);
+    if (res.data?.url) window.location.href = res.data.url;
+  };
+
   const inquiryMutation = useMutation({
     mutationFn: (data) => base44.entities.SchoolInquiry.create(data),
     onSuccess: () => setSubmitted(true),
