@@ -14,6 +14,8 @@ import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
 import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView";
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 import ActivityHistory from "../components/labeling/ActivityHistory";
+import GoalBankModal from "../components/goalbank/GoalBankModal";
+import StudentContactsSection from "../components/students/StudentContactsSection";
 
 const TABS = ["Overview", "Details", "Goals", "Accommodations", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
 
