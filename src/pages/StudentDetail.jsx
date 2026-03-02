@@ -373,11 +373,24 @@ export default function StudentDetailPage() {
         </div>
       )}
 
-      {(activeTab === "Contacts" || activeTab === "Accommodations" || activeTab === "Exports") && (
+      {activeTab === "Contacts" && (
+        <div id="tab-Contacts" role="tabpanel" aria-labelledby="tab-Contacts">
+          <StudentContactsSection studentId={studentId} />
+        </div>
+      )}
+
+      {(activeTab === "Accommodations" || activeTab === "Exports") && (
         <div className="modal-card p-10 text-center text-[var(--modal-text-muted)]" id={`tab-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`}>
           <p className="text-sm">This section is available from the main navigation.</p>
         </div>
       )}
+
+      <GoalBankModal
+        open={showGoalBank}
+        onClose={() => setShowGoalBank(false)}
+        studentId={studentId}
+        studentData={student}
+      />
     </div>
   );
 }
