@@ -183,6 +183,7 @@ export default function SettingsPage() {
             </div>
           )}
         </div>
+        )}
 
         {/* School Inquiry */}
         <div className="modal-card p-6">
