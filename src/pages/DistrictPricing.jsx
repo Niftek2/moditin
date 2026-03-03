@@ -423,7 +423,7 @@ export default function DistrictPricingPage() {
                   </span>
                 </div>
                 <p className="text-xs text-green-600 mt-1 font-medium">
-                  ✓ Credit card required — no charge until {selectedPlan.trialDays === 7 ? "7 days" : "14 days"} from now
+                  ✓ No charge until {selectedPlan.trialDays === 7 ? "7 days" : "14 days"} from now
                 </p>
               </div>
 
