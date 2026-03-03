@@ -6,7 +6,7 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
 Deno.serve(async (req) => {
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
-  const webhookSecret = Deno.env.get("STRIPE_DISTRICT_WEBHOOK_SECRET");
+  const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
 
   let event;
   try {
