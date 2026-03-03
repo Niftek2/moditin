@@ -10,7 +10,7 @@ const USD_PLANS = [
     key: "individual",
     name: "Individual",
     icon: User,
-    priceUSD: 240,
+    priceUSD: 230,
     priceCAD: 325,
     perLabel: "/year",
     seatLabel: "1 seat",
