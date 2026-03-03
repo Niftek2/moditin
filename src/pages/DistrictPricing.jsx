@@ -219,9 +219,17 @@ export default function DistrictPricingPage() {
       {/* Header */}
       <div className="text-center pt-16 pb-10 px-4">
         <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=60&h=60&fit=crop&crop=center" alt="" className="hidden" />
+        <div className="flex justify-center mb-6">
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png"
+            alt="Modal Itinerant Logo"
+            className="h-24 w-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
+        </div>
         <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 mb-4">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-white/80 text-sm font-medium">Free trial — no credit card required to start</span>
+          <span className="text-white/80 text-sm font-medium">Free trial — credit card required, no charge until trial ends</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">District & Program Pricing</h1>
         <p className="text-white/70 text-lg max-w-xl mx-auto mb-8">
