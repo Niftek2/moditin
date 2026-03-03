@@ -73,6 +73,7 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
+import DistrictPricing from './pages/DistrictPricing';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
+    "DistrictPricing": DistrictPricing,
 }
 
 export const pagesConfig = {
