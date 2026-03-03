@@ -51,6 +51,7 @@ import Accommodations from './pages/Accommodations';
 import ActivityPlanner from './pages/ActivityPlanner';
 import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
+import DistrictPricing from './pages/DistrictPricing';
 import Equipment from './pages/Equipment';
 import GoalBank from './pages/GoalBank';
 import InteractiveActivities from './pages/InteractiveActivities';
@@ -73,7 +74,6 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import DistrictPricing from './pages/DistrictPricing';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +82,7 @@ export const PAGES = {
     "ActivityPlanner": ActivityPlanner,
     "Calendar": Calendar,
     "Dashboard": Dashboard,
+    "DistrictPricing": DistrictPricing,
     "Equipment": Equipment,
     "GoalBank": GoalBank,
     "InteractiveActivities": InteractiveActivities,
@@ -104,7 +105,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "DistrictPricing": DistrictPricing,
 }
 
 export const pagesConfig = {

@@ -28,7 +28,7 @@ const USD_PLANS = [
       "AI-powered goal bank",
       "Service log & calendar",
       "Listening checks & audiology tools",
-      "7-day free trial — card required, no charge until trial ends",
+      "7-day free trial — no charge until trial ends",
     ],
   },
   {
