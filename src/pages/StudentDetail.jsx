@@ -31,20 +31,25 @@ export default function StudentDetailPage() {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [expandedSection, setExpandedSection] = useCollapsibleState(null);
   const [showGoalBank, setShowGoalBank] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
 
-  const { data: student } = useQuery({
-    queryKey: ["student", studentId],
+  React.useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
+
+  const { data: student, isLoading: studentLoading } = useQuery({
+    queryKey: ["student", studentId, currentUserEmail],
     queryFn: async () => {
-      const students = await base44.entities.Student.list();
-      return students.find(s => s.id === studentId);
+      const results = await base44.entities.Student.filter({ id: studentId, created_by: currentUserEmail });
+      return results[0] || null;
     },
-    enabled: !!studentId,
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   const { data: studentGoals = [] } = useQuery({
-    queryKey: ["studentGoals", studentId],
-    queryFn: () => base44.entities.StudentGoal.filter({ studentId }),
-    enabled: !!studentId,
+    queryKey: ["studentGoals", studentId, currentUserEmail],
+    queryFn: () => base44.entities.StudentGoal.filter({ studentId, created_by: currentUserEmail }),
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   const { data: goals = [] } = useQuery({
@@ -53,19 +58,23 @@ export default function StudentDetailPage() {
   });
 
   const { data: equipment = [] } = useQuery({
-    queryKey: ["equipment", studentId],
-    queryFn: () => base44.entities.Equipment.filter({ studentId }),
-    enabled: !!studentId,
+    queryKey: ["equipment", studentId, currentUserEmail],
+    queryFn: () => base44.entities.Equipment.filter({ studentId, created_by: currentUserEmail }),
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   const { data: services = [] } = useQuery({
-    queryKey: ["services", studentId],
-    queryFn: () => base44.entities.ServiceEntry.filter({ studentId }),
-    enabled: !!studentId,
+    queryKey: ["services", studentId, currentUserEmail],
+    queryFn: () => base44.entities.ServiceEntry.filter({ studentId, created_by: currentUserEmail }),
+    enabled: !!studentId && !!currentUserEmail,
   });
 
-  if (!student) {
+  if (!currentUserEmail || studentLoading) {
     return <div className="text-center py-16 text-[var(--modal-text-muted)]">Loading...</div>;
+  }
+
+  if (!student && studentId) {
+    return <div className="text-center py-16 text-red-600 font-semibold">Access Denied: You do not have permission to view this student.</div>;
   }
 
   const goalMap = {};
