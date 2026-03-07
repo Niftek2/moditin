@@ -70,7 +70,7 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Grade Band</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Delivery Model</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">IEP Annual Review</Label>
-        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide text-center">3yr?</Label>
+        <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Triennial Date</Label>
         <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Color</Label>
         <div />
       </div>
