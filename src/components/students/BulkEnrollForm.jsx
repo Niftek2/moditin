@@ -108,13 +108,13 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
               onChange={(e) => updateRow(i, "iepAnnualReviewDate", e.target.value)}
               className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium h-9 text-sm"
             />
-            <div className="flex justify-center items-center px-1" title="Check if this IEP is a 3-year re-evaluation (triennial)">
-              <Checkbox
-                checked={row.isTriennial || false}
-                onCheckedChange={(v) => updateRow(i, "isTriennial", v)}
-                className="border-2 border-[var(--modal-border)]"
-              />
-            </div>
+            <Input
+              type="date"
+              value={row.triennialEvaluationDate || ""}
+              onChange={(e) => updateRow(i, "triennialEvaluationDate", e.target.value)}
+              className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium h-9 text-sm"
+              title="3-year re-evaluation (triennial) due date"
+            />
             <Popover>
               <PopoverTrigger asChild>
                 <button
