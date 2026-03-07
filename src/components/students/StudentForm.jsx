@@ -158,6 +158,17 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
             className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
           />
           </div>
+
+          <div className="space-y-2">
+          <Label className="text-[var(--modal-text)] font-semibold text-sm">Triennial Evaluation Date</Label>
+          <Input
+            type="date"
+            value={form.triennialEvaluationDate || ""}
+            onChange={(e) => updateField("triennialEvaluationDate", e.target.value)}
+            className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] font-medium"
+          />
+          <p className="text-xs text-[var(--modal-text-muted)]">3-year re-evaluation due date</p>
+          </div>
       </div>
 
       <div className="space-y-2">
