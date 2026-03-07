@@ -14,14 +14,14 @@ const COMMUNICATION_MODALITIES = ["LSL", "ASL", "Bilingual ASL/English", "Total 
 const PRIMARY_LANGUAGES = ["ASL", "English", "ASL/English Bilingual", "Other"];
 const READING_LEVELS = ["Emergent (PreK-K)", "Early (1-2)", "Developing (3-5)", "Expanding (6-8)", "Academic (9-12)"];
 const COLOR_OPTIONS = [
-  { value: "red", label: "Red", bg: "bg-red-100", dot: "bg-red-500" },
-  { value: "orange", label: "Orange", bg: "bg-orange-100", dot: "bg-orange-500" },
-  { value: "yellow", label: "Yellow", bg: "bg-yellow-100", dot: "bg-yellow-500" },
-  { value: "green", label: "Green", bg: "bg-green-100", dot: "bg-green-500" },
-  { value: "blue", label: "Blue", bg: "bg-blue-100", dot: "bg-blue-500" },
-  { value: "purple", label: "Purple", bg: "bg-purple-100", dot: "bg-purple-500" },
-  { value: "pink", label: "Pink", bg: "bg-pink-100", dot: "bg-pink-500" },
-  { value: "gray", label: "Gray", bg: "bg-gray-100", dot: "bg-gray-500" },
+  { value: "red",    label: "Rose",   bg: "bg-red-50",    dot: "bg-red-300" },
+  { value: "orange", label: "Peach",  bg: "bg-orange-50", dot: "bg-orange-300" },
+  { value: "yellow", label: "Butter", bg: "bg-yellow-50", dot: "bg-yellow-300" },
+  { value: "green",  label: "Mint",   bg: "bg-green-50",  dot: "bg-green-300" },
+  { value: "blue",   label: "Sky",    bg: "bg-blue-50",   dot: "bg-blue-300" },
+  { value: "purple", label: "Lilac",  bg: "bg-purple-50", dot: "bg-purple-300" },
+  { value: "pink",   label: "Blush",  bg: "bg-pink-50",   dot: "bg-pink-300" },
+  { value: "gray",   label: "Slate",  bg: "bg-gray-100",  dot: "bg-gray-300" },
 ];
 
 export default function StudentForm({ student, onSubmit, onCancel }) {
