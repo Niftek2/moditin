@@ -18,10 +18,16 @@ export default function AccommodationsPage() {
   const [customAccName, setCustomAccName] = useState("");
   const [customAccNotes, setCustomAccNotes] = useState("");
   const queryClient = useQueryClient();
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", currentUserEmail],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }),
+    enabled: !!currentUserEmail,
   });
 
   const { data: accommodations = [] } = useQuery({
@@ -30,9 +36,9 @@ export default function AccommodationsPage() {
   });
 
   const { data: studentAccommodations = [] } = useQuery({
-    queryKey: ["studentAccommodations", selectedStudent],
-    queryFn: () => base44.entities.StudentAccommodation.filter({ studentId: selectedStudent }),
-    enabled: !!selectedStudent,
+    queryKey: ["studentAccommodations", selectedStudent, currentUserEmail],
+    queryFn: () => base44.entities.StudentAccommodation.filter({ studentId: selectedStudent, created_by: currentUserEmail }),
+    enabled: !!selectedStudent && !!currentUserEmail,
   });
 
   const toggleMutation = useMutation({
@@ -40,7 +46,7 @@ export default function AccommodationsPage() {
       if (isAssigned) {
         await base44.entities.StudentAccommodation.delete(saId);
       } else {
-        await base44.entities.StudentAccommodation.create({ studentId: selectedStudent, accommodationId });
+        await base44.entities.StudentAccommodation.create({ studentId: selectedStudent, accommodationId, created_by: currentUserEmail });
       }
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["studentAccommodations"] }),
@@ -52,11 +58,13 @@ export default function AccommodationsPage() {
         category: "Other",
         name: data.name,
         description: data.notes,
+        created_by: currentUserEmail,
       });
       await base44.entities.StudentAccommodation.create({
         studentId: selectedStudent,
         accommodationId: customAccommodation.id,
         notes: data.notes,
+        created_by: currentUserEmail,
       });
     },
     onSuccess: () => {

@@ -14,24 +14,29 @@ export default function Ling6SessionHistory({ studentId }) {
   const [filterTech, setFilterTech] = useState("All");
   const [showDetected, setShowDetected] = useState(false);
   const [expandedSession, setExpandedSession] = useState(null);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
 
   const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ["ling6sessions", studentId],
-    queryFn: () => base44.entities.Ling6Session.filter({ studentId }),
-    enabled: !!studentId,
+    queryKey: ["ling6sessions", studentId, currentUserEmail],
+    queryFn: () => base44.entities.Ling6Session.filter({ studentId, created_by: currentUserEmail }),
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   const { data: allTrials = [] } = useQuery({
-    queryKey: ["ling6trials", studentId],
+    queryKey: ["ling6trials", studentId, currentUserEmail],
     queryFn: async () => {
-      const ss = await base44.entities.Ling6Session.filter({ studentId });
+      const ss = await base44.entities.Ling6Session.filter({ studentId, created_by: currentUserEmail });
       if (!ss.length) return [];
       const trialsArrays = await Promise.all(
         ss.map(s => base44.entities.Ling6Trial.filter({ ling6SessionId: s.id }))
       );
       return trialsArrays.flat();
     },
-    enabled: !!studentId,
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   const trialsForSession = (sessionId) => allTrials.filter(t => t.ling6SessionId === sessionId);

@@ -11,11 +11,15 @@ const ACTIVITY_LABELS = {
 };
 
 export default function ActivityHistory({ studentId }) {
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
+
   const { data: activities = [], isLoading } = useQuery({
-    queryKey: ["labelingActivities", studentId],
-    queryFn: () => base44.entities.LabelingActivityRecord.filter({
-      studentId,
-    }, "-created_date"),
+    queryKey: ["labelingActivities", studentId, currentUserEmail],
+    queryFn: () => base44.entities.LabelingActivityRecord.filter({ studentId, created_by: currentUserEmail }, "-created_date"),
+    enabled: !!studentId && !!currentUserEmail,
   });
 
   if (isLoading) {

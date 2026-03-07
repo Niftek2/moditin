@@ -49,7 +49,10 @@ export default function StudentsPage() {
   });
 
   const bulkCreateMutation = useMutation({
-    mutationFn: (rows) => base44.entities.Student.bulkCreate(rows),
+    mutationFn: (rows) => {
+      const ownedRows = rows.map(row => ({ ...row, created_by: currentUserEmail }));
+      return base44.entities.Student.bulkCreate(ownedRows);
+    },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["students"] }); setShowBulkForm(false); },
   });
 
