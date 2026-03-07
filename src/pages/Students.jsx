@@ -130,7 +130,7 @@ export default function StudentsPage() {
             const colorTag = student.colorTag || "gray";
             const colors = COLOR_MAP[colorTag];
             return (
-            <div key={student.id} className={`${colors.bg} modal-card p-4 flex items-center justify-between hover:shadow-md transition-all group border-l-4 ${colors.dot}`}>
+            <div key={student.id} className={`${colors.bg} modal-card p-4 flex items-center justify-between hover:shadow-md transition-all group border-l-4 ${colors.border}`}>
               <Link to={createPageUrl(`StudentDetail?id=${student.id}`)} className="flex items-center gap-4 flex-1 min-w-0">
                 <div className={`w-11 h-11 rounded-xl ${colors.bg} flex items-center justify-center shrink-0 border border-current`}>
                   <span className={`text-sm font-bold ${colors.text}`}>{student.studentInitials?.slice(0, 2) || "?"}</span>
