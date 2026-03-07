@@ -15,14 +15,14 @@ import BulkEnrollForm from "../components/students/BulkEnrollForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
 
 const COLOR_MAP = {
-  red: { bg: "bg-red-100", text: "text-red-700", dot: "bg-red-500" },
-  orange: { bg: "bg-orange-100", text: "text-orange-700", dot: "bg-orange-500" },
-  yellow: { bg: "bg-yellow-100", text: "text-yellow-700", dot: "bg-yellow-500" },
-  green: { bg: "bg-green-100", text: "text-green-700", dot: "bg-green-500" },
-  blue: { bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-500" },
-  purple: { bg: "bg-purple-100", text: "text-purple-700", dot: "bg-purple-500" },
-  pink: { bg: "bg-pink-100", text: "text-pink-700", dot: "bg-pink-500" },
-  gray: { bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-500" },
+  red:    { bg: "bg-red-50",    text: "text-gray-900", dot: "bg-red-300",    border: "border-l-red-300" },
+  orange: { bg: "bg-orange-50", text: "text-gray-900", dot: "bg-orange-300", border: "border-l-orange-300" },
+  yellow: { bg: "bg-yellow-50", text: "text-gray-900", dot: "bg-yellow-300", border: "border-l-yellow-300" },
+  green:  { bg: "bg-green-50",  text: "text-gray-900", dot: "bg-green-300",  border: "border-l-green-300" },
+  blue:   { bg: "bg-blue-50",   text: "text-gray-900", dot: "bg-blue-300",   border: "border-l-blue-300" },
+  purple: { bg: "bg-purple-50", text: "text-gray-900", dot: "bg-purple-300", border: "border-l-purple-300" },
+  pink:   { bg: "bg-pink-50",   text: "text-gray-900", dot: "bg-pink-300",   border: "border-l-pink-300" },
+  gray:   { bg: "bg-gray-50",   text: "text-gray-900", dot: "bg-gray-300",   border: "border-l-gray-300" },
 };
 
 export default function StudentsPage() {
