@@ -76,6 +76,7 @@ import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
 import EvalReportDashboard from './pages/EvalReportDashboard';
 import EvalReportProfile from './pages/EvalReportProfile';
+import EvalReportWizard from './pages/EvalReportWizard';
 import __Layout from './Layout.jsx';
 
 
@@ -109,6 +110,7 @@ export const PAGES = {
     "Worksheets": Worksheets,
     "EvalReportDashboard": EvalReportDashboard,
     "EvalReportProfile": EvalReportProfile,
+    "EvalReportWizard": EvalReportWizard,
 }
 
 export const pagesConfig = {
