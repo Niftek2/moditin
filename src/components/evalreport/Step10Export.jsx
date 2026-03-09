@@ -28,7 +28,6 @@ export default function Step10Export({ reportData, generated, assessments, profi
     setExporting(true);
     setError(null);
     try {
-      // eslint-disable-next-line no-unused-vars
       // Prepare logo as base64 if available
       let logoBase64 = null;
       if (profile?.districtLogoUrl) {
