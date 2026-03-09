@@ -42,6 +42,7 @@ const navItems = [
   { name: "Activities", icon: Zap, page: "InteractiveActivities" },
   { name: "Labeling Activities", icon: Activity, page: "LabelingActivities" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
+  { name: "Eval Reports", icon: ClipboardList, page: "EvalReportDashboard" },
 ];
 
 export default function Sidebar({ currentPage }) {
