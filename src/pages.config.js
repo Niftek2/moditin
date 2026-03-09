@@ -74,6 +74,7 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
+import EvalReportDashboard from './pages/EvalReportDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -105,6 +106,7 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
+    "EvalReportDashboard": EvalReportDashboard,
 }
 
 export const pagesConfig = {
