@@ -271,12 +271,14 @@ Deno.serve(async (req) => {
     const buffer = await Packer.toBuffer(doc);
     const bytes = new Uint8Array(buffer);
 
-    return new Response(bytes, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'Content-Disposition': `attachment; filename="DHH_Evaluation_${reportData.studentInitials || 'Report'}.docx"`
-      }
+    // Encode as base64 so it can be returned as JSON and decoded on the frontend
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    const base64 = btoa(binary);
+
+    return Response.json({
+      base64,
+      filename: `DHH_Evaluation_${reportData.studentInitials || 'Report'}.docx`
     });
 
   } catch (error) {
