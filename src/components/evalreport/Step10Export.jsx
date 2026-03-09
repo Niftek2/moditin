@@ -61,27 +61,17 @@ export default function Step10Export({ reportData, generated, assessments, profi
         logoBase64,
       });
 
-      // The function returns a buffer — we need to handle binary response
-      // Since base44 functions return JSON, we request via fetch directly
-      const funcUrl = `/api/functions/exportReportDocx`;
-      const user = await base44.auth.me();
-      const token = await base44.auth.getToken?.();
+      const { base64, filename } = result.data;
 
-      // Fallback: invoke via base44 and handle blob
-      const fetchResp = await fetch(funcUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ reportData, sections, assessments: assessments || [], profile: profile || {}, logoBase64 }),
-        credentials: "include",
-      });
-
-      if (!fetchResp.ok) throw new Error("Export failed. Please try again.");
-
-      const blob = await fetchResp.blob();
+      // Decode base64 to binary and trigger download
+      const binaryStr = atob(base64);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `DHH_Evaluation_${reportData.studentInitials || "Report"}.docx`;
+      a.download = filename || `DHH_Evaluation_${reportData.studentInitials || "Report"}.docx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
