@@ -14,14 +14,12 @@ import { DemoProvider, useDemo } from "./components/demo/DemoContext";
 import DemoBanner from "./components/demo/DemoBanner";
 
 function AppShell({ children, currentPageName, agreed, setAgreed }) {
-  const { isDemoMode, enterDemo } = useDemo();
+  const { isDemoMode } = useDemo();
 
-  // Auto-enter demo mode if ?demo=1 is in the URL
+  // Clean up ?demo=1 from the URL after it's been consumed by DemoContext
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("demo") === "1" && !isDemoMode) {
-      enterDemo();
-      // Remove the query param cleanly
+    if (params.get("demo") === "1") {
       const url = new URL(window.location.href);
       url.searchParams.delete("demo");
       window.history.replaceState({}, "", url.toString());
