@@ -17,6 +17,7 @@ import ActivityHistory from "../components/labeling/ActivityHistory";
 import GoalBankModal from "../components/goalbank/GoalBankModal";
 import StudentContactsSection from "../components/students/StudentContactsSection";
 import StudentScheduleSection from "../components/students/StudentScheduleSection";
+import { useDemo } from "../components/demo/DemoContext";
 
 const TABS = ["Overview", "Details", "Goals", "Accommodations", "Schedule", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
 

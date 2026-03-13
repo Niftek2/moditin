@@ -51,6 +51,7 @@ import Accommodations from './pages/Accommodations';
 import ActivityPlanner from './pages/ActivityPlanner';
 import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
+import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import DistrictPricing from './pages/DistrictPricing';
 import Equipment from './pages/Equipment';
 import EvalReportDashboard from './pages/EvalReportDashboard';
@@ -77,7 +78,6 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -86,6 +86,7 @@ export const PAGES = {
     "ActivityPlanner": ActivityPlanner,
     "Calendar": Calendar,
     "Dashboard": Dashboard,
+    "DistrictManagerDashboard": DistrictManagerDashboard,
     "DistrictPricing": DistrictPricing,
     "Equipment": Equipment,
     "EvalReportDashboard": EvalReportDashboard,
@@ -112,7 +113,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "DistrictManagerDashboard": DistrictManagerDashboard,
 }
 
 export const pagesConfig = {
