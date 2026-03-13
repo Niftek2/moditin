@@ -42,23 +42,33 @@ export default function ServiceHoursPage() {
   const [activeTab, setActiveTab] = useState("basic");
 
   const queryClient = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
 
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
-  }, []);
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
-  const { data: entries = [] } = useQuery({
+  const { data: entriesRaw = [] } = useQuery({
     queryKey: ["serviceEntries", currentUser?.email],
     queryFn: () => base44.entities.ServiceEntry.filter({ created_by: currentUser?.email }, "-date", 500),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const entries = isDemoMode ? demoData.services.map(s => ({
+    ...s,
+    date: s.sessionDate,
+    category: "DirectService",
+    minutes: s.durationMinutes,
+    monthKey: s.sessionDate?.slice(0, 7),
+    entryMethod: "Manual",
+  })) : entriesRaw;
 
-  const { data: students = [] } = useQuery({
+  const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],
     queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const students = isDemoMode ? demoData.students : studentsRaw;
 
   const { data: studentGoals = [] } = useQuery({
     queryKey: ["studentGoals", form.studentId],
@@ -200,11 +210,11 @@ export default function ServiceHoursPage() {
       <PageHeader
         title="Service Hours"
         subtitle="Track and report your service time"
-        action={
+        action={!isDemoMode && (
           <Button onClick={() => { setEditingId(null); setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "" }); setShowForm(true); }} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
             <Plus className="w-4 h-4" /> Log Time
           </Button>
-        }
+        )}
       />
 
       {/* Timer */}
