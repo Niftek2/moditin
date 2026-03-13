@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useScrollRestore } from "../components/shared/useScrollRestore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -98,7 +98,7 @@ export default function StudentsPage() {
       <PageHeader
         title="Students"
         subtitle={`${students.length} student${students.length !== 1 ? "s" : ""} on your caseload`}
-        action={
+        action={!isDemoMode && (
           <div className="flex gap-2">
             <Button onClick={() => setShowBulkForm(true)} variant="outline" className="border-2 border-[#400070] text-[#400070] hover:bg-[#400070] hover:text-white rounded-xl gap-2">
               <Plus className="w-4 h-4" /> Bulk Enroll
@@ -107,7 +107,7 @@ export default function StudentsPage() {
               <Plus className="w-4 h-4" /> Add Student
             </Button>
           </div>
-        }
+        )}
       />
 
       {students.length > 0 && (
@@ -152,6 +152,7 @@ export default function StudentsPage() {
                   </div>
                 </div>
               </Link>
+              {!isDemoMode && (
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button variant="ghost" size="icon" className="text-[var(--modal-text-muted)] hover:text-[#400070] h-8 w-8"
                   onClick={() => { setEditing(student); setShowForm(true); }}>
@@ -162,6 +163,7 @@ export default function StudentsPage() {
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               </div>
+              )}
               <Link to={createPageUrl(`StudentDetail?id=${student.id}`)}>
                 <ChevronRight className="w-4 h-4 text-[var(--modal-text-muted)] ml-2" />
               </Link>
