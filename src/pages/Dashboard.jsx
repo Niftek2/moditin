@@ -18,7 +18,6 @@ import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 import { getColorForStudent } from "../components/utils/colorMapping";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useDemo } from "../components/demo/DemoContext";
-import { FlaskConical } from "lucide-react";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
@@ -27,7 +26,7 @@ export default function Dashboard() {
   const [focusSearchResult, setFocusSearchResult] = useState(false);
   const [studentOrder, setStudentOrder] = useState([]);
   const queryClient = useQueryClient();
-  const { isDemoMode, demoData, enterDemo } = useDemo();
+  const { isDemoMode, demoData } = useDemo();
   const handleRefresh = () => Promise.all([
     queryClient.invalidateQueries({ queryKey: ["students"] }),
     queryClient.invalidateQueries({ queryKey: ["services-dash"] }),
