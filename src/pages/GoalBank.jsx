@@ -31,22 +31,27 @@ export default function GoalBankPage() {
   const [showCustomGoalForm, setShowCustomGoalForm] = useState(false);
   const [customGoalForm, setCustomGoalForm] = useState({ annualGoal: "", domain: "", gradeBand: "", baselineLevel: "", measurementType: "" });
   const [currentUser, setCurrentUser] = useState(null);
+  const { isDemoMode, demoData } = useDemo ? useDemo() : { isDemoMode: false, demoData: {} };
 
-  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
   const queryClient = useQueryClient();
 
-  const { data: goals = [], isLoading } = useQuery({
+  const { data: goalsRaw = [], isLoading } = useQuery({
     queryKey: ["goals", currentUser?.id],
     queryFn: () => base44.entities.Goal.filter({ created_by: currentUser?.email }, "-created_date", 200),
-    enabled: !!currentUser?.id,
+    enabled: !!currentUser?.id && !isDemoMode,
   });
+  const goals = isDemoMode ? [] : goalsRaw;
 
-  const { data: students = [] } = useQuery({
+  const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],
     queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const students = isDemoMode ? (demoData.students || []) : studentsRaw;
 
   const assignMutation = useMutation({
     mutationFn: (data) => base44.entities.StudentGoal.create(data),
