@@ -3,7 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, Users, User, Building2, GraduationCap, Globe } from "lucide-react";
+import { Check, X, Users, User, Building2, GraduationCap, Globe, FlaskConical } from "lucide-react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "../utils";
 
 const USD_PLANS = [
   {
