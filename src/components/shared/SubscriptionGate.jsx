@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { base44 } from "@/api/base44Client";
 import { Loader2 } from "lucide-react";
+import { useDemo } from "../demo/DemoContext";
 
 const SubscriptionContext = createContext(null);
 
@@ -41,12 +42,12 @@ export function SubscriptionProvider({ children }) {
 
 export default function SubscriptionGate({ children }) {
   const { checking, subStatus, user } = useSubscription();
+  const { isDemoMode } = useDemo();
 
-  // If demo mode is active (via URL param), skip subscription check entirely
-  const isDemoParam = typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("demo") === "1";
+  // Demo mode bypasses all subscription/auth checks
+  if (isDemoMode) return <>{children}</>;
 
-  if (checking && !isDemoParam) {
+  if (checking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--modal-bg)]">
         <Loader2 className="w-8 h-8 animate-spin text-[#400070]" />
@@ -54,8 +55,8 @@ export default function SubscriptionGate({ children }) {
     );
   }
 
-  // If not subscribed (and not admin), redirect to Join page — unless demo mode
-  if (!isDemoParam && subStatus && !subStatus.isPro && user?.role !== "admin") {
+  // If not subscribed (and not admin), redirect to Join page
+  if (subStatus && !subStatus.isPro && user?.role !== "admin") {
     window.location.href = "/Join";
     return null;
   }
