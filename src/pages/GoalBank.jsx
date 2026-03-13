@@ -32,7 +32,7 @@ export default function GoalBankPage() {
   const [showCustomGoalForm, setShowCustomGoalForm] = useState(false);
   const [customGoalForm, setCustomGoalForm] = useState({ annualGoal: "", domain: "", gradeBand: "", baselineLevel: "", measurementType: "" });
   const [currentUser, setCurrentUser] = useState(null);
-  const { isDemoMode, demoData } = useDemo ? useDemo() : { isDemoMode: false, demoData: {} };
+  const { isDemoMode, demoData } = useDemo();
 
   useEffect(() => {
     if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});

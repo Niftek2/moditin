@@ -24,7 +24,7 @@ export default function Ling6CheckPage() {
   const [saving, setSaving] = useState(false);
   const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState(null);
-  const { isDemoMode, demoData } = useDemo ? useDemo() : { isDemoMode: false, demoData: {} };
+  const { isDemoMode, demoData } = useDemo();
   useEffect(() => {
     if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
   }, [isDemoMode]);
