@@ -16,6 +16,7 @@ import DemoBanner from "./components/demo/DemoBanner";
 
 function AppShell({ children, currentPageName, agreed, setAgreed }) {
   const { isDemoMode } = useDemo();
+  // eslint-disable-next-line no-unused-vars
   return (
     <div
       className="min-h-screen bg-[var(--modal-bg)] flex flex-col"
