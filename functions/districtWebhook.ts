@@ -83,6 +83,17 @@ Deno.serve(async (req) => {
       try {
         await base44.asServiceRole.users.inviteUser(email, "user");
         console.log(`Invited teacher: ${email}`);
+        // Link teacher to district
+        if (districtId) {
+          await new Promise(r => setTimeout(r, 500));
+          const newUsers = await base44.asServiceRole.entities.User.filter({ email });
+          if (newUsers.length > 0) {
+            await base44.asServiceRole.entities.User.update(newUsers[0].id, {
+              districtId,
+              districtStatus: 'active',
+            });
+          }
+        }
       } catch (e) {
         console.error(`Failed to invite ${email}:`, e.message);
       }
