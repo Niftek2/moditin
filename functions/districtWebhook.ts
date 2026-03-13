@@ -29,6 +29,9 @@ Deno.serve(async (req) => {
     const trialDays = parseInt(metadata.trial_days || '14');
     const quantity = parseInt(metadata.quantity || '1');
 
+    const stripeSubscriptionId = session.subscription;
+    const stripeCustomerId = session.customer;
+
     console.log(`Checkout completed for ${planName}: ${quantity} seats, purchaser: ${purchaserEmail}`);
 
     // Calculate trial end date
