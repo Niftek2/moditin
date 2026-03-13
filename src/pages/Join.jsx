@@ -96,7 +96,18 @@ export default function JoinPage() {
           No charge for 7 days. Cancel anytime from your account settings. By signing up you agree to our terms of service.
         </p>
 
-        <div className="mt-6 text-center">
+        {/* District / Program pricing link */}
+        <div className="mt-6 rounded-xl border border-[#D8CCE8] bg-[#F7F3FA] p-4 text-center">
+          <p className="text-sm font-semibold text-[#400070] mb-1">Purchasing for a district or program?</p>
+          <p className="text-xs text-[#6B5E80] mb-3">See volume pricing for Starter, Program, and District plans.</p>
+          <a href="/DistrictPricing">
+            <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2">
+              View District & Program Pricing <ArrowRight className="w-4 h-4" />
+            </Button>
+          </a>
+        </div>
+
+        <div className="mt-4 text-center">
           <p className="text-sm text-[#6B5E80] mb-2">Not ready to subscribe?</p>
           <a href="/Dashboard?demo=1">
             <Button
