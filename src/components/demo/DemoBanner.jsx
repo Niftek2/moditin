@@ -9,7 +9,7 @@ export default function DemoBanner() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between gap-2 px-4 py-2 bg-amber-400 text-amber-900 shadow-md"
+      className="fixed top-1 left-0 right-0 z-[49] flex items-center justify-between gap-2 px-4 py-2 bg-amber-400 text-amber-900 shadow-md"
       role="alert"
       aria-live="polite"
     >
