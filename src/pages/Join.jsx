@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Loader2, Check, Sparkles, ArrowRight } from "lucide-react";
+import { Loader2, Check, Sparkles, ArrowRight, FlaskConical } from "lucide-react";
 
 const MONTHLY_PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla"; // $17.99/month
 
@@ -95,6 +95,19 @@ export default function JoinPage() {
         <p className="text-[11px] text-[#8B7EA0] text-center mt-4">
           No charge for 7 days. Cancel anytime from your account settings. By signing up you agree to our terms of service.
         </p>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-[#6B5E80] mb-2">Not ready to subscribe?</p>
+          <a href="/Dashboard?demo=1">
+            <Button
+              variant="outline"
+              className="border-[#D8CCE8] text-[#400070] hover:bg-[#F7F3FA] gap-2"
+            >
+              <FlaskConical className="w-4 h-4" />
+              Explore with sample data
+            </Button>
+          </a>
+        </div>
       </div>
     </div>
   );
