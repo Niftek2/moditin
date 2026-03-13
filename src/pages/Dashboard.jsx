@@ -53,14 +53,17 @@ export default function Dashboard() {
   const students = isDemoMode ? demoData.students : studentsRaw;
 
   // Initialize studentOrder from displayOrder or ID order
+  const studentIds = students.map(s => s.id).join(",");
   useEffect(() => {
+    if (students.length === 0) return;
     const ordered = [...students].sort((a, b) => {
       const orderA = a.displayOrder ?? students.indexOf(a);
       const orderB = b.displayOrder ?? students.indexOf(b);
       return orderA - orderB;
     });
     setStudentOrder(ordered.map(s => s.id));
-  }, [students]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentIds]);
 
   const { data: servicesRaw = [] } = useQuery({
     queryKey: ["services-dash", user?.email],
