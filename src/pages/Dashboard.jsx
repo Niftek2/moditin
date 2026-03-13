@@ -34,13 +34,14 @@ export default function Dashboard() {
   ]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     base44.auth.me().then((u) => {
       setUser(u);
       if (u && !u.firstName) {
         window.location.href = "/Onboarding";
       }
     }).catch(() => {});
-  }, []);
+  }, [isDemoMode]);
 
   const firstName = user?.firstName || "";
 
