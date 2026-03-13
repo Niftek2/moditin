@@ -27,23 +27,26 @@ export default function CalendarPage() {
   const [pendingSave, setPendingSave] = useState(null);
 
   const qc = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
 
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
-  }, []);
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
-  const { data: events = [] } = useQuery({
+  const { data: eventsRaw = [] } = useQuery({
     queryKey: ["calendarEvents", currentUser?.id],
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: currentUser?.email }, "-startDateTime", 200),
-    enabled: !!currentUser?.id,
+    enabled: !!currentUser?.id && !isDemoMode,
   });
+  const events = isDemoMode ? demoData.calendarEvents : eventsRaw;
 
-  const { data: students = [] } = useQuery({
+  const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],
     queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const students = isDemoMode ? demoData.students : studentsRaw;
 
   const createEvent = useMutation({
     mutationFn: (data) => base44.entities.CalendarEvent.create(data),
@@ -108,6 +111,7 @@ export default function CalendarPage() {
   };
 
   const handleSave = (formData) => {
+    if (isDemoMode) return;
     const saveDate = parseISO(formData.startDateTime);
     const conflict = checkDriveConflict(events, formData, saveDate);
     if (conflict && !formData.bypassDriveWarning) {
@@ -212,7 +216,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Modals */}
-      {showForm && (
+      {showForm && !isDemoMode && (
         <EventForm
           event={editingEvent}
           students={students}
