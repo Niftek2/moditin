@@ -39,6 +39,44 @@ Deno.serve(async (req) => {
     trialEndDate.setDate(trialEndDate.getDate() + trialDays);
     const trialEndStr = trialEndDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+    // --- District setup: create District record + promote purchaser to manager ---
+    let districtId = null;
+    if (quantity > 1) {
+      try {
+        // Find purchaser user and promote to manager
+        const purchaserUsers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+        let purchaserUserId = null;
+        if (purchaserUsers.length > 0) {
+          purchaserUserId = purchaserUsers[0].id;
+          await base44.asServiceRole.auth.updateUser(purchaserUserId, { role: 'manager' });
+          console.log(`Promoted ${purchaserEmail} to manager role`);
+        } else {
+          // Invite purchaser as manager if they don't have an account yet
+          await base44.asServiceRole.users.inviteUser(purchaserEmail, 'manager');
+          console.log(`Invited purchaser ${purchaserEmail} as manager`);
+          const newPurchasers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+          if (newPurchasers.length > 0) purchaserUserId = newPurchasers[0].id;
+        }
+
+        // Create District record
+        const districtRecord = await base44.asServiceRole.entities.District.create({
+          districtName: `${purchaserName}'s District`,
+          managerUserId: purchaserUserId || '',
+          managerEmail: purchaserEmail,
+          planName,
+          licensedTeacherCount: quantity,
+          stripeSubscriptionId,
+          stripeCustomerId,
+          status: 'trialing',
+          trialEndDate: trialEndDate.toISOString(),
+        });
+        districtId = districtRecord.id;
+        console.log(`District record created: ${districtId}`);
+      } catch (e) {
+        console.error('Failed to create District record:', e.message);
+      }
+    }
+
     // Invite each teacher and send them a welcome email
     for (const email of teacherEmails) {
       if (!email || email === purchaserEmail) continue;
