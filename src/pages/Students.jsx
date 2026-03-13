@@ -13,6 +13,7 @@ import EmptyState from "../components/shared/EmptyState";
 import StudentForm from "../components/students/StudentForm";
 import BulkEnrollForm from "../components/students/BulkEnrollForm";
 import PullToRefresh from "../components/shared/PullToRefresh";
+import { useDemo } from "../components/demo/DemoContext";
 
 const COLOR_MAP = {
   red:    { bg: "bg-red-50",    text: "text-gray-900", dot: "bg-red-300",    border: "border-l-red-300" },
@@ -32,16 +33,21 @@ export default function StudentsPage() {
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
   const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
   React.useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
 
-  const { data: students = [], isLoading } = useQuery({
+  const { data: studentsReal = [], isLoading } = useQuery({
     queryKey: ["students", currentUserEmail],
     queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }, "-created_date"),
-    enabled: !!currentUserEmail,
+    enabled: !!currentUserEmail && !isDemoMode,
   });
+
+  const students = isDemoMode ? demoData.students : studentsReal;
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Student.create(data),
