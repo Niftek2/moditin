@@ -53,6 +53,9 @@ import Calendar from './pages/Calendar';
 import Dashboard from './pages/Dashboard';
 import DistrictPricing from './pages/DistrictPricing';
 import Equipment from './pages/Equipment';
+import EvalReportDashboard from './pages/EvalReportDashboard';
+import EvalReportProfile from './pages/EvalReportProfile';
+import EvalReportWizard from './pages/EvalReportWizard';
 import GoalBank from './pages/GoalBank';
 import InteractiveActivities from './pages/InteractiveActivities';
 import IosLogin from './pages/IosLogin';
@@ -74,9 +77,6 @@ import Students from './pages/Students';
 import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
-import EvalReportDashboard from './pages/EvalReportDashboard';
-import EvalReportProfile from './pages/EvalReportProfile';
-import EvalReportWizard from './pages/EvalReportWizard';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +87,9 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "DistrictPricing": DistrictPricing,
     "Equipment": Equipment,
+    "EvalReportDashboard": EvalReportDashboard,
+    "EvalReportProfile": EvalReportProfile,
+    "EvalReportWizard": EvalReportWizard,
     "GoalBank": GoalBank,
     "InteractiveActivities": InteractiveActivities,
     "IosLogin": IosLogin,
@@ -108,9 +111,6 @@ export const PAGES = {
     "TestingDecisions": TestingDecisions,
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
-    "EvalReportDashboard": EvalReportDashboard,
-    "EvalReportProfile": EvalReportProfile,
-    "EvalReportWizard": EvalReportWizard,
 }
 
 export const pagesConfig = {

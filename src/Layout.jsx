@@ -10,6 +10,8 @@ import PrivacyReminderBanner from "./components/shared/PrivacyReminderBanner";
 import NotificationBell from "./components/shared/NotificationBell";
 import { useAndroidBack } from "./components/shared/useAndroidBack";
 import SubscriptionGate, { SubscriptionProvider } from "./components/shared/SubscriptionGate";
+import { DemoProvider } from "./components/demo/DemoContext";
+import DemoBanner from "./components/demo/DemoBanner";
 
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
