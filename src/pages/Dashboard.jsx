@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [focusSearchResult, setFocusSearchResult] = useState(false);
   const [studentOrder, setStudentOrder] = useState([]);
   const queryClient = useQueryClient();
+  const { isDemoMode, demoData, enterDemo } = useDemo();
   const handleRefresh = () => Promise.all([
     queryClient.invalidateQueries({ queryKey: ["students"] }),
     queryClient.invalidateQueries({ queryKey: ["services-dash"] }),
