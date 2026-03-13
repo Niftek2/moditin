@@ -45,7 +45,11 @@ function deepClone(obj) {
 }
 
 export function DemoProvider({ children }) {
-  const [isDemoMode, setIsDemoMode] = useState(false);
+  // Initialize immediately from URL so queries never fire against real data
+  const [isDemoMode, setIsDemoMode] = useState(() =>
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("demo") === "1"
+  );
   const [demoData, setDemoData] = useState(deepClone(SEED_DATA));
 
   const enterDemo = useCallback(() => {
