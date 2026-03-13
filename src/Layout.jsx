@@ -14,7 +14,19 @@ import { DemoProvider, useDemo } from "./components/demo/DemoContext";
 import DemoBanner from "./components/demo/DemoBanner";
 
 function AppShell({ children, currentPageName, agreed, setAgreed }) {
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, enterDemo } = useDemo();
+
+  // Auto-enter demo mode if ?demo=1 is in the URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("demo") === "1" && !isDemoMode) {
+      enterDemo();
+      // Remove the query param cleanly
+      const url = new URL(window.location.href);
+      url.searchParams.delete("demo");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
   return (
     <div
       className="min-h-screen bg-[var(--modal-bg)] flex flex-col"
