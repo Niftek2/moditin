@@ -16,16 +16,18 @@ export default function MileagePage() {
   const [form, setForm] = useState({ date: new Date().toISOString().split("T")[0], miles: "", purpose: "" });
   const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState(null);
+  const isDemoMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
 
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
-  }, []);
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
-  const { data: entries = [] } = useQuery({
+  const { data: entriesRaw = [] } = useQuery({
     queryKey: ["mileageEntries", currentUser?.email],
     queryFn: () => base44.entities.MileageEntry.filter({ created_by: currentUser?.email }, "-date", 500),
-    enabled: !!currentUser?.email,
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const entries = isDemoMode ? [] : entriesRaw;
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MileageEntry.create(data),
