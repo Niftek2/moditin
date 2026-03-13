@@ -121,11 +121,7 @@ export default function Layout({ children, currentPageName }) {
   }, [currentPageName, isIosMode, navigate]);
 
   // Pages that render without the full app shell (no auth required)
-  if (["Join", "PrivacyPolicy", "DistrictPricing", "DistrictManagerDashboard"].includes(currentPageName) === false &&
-    ["Join", "PrivacyPolicy", "DistrictPricing"].includes(currentPageName)) {
-    return <>{children}</>;
-  }
-  if (["Join", "PrivacyPolicy", "DistrictPricing"].includes(currentPageName)) {
+  if (["Join", "PrivacyPolicy", "DistrictPricing", "DistrictManagerDashboard"].includes(currentPageName)) {
     return <>{children}</>;
   }
 
