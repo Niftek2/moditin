@@ -12,6 +12,7 @@ import EventForm from "../components/calendar/EventForm";
 import EventDetailModal from "../components/calendar/EventDetailModal";
 import DriveConflictModal from "../components/calendar/DriveConflictModal";
 import { checkDriveConflict, getEventsForDay } from "../components/calendar/calendarUtils";
+import { useDemo } from "../components/demo/DemoContext";
 
 const VIEWS = ["Day", "Week", "Month"];
 

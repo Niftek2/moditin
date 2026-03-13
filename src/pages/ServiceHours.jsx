@@ -12,6 +12,7 @@ import { Clock, Play, Square, Plus, Timer, Download, Trash2, Pencil } from "luci
 import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import SessionNotesForm from "../components/servicehours/SessionNotesForm";
+import { useDemo } from "../components/demo/DemoContext";
 
 const CATEGORIES = ["DirectService", "Planning", "Consultation", "Evaluation", "IEPMeeting", "Travel"];
 const CATEGORY_LABELS = {

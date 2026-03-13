@@ -6,6 +6,7 @@ import { Plus, Bell, ShieldAlert, CheckCircle2, Trash2 } from "lucide-react";
 import { isPast, parseISO, addDays, addWeeks, addMonths, isToday, isFuture } from "date-fns";
 import ReminderForm from "../components/reminders/ReminderForm";
 import ReminderCard from "../components/reminders/ReminderCard";
+import { useDemo } from "../components/demo/DemoContext";
 
 const TABS = ["Pending", "Snoozed", "Completed"];
 

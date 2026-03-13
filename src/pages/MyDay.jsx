@@ -15,6 +15,7 @@ import { EVENT_TYPE_LABELS, EVENT_COLORS } from "../components/calendar/calendar
 import ReminderCard from "../components/reminders/ReminderCard";
 import ReminderForm from "../components/reminders/ReminderForm";
 import EventForm from "../components/calendar/EventForm";
+import { useDemo } from "../components/demo/DemoContext";
 
 function getGreeting() {
   const h = new Date().getHours();
