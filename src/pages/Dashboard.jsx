@@ -138,17 +138,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-[var(--modal-text)]">
             {firstName ? `Hi, ${firstName} 👋` : "Hi there 👋"}
           </h1>
-          {!isDemoMode && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="shrink-0 border-[var(--modal-border)] text-[var(--modal-text-muted)] hover:text-[#400070] hover:border-[#400070] text-xs gap-1.5"
-              onClick={enterDemo}
-            >
-              <FlaskConical className="w-3.5 h-3.5" />
-              Try Demo
-            </Button>
-          )}
+
         </div>
         <DailyQuote />
       </motion.div>
