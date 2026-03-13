@@ -45,26 +45,32 @@ export default function MyDay() {
   const qc = useQueryClient();
   const now = new Date();
   const { text: greetText, Icon: GreetIcon } = getGreeting();
+  const { isDemoMode, demoData } = useDemo();
 
-  useEffect(() => { base44.auth.me().then(setUser).catch(() => {}); }, []);
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(setUser).catch(() => {});
+  }, [isDemoMode]);
 
-  const { data: calendarEvents = [] } = useQuery({
+  const { data: calendarEventsRaw = [] } = useQuery({
     queryKey: ["calendarEvents-myday", user?.email],
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: user?.email }, "-startDateTime", 200),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const calendarEvents = isDemoMode ? demoData.calendarEvents : calendarEventsRaw;
 
-  const { data: reminders = [] } = useQuery({
+  const { data: remindersRaw = [] } = useQuery({
     queryKey: ["reminders", user?.email],
     queryFn: () => base44.entities.PersonalReminder.filter({ created_by: user?.email }, "-dueDateTime", 200),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const reminders = isDemoMode ? demoData.reminders : remindersRaw;
 
-  const { data: students = [] } = useQuery({
+  const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", user?.email],
     queryFn: () => base44.entities.Student.filter({ created_by: user?.email }),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const students = isDemoMode ? demoData.students : studentsRaw;
 
   const createReminderMutation = useMutation({
     mutationFn: (data) => base44.entities.PersonalReminder.create(data),
