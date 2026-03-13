@@ -17,7 +17,7 @@ export default function MileagePage() {
   const [form, setForm] = useState({ date: new Date().toISOString().split("T")[0], miles: "", purpose: "" });
   const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState(null);
-  const isDemoMode = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("demo") === "1";
+  const { isDemoMode, demoData } = useDemo();
 
   useEffect(() => {
     if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
