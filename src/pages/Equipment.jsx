@@ -21,7 +21,10 @@ const CHECK_TYPES = ["DailyCheck", "WeeklyCheck", "IssueReport", "Repair", "Repl
 
 export default function EquipmentPage() {
   const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+  const { isDemoMode, demoData } = useDemo();
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
   const [showEquipForm, setShowEquipForm] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);

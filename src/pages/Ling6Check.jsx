@@ -9,6 +9,7 @@ import Ling6SummaryScreen from "../components/ling6/Ling6SummaryScreen";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
+import { useDemo } from "../components/demo/DemoContext";
 
 const STEPS = ["select", "setup", "check", "summary"];
 
