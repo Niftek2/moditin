@@ -85,7 +85,6 @@ export default function Layout({ children, currentPageName }) {
           aria-label="Modal Education Platform"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <DemoBannerSpacer />
           <DemoBanner />
           {/* Top accent bar */}
           <div
