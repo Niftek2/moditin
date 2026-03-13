@@ -76,6 +76,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
+    <DemoProvider>
     <SubscriptionProvider>
       <SubscriptionGate>
         <div
