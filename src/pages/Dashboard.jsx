@@ -94,6 +94,7 @@ export default function Dashboard() {
 
   // Handle drag end for student reordering
   const handleDragEnd = (result) => {
+    if (isDemoMode) return; // no writes in demo
     const { source, destination } = result;
     if (!destination) return;
     if (source.index === destination.index) return;
