@@ -14,11 +14,19 @@ export default function LabelingActivitySetup({ onStart }) {
   const [sessionDate, setSessionDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [startTime, setStartTime] = useState(format(new Date(), "HH:mm"));
   const [selectedActivity, setSelectedActivity] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const { isDemoMode, demoData } = useDemo();
 
-  const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
+
+  const { data: studentsRaw = [] } = useQuery({
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const students = isDemoMode ? (demoData.students || []) : studentsRaw;
 
   const canStart = selectedStudent && sessionDate && selectedActivity;
 

@@ -29,11 +29,19 @@ export default function ActivitySetupScreen({ onActivityGenerated, onShowDeafCul
   const [topic, setTopic] = useState("");
   const [criticalElements, setCriticalElements] = useState("2");
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const { isDemoMode, demoData } = useDemo();
 
-  const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
+
+  const { data: studentsRaw = [] } = useQuery({
+    queryKey: ["students", currentUser?.email],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }),
+    enabled: !!currentUser?.email && !isDemoMode,
   });
+  const students = isDemoMode ? (demoData.students || []) : studentsRaw;
 
   const { data: studentGoals = [] } = useQuery({
     queryKey: ["studentGoals-interactive", studentId],
