@@ -28,14 +28,18 @@ export default function Reminders() {
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const qc = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
   const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => { base44.auth.me().then(u => setCurrentUser(u)).catch(() => {}); }, []);
+  useEffect(() => {
+    if (!isDemoMode) base44.auth.me().then(u => setCurrentUser(u)).catch(() => {});
+  }, [isDemoMode]);
 
-  const { data: reminders = [], isLoading } = useQuery({
+  const { data: remindersRaw = [], isLoading } = useQuery({
     queryKey: ["reminders", currentUser?.id],
     queryFn: () => base44.entities.PersonalReminder.filter({ created_by: currentUser?.email }, "-dueDateTime", 200),
-    enabled: !!currentUser?.id,
+    enabled: !!currentUser?.id && !isDemoMode,
   });
+  const reminders = isDemoMode ? demoData.reminders : remindersRaw;
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.PersonalReminder.create(data),
@@ -100,12 +104,14 @@ export default function Reminders() {
             {pendingCount} pending{overdueCount > 0 ? ` · ${overdueCount} overdue` : ""}
           </p>
         </div>
+        {!isDemoMode && (
         <Button
           onClick={() => { setEditTarget(null); setShowForm(true); }}
           className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-2"
         >
           <Plus className="w-4 h-4" /> Add Reminder
         </Button>
+        )}
       </div>
 
       {/* Tabs */}
