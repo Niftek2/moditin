@@ -328,6 +328,25 @@ export default function DistrictPricingPage() {
         <p className="text-center text-white/50 text-sm mt-10">
           All prices shown are per seat, billed annually. No charge until your free trial ends. Cancel anytime.
         </p>
+
+        {/* Demo CTA for district decision makers */}
+        <div className="mt-10 max-w-2xl mx-auto bg-white/5 border border-white/15 rounded-2xl p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <FlaskConical className="w-4 h-4 text-amber-300" />
+            <span className="text-amber-300 text-sm font-semibold uppercase tracking-wide">Not ready to commit?</span>
+          </div>
+          <h3 className="text-white text-xl font-bold mb-2">See exactly what your teachers will use</h3>
+          <p className="text-white/60 text-sm max-w-md mx-auto mb-5">
+            Explore the full platform with sample data — no sign-up, no credit card. Walk through the tools your team would use every day before making a district-wide decision.
+          </p>
+          <Link to={createPageUrl("Dashboard") + "?demo=1"}>
+            <button className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-amber-900 font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-400/20">
+              <FlaskConical className="w-4 h-4" />
+              Preview the Platform — No Sign-Up Required
+            </button>
+          </Link>
+          <p className="text-white/30 text-xs mt-3">Sample data only · Nothing is saved · Exit anytime</p>
+        </div>
       </div>
 
       {/* Checkout Modal */}
