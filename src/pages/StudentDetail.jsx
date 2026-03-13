@@ -33,44 +33,66 @@ export default function StudentDetailPage() {
   const [expandedSection, setExpandedSection] = useCollapsibleState(null);
   const [showGoalBank, setShowGoalBank] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
+  const { isDemoMode, demoData } = useDemo();
 
   React.useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
 
   const { data: student, isLoading: studentLoading } = useQuery({
-    queryKey: ["student", studentId, currentUserEmail],
+    queryKey: ["student", studentId, currentUserEmail, isDemoMode],
     queryFn: async () => {
+      if (isDemoMode) {
+        return demoData.students.find(s => s.id === studentId) || null;
+      }
       const results = await base44.entities.Student.filter({ id: studentId, created_by: currentUserEmail });
       return results[0] || null;
     },
-    enabled: !!studentId && !!currentUserEmail,
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const { data: studentGoals = [] } = useQuery({
-    queryKey: ["studentGoals", studentId, currentUserEmail],
-    queryFn: () => base44.entities.StudentGoal.filter({ studentId, created_by: currentUserEmail }),
-    enabled: !!studentId && !!currentUserEmail,
+    queryKey: ["studentGoals", studentId, currentUserEmail, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.goals.filter(g => g.studentId === studentId);
+      return base44.entities.StudentGoal.filter({ studentId, created_by: currentUserEmail });
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const { data: goals = [] } = useQuery({
-    queryKey: ["goals"],
-    queryFn: () => base44.entities.Goal.list(),
+    queryKey: ["goals", isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return [];
+      return base44.entities.Goal.list();
+    },
   });
 
   const { data: equipment = [] } = useQuery({
-    queryKey: ["equipment", studentId, currentUserEmail],
-    queryFn: () => base44.entities.Equipment.filter({ studentId, created_by: currentUserEmail }),
-    enabled: !!studentId && !!currentUserEmail,
+    queryKey: ["equipment", studentId, currentUserEmail, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return [];
+      return base44.entities.Equipment.filter({ studentId, created_by: currentUserEmail });
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const { data: services = [] } = useQuery({
-    queryKey: ["services", studentId, currentUserEmail],
-    queryFn: () => base44.entities.ServiceEntry.filter({ studentId, created_by: currentUserEmail }),
-    enabled: !!studentId && !!currentUserEmail,
+    queryKey: ["services", studentId, currentUserEmail, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.services.filter(s => s.studentId === studentId);
+      return base44.entities.ServiceEntry.filter({ studentId, created_by: currentUserEmail });
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
-  if (!currentUserEmail || studentLoading) {
+  if (!isDemoMode && (!currentUserEmail || studentLoading)) {
+    return <div className="text-center py-16 text-[var(--modal-text-muted)]">Loading...</div>;
+  }
+
+  if (isDemoMode && studentLoading) {
     return <div className="text-center py-16 text-[var(--modal-text-muted)]">Loading...</div>;
   }
 
