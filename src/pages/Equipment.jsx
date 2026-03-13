@@ -37,11 +37,11 @@ export default function EquipmentPage() {
   const queryClient = useQueryClient();
 
   const { data: equipmentRaw = [] } = useQuery({ queryKey: ["equipment", currentUser?.id], queryFn: () => base44.entities.Equipment.filter({ created_by: currentUser?.email }), enabled: !!currentUser?.id && !isDemoMode });
-  const equipment = isDemoMode ? [] : equipmentRaw;
+  const equipment = isDemoMode ? (demoData.equipment || []) : equipmentRaw;
   const { data: studentsRaw = [] } = useQuery({ queryKey: ["students", currentUser?.email], queryFn: () => base44.entities.Student.filter({ created_by: currentUser?.email }), enabled: !!currentUser?.email && !isDemoMode });
   const students = isDemoMode ? (demoData.students || []) : studentsRaw;
   const { data: logsRaw = [] } = useQuery({ queryKey: ["equipLogs", currentUser?.id], queryFn: () => base44.entities.EquipmentLog.filter({ created_by: currentUser?.email }, "-date", 100), enabled: !!currentUser?.id && !isDemoMode });
-  const logs = isDemoMode ? [] : logsRaw;
+  const logs = isDemoMode ? (demoData.equipmentLogs || []) : logsRaw;
   const { data: troubleshootSessions = [] } = useQuery({ queryKey: ["troubleshootSessions", currentUser?.id], queryFn: () => base44.entities.EquipmentTroubleshootSession.filter({ created_by: currentUser?.email }, "-created_date", 100), enabled: !!currentUser?.id && !isDemoMode });
 
   const [editingEquip, setEditingEquip] = useState(null);

@@ -45,7 +45,7 @@ export default function GoalBankPage() {
     queryFn: () => base44.entities.Goal.filter({ created_by: currentUser?.email }, "-created_date", 200),
     enabled: !!currentUser?.id && !isDemoMode,
   });
-  const goals = isDemoMode ? [] : goalsRaw;
+  const goals = isDemoMode ? (demoData.goalBank || []) : goalsRaw;
 
   const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],

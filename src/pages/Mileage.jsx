@@ -27,7 +27,7 @@ export default function MileagePage() {
     queryFn: () => base44.entities.MileageEntry.filter({ created_by: currentUser?.email }, "-date", 500),
     enabled: !!currentUser?.email && !isDemoMode,
   });
-  const entries = isDemoMode ? [] : entriesRaw;
+  const entries = isDemoMode ? (demoData?.mileage || []) : entriesRaw;
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.MileageEntry.create(data),
