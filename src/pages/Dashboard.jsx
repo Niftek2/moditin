@@ -17,6 +17,8 @@ import { format, parseISO, isToday, isTomorrow, addDays, isWithinInterval } from
 import { EVENT_COLORS } from "../components/calendar/calendarUtils";
 import { getColorForStudent } from "../components/utils/colorMapping";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { useDemo } from "../components/demo/DemoContext";
+import { FlaskConical } from "lucide-react";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
