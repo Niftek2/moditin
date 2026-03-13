@@ -34,8 +34,8 @@ export default function StudentsPage() {
   const [search, setSearch] = useState("");
   const queryClient = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
-  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
-  React.useEffect(() => {
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  useEffect(() => {
     if (!isDemoMode) {
       base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
     }
