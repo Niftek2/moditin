@@ -45,11 +45,12 @@ export default function Dashboard() {
 
   const firstName = user?.firstName || "";
 
-  const { data: students = [] } = useQuery({
+  const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", user?.email],
     queryFn: () => base44.entities.Student.filter({ created_by: user?.email }),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const students = isDemoMode ? demoData.students : studentsRaw;
 
   // Initialize studentOrder from displayOrder or ID order
   useEffect(() => {
@@ -61,17 +62,19 @@ export default function Dashboard() {
     setStudentOrder(ordered.map(s => s.id));
   }, [students]);
 
-  const { data: services = [] } = useQuery({
+  const { data: servicesRaw = [] } = useQuery({
     queryKey: ["services-dash", user?.email],
     queryFn: () => base44.entities.ServiceEntry.filter({ created_by: user?.email }, "-created_date", 50),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const services = isDemoMode ? demoData.services : servicesRaw;
 
-  const { data: calendarEvents = [] } = useQuery({
+  const { data: calendarEventsRaw = [] } = useQuery({
     queryKey: ["calendarEvents-dash", user?.email],
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: user?.email }, "-startDateTime", 100),
-    enabled: !!user?.email,
+    enabled: !!user?.email && !isDemoMode,
   });
+  const calendarEvents = isDemoMode ? demoData.calendarEvents : calendarEventsRaw;
 
   const now = new Date();
   const iepsThisMonth = students.filter((s) => {
