@@ -331,6 +331,7 @@ export default function Dashboard() {
         }
       </motion.div>
     </div>
+    <GuidedTour run={runTour} onFinish={() => setRunTour(false)} />
     </PullToRefresh>
   );
 }
