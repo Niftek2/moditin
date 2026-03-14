@@ -111,17 +111,23 @@ export default function JoinPage() {
 
         <div className="mt-4 text-center">
           <p className="text-sm text-[#6B5E80] mb-2">Not ready to subscribe?</p>
-          <a href="/Dashboard?demo=1">
-            <Button
-              variant="outline"
-              className="border-[#D8CCE8] text-[#400070] hover:bg-[#F7F3FA] gap-2"
-            >
-              <FlaskConical className="w-4 h-4" />
-              Explore with sample data
-            </Button>
-          </a>
+          <Button
+            variant="outline"
+            onClick={() => setShowDemoGate(true)}
+            className="border-[#D8CCE8] text-[#400070] hover:bg-[#F7F3FA] gap-2"
+          >
+            <FlaskConical className="w-4 h-4" />
+            Explore with sample data
+          </Button>
         </div>
       </div>
+
+      {showDemoGate && (
+        <DemoEmailGate
+          onEnter={() => { setShowDemoGate(false); window.location.href = "/Dashboard?demo=1"; }}
+          onCancel={() => setShowDemoGate(false)}
+        />
+      )}
     </div>
   );
 }
