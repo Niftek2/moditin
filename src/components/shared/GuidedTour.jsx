@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
-import { base44 } from "@/api/base44Client";
 
 const TOUR_KEY = "modal_itinerant_tour_done";
 
