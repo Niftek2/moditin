@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, Sparkles, ArrowRight, FlaskConical } from "lucide-react";
+import DemoEmailGate from "../components/demo/DemoEmailGate";
 
 const MONTHLY_PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla"; // $17.99/month
 
