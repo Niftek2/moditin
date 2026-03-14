@@ -98,6 +98,21 @@ function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+// Warn (but don't hard-block) if a real write is attempted while in demo mode.
+// This is a dev-safety net — real teacher data is never touched in demo mode because
+// all queries are gated by `enabled: !isDemoMode` and mutations have early returns,
+// but this console.error provides an additional loud signal during development.
+function warnOnDemoWrite(method) {
+  const original = method;
+  return function (...args) {
+    console.error(
+      "[DEMO MODE] Attempted a real write operation. This should be blocked at the call site. Args:",
+      args
+    );
+    return original.apply(this, args);
+  };
+}
+
 export function DemoProvider({ children }) {
   // Initialize immediately from URL so queries never fire against real data
   const [isDemoMode, setIsDemoMode] = useState(() =>
