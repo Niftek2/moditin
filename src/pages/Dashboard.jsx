@@ -211,7 +211,8 @@ export default function Dashboard() {
         transition={{ delay: 0.15, duration: 0.3 }}
         className="space-y-3"
         role="region"
-        aria-labelledby="actions-heading">
+        aria-labelledby="actions-heading"
+        data-tour="quick-actions">
 
         <h2 id="actions-heading" className="text-lg font-bold text-[var(--modal-text)]">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3">
