@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
         studentId: student.id,
         triggerDateTime: new Date().toISOString(),
         isRead: false,
-        created_by: student.created_by,
+        ownerEmail: student.created_by,
       });
 
       created++;
