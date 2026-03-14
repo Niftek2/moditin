@@ -36,11 +36,17 @@ export default function Dashboard() {
   ]);
 
   useEffect(() => {
-    if (isDemoMode) return;
+    if (isDemoMode) {
+      // Show tour for demo users if not done
+      if (!hasTourBeenDone()) setRunTour(true);
+      return;
+    }
     base44.auth.me().then((u) => {
       setUser(u);
       if (u && !u.firstName) {
         window.location.href = "/Onboarding";
+      } else if (u && !hasTourBeenDone()) {
+        setRunTour(true);
       }
     }).catch(() => {});
   }, [isDemoMode]);
