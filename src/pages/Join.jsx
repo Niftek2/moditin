@@ -9,6 +9,7 @@ const MONTHLY_PRICE_ID = "price_1T4B1rG8v8oKpU6mPPumccla"; // $17.99/month
 export default function JoinPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showDemoGate, setShowDemoGate] = useState(false);
 
   const handleCheckout = async () => {
     if (window.self !== window.top) {
