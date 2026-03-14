@@ -48,7 +48,7 @@ function AppShell({ children, currentPageName, agreed, setAgreed }) {
           className="p-4 pt-16 lg:pt-8 lg:p-8 max-w-7xl mx-auto"
           style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
         >
-          <div className="flex justify-end mb-4 -mt-2">
+          <div className="flex justify-end mb-4 -mt-2" data-tour="notification-bell">
             <NotificationBell />
           </div>
           <PrivacyReminderBanner />
