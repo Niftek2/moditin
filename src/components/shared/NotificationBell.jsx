@@ -34,7 +34,7 @@ export default function NotificationBell() {
 
   const { data: appNotifications = [] } = useQuery({
     queryKey: ["appNotifications", currentUser?.email],
-    queryFn: () => base44.entities.AppNotification.filter({ created_by: currentUser?.email }, "-triggerDateTime", 50),
+    queryFn: () => base44.entities.AppNotification.filter({ ownerEmail: currentUser?.email }, "-triggerDateTime", 50),
     enabled: !!currentUser?.email,
     refetchInterval: 60000,
   });

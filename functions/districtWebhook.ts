@@ -188,18 +188,15 @@ The Modal Education Team
     for (const email of [...new Set([...teacherEmails, purchaserEmail])]) {
       if (!email) continue;
       try {
-        // Find the user by email
-        const users = await base44.asServiceRole.entities.User.filter({ email });
-        if (users.length > 0) {
-          await base44.asServiceRole.entities.AppNotification.create({
-            type: "CustomReminder",
-            title: "Your free trial ends in 2 days",
-            body: `Your ${planName} free trial ends on ${trialEndStr}. Your card will be charged at that time. Manage your subscription at any time.`,
-            triggerDateTime: reminderDate.toISOString(),
-            isRead: false,
-          });
-          console.log(`Trial reminder notification created for ${email}`);
-        }
+        await base44.asServiceRole.entities.AppNotification.create({
+          type: "CustomReminder",
+          title: "Your free trial ends in 2 days",
+          body: `Your ${planName} free trial ends on ${trialEndStr}. Your card will be charged at that time. Manage your subscription at any time.`,
+          triggerDateTime: reminderDate.toISOString(),
+          isRead: false,
+          ownerEmail: email,
+        });
+        console.log(`Trial reminder notification created for ${email}`);
       } catch (e) {
         console.error(`Failed to create reminder for ${email}:`, e.message);
       }
