@@ -12,6 +12,7 @@ import { useAndroidBack } from "./components/shared/useAndroidBack";
 import SubscriptionGate, { SubscriptionProvider } from "./components/shared/SubscriptionGate";
 import { DemoProvider, useDemo } from "./components/demo/DemoContext";
 import DemoBanner from "./components/demo/DemoBanner";
+import PWAInstallPrompt from "./components/layout/PWAInstallPrompt";
 
 function AppShell({ children, currentPageName, agreed, setAgreed }) {
   const { isDemoMode } = useDemo();
