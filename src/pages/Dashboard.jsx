@@ -152,10 +152,11 @@ export default function Dashboard() {
           </h1>
           <button
             onClick={() => { resetTour(); setRunTour(true); }}
-            className="text-xs text-[var(--modal-text-muted)] hover:text-[#400070] underline transition-colors shrink-0"
+            className="w-7 h-7 rounded-full border-2 border-[var(--modal-border)] bg-white text-[#6B2FB9] hover:border-[#6B2FB9] hover:bg-[#F7F3FA] transition-all flex items-center justify-center shrink-0 text-sm font-bold leading-none"
             aria-label="Take the guided tour"
+            title="Take a guided tour"
           >
-            Take a tour
+            ?
           </button>
         </div>
         <DailyQuote />
