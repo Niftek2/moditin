@@ -117,6 +117,22 @@ export default function Sidebar({ currentPage }) {
         })}
       </nav>
 
+      {/* Add-On Promo */}
+      <div className="px-3 pb-3">
+        <div className="rounded-xl border border-[#C4A8E0] bg-gradient-to-br from-[#F3EBF9] to-[#EDE0F7] p-3">
+          <div className="flex items-start gap-2">
+            <div className="mt-0.5 w-7 h-7 rounded-lg bg-[#400070] flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B2FB9] leading-tight mb-0.5">Add-On</p>
+              <p className="text-sm font-bold text-[#1A1028] leading-tight">Draft Evaluation Report Generator</p>
+              <span className="inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#400070] text-white tracking-wide">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
       <div className="p-3 border-t border-[var(--modal-border)]">
         <Link
