@@ -150,7 +150,13 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-[var(--modal-text)]">
             {firstName ? `Hi, ${firstName} 👋` : "Hi there 👋"}
           </h1>
-
+          <button
+            onClick={() => { resetTour(); setRunTour(true); }}
+            className="text-xs text-[var(--modal-text-muted)] hover:text-[#400070] underline transition-colors shrink-0"
+            aria-label="Take the guided tour"
+          >
+            Take a tour
+          </button>
         </div>
         <DailyQuote />
       </motion.div>
