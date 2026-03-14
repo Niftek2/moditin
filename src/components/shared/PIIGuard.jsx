@@ -6,6 +6,9 @@ const PII_PATTERNS = [
   { pattern: /\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b/, label: "SSN/ID number" },
   { pattern: /\b\d{1,5}\s\w+\s(St|Ave|Blvd|Dr|Rd|Ln|Way|Ct)\b/i, label: "address" },
   { pattern: /\b(student\s?id|sid)[:\s]?\d+/i, label: "student ID" },
+  { pattern: /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/, label: "phone number" },
+  { pattern: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i, label: "email address" },
+  { pattern: /\b(Elementary|Middle|High|Academy|School|District|Charter|Preschool|Pre-K)\b/i, label: "school name" },
 ];
 
 export function checkPII(text) {
