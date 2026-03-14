@@ -246,7 +246,8 @@ export default function Dashboard() {
         transition={{ delay: 0.2, duration: 0.3 }}
         className="space-y-3"
         role="region"
-        aria-labelledby="students-heading">
+        aria-labelledby="students-heading"
+        data-tour="students-block">
 
         <h2 id="students-heading" className="text-lg font-bold text-[var(--modal-text)]">My Students</h2>
         
