@@ -20,7 +20,8 @@ import {
   Zap,
   Bell,
   Sun,
-  Activity
+  Activity,
+  Sparkles
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
