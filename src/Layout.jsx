@@ -69,6 +69,7 @@ function AppShell({ children, currentPageName, agreed, setAgreed }) {
 
       <BottomNav currentPage={currentPageName} />
       <StickyTermsFooter />
+      <PWAInstallPrompt />
       {!agreed && <TermsAgreementModal onAgree={() => setAgreed(true)} />}
     </div>
   );
