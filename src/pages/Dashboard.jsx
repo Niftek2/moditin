@@ -26,6 +26,7 @@ export default function Dashboard() {
   const [studentSearch, setStudentSearch] = useState("");
   const [focusSearchResult, setFocusSearchResult] = useState(false);
   const [studentOrder, setStudentOrder] = useState([]);
+  const [runTour, setRunTour] = useState(false);
   const queryClient = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
   const handleRefresh = () => Promise.all([
