@@ -41,7 +41,7 @@ export default function JoinPage() {
               Built for itinerant teachers of the Deaf &amp; HH
             </p>
             <h1 className="text-5xl xl:text-6xl font-bold text-white leading-tight">
-              Every tool you need,<br />
+              The tools you need,<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C084FC] to-[#818CF8]">
                 built for your caseload.
               </span>
