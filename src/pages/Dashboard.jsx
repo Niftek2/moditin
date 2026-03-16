@@ -49,7 +49,8 @@ export default function Dashboard() {
       }
       if (u && !u.firstName) {
         window.location.href = "/Onboarding";
-      } else if (u && !hasTourBeenDone()) {
+      } else if (u && consumeTourQueue()) {
+        // Only auto-start tour if terms were just agreed (queued)
         setRunTour(true);
       }
     }).catch(() => {});
