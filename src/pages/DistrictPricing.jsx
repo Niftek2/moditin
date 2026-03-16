@@ -2,34 +2,36 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, Users, User, Building2, GraduationCap, Globe, FlaskConical } from "lucide-react";
+import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "../utils";
 
 const USD_PLANS = [
   {
     key: "individual",
     name: "Individual",
     icon: User,
-    priceUSD: 230,
-    priceCAD: 325,
-    perLabel: "/year",
+    priceUSD: 17.99,
+    priceCAD: null,
+    perLabel: "/month",
     seatLabel: "1 seat",
     description: "Perfect for a single itinerant teacher of the Deaf/HH",
     trial: "7-day free trial",
     trialDays: 7,
     minSeats: 1,
     maxSeats: 1,
-    priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",
-    priceIdCAD: "price_1T6xgSG8v8oKpU6mtmnmPVet",
+    priceIdUSD: "price_1T4B1rG8v8oKpU6mPPumccla",
+    priceIdCAD: "price_1T4B1rG8v8oKpU6mPPumccla",
     cta: "Start Free Trial",
-    highlight: false,
+    highlight: true,
+    badge: "Most Popular",
+    yearlyNote: "Or $230/year — save 20%",
+    yearlyPriceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",
     features: [
       "Full access to Modal Itinerant",
       "AI-powered goal bank",
       "Service log & calendar",
       "Listening checks & audiology tools",
+      "Worksheet & activity generators",
       "7-day free trial — no charge until trial ends",
     ],
   },
@@ -49,13 +51,13 @@ const USD_PLANS = [
     priceIdUSD: "price_1T6xgSG8v8oKpU6mjlatbmy2",
     priceIdCAD: "price_1T6xgSG8v8oKpU6mYiDbrVsr",
     cta: "Choose this Plan",
-    highlight: true,
+    highlight: false,
     features: [
       "Everything in Individual",
       "2–4 teacher licenses",
+      "District manager dashboard",
       "Centralized team management",
       "14-day free trial — no charge until trial ends",
-      "Email setup for each teacher",
     ],
   },
   {
@@ -80,7 +82,6 @@ const USD_PLANS = [
       "5–15 teacher licenses",
       "Priority support",
       "14-day free trial — no charge until trial ends",
-      "Email setup for each teacher",
     ],
   },
   {
@@ -105,7 +106,6 @@ const USD_PLANS = [
       "16–30 teacher licenses",
       "Dedicated onboarding support",
       "14-day free trial — no charge until trial ends",
-      "Email setup for each teacher",
     ],
   },
   {
@@ -174,12 +174,10 @@ export default function DistrictPricingPage() {
 
   const handleCheckout = async () => {
     setError("");
-    // Block checkout in iframe
     if (window.self !== window.top) {
       alert("Checkout is only available from the published app, not inside the preview.");
       return;
     }
-
     if (!purchaserEmail || !purchaserName) {
       setError("Please enter your name and email.");
       return;
@@ -191,23 +189,38 @@ export default function DistrictPricingPage() {
 
     setLoading(true);
     try {
-      const priceId = isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD;
-      const res = await base44.functions.invoke("districtCheckout", {
-        priceId,
-        quantity: selectedPlan.key === "individual" ? 1 : seats,
-        teacherEmails: selectedPlan.key === "individual" ? [purchaserEmail] : emails,
-        purchaserEmail,
-        purchaserName,
-        planName: selectedPlan.name,
-        trialDays: selectedPlan.trialDays,
-        currency,
-        successUrl: window.location.origin + "/DistrictManagerDashboard?checkout_success=1",
-        cancelUrl: window.location.href,
-      });
-      if (res.data?.url) {
-        window.location.href = res.data.url;
+      if (selectedPlan.key === "individual") {
+        // Use simple stripeCheckout for individual
+        const res = await base44.functions.invoke("stripeCheckout", {
+          priceId: selectedPlan.priceIdUSD,
+          successUrl: window.location.origin + "/Dashboard?checkout_success=1",
+          cancelUrl: window.location.href,
+          email: purchaserEmail,
+        });
+        if (res.data?.url) {
+          window.location.href = res.data.url;
+        } else {
+          setError(res.data?.error || "Something went wrong. Please try again.");
+        }
       } else {
-        setError(res.data?.error || "Something went wrong. Please try again.");
+        const priceId = isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD;
+        const res = await base44.functions.invoke("districtCheckout", {
+          priceId,
+          quantity: seats,
+          teacherEmails: emails,
+          purchaserEmail,
+          purchaserName,
+          planName: selectedPlan.name,
+          trialDays: selectedPlan.trialDays,
+          currency,
+          successUrl: window.location.origin + "/DistrictManagerDashboard?checkout_success=1",
+          cancelUrl: window.location.href,
+        });
+        if (res.data?.url) {
+          window.location.href = res.data.url;
+        } else {
+          setError(res.data?.error || "Something went wrong. Please try again.");
+        }
       }
     } catch (e) {
       setError(e.message || "Checkout failed. Please try again.");
@@ -219,26 +232,36 @@ export default function DistrictPricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a0030] via-[#2d0060] to-[#400070]">
       {/* Header */}
-      <div className="text-center pt-16 pb-10 px-4">
-        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=60&h=60&fit=crop&crop=center" alt="" className="hidden" />
+      <div className="text-center pt-14 pb-10 px-4">
+        {/* Back + Sign In row */}
+        <div className="flex items-center justify-between max-w-6xl mx-auto mb-8">
+          <Link to="/Join" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </Link>
+          <button
+            onClick={() => base44.auth.redirectToLogin("/Dashboard")}
+            className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
+          >
+            <LogIn className="w-4 h-4" />
+            Already have an account? Sign in
+          </button>
+        </div>
+
         <div className="flex justify-center mb-6">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png"
-            alt="Modal Itinerant Logo"
-            className="h-24 w-auto"
+            alt="Modal Itinerant"
+            className="h-20 w-auto"
             style={{ filter: "brightness(0) invert(1)" }}
           />
         </div>
-        <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 mb-4">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-white/80 text-sm font-medium">Free trial — credit card required, no charge until trial ends</span>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">District & Program Pricing</h1>
-        <p className="text-white/70 text-lg max-w-xl mx-auto mb-8">
-          Purpose-built tools for itinerant teachers of the Deaf and Hard of Hearing. Choose the plan that fits your team.
+
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">Choose your plan</h1>
+        <p className="text-white/60 text-base max-w-xl mx-auto mb-8">
+          Purpose-built for itinerant teachers of the Deaf and Hard of Hearing. Free trial on every plan.
         </p>
 
-        {/* Currency Toggle */}
+        {/* Currency Toggle — only show for multi-seat plans */}
         <div className="inline-flex items-center bg-white/10 rounded-full p-1 gap-1">
           <button
             onClick={() => setCurrency("USD")}
@@ -252,11 +275,11 @@ export default function DistrictPricingPage() {
       </div>
 
       {/* Plans Grid */}
-      <div className="max-w-6xl mx-auto px-4 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="max-w-6xl mx-auto px-4 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-start">
           {USD_PLANS.map(plan => {
             const Icon = plan.icon;
-            const price = isCAD ? plan.priceCAD : plan.priceUSD;
+            const price = plan.key === "individual" ? plan.priceUSD : (isCAD ? plan.priceCAD : plan.priceUSD);
             return (
               <div
                 key={plan.key}
@@ -266,9 +289,9 @@ export default function DistrictPricingPage() {
                     : "bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15"
                 }`}
               >
-                {plan.highlight && (
+                {plan.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-yellow-400 text-[#400070] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">Most Popular</span>
+                    <span className="bg-yellow-400 text-[#400070] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{plan.badge}</span>
                   </div>
                 )}
 
@@ -276,13 +299,13 @@ export default function DistrictPricingPage() {
                   <Icon className={`w-5 h-5 ${plan.highlight ? "text-[#400070]" : "text-white"}`} />
                 </div>
 
-                <h3 className={`font-bold text-lg mb-1 ${plan.highlight ? "text-[#400070]" : "text-white"}`}>{plan.name}</h3>
+                <h3 className={`font-bold text-lg mb-0.5 ${plan.highlight ? "text-[#400070]" : "text-white"}`}>{plan.name}</h3>
                 <p className={`text-xs mb-4 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/60"}`}>{plan.seatLabel}</p>
 
                 {price ? (
                   <div className="mb-1">
                     <span className={`text-3xl font-bold ${plan.highlight ? "text-[#400070]" : "text-white"}`}>
-                      {isCAD ? "CA$" : "$"}{price}
+                      {plan.key === "individual" ? "$" : (isCAD ? "CA$" : "$")}{price}
                     </span>
                     <span className={`text-sm ml-1 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/60"}`}>{plan.perLabel}</span>
                   </div>
@@ -290,6 +313,10 @@ export default function DistrictPricingPage() {
                   <div className="mb-1">
                     <span className={`text-2xl font-bold ${plan.highlight ? "text-[#400070]" : "text-white"}`}>Custom</span>
                   </div>
+                )}
+
+                {plan.yearlyNote && (
+                  <p className={`text-xs mb-1 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/50"}`}>{plan.yearlyNote}</p>
                 )}
 
                 {plan.trial && (
@@ -324,29 +351,9 @@ export default function DistrictPricingPage() {
           })}
         </div>
 
-        {/* Footer note */}
-        <p className="text-center text-white/50 text-sm mt-10">
-          All prices shown are per seat, billed annually. No charge until your free trial ends. Cancel anytime.
+        <p className="text-center text-white/40 text-sm mt-10">
+          No charge until your free trial ends. Cancel anytime.
         </p>
-
-        {/* Demo CTA for district decision makers */}
-        <div className="mt-10 max-w-2xl mx-auto bg-white/5 border border-white/15 rounded-2xl p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <FlaskConical className="w-4 h-4 text-amber-300" />
-            <span className="text-amber-300 text-sm font-semibold uppercase tracking-wide">Not ready to commit?</span>
-          </div>
-          <h3 className="text-white text-xl font-bold mb-2">See exactly what your teachers will use</h3>
-          <p className="text-white/60 text-sm max-w-md mx-auto mb-5">
-            Explore the full platform with sample data — no sign-up, no credit card. Walk through the tools your team would use every day before making a district-wide decision.
-          </p>
-          <Link to={createPageUrl("Dashboard") + "?demo=1"}>
-            <button className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-amber-900 font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-lg shadow-amber-400/20">
-              <FlaskConical className="w-4 h-4" />
-              Preview the Platform — No Sign-Up Required
-            </button>
-          </Link>
-          <p className="text-white/30 text-xs mt-3">Sample data only · Nothing is saved · Exit anytime</p>
-        </div>
       </div>
 
       {/* Checkout Modal */}
@@ -358,32 +365,21 @@ export default function DistrictPricingPage() {
                 <h2 className="text-lg font-bold text-[#400070]">{selectedPlan.name} Plan</h2>
                 <p className="text-xs text-gray-500">{selectedPlan.trial} — no charge until trial ends</p>
               </div>
-              <button onClick={() => setSelectedPlan(null)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setSelectedPlan(null)} className="text-gray-400 hover:text-gray-600 p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-5">
-              {/* Purchaser info */}
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
-                <Input
-                  placeholder="Full name"
-                  value={purchaserName}
-                  onChange={e => setPurchaserName(e.target.value)}
-                />
+                <Input placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} />
               </div>
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
-                <Input
-                  type="email"
-                  placeholder="you@district.org"
-                  value={purchaserEmail}
-                  onChange={e => setPurchaserEmail(e.target.value)}
-                />
+                <Input type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} />
               </div>
 
-              {/* Seats selector (multi-seat plans only) */}
               {selectedPlan.key !== "individual" && (
                 <div>
                   <label className="text-sm font-bold text-gray-700 mb-1.5 block">
@@ -391,25 +387,18 @@ export default function DistrictPricingPage() {
                     <span className="text-gray-400 font-normal ml-1">({selectedPlan.minSeats}–{selectedPlan.maxSeats})</span>
                   </label>
                   <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleSeatChange(seats - 1)}
-                      className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold"
-                    >−</button>
+                    <button type="button" onClick={() => handleSeatChange(seats - 1)}
+                      className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">−</button>
                     <span className="text-2xl font-bold text-[#400070] w-8 text-center">{seats}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleSeatChange(seats + 1)}
-                      className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold"
-                    >+</button>
-                    <span className="text-sm text-gray-500 ml-1">
-                      = {isCAD ? "CA$" : "$"}{((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * seats).toLocaleString()}/{isCAD ? "CAD" : "USD"} yr
+                    <button type="button" onClick={() => handleSeatChange(seats + 1)}
+                      className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">+</button>
+                    <span className="text-sm text-gray-500">
+                      = {isCAD ? "CA$" : "$"}{((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * seats).toLocaleString()} yr
                     </span>
                   </div>
                 </div>
               )}
 
-              {/* Teacher emails (multi-seat only) */}
               {selectedPlan.key !== "individual" && (
                 <div>
                   <label className="text-sm font-bold text-gray-700 mb-1.5 block">
@@ -437,31 +426,33 @@ export default function DistrictPricingPage() {
               <div className="bg-[#F7F3FA] rounded-xl p-4">
                 <div className="flex justify-between text-sm font-semibold text-gray-700">
                   <span>
-                    {selectedPlan.key === "individual" ? "1 seat" : `${seats} seats`} × {isCAD ? "CA$" : "$"}{isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD}/seat/yr
+                    {selectedPlan.key === "individual"
+                      ? "Individual — monthly"
+                      : `${seats} seats × ${isCAD ? "CA$" : "$"}${isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD}/seat/yr`}
                   </span>
                   <span className="text-[#400070]">
-                    {isCAD ? "CA$" : "$"}{((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * (selectedPlan.key === "individual" ? 1 : seats)).toLocaleString()}
+                    {selectedPlan.key === "individual"
+                      ? `$${selectedPlan.priceUSD}/mo`
+                      : `${isCAD ? "CA$" : "$"}${((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * seats).toLocaleString()}`}
                   </span>
                 </div>
                 <p className="text-xs text-green-600 mt-1 font-medium">
-                  ✓ No charge until {selectedPlan.trialDays === 7 ? "7 days" : "14 days"} from now
+                  ✓ No charge for {selectedPlan.trialDays} days
                 </p>
               </div>
 
-              {error && (
-                <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</p>}
 
               <Button
                 onClick={handleCheckout}
                 disabled={loading}
                 className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12 text-base font-semibold"
               >
-                {loading ? "Redirecting to Checkout..." : `Start ${selectedPlan.trial}`}
+                {loading ? "Redirecting to Checkout…" : `Start ${selectedPlan.trial}`}
               </Button>
 
               <p className="text-xs text-gray-400 text-center">
-                Secure checkout powered by Stripe. You will receive login instructions by email after checkout.
+                Secure checkout powered by Stripe. You'll receive login instructions by email after checkout.
               </p>
             </div>
           </div>
