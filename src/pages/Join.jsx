@@ -9,7 +9,7 @@ const FEATURES = [
   { icon: Clock, text: "Service log & smart session notes" },
   { icon: Target, text: "AI-powered IEP goal bank" },
   { icon: Ear, text: "Listening checks & audiology tools" },
-  { icon: FileText, text: "Eval report wizard" },
+  { icon: FileText, text: "Assessment Wizard" },
   { icon: Zap, text: "Interactive activities & worksheets" },
 ];
 
