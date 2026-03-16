@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft } from "lucide-react";
+import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const INDIVIDUAL_PLAN = {
