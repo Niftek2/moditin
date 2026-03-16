@@ -19,7 +19,7 @@ export function SubscriptionProvider({ children }) {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       const res = await base44.functions.invoke("stripeStatus", {});
-      const isAdmin = currentUser?.role === "admin";
+      const isAdmin = currentUser?.role === "admin" || currentUser?.role === "manager";
       setSubStatus({ ...res.data, isPro: isAdmin || res.data.isPro });
     } catch {
       setSubStatus({ isActive: false, isPro: false, isTrial: false, studentCount: 0 });
