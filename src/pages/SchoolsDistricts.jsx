@@ -309,25 +309,9 @@ export default function SchoolsDistrictsPage() {
                   </span>
                 </div>
               </div>
-              <div>
-                <label className="text-sm font-bold text-gray-700 mb-1.5 block">
-                  Teacher Email Addresses
-                  <span className="text-gray-400 font-normal ml-1">(each will receive login instructions)</span>
-                </label>
-                <div className="space-y-2">
-                  {emails.map((email, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 w-5">{i + 1}.</span>
-                      <Input
-                        type="email"
-                        placeholder={`teacher${i + 1}@district.org`}
-                        value={email}
-                        onChange={e => handleEmailChange(i, e.target.value)}
-                        className="flex-1"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="bg-[#F7F3FA] rounded-xl p-3 border border-[#D8CDE5]">
+                <p className="text-xs text-[#400070] font-semibold mb-0.5">✓ Add teachers after checkout</p>
+                <p className="text-xs text-gray-500">Once your account is set up, you'll manage all teacher licenses from your District Manager Dashboard.</p>
               </div>
               <div className="bg-[#F7F3FA] rounded-xl p-4">
                 <div className="flex justify-between text-sm font-semibold text-gray-700">
