@@ -332,12 +332,15 @@ export default function StudentDetailPage() {
           ) : (
             <div className="divide-y divide-[var(--modal-border)]">
               {services.map(entry => (
-                <div key={entry.id} className="flex justify-between py-3">
-                  <div>
-                    <p className="text-sm font-medium text-[var(--modal-text)]">{entry.category?.replace(/([A-Z])/g, " $1").trim()}</p>
-                    <p className="text-xs text-[var(--modal-text-muted)]">{entry.date}</p>
+                <div key={entry.id} className="py-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-medium text-[var(--modal-text)]">{entry.sessionType || entry.category?.replace(/([A-Z])/g, " $1").trim() || "Direct"}</p>
+                      <p className="text-xs text-[var(--modal-text-muted)]">{entry.sessionDate || entry.date || "—"}</p>
+                    </div>
+                    <span className="text-sm font-semibold text-[#6B2FB9]">{entry.durationMinutes || entry.minutes || 0} min</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#6B2FB9]">{entry.minutes} min</span>
+                  {entry.notes && <p className="text-xs text-[var(--modal-text-muted)] mt-1 italic">{entry.notes}</p>}
                 </div>
               ))}
             </div>
