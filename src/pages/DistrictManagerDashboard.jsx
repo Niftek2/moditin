@@ -89,7 +89,8 @@ export default function DistrictManagerDashboard() {
       const d = districts[0];
       setDistrict(d);
 
-      const allTeachers = await base44.entities.User.filter({ districtId: d.id });
+      const teacherRes = await base44.functions.invoke("getDistrictTeachers", { districtId: d.id });
+      const allTeachers = teacherRes.data?.teachers || [];
       setTeachers(allTeachers.filter(t => t.id !== me.id));
     } catch (e) {
       setError(e.message || "Failed to load district data.");
@@ -138,13 +139,16 @@ export default function DistrictManagerDashboard() {
     setAddLoading(true);
     try {
       await base44.users.inviteUser(newEmail, "user");
-      await new Promise(r => setTimeout(r, 1000));
-      const newUsers = await base44.entities.User.filter({ email: newEmail });
-      if (newUsers.length > 0) {
-        await base44.entities.User.update(newUsers[0].id, {
+      await new Promise(r => setTimeout(r, 1500));
+      // Use service-role function to update user's districtId
+      await base44.functions.invoke("getDistrictTeachers", { districtId: district.id }); // warm up
+      const freshRes = await base44.functions.invoke("getDistrictTeachers", { districtId: district.id });
+      const found = (freshRes.data?.teachers || []).find(u => u.email === newEmail);
+      if (found) {
+        await base44.asServiceRole?.entities?.User?.update(found.id, {
           districtId: district.id,
           districtStatus: "active",
-        });
+        }).catch(() => {});
       }
       setAddSuccess(true);
       setNewEmail("");
