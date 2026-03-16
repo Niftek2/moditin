@@ -325,6 +325,17 @@ export default function DistrictPricingPage() {
           })()}
         </div>
 
+        {/* Demo link for individual teachers */}
+        <div className="flex justify-center mb-12">
+          <button
+            onClick={() => { window.location.href = "/Dashboard?demo=1"; }}
+            className="inline-flex items-center gap-2 text-amber-300 hover:text-amber-200 text-sm font-medium transition-colors"
+          >
+            <FlaskConical className="w-4 h-4" />
+            Not ready to commit? Explore with sample data first
+          </button>
+        </div>
+
         {/* SECTION 2: Schools & Districts */}
         <h2 className="text-white font-bold text-xl mb-3">For Schools &amp; Districts</h2>
         <p className="text-white/50 text-sm mb-6">Multi-seat plans for programs, schools, districts, and cooperatives.</p>
