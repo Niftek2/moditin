@@ -363,7 +363,7 @@ export default function DistrictManagerDashboard() {
           <div className="space-y-3">
             <Input placeholder="Teacher's full name" value={newName} onChange={e => setNewName(e.target.value)} />
             <Input type="email" placeholder="teacher@district.org" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
-            {addError && <p className="text-red-600 text-sm">{addError}</p>}
+            {addError && <p className="text-red-600 text-sm" role="alert">{addError}</p>}
             {addSuccess && (
               <p className="text-green-600 text-sm flex items-center gap-1">
                 <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with login instructions.
@@ -394,9 +394,10 @@ export default function DistrictManagerDashboard() {
                   </div>
                   <button
                     onClick={() => setConfirmRemove(t)}
+                    aria-label={`Remove ${t.full_name || t.email}`}
                     className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </li>
               ))}
@@ -428,9 +429,9 @@ export default function DistrictManagerDashboard() {
 
       {/* Remove Confirmation Modal */}
       {confirmRemove && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="remove-dialog-title">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Remove Teacher?</h3>
+            <h3 id="remove-dialog-title" className="text-lg font-bold text-gray-900 mb-2">Remove Teacher?</h3>
             <p className="text-gray-600 text-sm mb-1"><strong>{confirmRemove.email}</strong> will lose access immediately.</p>
             <p className="text-gray-500 text-sm mb-5">Their account and data will be retained for 30 days.</p>
             <div className="flex gap-3">
@@ -445,11 +446,11 @@ export default function DistrictManagerDashboard() {
 
       {/* Upgrade/Change Plan Modal */}
       {showUpgrade && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="upgrade-dialog-title">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-              <h2 className="text-lg font-bold text-[#400070]">Change Plan</h2>
-              <button onClick={() => setShowUpgrade(false)}><X className="w-5 h-5 text-gray-400" /></button>
+              <h2 id="upgrade-dialog-title" className="text-lg font-bold text-[#400070]">Change Plan</h2>
+              <button onClick={() => setShowUpgrade(false)} aria-label="Close dialog"><X className="w-5 h-5 text-gray-400" aria-hidden="true" /></button>
             </div>
 
             <div className="p-6 space-y-3">
@@ -500,10 +501,10 @@ export default function DistrictManagerDashboard() {
                         Number of Seats <span className="text-gray-400 font-normal">({upgradePlan.minSeats}–{upgradePlan.maxSeats})</span>
                       </label>
                       <div className="flex items-center gap-3">
-                        <button type="button" onClick={() => setUpgradeSeats(s => Math.max(upgradePlan.minSeats, s - 1))}
+                        <button type="button" aria-label="Decrease seats" onClick={() => setUpgradeSeats(s => Math.max(upgradePlan.minSeats, s - 1))}
                           className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">−</button>
-                        <span className="text-2xl font-bold text-[#400070] w-8 text-center">{upgradeSeats}</span>
-                        <button type="button" onClick={() => setUpgradeSeats(s => Math.min(upgradePlan.maxSeats, s + 1))}
+                        <span className="text-2xl font-bold text-[#400070] w-8 text-center" aria-live="polite" aria-label={`${upgradeSeats} seats`}>{upgradeSeats}</span>
+                        <button type="button" aria-label="Increase seats" onClick={() => setUpgradeSeats(s => Math.min(upgradePlan.maxSeats, s + 1))}
                           className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">+</button>
                         <span className="text-sm text-gray-500">=&nbsp;${(upgradePlan.priceUSD * upgradeSeats).toLocaleString()}/yr</span>
                       </div>
@@ -520,7 +521,7 @@ export default function DistrictManagerDashboard() {
                     />
                   </div>
 
-                  {upgradeError && <p className="text-red-600 text-sm">{upgradeError}</p>}
+                  {upgradeError && <p className="text-red-600 text-sm" role="alert">{upgradeError}</p>}
 
                   <Button
                     onClick={handleUpgradeCheckout}
