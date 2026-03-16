@@ -158,11 +158,9 @@ export default function DistrictManagerDashboard() {
   const handleRemoveTeacher = async (teacher) => {
     setRemoveLoading(true);
     try {
-      const deletionDate = new Date();
-      deletionDate.setDate(deletionDate.getDate() + 30);
-      await base44.entities.User.update(teacher.id, {
-        districtStatus: "pending_deletion",
-        scheduledDeletionDate: deletionDate.toISOString(),
+      await base44.functions.invoke("removeTeacher", {
+        teacherId: teacher.id,
+        districtId: district.id,
       });
       setConfirmRemove(null);
       await loadData();
