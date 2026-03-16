@@ -34,8 +34,8 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
+      // Redirect to our custom Join page instead of platform login
+      window.location.replace('/Join');
       return null;
     }
   }
