@@ -110,6 +110,18 @@ export default function JoinPage() {
         </div>
 
         <div className="mt-4 text-center">
+          <p className="text-sm text-[#6B5E80] mb-2">
+            Already have an account?{" "}
+            <button
+              onClick={() => base44.auth.redirectToLogin("/Dashboard")}
+              className="text-[#400070] font-semibold underline hover:text-[#5B00A0]"
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
+
+        <div className="mt-2 text-center">
           <p className="text-sm text-[#6B5E80] mb-2">Not ready to subscribe?</p>
           <Button
             variant="outline"
