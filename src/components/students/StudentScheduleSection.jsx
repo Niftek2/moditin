@@ -5,20 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, CalendarDays, Clock } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import EventForm from "../calendar/EventForm";
+import { useDemo } from "../demo/DemoContext";
 
 export default function StudentScheduleSection({ studentId, student }) {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const { isDemoMode, demoData } = useDemo();
 
   const { data: students = [] } = useQuery({
-    queryKey: ["students"],
-    queryFn: () => base44.entities.Student.list(),
+    queryKey: ["students", isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.students;
+      return base44.entities.Student.list();
+    },
   });
 
   const { data: events = [], isLoading } = useQuery({
-    queryKey: ["calendarEvents", studentId],
-    queryFn: () => base44.entities.CalendarEvent.filter({ studentId }),
+    queryKey: ["calendarEvents", studentId, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.calendarEvents.filter(e => e.studentId === studentId);
+      return base44.entities.CalendarEvent.filter({ studentId });
+    },
     enabled: !!studentId,
   });
 
