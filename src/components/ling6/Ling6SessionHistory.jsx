@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { computeSummary, LING6_SOUNDS, SOUND_LABELS, soundStatusColor } from "./ling6Utils";
 import { format } from "date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useDemo } from "../demo/DemoContext";
 
 export default function Ling6SessionHistory({ studentId }) {
   const [filterEar, setFilterEar] = useState("All");
@@ -15,20 +16,30 @@ export default function Ling6SessionHistory({ studentId }) {
   const [showDetected, setShowDetected] = useState(false);
   const [expandedSession, setExpandedSession] = useState(null);
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const { isDemoMode, demoData } = useDemo();
 
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
 
   const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ["ling6sessions", studentId, currentUserEmail],
-    queryFn: () => base44.entities.Ling6Session.filter({ studentId, created_by: currentUserEmail }),
-    enabled: !!studentId && !!currentUserEmail,
+    queryKey: ["ling6sessions", studentId, currentUserEmail, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.ling6Sessions.filter(s => s.studentId === studentId);
+      return base44.entities.Ling6Session.filter({ studentId, created_by: currentUserEmail });
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const { data: allTrials = [] } = useQuery({
-    queryKey: ["ling6trials", studentId, currentUserEmail],
+    queryKey: ["ling6trials", studentId, currentUserEmail, isDemoMode],
     queryFn: async () => {
+      if (isDemoMode) {
+        const sessionIds = demoData.ling6Sessions.filter(s => s.studentId === studentId).map(s => s.id);
+        return demoData.ling6Trials.filter(t => sessionIds.includes(t.ling6SessionId));
+      }
       const ss = await base44.entities.Ling6Session.filter({ studentId, created_by: currentUserEmail });
       if (!ss.length) return [];
       const trialsArrays = await Promise.all(
@@ -36,7 +47,7 @@ export default function Ling6SessionHistory({ studentId }) {
       );
       return trialsArrays.flat();
     },
-    enabled: !!studentId && !!currentUserEmail,
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const trialsForSession = (sessionId) => allTrials.filter(t => t.ling6SessionId === sessionId);
