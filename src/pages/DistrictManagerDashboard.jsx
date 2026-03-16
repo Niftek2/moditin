@@ -140,16 +140,10 @@ export default function DistrictManagerDashboard() {
     try {
       await base44.users.inviteUser(newEmail, "user");
       await new Promise(r => setTimeout(r, 1500));
-      // Use service-role function to update user's districtId
-      await base44.functions.invoke("getDistrictTeachers", { districtId: district.id }); // warm up
-      const freshRes = await base44.functions.invoke("getDistrictTeachers", { districtId: district.id });
-      const found = (freshRes.data?.teachers || []).find(u => u.email === newEmail);
-      if (found) {
-        await base44.asServiceRole?.entities?.User?.update(found.id, {
-          districtId: district.id,
-          districtStatus: "active",
-        }).catch(() => {});
-      }
+      await base44.functions.invoke("assignTeacherToDistrict", {
+        teacherEmail: newEmail,
+        districtId: district.id,
+      });
       setAddSuccess(true);
       setNewEmail("");
       setNewName("");
