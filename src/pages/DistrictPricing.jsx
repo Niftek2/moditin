@@ -276,74 +276,100 @@ export default function DistrictPricingPage() {
         </div>
       </div>
 
-      {/* Plans Grid */}
+      {/* Plans */}
       <div className="max-w-6xl mx-auto px-4 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-start">
-          {USD_PLANS.map(plan => {
+
+        {/* Helper line */}
+        <p className="text-center text-white/50 text-sm mb-10 max-w-xl mx-auto">
+          Choose the plan that fits your role. Individual teachers typically start with the Individual plan, while schools and districts can choose a multi-seat option.
+        </p>
+
+        {/* SECTION 1: Individual */}
+        <h2 className="text-white font-bold text-xl mb-5">For Individual Teachers</h2>
+        <div className="flex justify-start mb-12">
+          {(() => {
+            const plan = INDIVIDUAL_PLAN;
             const Icon = plan.icon;
-            const price = plan.key === "individual" ? plan.priceUSD : (isCAD ? plan.priceCAD : plan.priceUSD);
+            const price = isCAD ? plan.priceCAD : plan.priceUSD;
             return (
-              <div
-                key={plan.key}
-                className={`relative rounded-2xl p-6 flex flex-col transition-all duration-200 ${
-                  plan.highlight
-                    ? "bg-white border-2 border-yellow-400 shadow-xl shadow-yellow-400/20 scale-105"
-                    : "bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15"
-                }`}
-              >
-                {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-yellow-400 text-[#400070] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">{plan.badge}</span>
-                  </div>
-                )}
-
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${plan.highlight ? "bg-[#EADDF5]" : "bg-white/20"}`}>
-                  <Icon className={`w-5 h-5 ${plan.highlight ? "text-[#400070]" : "text-white"}`} />
+              <div className="relative rounded-2xl p-6 flex flex-col bg-white border-2 border-yellow-400 shadow-xl shadow-yellow-400/20 w-full max-w-xs">
+                <div className="absolute -top-3 left-6">
+                  <span className="bg-yellow-400 text-[#400070] text-xs font-bold px-3 py-1 rounded-full">{plan.badge}</span>
                 </div>
-
-                <h3 className={`font-bold text-lg mb-0.5 ${plan.highlight ? "text-[#400070]" : "text-white"}`}>{plan.name}</h3>
-                <p className={`text-xs mb-4 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/60"}`}>{plan.seatLabel}</p>
-
-                {price ? (
-                  <div className="mb-1">
-                    <span className={`text-3xl font-bold ${plan.highlight ? "text-[#400070]" : "text-white"}`}>
-                      {plan.key === "individual" ? "$" : (isCAD ? "CA$" : "$")}{price}
-                    </span>
-                    <span className={`text-sm ml-1 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/60"}`}>{plan.perLabel}</span>
-                  </div>
-                ) : (
-                  <div className="mb-1">
-                    <span className={`text-2xl font-bold ${plan.highlight ? "text-[#400070]" : "text-white"}`}>Custom</span>
-                  </div>
-                )}
-
-                {plan.yearlyNote && (
-                  <p className={`text-xs mb-1 ${plan.highlight ? "text-[#6B2FB9]" : "text-white/50"}`}>{plan.yearlyNote}</p>
-                )}
-
-                {plan.trial && (
-                  <p className={`text-xs mb-4 font-medium ${plan.highlight ? "text-green-600" : "text-green-400"}`}>✓ {plan.trial}</p>
-                )}
-
-                <p className={`text-xs mb-4 flex-1 ${plan.highlight ? "text-gray-600" : "text-white/60"}`}>{plan.description}</p>
-
+                <div className="w-10 h-10 rounded-xl bg-[#EADDF5] flex items-center justify-center mb-4">
+                  <Icon className="w-5 h-5 text-[#400070]" />
+                </div>
+                <h3 className="font-bold text-lg text-[#400070] mb-0.5">{plan.name}</h3>
+                <p className="text-xs text-[#6B2FB9] mb-4">{plan.seatLabel}</p>
+                <div className="mb-0.5">
+                  <span className="text-3xl font-bold text-[#400070]">{isCAD ? "CA$" : "$"}{price}</span>
+                  <span className="text-sm text-[#6B2FB9] ml-1">{plan.perLabel}</span>
+                </div>
+                <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
+                <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                <p className="text-xs text-green-600 font-medium mb-4">✓ {plan.trial}</p>
+                <p className="text-xs text-gray-600 mb-4 flex-1">{plan.description}</p>
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((f, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${plan.highlight ? "text-[#400070]" : "text-green-400"}`} />
-                      <span className={`text-xs ${plan.highlight ? "text-gray-700" : "text-white/70"}`}>{f}</span>
+                      <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[#400070]" />
+                      <span className="text-xs text-gray-700">{f}</span>
                     </li>
                   ))}
                 </ul>
+                <Button onClick={() => handleSelectPlan(plan)} className="w-full rounded-xl font-semibold bg-[#400070] hover:bg-[#5B00A0] text-white">
+                  {plan.cta}
+                </Button>
+              </div>
+            );
+          })()}
+        </div>
 
+        {/* SECTION 2: Schools & Districts */}
+        <h2 className="text-white font-bold text-xl mb-5">For Schools &amp; Districts</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+          {DISTRICT_PLANS.map(plan => {
+            const Icon = plan.icon;
+            const price = isCAD ? plan.priceCAD : plan.priceUSD;
+            return (
+              <div
+                key={plan.key}
+                className="relative rounded-2xl p-6 flex flex-col bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-200"
+              >
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-4">
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-bold text-lg text-white mb-0.5">{plan.name}</h3>
+                <p className="text-xs text-white/60 mb-4">{plan.seatLabel}</p>
+                {price ? (
+                  <div className="mb-1">
+                    <span className="text-3xl font-bold text-white">{isCAD ? "CA$" : "$"}{price}</span>
+                    <span className="text-sm text-white/60 ml-1">{plan.perLabel}</span>
+                  </div>
+                ) : (
+                  <div className="mb-1">
+                    <span className="text-2xl font-bold text-white">Custom</span>
+                  </div>
+                )}
+                {plan.trial && (
+                  <p className="text-xs text-green-400 font-medium mb-4">✓ {plan.trial}</p>
+                )}
+                {!plan.trial && <div className="mb-4" />}
+                <p className="text-xs text-white/60 mb-4 flex-1">{plan.description}</p>
+                <ul className="space-y-2 mb-6">
+                  {plan.features.map((f, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-green-400" />
+                      <span className="text-xs text-white/70">{f}</span>
+                    </li>
+                  ))}
+                </ul>
                 <Button
                   onClick={() => handleSelectPlan(plan)}
-                  className={`w-full rounded-xl font-semibold ${
-                    plan.highlight
-                      ? "bg-[#400070] hover:bg-[#5B00A0] text-white"
-                      : plan.key === "cooperative"
-                        ? "bg-white/20 hover:bg-white/30 text-white border border-white/30"
-                        : "bg-white hover:bg-white/90 text-[#400070]"
+                  className={`w-full rounded-xl font-semibold mt-auto ${
+                    plan.key === "cooperative"
+                      ? "bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                      : "bg-white hover:bg-white/90 text-[#400070]"
                   }`}
                 >
                   {plan.cta}
@@ -354,7 +380,7 @@ export default function DistrictPricingPage() {
         </div>
 
         <p className="text-center text-white/40 text-sm mt-10">
-          No charge until your free trial ends. Cancel anytime.
+          No charge until your 14-day free trial ends. Cancel anytime.
         </p>
       </div>
 
