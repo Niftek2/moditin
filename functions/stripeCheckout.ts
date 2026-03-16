@@ -8,17 +8,33 @@ Deno.serve(async (req) => {
     const { successUrl, cancelUrl, priceId: requestedPriceId, email, trialDays } = await req.json();
     const priceId = requestedPriceId || PRICE_ID;
 
+    const teacherEmailsStr = JSON.stringify(email ? [email] : []);
     const sessionParams = {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
         trial_period_days: trialDays || 14,
+        metadata: {
+          base44_app_id: Deno.env.get("BASE44_APP_ID"),
+          purchaser_email: email || '',
+          purchaser_name: '',
+          plan_name: 'Individual',
+          teacher_emails: teacherEmailsStr,
+          quantity: '1',
+          trial_days: String(trialDays || 14),
+        },
       },
       success_url: successUrl,
       cancel_url: cancelUrl,
       metadata: {
         base44_app_id: Deno.env.get("BASE44_APP_ID"),
+        purchaser_email: email || '',
+        purchaser_name: '',
+        plan_name: 'Individual',
+        teacher_emails: teacherEmailsStr,
+        quantity: '1',
+        trial_days: String(trialDays || 14),
       },
     };
 
