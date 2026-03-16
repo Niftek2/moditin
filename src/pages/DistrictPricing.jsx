@@ -326,58 +326,22 @@ export default function DistrictPricingPage() {
         </div>
 
         {/* SECTION 2: Schools & Districts */}
-        <h2 className="text-white font-bold text-xl mb-5">For Schools &amp; Districts</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
-          {DISTRICT_PLANS.map(plan => {
-            const Icon = plan.icon;
-            const price = isCAD ? plan.priceCAD : plan.priceUSD;
-            return (
-              <div
-                key={plan.key}
-                className="relative rounded-2xl p-6 flex flex-col bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/15 transition-all duration-200"
-              >
-                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-4">
-                  <Icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="font-bold text-lg text-white mb-0.5">{plan.name}</h3>
-                <p className="text-xs text-white/60 mb-4">{plan.seatLabel}</p>
-                {price ? (
-                  <div className="mb-1">
-                    <span className="text-3xl font-bold text-white">{isCAD ? "CA$" : "$"}{price}</span>
-                    <span className="text-sm text-white/60 ml-1">{plan.perLabel}</span>
-                  </div>
-                ) : (
-                  <div className="mb-1">
-                    <span className="text-2xl font-bold text-white">Custom</span>
-                  </div>
-                )}
-                {plan.trial && (
-                  <p className="text-xs text-green-400 font-medium mb-4">✓ {plan.trial}</p>
-                )}
-                {!plan.trial && <div className="mb-4" />}
-                <p className="text-xs text-white/60 mb-4 flex-1">{plan.description}</p>
-                <ul className="space-y-2 mb-6">
-                  {plan.features.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-green-400" />
-                      <span className="text-xs text-white/70">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  onClick={() => handleSelectPlan(plan)}
-                  className={`w-full rounded-xl font-semibold mt-auto ${
-                    plan.key === "cooperative"
-                      ? "bg-white/20 hover:bg-white/30 text-white border border-white/30"
-                      : "bg-white hover:bg-white/90 text-[#400070]"
-                  }`}
-                >
-                  {plan.cta}
-                </Button>
+        <h2 className="text-white font-bold text-xl mb-3">For Schools &amp; Districts</h2>
+        <p className="text-white/50 text-sm mb-6">Multi-seat plans for programs, schools, districts, and cooperatives.</p>
+        <Link to="/SchoolsDistricts">
+          <div className="flex items-center justify-between bg-white/10 border border-white/20 hover:bg-white/15 transition-all rounded-2xl px-6 py-5 cursor-pointer group">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
               </div>
-            );
-          })}
-        </div>
+              <div>
+                <p className="text-white font-bold text-base">Buying for a school or district?</p>
+                <p className="text-white/60 text-sm">See plans from 2 seats up to 50+ — with a free demo</p>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-white/50 group-hover:text-white transition-colors flex-shrink-0 ml-4" />
+          </div>
+        </Link>
 
         <p className="text-center text-white/40 text-sm mt-10">
           No charge until your 14-day free trial ends. Cancel anytime.
