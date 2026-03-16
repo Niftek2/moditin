@@ -455,12 +455,12 @@ export default function DistrictPricingPage() {
                 <div className="flex justify-between text-sm font-semibold text-gray-700">
                   <span>
                     {selectedPlan.key === "individual"
-                      ? "Individual — monthly"
+                      ? "Individual — 1 seat / year"
                       : `${seats} seats × ${isCAD ? "CA$" : "$"}${isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD}/seat/yr`}
                   </span>
                   <span className="text-[#400070]">
                     {selectedPlan.key === "individual"
-                      ? `$${selectedPlan.priceUSD}/mo`
+                      ? `${isCAD ? "CA$" : "$"}${isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD}/yr`
                       : `${isCAD ? "CA$" : "$"}${((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * seats).toLocaleString()}`}
                   </span>
                 </div>
