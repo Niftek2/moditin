@@ -79,7 +79,7 @@ export default function SubscriptionGate({ children }) {
     );
   }
 
-  if (subStatus && !subStatus.isPro && user?.role !== "admin") {
+  if (subStatus && !subStatus.isPro && user?.role !== "admin" && user?.role !== "manager") {
     window.location.href = "/Join";
     return null;
   }
