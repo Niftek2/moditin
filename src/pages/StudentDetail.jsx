@@ -96,8 +96,8 @@ export default function StudentDetailPage() {
     return <div className="text-center py-16 text-[var(--modal-text-muted)]">Loading...</div>;
   }
 
-  if (!student && studentId) {
-    return <div className="text-center py-16 text-red-600 font-semibold">Access Denied: You do not have permission to view this student.</div>;
+  if (!student) {
+    return <div className="text-center py-16 text-red-600 font-semibold">Student not found or you do not have permission to view this student.</div>;
   }
 
   const goalMap = {};
