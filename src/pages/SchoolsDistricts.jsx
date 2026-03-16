@@ -129,15 +129,6 @@ export default function SchoolsDistrictsPage() {
   const handleSeatChange = (n) => {
     const clamped = Math.min(Math.max(n, selectedPlan.minSeats), selectedPlan.maxSeats);
     setSeats(clamped);
-    setEmails(prev => {
-      const next = [...prev];
-      while (next.length < clamped) next.push("");
-      return next.slice(0, clamped);
-    });
-  };
-
-  const handleEmailChange = (i, val) => {
-    setEmails(prev => { const n = [...prev]; n[i] = val; return n; });
   };
 
   const handleCheckout = async () => {
