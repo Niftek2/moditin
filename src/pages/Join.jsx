@@ -98,7 +98,7 @@ export default function JoinPage() {
 
             {/* Sign In */}
             <Button
-              onClick={() => base44.auth.redirectToLogin(window.location.origin + "/Dashboard")}
+              onClick={() => base44.auth.redirectToLogin("/Dashboard")}
               className="w-full text-base rounded-2xl font-bold mb-4 gap-2"
               style={{
                 background: "linear-gradient(135deg, #7C3AED 0%, #5B00A0 100%)",
