@@ -107,7 +107,6 @@ export default function SchoolsDistrictsPage() {
   const [currency, setCurrency] = useState("USD");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [seats, setSeats] = useState(2);
-  const [emails, setEmails] = useState([""]);
   const [purchaserEmail, setPurchaserEmail] = useState("");
   const [purchaserName, setPurchaserName] = useState("");
   const [loading, setLoading] = useState(false);

@@ -43,6 +43,10 @@ export default function Dashboard() {
     }
     base44.auth.me().then((u) => {
       setUser(u);
+      if (u?.role === "manager") {
+        window.location.replace("/DistrictManagerDashboard");
+        return;
+      }
       if (u && !u.firstName) {
         window.location.href = "/Onboarding";
       } else if (u && !hasTourBeenDone()) {

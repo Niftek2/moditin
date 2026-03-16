@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 
 const PLANS = [
-  { key: "individual", name: "Individual", priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o", priceUSD: 230, minSeats: 1, maxSeats: 1, trialDays: 7 },
-  { key: "starter",    name: "Starter",    priceIdUSD: "price_1T6xgSG8v8oKpU6mjlatbmy2", priceUSD: 220, minSeats: 2, maxSeats: 4,  trialDays: 14 },
-  { key: "district",   name: "District",   priceIdUSD: "price_1T6xgSG8v8oKpU6mvbhONM6m", priceUSD: 200, minSeats: 5, maxSeats: 15, trialDays: 14 },
-  { key: "program",    name: "Program",    priceIdUSD: "price_1T6xgSG8v8oKpU6mTNO5gH8o", priceUSD: 175, minSeats: 16, maxSeats: 30, trialDays: 14 },
+  { key: "individual", name: "Individual", priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o", priceUSD: 249, minSeats: 1, maxSeats: 1,  trialDays: 14 },
+  { key: "starter",    name: "Starter",    priceIdUSD: "price_1T6xgSG8v8oKpU6mjlatbmy2", priceUSD: 225, minSeats: 2, maxSeats: 5,  trialDays: 14 },
+  { key: "district",   name: "District",   priceIdUSD: "price_1T6xgSG8v8oKpU6mvbhONM6m", priceUSD: 199, minSeats: 6, maxSeats: 20, trialDays: 14 },
+  { key: "program",    name: "Program",    priceIdUSD: "price_1T6xgSG8v8oKpU6mTNO5gH8o", priceUSD: 175, minSeats: 21, maxSeats: 50, trialDays: 14 },
 ];
 
 const STATUS_COLORS = {
