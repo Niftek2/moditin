@@ -194,7 +194,8 @@ export default function DistrictPricingPage() {
       if (selectedPlan.key === "individual") {
         // Use simple stripeCheckout for individual
         const res = await base44.functions.invoke("stripeCheckout", {
-          priceId: selectedPlan.priceIdUSD,
+          priceId: isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD,
+          trialDays: selectedPlan.trialDays,
           successUrl: window.location.origin + "/Dashboard?checkout_success=1",
           cancelUrl: window.location.href,
           email: purchaserEmail,

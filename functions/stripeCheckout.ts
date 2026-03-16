@@ -5,7 +5,7 @@ const PRICE_ID = "price_1T6xs1G8v8oKpU6mG5VLBRA6"; // $17.99/month
 
 Deno.serve(async (req) => {
   try {
-    const { successUrl, cancelUrl, priceId: requestedPriceId, email } = await req.json();
+    const { successUrl, cancelUrl, priceId: requestedPriceId, email, trialDays } = await req.json();
     const priceId = requestedPriceId || PRICE_ID;
 
     const sessionParams = {
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
-        trial_period_days: 7,
+        trial_period_days: trialDays || 14,
       },
       success_url: successUrl,
       cancel_url: cancelUrl,

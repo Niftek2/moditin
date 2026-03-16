@@ -65,6 +65,7 @@ Deno.serve(async (req) => {
         base44_app_id: Deno.env.get("BASE44_APP_ID"),
         plan_name: planName,
         purchaser_email: purchaserEmail,
+        purchaser_name: purchaserName || '',
         teacher_emails: teacherEmailsStr,
         quantity: String(quantity || 1),
         trial_days: String(trialDays || 14),
