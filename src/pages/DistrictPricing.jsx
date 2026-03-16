@@ -286,7 +286,7 @@ export default function DistrictPricingPage() {
 
         {/* SECTION 1: Individual */}
         <h2 className="text-white font-bold text-xl mb-5">For Individual Teachers</h2>
-        <div className="flex justify-start mb-12">
+        <div className="flex justify-center mb-4">
           {(() => {
             const plan = INDIVIDUAL_PLAN;
             const Icon = plan.icon;
