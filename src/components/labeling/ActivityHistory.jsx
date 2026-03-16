@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
 import EmptyState from "../shared/EmptyState";
 import { Activity } from "lucide-react";
+import { useDemo } from "../demo/DemoContext";
 
 const ACTIVITY_LABELS = {
   hearingAid: "Hearing Aid",
@@ -12,14 +13,21 @@ const ACTIVITY_LABELS = {
 
 export default function ActivityHistory({ studentId }) {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const { isDemoMode, demoData } = useDemo();
+
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
-  }, []);
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
 
   const { data: activities = [], isLoading } = useQuery({
-    queryKey: ["labelingActivities", studentId, currentUserEmail],
-    queryFn: () => base44.entities.LabelingActivityRecord.filter({ studentId, created_by: currentUserEmail }, "-created_date"),
-    enabled: !!studentId && !!currentUserEmail,
+    queryKey: ["labelingActivities", studentId, currentUserEmail, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.labelingActivities.filter(a => a.studentId === studentId);
+      return base44.entities.LabelingActivityRecord.filter({ studentId, created_by: currentUserEmail }, "-created_date");
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   if (isLoading) {
