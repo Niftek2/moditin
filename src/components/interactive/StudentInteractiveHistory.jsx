@@ -8,13 +8,18 @@ import { TEMPLATE_LABELS } from "./activityTemplates";
 import { Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { useDemo } from "../demo/DemoContext";
 
 export default function StudentInteractiveHistory({ studentId }) {
   const [filterTemplate, setFilterTemplate] = useState("all");
+  const { isDemoMode, demoData } = useDemo();
 
   const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ["interactiveSessions", studentId],
-    queryFn: () => base44.entities.InteractiveActivitySession.filter({ studentId }, "-created_date", 50),
+    queryKey: ["interactiveSessions", studentId, isDemoMode],
+    queryFn: () => {
+      if (isDemoMode) return demoData.interactiveSessions.filter(s => s.studentId === studentId);
+      return base44.entities.InteractiveActivitySession.filter({ studentId }, "-created_date", 50);
+    },
     enabled: !!studentId,
   });
 
