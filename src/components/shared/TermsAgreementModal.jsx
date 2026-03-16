@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shield } from "lucide-react";
+import { queueTour } from "./GuidedTour";
 
 const TERMS_KEY = "modal_itinerant_terms_agreed_v1";
 
@@ -12,6 +13,7 @@ export function hasAgreedToTerms() {
 export default function TermsAgreementModal({ onAgree }) {
   const handleAgree = () => {
     localStorage.setItem(TERMS_KEY, "true");
+    queueTour(); // start tour after terms agreed (first sign-in only)
     onAgree();
   };
 

@@ -2,6 +2,19 @@ import React, { useState, useEffect } from "react";
 import Joyride, { STATUS } from "react-joyride";
 
 const TOUR_KEY = "modal_itinerant_tour_done";
+const PENDING_TOUR_KEY = "modal_itinerant_tour_pending";
+
+export function queueTour() {
+  try { localStorage.setItem(PENDING_TOUR_KEY, "1"); } catch {}
+}
+
+export function consumeTourQueue() {
+  try {
+    const pending = localStorage.getItem(PENDING_TOUR_KEY) === "1";
+    if (pending) localStorage.removeItem(PENDING_TOUR_KEY);
+    return pending;
+  } catch { return false; }
+}
 
 const STEPS = [
   {
