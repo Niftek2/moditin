@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     const sub = subscriptions.data[0];
     const isActive = sub.status === 'active' || sub.status === 'trialing';
     const isTrial = sub.status === 'trialing';
-    const isPro = sub.status === 'active';
+    const isPro = isActive; // trialing users get full access
 
     return Response.json({
       status: sub.status,
