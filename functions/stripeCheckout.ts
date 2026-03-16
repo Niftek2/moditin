@@ -1,30 +1,14 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe@14.21.0';
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
-const PRICE_ID = "price_1T6xs1G8v8oKpU6mG5VLBRA6"; // $19.99/month
+const PRICE_ID = "price_1T6xs1G8v8oKpU6mG5VLBRA6"; // $17.99/month
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const { successUrl, cancelUrl, priceId: requestedPriceId } = await req.json();
+    const { successUrl, cancelUrl, priceId: requestedPriceId, email } = await req.json();
     const priceId = requestedPriceId || PRICE_ID;
 
-    // Check if customer already exists
-    const existingCustomers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId;
-    if (existingCustomers.data.length > 0) {
-      customerId = existingCustomers.data[0].id;
-    } else {
-      const customer = await stripe.customers.create({ email: user.email, name: user.full_name });
-      customerId = customer.id;
-    }
-
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
+    const sessionParams = {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
@@ -35,9 +19,20 @@ Deno.serve(async (req) => {
       cancel_url: cancelUrl,
       metadata: {
         base44_app_id: Deno.env.get("BASE44_APP_ID"),
-        user_email: user.email,
       },
-    });
+    };
+
+    // If email is provided, look up or create a customer
+    if (email) {
+      const existingCustomers = await stripe.customers.list({ email, limit: 1 });
+      if (existingCustomers.data.length > 0) {
+        sessionParams.customer = existingCustomers.data[0].id;
+      } else {
+        sessionParams.customer_email = email;
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return Response.json({ url: session.url });
   } catch (error) {
