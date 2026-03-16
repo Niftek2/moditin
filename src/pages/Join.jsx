@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const FEATURES = [
   { icon: Clock, text: "Service log & smart session notes" },
   { icon: Target, text: "AI-powered IEP goal bank" },
-  { icon: Ear, text: "Ling 6 checks & audiology tools" },
+  { icon: Ear, text: "Listening checks & audiology tools" },
   { icon: FileText, text: "Eval report wizard" },
   { icon: Zap, text: "Interactive activities & worksheets" },
 ];
