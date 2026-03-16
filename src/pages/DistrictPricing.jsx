@@ -265,15 +265,17 @@ export default function DistrictPricingPage() {
         </p>
 
         {/* Currency Toggle — only show for multi-seat plans */}
-        <div className="inline-flex items-center bg-white/10 rounded-full p-1 gap-1">
+        <div className="inline-flex items-center bg-white/10 rounded-full p-1 gap-1" role="group" aria-label="Currency selection">
           <button
             onClick={() => setCurrency("USD")}
+            aria-pressed={!isCAD}
             className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${!isCAD ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
-          >🇺🇸 USD</button>
+          ><span aria-hidden="true">🇺🇸</span> USD</button>
           <button
             onClick={() => setCurrency("CAD")}
+            aria-pressed={isCAD}
             className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${isCAD ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
-          >🇨🇦 CAD</button>
+          ><span aria-hidden="true">🇨🇦</span> CAD</button>
         </div>
       </div>
 
@@ -362,26 +364,26 @@ export default function DistrictPricingPage() {
 
       {/* Checkout Modal */}
       {selectedPlan && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="checkout-dialog-title">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
               <div>
-                <h2 className="text-lg font-bold text-[#400070]">{selectedPlan.name} Plan</h2>
+                <h2 id="checkout-dialog-title" className="text-lg font-bold text-[#400070]">{selectedPlan.name} Plan</h2>
                 <p className="text-xs text-gray-500">{selectedPlan.trial} — no charge until trial ends</p>
               </div>
-              <button onClick={() => setSelectedPlan(null)} className="text-gray-400 hover:text-gray-600 p-1">
-                <X className="w-5 h-5" />
+              <button onClick={() => setSelectedPlan(null)} aria-label="Close checkout" className="text-gray-400 hover:text-gray-600 p-1">
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
             <div className="p-6 space-y-5">
               <div>
-                <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
-                <Input placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} />
-              </div>
-              <div>
-                <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
-                <Input type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} />
+                <label htmlFor="purchaser-name" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
+                <Input id="purchaser-name" placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} autoComplete="name" />
+                </div>
+                <div>
+                <label htmlFor="purchaser-email" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
+                <Input id="purchaser-email" type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} autoComplete="email" />
               </div>
 
               {selectedPlan.key !== "individual" && (
@@ -391,10 +393,10 @@ export default function DistrictPricingPage() {
                     <span className="text-gray-400 font-normal ml-1">({selectedPlan.minSeats}–{selectedPlan.maxSeats})</span>
                   </label>
                   <div className="flex items-center gap-3">
-                    <button type="button" onClick={() => handleSeatChange(seats - 1)}
+                    <button type="button" aria-label="Decrease seats" onClick={() => handleSeatChange(seats - 1)}
                       className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">−</button>
-                    <span className="text-2xl font-bold text-[#400070] w-8 text-center">{seats}</span>
-                    <button type="button" onClick={() => handleSeatChange(seats + 1)}
+                    <span className="text-2xl font-bold text-[#400070] w-8 text-center" aria-live="polite" aria-label={`${seats} seats`}>{seats}</span>
+                    <button type="button" aria-label="Increase seats" onClick={() => handleSeatChange(seats + 1)}
                       className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">+</button>
                     <span className="text-sm text-gray-500">
                       = {isCAD ? "CA$" : "$"}{((isCAD ? selectedPlan.priceCAD : selectedPlan.priceUSD) * seats).toLocaleString()} yr
@@ -445,7 +447,7 @@ export default function DistrictPricingPage() {
                 </p>
               </div>
 
-              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</p>}
+              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2" role="alert">{error}</p>}
 
               <Button
                 onClick={handleCheckout}
