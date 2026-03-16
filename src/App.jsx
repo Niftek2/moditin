@@ -59,6 +59,7 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/SchoolsDistricts" element={<SchoolsDistricts />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
