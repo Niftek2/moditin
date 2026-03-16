@@ -140,17 +140,13 @@ export default function SchoolsDistrictsPage() {
       setError("Please enter your name and email.");
       return;
     }
-    if (emails.some(e => !e || !e.includes("@"))) {
-      setError("Please enter a valid email address for each teacher license.");
-      return;
-    }
     setLoading(true);
     try {
       const priceId = isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD;
       const res = await base44.functions.invoke("districtCheckout", {
         priceId,
         quantity: seats,
-        teacherEmails: emails,
+        teacherEmails: [purchaserEmail],
         purchaserEmail,
         purchaserName,
         planName: selectedPlan.name,
