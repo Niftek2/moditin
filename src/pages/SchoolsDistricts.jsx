@@ -122,7 +122,6 @@ export default function SchoolsDistrictsPage() {
     }
     setSelectedPlan(plan);
     setSeats(plan.minSeats);
-    setEmails(Array(plan.minSeats).fill(""));
     setError("");
   };
 
