@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, AlertTriangle, CalendarDays, Ear } from "lucide-react";
 import AudiologySnapshotForm from "./AudiologySnapshotForm";
+import { useDemo } from "../demo/DemoContext";
 
 const EQUIPMENT_LABELS = {
   HearingAids: "Hearing Aids", CochlearImplant: "CI", BAHA: "BAHA",
