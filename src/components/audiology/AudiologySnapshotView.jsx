@@ -21,10 +21,12 @@ const HL_TYPE_LABELS = {
 export default function AudiologySnapshotView({ studentId }) {
   const [editing, setEditing] = useState(false);
   const queryClient = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
 
   const { data: snapshot, isLoading } = useQuery({
-    queryKey: ["audiologySnapshot", studentId],
+    queryKey: ["audiologySnapshot", studentId, isDemoMode],
     queryFn: async () => {
+      if (isDemoMode) return demoData.audiologySnapshots.find(s => s.studentId === studentId) || null;
       const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId });
       return results[0] || null;
     },
