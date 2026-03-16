@@ -147,7 +147,7 @@ export default function JoinPage() {
                 className="inline-flex items-center gap-2 text-amber-300 hover:text-amber-200 text-sm font-medium transition-colors"
               >
                 <FlaskConical className="w-4 h-4" />
-                Explore with sample data
+                Explore the Demo with Sample Data
               </button>
             </div>
           </div>
