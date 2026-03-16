@@ -56,7 +56,7 @@ export default function StudentDetailPage() {
   const { data: studentGoals = [] } = useQuery({
     queryKey: ["studentGoals", studentId, currentUserEmail, isDemoMode],
     queryFn: () => {
-      if (isDemoMode) return demoData.goals.filter(g => g.studentId === studentId);
+      if (isDemoMode) return demoData.studentGoals.filter(g => g.studentId === studentId);
       return base44.entities.StudentGoal.filter({ studentId, created_by: currentUserEmail });
     },
     enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
@@ -65,7 +65,7 @@ export default function StudentDetailPage() {
   const { data: goals = [] } = useQuery({
     queryKey: ["goals", isDemoMode],
     queryFn: () => {
-      if (isDemoMode) return [];
+      if (isDemoMode) return demoData.goalBank;
       return base44.entities.Goal.list();
     },
   });
@@ -73,7 +73,7 @@ export default function StudentDetailPage() {
   const { data: equipment = [] } = useQuery({
     queryKey: ["equipment", studentId, currentUserEmail, isDemoMode],
     queryFn: () => {
-      if (isDemoMode) return [];
+      if (isDemoMode) return demoData.equipment.filter(e => e.studentId === studentId);
       return base44.entities.Equipment.filter({ studentId, created_by: currentUserEmail });
     },
     enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
