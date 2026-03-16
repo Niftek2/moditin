@@ -131,7 +131,7 @@ export default function JoinPage() {
 
             {/* Trust badges */}
             <div className="mt-8 flex items-center justify-center gap-4 flex-wrap">
-              {["14-day free trial", "No credit card required", "Cancel anytime"].map((t) => (
+              {["14-day free trial", "Cancel anytime"].map((t) => (
                 <span key={t} className="flex items-center gap-1 text-white/40 text-xs">
                   <CheckCircle className="w-3 h-3 text-[#A855F7]" />
                   {t}
