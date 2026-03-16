@@ -26,10 +26,12 @@ export default function StudentContactsSection({ studentId }) {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", role: "" });
+  const { isDemoMode, demoData } = useDemo();
 
   const { data: contacts } = useQuery({
-    queryKey: ["studentContacts", studentId],
+    queryKey: ["studentContacts", studentId, isDemoMode],
     queryFn: async () => {
+      if (isDemoMode) return demoData.contacts.find(c => c.studentId === studentId) || null;
       const all = await base44.entities.StudentContacts.filter({ studentId });
       return all[0] || null;
     },
