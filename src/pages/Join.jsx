@@ -6,12 +6,12 @@ import DemoEmailGate from "../components/demo/DemoEmailGate";
 import { Link } from "react-router-dom";
 
 const FEATURES = [
-  { icon: Clock, text: "Service log & smart session notes" },
-  { icon: Target, text: "AI-powered IEP goal bank" },
-  { icon: Ear, text: "Listening checks & audiology tools" },
-  { icon: FileText, text: "Assessment Wizard" },
-  { icon: Zap, text: "Interactive activities & worksheets" },
-];
+{ icon: Clock, text: "Service log & smart session notes" },
+{ icon: Target, text: "AI-powered IEP goal bank" },
+{ icon: Ear, text: "Listening checks & audiology tools" },
+{ icon: FileText, text: "Assessment Wizard" },
+{ icon: Zap, text: "Interactive activities & worksheets" }];
+
 
 export default function JoinPage() {
   const [showDemoGate, setShowDemoGate] = useState(false);
@@ -31,8 +31,8 @@ export default function JoinPage() {
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png"
             alt="Modal Itinerant"
             className="h-16 object-contain"
-            style={{ filter: "brightness(0) invert(1)" }}
-          />
+            style={{ filter: "brightness(0) invert(1)" }} />
+
         </div>
 
         <div className="space-y-12">
@@ -49,22 +49,22 @@ export default function JoinPage() {
           </div>
 
           <ul className="space-y-5">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-center gap-4">
+            {FEATURES.map(({ icon: Icon, text }) =>
+            <li key={text} className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5 text-[#C084FC]" />
                 </div>
                 <span className="text-white/80 text-base">{text}</span>
               </li>
-            ))}
+            )}
           </ul>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
-            {["#7C3AED","#9333EA","#A855F7","#C084FC"].map((c, i) => (
-              <div key={i} className="w-9 h-9 rounded-full border-2 border-[#0d0020]" style={{ backgroundColor: c }} />
-            ))}
+            {["#7C3AED", "#9333EA", "#A855F7", "#C084FC"].map((c, i) =>
+            <div key={i} className="w-9 h-9 rounded-full border-2 border-[#0d0020]" style={{ backgroundColor: c }} />
+            )}
           </div>
           <p className="text-white/50 text-sm">Trusted by itinerant teachers across North America</p>
         </div>
@@ -80,17 +80,17 @@ export default function JoinPage() {
               background: "rgba(255,255,255,0.06)",
               backdropFilter: "blur(24px)",
               border: "1px solid rgba(255,255,255,0.14)",
-              boxShadow: "0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12)",
-            }}
-          >
+              boxShadow: "0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12)"
+            }}>
+
             {/* Mobile logo */}
             <div className="flex lg:hidden justify-center mb-10">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png"
                 alt="Modal Itinerant"
                 className="h-16 object-contain"
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
+                style={{ filter: "brightness(0) invert(1)" }} />
+
             </div>
 
             <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
@@ -105,9 +105,9 @@ export default function JoinPage() {
                 color: "white",
                 height: "56px",
                 border: "none",
-                boxShadow: "0 8px 24px rgba(124,58,237,0.4)",
-              }}
-            >
+                boxShadow: "0 8px 24px rgba(124,58,237,0.4)"
+              }}>
+
               <LogIn className="w-5 h-5" />
               Sign In
             </Button>
@@ -121,9 +121,9 @@ export default function JoinPage() {
                   height: "56px",
                   background: "rgba(255,255,255,0.07)",
                   border: "1px solid rgba(255,255,255,0.2)",
-                  color: "white",
-                }}
-              >
+                  color: "white"
+                }}>
+
                 Create an account
                 <ArrowRight className="w-4 h-4" />
               </Button>
@@ -131,21 +131,21 @@ export default function JoinPage() {
 
             {/* Trust badges */}
             <div className="mt-8 flex items-center justify-center gap-5 flex-wrap">
-              {["14-day free trial", "Cancel anytime"].map((t) => (
-                <span key={t} className="flex items-center gap-1.5 text-white/40 text-xs">
+              {["14-day free trial", "Cancel anytime"].map((t) =>
+              <span key={t} className="flex items-center gap-1.5 text-white/40 text-xs">
                   <CheckCircle className="w-3.5 h-3.5 text-[#A855F7]" />
                   {t}
                 </span>
-              ))}
+              )}
             </div>
 
             {/* Divider */}
             <div className="mt-8 border-t border-white/10 pt-7 text-center">
-              <p className="text-white/30 text-xs mb-3">Not ready to commit?</p>
+              <p className="text-slate-50 mb-3 text-xs">Not ready to commit?</p>
               <button
                 onClick={() => setShowDemoGate(true)}
-                className="inline-flex items-center gap-2 text-amber-300 hover:text-amber-200 text-sm font-medium transition-colors"
-              >
+                className="inline-flex items-center gap-2 text-amber-300 hover:text-amber-200 text-sm font-medium transition-colors">
+
                 <FlaskConical className="w-4 h-4" />
                 Explore the Demo with Sample Data
               </button>
@@ -154,12 +154,12 @@ export default function JoinPage() {
         </div>
       </div>
 
-      {showDemoGate && (
-        <DemoEmailGate
-          onEnter={() => { setShowDemoGate(false); window.location.href = "/Dashboard?demo=1"; }}
-          onCancel={() => setShowDemoGate(false)}
-        />
-      )}
-    </div>
-  );
+      {showDemoGate &&
+      <DemoEmailGate
+        onEnter={() => {setShowDemoGate(false);window.location.href = "/Dashboard?demo=1";}}
+        onCancel={() => setShowDemoGate(false)} />
+
+      }
+    </div>);
+
 }
