@@ -185,52 +185,6 @@ export default function SettingsPage() {
         </div>
         )}
 
-        {/* School Inquiry */}
-        <div className="modal-card p-6">
-          <h3 className="font-semibold text-[var(--modal-text)] mb-2">School/District Inquiry</h3>
-          <p className="text-xs text-[var(--modal-text-muted)] mb-4">Interested in options for your school or district? Fill out the form below.</p>
-
-          {submitted ? (
-            <div className="text-center py-6">
-              <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <p className="text-[var(--modal-text)] font-medium">Thank you!</p>
-              <p className="text-xs text-[var(--modal-text-muted)]">We'll be in touch shortly.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[var(--modal-text-muted)]">Name *</Label>
-                  <Input value={inquiryForm.name} onChange={(e) => setInquiryForm(p => ({ ...p, name: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                  </div>
-                  <div className="space-y-2">
-                  <Label className="text-[var(--modal-text-muted)]">Email *</Label>
-                  <Input type="email" value={inquiryForm.email} onChange={(e) => setInquiryForm(p => ({ ...p, email: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                  </div>
-                  <div className="space-y-2">
-                  <Label className="text-[var(--modal-text-muted)]">School/District *</Label>
-                  <Input value={inquiryForm.schoolDistrict} onChange={(e) => setInquiryForm(p => ({ ...p, schoolDistrict: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                  </div>
-                  <div className="space-y-2">
-                  <Label className="text-[var(--modal-text-muted)]">Estimated Users</Label>
-                  <Input type="number" value={inquiryForm.estimatedUsers} onChange={(e) => setInquiryForm(p => ({ ...p, estimatedUsers: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-                  </div>
-                  </div>
-                  <div className="space-y-2">
-                  <Label className="text-[var(--modal-text-muted)]">Notes</Label>
-                  <Textarea value={inquiryForm.notes} onChange={(e) => setInquiryForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
-              </div>
-              <Button
-                onClick={() => inquiryMutation.mutate({ ...inquiryForm, estimatedUsers: inquiryForm.estimatedUsers ? parseInt(inquiryForm.estimatedUsers) : undefined })}
-                disabled={!inquiryForm.name || !inquiryForm.email || !inquiryForm.schoolDistrict}
-                className="bg-[#400070] hover:bg-[#5B00A0] text-white"
-              >
-                Submit Inquiry
-              </Button>
-            </div>
-          )}
-        </div>
-
         {/* Audio Settings */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-4">Audio Settings</h3>
