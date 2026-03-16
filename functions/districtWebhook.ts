@@ -34,56 +34,80 @@ Deno.serve(async (req) => {
 
     console.log(`Checkout completed for ${planName}: ${quantity} seats, purchaser: ${purchaserEmail}`);
 
-    // Calculate trial end date
     const trialEndDate = new Date();
     trialEndDate.setDate(trialEndDate.getDate() + trialDays);
     const trialEndStr = trialEndDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // --- District setup: create District record + promote purchaser to manager ---
+    // --- District setup ---
     let districtId = null;
-    if (quantity > 1) {
+    if (quantity >= 1 && purchaserEmail && planName !== 'Modal Itinerant') {
       try {
-        // Find purchaser user and promote to manager
-        const purchaserUsers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
-        let purchaserUserId = null;
-        if (purchaserUsers.length > 0) {
-          purchaserUserId = purchaserUsers[0].id;
-          await base44.asServiceRole.auth.updateUser(purchaserUserId, { role: 'manager' });
-          console.log(`Promoted ${purchaserEmail} to manager role`);
-        } else {
-          // Invite purchaser as manager if they don't have an account yet
-          await base44.asServiceRole.users.inviteUser(purchaserEmail, 'manager');
-          console.log(`Invited purchaser ${purchaserEmail} as manager`);
-          const newPurchasers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
-          if (newPurchasers.length > 0) purchaserUserId = newPurchasers[0].id;
-        }
+        // Check if district already exists for this customer (upgrade flow)
+        const existingDistricts = await base44.asServiceRole.entities.District.filter({ stripeCustomerId });
 
-        // Create District record
-        const districtRecord = await base44.asServiceRole.entities.District.create({
-          districtName: `${purchaserName}'s District`,
-          managerUserId: purchaserUserId || '',
-          managerEmail: purchaserEmail,
-          planName,
-          licensedTeacherCount: quantity,
-          stripeSubscriptionId,
-          stripeCustomerId,
-          status: 'trialing',
-          trialEndDate: trialEndDate.toISOString(),
-        });
-        districtId = districtRecord.id;
-        console.log(`District record created: ${districtId}`);
+        if (existingDistricts.length > 0) {
+          // Upgrade: update existing district record
+          const existing = existingDistricts[0];
+          districtId = existing.id;
+
+          // Cancel old subscription if it changed
+          if (existing.stripeSubscriptionId && existing.stripeSubscriptionId !== stripeSubscriptionId) {
+            try {
+              await stripe.subscriptions.cancel(existing.stripeSubscriptionId);
+              console.log(`Canceled old subscription: ${existing.stripeSubscriptionId}`);
+            } catch (e) {
+              console.error('Failed to cancel old subscription:', e.message);
+            }
+          }
+
+          await base44.asServiceRole.entities.District.update(districtId, {
+            planName,
+            licensedTeacherCount: quantity,
+            stripeSubscriptionId,
+            status: 'trialing',
+            trialEndDate: trialEndDate.toISOString(),
+          });
+          console.log(`District upgraded: ${districtId}`);
+        } else {
+          // New district: promote purchaser and create record
+          const purchaserUsers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+          let purchaserUserId = null;
+          if (purchaserUsers.length > 0) {
+            purchaserUserId = purchaserUsers[0].id;
+            await base44.asServiceRole.auth.updateUser(purchaserUserId, { role: 'manager' });
+            console.log(`Promoted ${purchaserEmail} to manager`);
+          } else {
+            await base44.asServiceRole.users.inviteUser(purchaserEmail, 'manager');
+            console.log(`Invited purchaser ${purchaserEmail} as manager`);
+            const newPurchasers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+            if (newPurchasers.length > 0) purchaserUserId = newPurchasers[0].id;
+          }
+
+          const districtRecord = await base44.asServiceRole.entities.District.create({
+            districtName: `${purchaserName}'s District`,
+            managerUserId: purchaserUserId || '',
+            managerEmail: purchaserEmail,
+            planName,
+            licensedTeacherCount: quantity,
+            stripeSubscriptionId,
+            stripeCustomerId,
+            status: 'trialing',
+            trialEndDate: trialEndDate.toISOString(),
+          });
+          districtId = districtRecord.id;
+          console.log(`District created: ${districtId}`);
+        }
       } catch (e) {
-        console.error('Failed to create District record:', e.message);
+        console.error('Failed to setup District record:', e.message);
       }
     }
 
-    // Invite each teacher and send them a welcome email
+    // Invite each teacher (skip purchaser — they're the manager)
     for (const email of teacherEmails) {
       if (!email || email === purchaserEmail) continue;
       try {
         await base44.asServiceRole.users.inviteUser(email, "user");
         console.log(`Invited teacher: ${email}`);
-        // Link teacher to district
         if (districtId) {
           await new Promise(r => setTimeout(r, 500));
           const newUsers = await base44.asServiceRole.entities.User.filter({ email });
@@ -98,43 +122,19 @@ Deno.serve(async (req) => {
         console.error(`Failed to invite ${email}:`, e.message);
       }
 
-      // Send welcome email to teacher
+      // Welcome email to teacher
       try {
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: email,
           subject: `Welcome to Modal Itinerant — Your ${planName} Access is Ready`,
-          body: `
-Hi there,
-
-You've been invited to Modal Itinerant as part of the ${planName} plan by ${purchaserName} (${purchaserEmail}).
-
-Your ${trialDays}-day free trial is now active — you won't be charged until ${trialEndStr}.
-
-To get started:
-1. Visit https://app.base44.com and click "Sign In"
-2. Use the email address this was sent to: ${email}
-3. Click "Forgot Password" to set up your password and access your account
-
-You'll have full access to:
-• AI-powered goal bank for Deaf/HH students
-• Service log & scheduling calendar
-• Listening checks (Ling 6) and audiology tools
-• Interactive activities and worksheets
-• And much more
-
-If you have any questions, visit https://www.modaleducation.com/contact-5
-
-Welcome aboard!
-The Modal Education Team
-          `.trim(),
+          body: `Hi there,\n\nYou've been invited to Modal Itinerant as part of the ${planName} plan by ${purchaserName} (${purchaserEmail}).\n\nYour ${trialDays}-day free trial is now active — you won't be charged until ${trialEndStr}.\n\nTo get started:\n1. Visit https://app.base44.com and click "Sign In"\n2. Use the email address this was sent to: ${email}\n3. Click "Forgot Password" to set up your password\n\nIf you have any questions, visit https://www.modaleducation.com/contact-5\n\nWelcome aboard!\nThe Modal Education Team`,
         });
-        console.log(`Welcome email sent to teacher: ${email}`);
       } catch (e) {
         console.error(`Failed to send welcome email to ${email}:`, e.message);
       }
     }
 
-    // If individual plan, the purchaser IS the teacher — invite them too
+    // If individual plan, invite purchaser as user too
     if (quantity === 1 && teacherEmails.includes(purchaserEmail)) {
       try {
         await base44.asServiceRole.users.inviteUser(purchaserEmail, "user");
@@ -143,72 +143,72 @@ The Modal Education Team
       }
     }
 
-    // Send confirmation email to purchaser
+    // Confirmation email to purchaser
     try {
       const teacherList = teacherEmails.filter(e => e && e !== purchaserEmail)
         .map((e, i) => `${i + 1}. ${e}`).join('\n');
-
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: purchaserEmail,
         subject: `Your Modal Itinerant ${planName} Trial Has Started!`,
-        body: `
-Hi ${purchaserName},
-
-Thank you for choosing Modal Itinerant! Your ${trialDays}-day free trial for the ${planName} plan is now active.
-
-Trial details:
-• Plan: ${planName}
-• Seats: ${quantity}
-• Trial ends: ${trialEndStr}
-• You will NOT be charged until ${trialEndStr}
-
-${teacherList ? `The following teachers have been invited and will receive login instructions by email:\n${teacherList}\n` : ''}
-To access your account:
-1. Visit https://app.base44.com
-2. Sign in with ${purchaserEmail}
-3. If it's your first time, click "Forgot Password" to set your password
-
-You'll receive a reminder 2 days before your trial ends.
-
-Questions? Visit https://www.modaleducation.com/contact-5
-
-Thank you for supporting Deaf and Hard of Hearing students!
-The Modal Education Team
-        `.trim(),
+        body: `Hi ${purchaserName},\n\nThank you for choosing Modal Itinerant! Your ${trialDays}-day free trial for the ${planName} plan is now active.\n\nPlan: ${planName}\nSeats: ${quantity}\nTrial ends: ${trialEndStr}\n\n${teacherList ? `Teachers invited:\n${teacherList}\n\n` : ''}To access your account:\n1. Visit https://app.base44.com\n2. Sign in with ${purchaserEmail}\n\nQuestions? Visit https://www.modaleducation.com/contact-5\n\nThank you!\nThe Modal Education Team`,
       });
-      console.log(`Confirmation email sent to purchaser: ${purchaserEmail}`);
     } catch (e) {
-      console.error(`Failed to send confirmation to purchaser:`, e.message);
+      console.error('Failed to send confirmation to purchaser:', e.message);
     }
 
-    // Create in-app trial-ending reminders for 2 days before trial ends
+    // Trial-ending reminder notification (2 days before)
     const reminderDate = new Date(trialEndDate);
     reminderDate.setDate(reminderDate.getDate() - 2);
-
     for (const email of [...new Set([...teacherEmails, purchaserEmail])]) {
       if (!email) continue;
       try {
         await base44.asServiceRole.entities.AppNotification.create({
           type: "CustomReminder",
           title: "Your free trial ends in 2 days",
-          body: `Your ${planName} free trial ends on ${trialEndStr}. Your card will be charged at that time. Manage your subscription at any time.`,
+          body: `Your ${planName} free trial ends on ${trialEndStr}. Your card will be charged at that time.`,
           triggerDateTime: reminderDate.toISOString(),
           isRead: false,
           ownerEmail: email,
         });
-        console.log(`Trial reminder notification created for ${email}`);
       } catch (e) {
         console.error(`Failed to create reminder for ${email}:`, e.message);
       }
     }
   }
 
+  // Sync district status on subscription changes
+  if (event.type === 'customer.subscription.updated') {
+    const sub = event.data.object;
+    const stripeCustomerId = sub.customer;
+    try {
+      const districts = await base44.asServiceRole.entities.District.filter({ stripeCustomerId });
+      if (districts.length > 0) {
+        const status = ['active', 'trialing', 'past_due', 'canceled'].includes(sub.status) ? sub.status : 'active';
+        await base44.asServiceRole.entities.District.update(districts[0].id, { status });
+        console.log(`District ${districts[0].id} status updated to: ${status}`);
+      }
+    } catch (e) {
+      console.error('Failed to update district on subscription update:', e.message);
+    }
+  }
+
+  if (event.type === 'customer.subscription.deleted') {
+    const sub = event.data.object;
+    const stripeCustomerId = sub.customer;
+    try {
+      const districts = await base44.asServiceRole.entities.District.filter({ stripeCustomerId });
+      if (districts.length > 0) {
+        await base44.asServiceRole.entities.District.update(districts[0].id, { status: 'canceled' });
+        console.log(`District ${districts[0].id} marked as canceled`);
+      }
+    } catch (e) {
+      console.error('Failed to update district on subscription delete:', e.message);
+    }
+  }
+
   if (event.type === 'customer.subscription.trial_will_end') {
-    // Stripe fires this 3 days before trial end — we use it as a safety net
     const subscription = event.data.object;
-    const customerEmail = subscription.metadata?.purchaser_email;
-    console.log(`Trial will end soon for: ${customerEmail}`);
-    // Notifications are already created at checkout — this is a backup log
+    console.log(`Trial will end soon for customer: ${subscription.customer}`);
   }
 
   return Response.json({ received: true });

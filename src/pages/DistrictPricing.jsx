@@ -201,7 +201,7 @@ export default function DistrictPricingPage() {
         planName: selectedPlan.name,
         trialDays: selectedPlan.trialDays,
         currency,
-        successUrl: window.location.origin + "/Dashboard",
+        successUrl: window.location.origin + "/DistrictManagerDashboard?checkout_success=1",
         cancelUrl: window.location.href,
       });
       if (res.data?.url) {

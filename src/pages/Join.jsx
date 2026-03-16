@@ -21,7 +21,7 @@ export default function JoinPage() {
     try {
       const res = await base44.functions.invoke("stripeCheckout", {
         priceId: MONTHLY_PRICE_ID,
-        successUrl: window.location.origin + "/Dashboard",
+        successUrl: window.location.origin + "/Dashboard?checkout_success=1",
         cancelUrl: window.location.href,
       });
       if (res.data?.url) {

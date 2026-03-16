@@ -19,7 +19,6 @@ export function SubscriptionProvider({ children }) {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       const res = await base44.functions.invoke("stripeStatus", {});
-      // Admins always have Pro access
       const isAdmin = currentUser?.role === "admin";
       setSubStatus({ ...res.data, isPro: isAdmin || res.data.isPro });
     } catch {
@@ -41,21 +40,45 @@ export function SubscriptionProvider({ children }) {
 }
 
 export default function SubscriptionGate({ children }) {
-  const { checking, subStatus, user } = useSubscription();
+  const { checking, subStatus, user, refetch } = useSubscription();
   const { isDemoMode } = useDemo();
+  const [attempts, setAttempts] = useState(0);
+  const MAX_ATTEMPTS = 8;
 
-  // Demo mode bypasses all subscription/auth checks
+  const isCheckoutSuccess = typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("checkout_success") === "1";
+
+  useEffect(() => {
+    if (!isCheckoutSuccess || checking) return;
+    if (subStatus?.isPro) {
+      // Clean up the param from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("checkout_success");
+      window.history.replaceState({}, "", url.toString());
+      return;
+    }
+    if (attempts >= MAX_ATTEMPTS) return;
+    const t = setTimeout(() => {
+      setAttempts(a => a + 1);
+      refetch();
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [isCheckoutSuccess, checking, subStatus, attempts]);
+
   if (isDemoMode) return <>{children}</>;
 
-  if (checking) {
+  // Show spinner during initial load OR while polling after checkout
+  if (checking || (isCheckoutSuccess && !subStatus?.isPro && attempts < MAX_ATTEMPTS)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--modal-bg)]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#400070]" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--modal-bg)]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#400070] mb-3" />
+        {isCheckoutSuccess && !checking && (
+          <p className="text-[#400070] font-semibold text-sm">Activating your account…</p>
+        )}
       </div>
     );
   }
 
-  // If not subscribed (and not admin), redirect to Join page
   if (subStatus && !subStatus.isPro && user?.role !== "admin") {
     window.location.href = "/Join";
     return null;
