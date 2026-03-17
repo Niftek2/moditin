@@ -76,15 +76,29 @@ export default function DistrictManagerDashboard() {
       setUser(me);
       setUpgradePurchaserEmail(me.email || "");
 
-      const districts = await base44.entities.District.filter({ managerEmail: me.email });
+      let districts = await base44.entities.District.filter({ managerEmail: me.email });
       if (districts.length === 0) {
         if (isCheckoutSuccess && retryCount < 6) {
           setLoading(false);
           return;
         }
-        setError("No district found for your account. Please contact support.");
-        setLoading(false);
-        return;
+        // Auto-create a district for manually-promoted managers
+        try {
+          const created = await base44.functions.invoke("onUserRoleChange", {
+            data: { role: 'manager', email: me.email, id: me.id, full_name: me.full_name },
+            old_data: { role: 'user' }
+          });
+          if (created.data?.created) {
+            districts = await base44.entities.District.filter({ managerEmail: me.email });
+          }
+        } catch (e) {
+          console.error("Failed to auto-create district:", e);
+        }
+        if (districts.length === 0) {
+          setError("No district found for your account. Please contact support.");
+          setLoading(false);
+          return;
+        }
       }
       const d = districts[0];
       setDistrict(d);
