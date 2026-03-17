@@ -191,7 +191,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Delete Account */}
-        <div className="modal-card p-6 border border-red-200">
+        {!isDemo && <div className="modal-card p-6 border border-red-200">
           <h3 className="font-semibold text-red-600 mb-2">Danger Zone</h3>
           <p className="text-xs text-[var(--modal-text-muted)] mb-4">
             Permanently delete your account and all associated data. This cannot be undone.
