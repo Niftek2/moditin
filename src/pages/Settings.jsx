@@ -78,7 +78,8 @@ export default function SettingsPage() {
   });
 
   return (
-    <div>
+    <>
+      <div>
       <PageHeader title="Settings" subtitle="Account settings" />
 
       <div className="space-y-6 max-w-2xl">
