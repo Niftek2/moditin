@@ -204,7 +204,7 @@ export default function SettingsPage() {
             <Trash2 className="w-4 h-4" />
             Delete Account
           </Button>
-        </div>
+        </div>}
       </div>
 
       <DeleteAccountDialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)} />
