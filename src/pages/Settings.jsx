@@ -208,7 +208,8 @@ export default function SettingsPage() {
         </div>}
       </div>
 
+      </div>
       <DeleteAccountDialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)} />
-    </div>
+    </>
   );
 }
