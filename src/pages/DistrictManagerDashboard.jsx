@@ -250,12 +250,24 @@ export default function DistrictManagerDashboard() {
   }
 
   if (error) {
+    const isNoDistrict = error.includes("No district found");
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1a0030] via-[#2d0060] to-[#400070] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 max-w-md text-center">
           <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Access Error</h2>
-          <p className="text-gray-600">{error}</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">{isNoDistrict ? "No Subscription Found" : "Access Error"}</h2>
+          <p className="text-gray-600 mb-5">{isNoDistrict ? "We couldn't find an active district subscription linked to your account." : error}</p>
+          {isNoDistrict && (
+            <div className="space-y-3">
+              <Button
+                onClick={() => window.location.href = "/DistrictPricing"}
+                className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl"
+              >
+                Set Up Subscription
+              </Button>
+              <p className="text-xs text-gray-400">Already purchased? Contact <a href="mailto:support@modaleducation.com" className="underline">support@modaleducation.com</a></p>
+            </div>
+          )}
         </div>
       </div>
     );
