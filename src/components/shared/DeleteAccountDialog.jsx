@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+
+const DEMO_EMAILS = ["demo@modaleducation.com", "niftek2@gmail.com"];
 
 export default function DeleteAccountDialog({ open, onClose }) {
   const [confirm, setConfirm] = useState("");
+  const [isDemo, setIsDemo] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      base44.auth.me().then(u => {
+        setIsDemo(DEMO_EMAILS.includes(u?.email?.toLowerCase()));
+      }).catch(() => {});
+    }
+  }, [open]);
 
   const handleDelete = () => {
-    // Sign out user — actual deletion requires backend/support
     base44.auth.logout();
   };
 
