@@ -38,36 +38,47 @@ export default function DeleteAccountDialog({ open, onClose }) {
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
-          <div className="space-y-2">
-            <Label htmlFor="confirm-delete" className="text-[var(--modal-text)]">
-              Type <span className="font-bold">DELETE</span> to confirm
-            </Label>
-            <Input
-              id="confirm-delete"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              placeholder="DELETE"
-              className="border-[var(--modal-border)] text-[var(--modal-text)]"
-              autoComplete="off"
-            />
-          </div>
-
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={onClose} className="flex-1 border-[var(--modal-border)] text-[var(--modal-text)]">
-              Cancel
+          {isDemo ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800 text-center">
+              This is a demo account and cannot be deleted.
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-delete" className="text-[var(--modal-text)]">
+                  Type <span className="font-bold">DELETE</span> to confirm
+                </Label>
+                <Input
+                  id="confirm-delete"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  placeholder="DELETE"
+                  className="border-[var(--modal-border)] text-[var(--modal-text)]"
+                  autoComplete="off"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={onClose} className="flex-1 border-[var(--modal-border)] text-[var(--modal-text)]">
+                  Cancel
+                </Button>
+                <Button
+                  disabled={confirm !== "DELETE"}
+                  onClick={handleDelete}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white disabled:opacity-40"
+                >
+                  Delete My Account
+                </Button>
+              </div>
+              <p className="text-xs text-[var(--modal-text-muted)] text-center">
+                Need help instead? Contact support before deleting.
+              </p>
+            </>
+          )}
+          {isDemo && (
+            <Button variant="outline" onClick={onClose} className="w-full border-[var(--modal-border)] text-[var(--modal-text)]">
+              Close
             </Button>
-            <Button
-              disabled={confirm !== "DELETE"}
-              onClick={handleDelete}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white disabled:opacity-40"
-            >
-              Delete My Account
-            </Button>
-          </div>
-
-          <p className="text-xs text-[var(--modal-text-muted)] text-center">
-            Need help instead? Contact support before deleting.
-          </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
