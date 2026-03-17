@@ -33,6 +33,8 @@ export default function SettingsPage() {
     base44.auth.me().then((u) => {
       setUser(u);
       setProfileForm({ firstName: u?.firstName || "", email: u?.email || "" });
+      const demoEmails = ["demo@modaleducation.com", "niftek2@gmail.com"];
+      setIsDemo(demoEmails.includes(u?.email?.toLowerCase()));
     }).catch(() => {});
     if (!isIosMode) {
       base44.functions.invoke("stripeStatus", {}).then(res => setSubStatus(res.data)).catch(() => {});
