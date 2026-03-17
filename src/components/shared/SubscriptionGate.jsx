@@ -79,7 +79,7 @@ export default function SubscriptionGate({ children }) {
     );
   }
 
-  if (subStatus && !subStatus.isPro && user?.role !== "admin" && user?.role !== "manager") {
+  if (subStatus && !subStatus.isPro && user?.role !== "admin" && user?.role !== "manager" && !user?.districtId) {
     window.location.href = "/DistrictPricing";
     return null;
   }
