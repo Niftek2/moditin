@@ -11,7 +11,7 @@ import MonthView from "../components/calendar/MonthView";
 import EventForm from "../components/calendar/EventForm";
 import EventDetailModal from "../components/calendar/EventDetailModal";
 import DriveConflictModal from "../components/calendar/DriveConflictModal";
-import SchedulerPanel from "../components/calendar/SchedulerPanel";
+import SchedulerWizard from "../components/calendar/scheduler/SchedulerWizard";
 import { checkDriveConflict, getEventsForDay } from "../components/calendar/calendarUtils";
 import { useDemo } from "../components/demo/DemoContext";
 
