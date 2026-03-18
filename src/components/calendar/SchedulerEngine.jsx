@@ -1,348 +1,252 @@
-import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
-import { addMinutes, eachDayOfInterval, isSameDay, parseISO, format, addDays } from "date-fns";
-import { Sparkles, X, Calendar, Loader2, AlertTriangle, Check } from "lucide-react";
+/**
+ * SchedulerEngine — pure-function utility module.
+ * No React components. No side-effects. No PII in AI payloads.
+ *
+ * Exports:
+ *   isWithinWorkingHours   — slot boundary check against teacher working hours
+ *   isWithinAvailability   — slot check against student availability windows
+ *   hasConflict            — slot overlap check with travel buffer padding
+ *   findFirstAvailableSlot — greedy next-available-slot search (15-min granularity)
+ *   groupStudentsByLocation — cluster students by locationId
+ *   runGreedySchedule      — deterministic schedule generator
+ *   runAIOptimize          — anonymized LLM travel-optimization pass (opt-in only)
+ */
 
-// ─── Pure scheduling functions ────────────────────────────────────────────────
+import { format, addMinutes } from "date-fns";
+import { base44 } from "@/api/base44Client";
+
+// ---------------------------------------------------------------------------
+// Time-window helpers
+// ---------------------------------------------------------------------------
+
+/** Returns true if [slotStart, slotEnd) lies entirely within the teacher's working hours for that day. */
+export function isWithinWorkingHours(slotStart, slotEnd, workingHours) {
+  const [startHH, startMM] = (workingHours?.start || "08:00").split(":").map(Number);
+  const [endHH,   endMM]   = (workingHours?.end   || "17:00").split(":").map(Number);
+  const dayStr = format(slotStart, "yyyy-MM-dd");
+  const wStart = new Date(`${dayStr}T${pad(startHH)}:${pad(startMM)}`);
+  const wEnd   = new Date(`${dayStr}T${pad(endHH)}:${pad(endMM)}`);
+  return slotStart >= wStart && slotEnd <= wEnd;
+}
 
 /**
- * Greedy slot finder for a single student within a time window on a given day.
- * Returns { start: Date, end: Date } or null.
+ * Returns true if slotStart falls within any availability window the student has
+ * for that day-of-week.  If no windows are defined the student is treated as
+ * always available.
  */
-function findOpenSlot(day, window, durationMinutes, existingEvents, travelBufferMinutes) {
-  const [sh, sm] = window.start.split(":").map(Number);
-  const [eh, em] = window.end.split(":").map(Number);
+export function isWithinAvailability(slotStart, student) {
+  const windows = student?.availabilityWindows;
+  if (!windows) return true;
+  const dow = slotStart.getDay();
+  const dayWindows = windows[dow];
+  if (!dayWindows || dayWindows.length === 0) return false;
+  const timeStr = format(slotStart, "HH:mm");
+  return dayWindows.some(w => timeStr >= w.start && timeStr < w.end);
+}
 
-  let cursor = new Date(day);
-  cursor.setHours(sh, sm, 0, 0);
-  const windowEnd = new Date(day);
-  windowEnd.setHours(eh, em, 0, 0);
+// ---------------------------------------------------------------------------
+// Conflict detection
+// ---------------------------------------------------------------------------
 
-  const sorted = [...existingEvents].sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
-  const bufMs = travelBufferMinutes * 60000;
+/**
+ * Returns true if [slotStart, slotEnd) overlaps any committed event after
+ * padding each committed event with ±travelBuffer minutes.
+ */
+export function hasConflict(slotStart, slotEnd, committedEvents, travelBuffer = 0) {
+  return committedEvents.some(e => {
+    const eStart = new Date(e.startDateTime);
+    const eEnd   = new Date(e.endDateTime);
+    const bufferedStart = new Date(eStart.getTime() - travelBuffer * 60000);
+    const bufferedEnd   = new Date(eEnd.getTime()   + travelBuffer * 60000);
+    return slotStart < bufferedEnd && slotEnd > bufferedStart;
+  });
+}
 
-  while (cursor < windowEnd) {
+// ---------------------------------------------------------------------------
+// Slot finder
+// ---------------------------------------------------------------------------
+
+/**
+ * Greedy search: walks through a single day in 15-min steps and returns the
+ * first slot of `durationMinutes` that:
+ *   • lies within working hours
+ *   • does not conflict with any committedEvents (travel-buffer aware)
+ *
+ * Returns { start: ISO, end: ISO } or null.
+ */
+export function findFirstAvailableSlot(date, durationMinutes, committedEvents, workingHours, travelBuffer = 0) {
+  const [startHH, startMM] = (workingHours?.start || "08:00").split(":").map(Number);
+  const [endHH,   endMM]   = (workingHours?.end   || "17:00").split(":").map(Number);
+  const dayStr = format(date, "yyyy-MM-dd");
+  let   cursor = new Date(`${dayStr}T${pad(startHH)}:${pad(startMM)}`);
+  const dayEnd = new Date(`${dayStr}T${pad(endHH)}:${pad(endMM)}`);
+
+  while (cursor < dayEnd) {
     const slotEnd = addMinutes(cursor, durationMinutes);
-    if (slotEnd > windowEnd) break;
-
-    const conflict = sorted.find(e => {
-      const eStart = new Date(e.startDateTime).getTime();
-      const eEnd = new Date(e.endDateTime).getTime();
-      return cursor.getTime() < eEnd + bufMs && slotEnd.getTime() > eStart - bufMs;
-    });
-
-    if (!conflict) return { start: cursor, end: slotEnd };
-
-    // Jump past the conflicting event + travel buffer
-    cursor = new Date(new Date(conflict.endDateTime).getTime() + bufMs);
+    if (slotEnd > dayEnd) break;
+    if (
+      isWithinWorkingHours(cursor, slotEnd, workingHours) &&
+      !hasConflict(cursor, slotEnd, committedEvents, travelBuffer)
+    ) {
+      return { start: cursor.toISOString(), end: slotEnd.toISOString() };
+    }
+    cursor = addMinutes(cursor, 15);
   }
-
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Location grouping
+// ---------------------------------------------------------------------------
+
+/** Cluster students by locationId for travel-minimizing scheduling. */
+export function groupStudentsByLocation(students) {
+  return students.reduce((acc, s) => {
+    const key = s.locationId || "unassigned";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(s);
+    return acc;
+  }, {});
+}
+
+// ---------------------------------------------------------------------------
+// Deterministic greedy scheduler
+// ---------------------------------------------------------------------------
+
 /**
- * Deterministic greedy scheduler. Groups students by locationId per day.
- * Returns an array of proposed slot objects (not yet persisted).
+ * Generates an array of draft CalendarEvent shells (not yet persisted).
+ *
+ * Algorithm (greedy / deterministic):
+ *   For each day in dateRange:
+ *     For each locationId group (travel-minimizing order):
+ *       For each student in the group:
+ *         Find first available slot respecting workingHours, travelBuffer,
+ *         and the student's availabilityWindows.
+ *         Append to drafts and treat as occupied for subsequent searches.
  */
-function buildSchedule(selectedStudents, committedEvents, startDate, endDate, travelBuffer, workingHours) {
-  const proposed = [];
-  const wStart = workingHours?.start || "08:00";
-  const wEnd = workingHours?.end || "15:30";
+export function runGreedySchedule({
+  students,
+  dateRange,
+  committedEvents,
+  workingHours,
+  travelBuffer = 0,
+  durationMinutes = 30,
+}) {
+  const { startDate, endDate } = dateRange;
+  const grouped   = groupStudentsByLocation(students);
+  const drafts    = [];
 
-  eachDayOfInterval({ start: startDate, end: endDate }).forEach(day => {
-    const dow = day.getDay();
-    if (dow === 0 || dow === 6) return; // skip weekends
+  const allDays = [];
+  let d = new Date(startDate);
+  const stop = new Date(endDate);
+  while (d <= stop) {
+    allDays.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
 
-    // Group students by locationId for travel-efficient batching
-    const byLocation = {};
-    selectedStudents.forEach(s => {
-      const loc = s.locationId || "unassigned";
-      if (!byLocation[loc]) byLocation[loc] = [];
-      byLocation[loc].push(s);
-    });
+  for (const day of allDays) {
+    const dayStr = format(day, "yyyy-MM-dd");
 
-    const dayPlaced = committedEvents.filter(e => isSameDay(parseISO(e.startDateTime), day));
+    // committed + already-drafted events for this day
+    const occupied = [
+      ...committedEvents.filter(e => format(new Date(e.startDateTime), "yyyy-MM-dd") === dayStr),
+      ...drafts.filter(e => format(new Date(e.startDateTime), "yyyy-MM-dd") === dayStr),
+    ];
 
-    Object.entries(byLocation).forEach(([locationId, students]) => {
-      students.forEach(student => {
-        // Respect student availability windows; fall back to teacher working hours
-        const windows = student.availabilityWindows?.[dow];
-        const availWindow = windows?.length > 0 ? windows[0] : { start: wStart, end: wEnd };
+    for (const locationStudents of Object.values(grouped)) {
+      for (const student of locationStudents) {
+        const slot = findFirstAvailableSlot(day, durationMinutes, occupied, workingHours, travelBuffer);
+        if (!slot) continue;
+        if (!isWithinAvailability(new Date(slot.start), student)) continue;
 
-        const sessionDuration = student.directMinutes || 30;
-        const slot = findOpenSlot(day, availWindow, sessionDuration, dayPlaced, travelBuffer);
+        const draft = {
+          title:         `Session — ${student.studentInitials || "Student"}`,
+          eventType:     "DirectService",
+          startDateTime: slot.start,
+          endDateTime:   slot.end,
+          setting:       student.serviceDeliveryModel || "InPerson",
+          studentId:     student.id,
+          studentInitials: student.studentInitials || "",
+          locationLabel: student.locationId || undefined,
+          driveTimeMinutes: travelBuffer,
+          driveTimeIncluded: travelBuffer > 0,
+          isDraft: true,
+        };
 
-        if (slot) {
-          const entry = {
-            startDateTime: slot.start.toISOString(),
-            endDateTime: slot.end.toISOString(),
-            _studentId: student.id,
-            _studentInitials: student.studentInitials || "??",
-            _locationId: locationId,
-          };
-          proposed.push(entry);
-          // Treat placed slot as committed for subsequent students on the same day
-          dayPlaced.push({ startDateTime: slot.start.toISOString(), endDateTime: slot.end.toISOString(), setting: "InPerson" });
-        }
-      });
-    });
-  });
-
-  return proposed;
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function SchedulerEngine({ students, committedEvents, currentUser, onClose, onFinalized }) {
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [startDate, setStartDate] = useState(format(new Date(), "yyyy-MM-dd"));
-  const [endDate, setEndDate] = useState(format(addDays(new Date(), 4), "yyyy-MM-dd"));
-  const [proposed, setProposed] = useState([]);
-  const [hasGenerated, setHasGenerated] = useState(false);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [isFinalizing, setIsFinalizing] = useState(false);
-
-  const travelBuffer = currentUser?.globalTravelBuffer || 15;
-  const workingHours = currentUser?.workingHours || { start: "08:00", end: "15:30" };
-
-  const toggleStudent = (id) =>
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-
-  const handleGenerate = () => {
-    const selected = students.filter(s => selectedIds.includes(s.id));
-    const slots = buildSchedule(
-      selected,
-      committedEvents,
-      new Date(startDate + "T00:00:00"),
-      new Date(endDate + "T23:59:59"),
-      travelBuffer,
-      workingHours
-    );
-    setProposed(slots);
-    setHasGenerated(true);
-  };
-
-  // AI optimization: anonymized payload — NO student names or identifiable data
-  const handleAIOptimize = async () => {
-    if (proposed.length === 0) return;
-    setIsAiLoading(true);
-    try {
-      const anonymized = proposed.map((slot, i) => ({
-        ref: `S${i + 1}`,
-        locationId: slot._locationId,          // location zone only
-        sessionDurationMin: Math.round((new Date(slot.endDateTime) - new Date(slot.startDateTime)) / 60000),
-        proposedStart: slot.startDateTime,
-      }));
-
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a travel optimizer for an itinerant teacher scheduler. Reorder these sessions to minimize travel between different locationIds. Sessions at the same locationId should be grouped on the same day where possible. Travel buffer between sessions: ${travelBuffer} minutes. Return the refs in optimal order.
-
-Sessions: ${JSON.stringify(anonymized)}`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            order: { type: "array", items: { type: "string" } }
-          }
-        }
-      });
-
-      if (result?.order?.length === proposed.length) {
-        const refMap = {};
-        proposed.forEach((slot, i) => { refMap[`S${i + 1}`] = slot; });
-        const reordered = result.order.map(ref => refMap[ref]).filter(Boolean);
-        if (reordered.length === proposed.length) setProposed(reordered);
+        drafts.push(draft);
+        occupied.push(draft);
       }
-    } catch (e) {
-      console.error("AI Optimize error:", e);
-    } finally {
-      setIsAiLoading(false);
     }
-  };
+  }
 
-  const handleFinalize = async () => {
-    if (proposed.length === 0) return;
-    setIsFinalizing(true);
-    try {
-      const events = proposed.map(slot => ({
-        title: `Direct Service — ${slot._studentInitials}`,
-        eventType: "DirectService",
-        startDateTime: slot.startDateTime,
-        endDateTime: slot.endDateTime,
-        studentId: slot._studentId,
-        studentInitials: slot._studentInitials,
-        locationLabel: slot._locationId !== "unassigned" ? slot._locationId : undefined,
-        setting: "InPerson",
-        isDraft: false,
-      }));
-      await base44.entities.CalendarEvent.bulkCreate(events);
-      onFinalized?.();
-      onClose();
-    } catch (e) {
-      console.error("Finalize error:", e);
-    } finally {
-      setIsFinalizing(false);
-    }
-  };
-
-  const removeSlot = (i) => setProposed(prev => prev.filter((_, idx) => idx !== i));
-
-  return (
-    <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* BETA Warning Banner */}
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800 font-medium leading-relaxed">
-            BETA: Automated slots are suggestions. Verify against IEP requirements before finalizing.
-          </p>
-        </div>
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--modal-border)]">
-          <div>
-            <h2 className="font-bold text-[#400070] text-lg">Intelligent Scheduler</h2>
-            <p className="text-xs text-[var(--modal-text-muted)]">
-              Travel buffer: {travelBuffer} min · Working hours: {workingHours.start}–{workingHours.end}
-            </p>
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-5 space-y-5">
-          {/* Date Range */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-semibold text-[var(--modal-text-muted)] mb-1 block">Start Date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-                className="w-full border border-[var(--modal-border)] rounded-lg px-3 py-2 text-sm text-[var(--modal-text)]"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-[var(--modal-text-muted)] mb-1 block">End Date</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-                className="w-full border border-[var(--modal-border)] rounded-lg px-3 py-2 text-sm text-[var(--modal-text)]"
-              />
-            </div>
-          </div>
-
-          {/* Student Selection */}
-          <div>
-            <label className="text-xs font-semibold text-[var(--modal-text-muted)] mb-2 block">
-              Select Students <span className="text-[#400070]">({selectedIds.length} selected)</span>
-            </label>
-            <div className="max-h-40 overflow-y-auto space-y-1 border border-[var(--modal-border)] rounded-xl p-2">
-              {students.length === 0 && (
-                <p className="text-xs text-[var(--modal-text-muted)] p-2 text-center">No students found.</p>
-              )}
-              {students.map(s => (
-                <button
-                  key={s.id}
-                  onClick={() => toggleStudent(s.id)}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-left transition-colors ${
-                    selectedIds.includes(s.id)
-                      ? "bg-[#EADDF5] text-[#400070] font-semibold"
-                      : "hover:bg-gray-50 text-[var(--modal-text)]"
-                  }`}
-                >
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
-                    selectedIds.includes(s.id) ? "bg-[#400070] border-[#400070]" : "border-gray-300"
-                  }`}>
-                    {selectedIds.includes(s.id) && <Check className="w-3 h-3 text-white" />}
-                  </div>
-                  <span className="flex-1">{s.studentInitials || "—"}</span>
-                  {s.locationId && (
-                    <span className="text-xs text-[var(--modal-text-muted)] bg-gray-100 px-1.5 py-0.5 rounded">
-                      {s.locationId}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Generate Button */}
-          <Button
-            onClick={handleGenerate}
-            disabled={selectedIds.length === 0}
-            className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white gap-2"
-          >
-            <Calendar className="w-4 h-4" />
-            Generate Schedule
-          </Button>
-
-          {/* Proposed Slots */}
-          {hasGenerated && (
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold text-[var(--modal-text)]">
-                  {proposed.length === 0
-                    ? "No available slots found in this range."
-                    : `${proposed.length} slot${proposed.length !== 1 ? "s" : ""} proposed`}
-                </p>
-                {proposed.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAIOptimize}
-                    disabled={isAiLoading}
-                    className="gap-1.5 text-[#400070] border-[#400070]/30 text-xs h-7 px-2"
-                  >
-                    {isAiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                    AI Optimize
-                  </Button>
-                )}
-              </div>
-
-              {proposed.length > 0 && (
-                <>
-                  <div className="space-y-1.5 max-h-52 overflow-y-auto">
-                    {proposed.map((slot, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-[#F7F3FA] rounded-xl px-3 py-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-[#400070]">{slot._studentInitials}</p>
-                          <p className="text-xs text-[var(--modal-text-muted)]">
-                            {format(parseISO(slot.startDateTime), "EEE MMM d")}
-                            {" · "}
-                            {format(parseISO(slot.startDateTime), "h:mm a")}–{format(parseISO(slot.endDateTime), "h:mm a")}
-                            {slot._locationId !== "unassigned" && ` · ${slot._locationId}`}
-                          </p>
-                        </div>
-                        <button onClick={() => removeSlot(i)} className="text-gray-400 hover:text-red-500 flex-shrink-0 p-0.5">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button
-                    onClick={handleFinalize}
-                    disabled={isFinalizing}
-                    className="w-full mt-3 bg-green-600 hover:bg-green-700 text-white gap-2"
-                  >
-                    {isFinalizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                    Finalize Schedule ({proposed.length} events)
-                  </Button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  return drafts;
 }
+
+// ---------------------------------------------------------------------------
+// AI optimization pass  (opt-in — caller must invoke explicitly)
+// ---------------------------------------------------------------------------
+
+/**
+ * Sends an ANONYMIZED payload to the LLM (locationId + durations only — NO
+ * student names, initials, IDs, or any PII) and returns reordered draft events
+ * grouped by location to minimise travel.
+ *
+ * Falls back to the original draft array on any error.
+ */
+export async function runAIOptimize({ drafts, travelBuffer = 0 }) {
+  // Build anonymized payload: index → locationId + timing only
+  const anonymized = drafts.map((d, i) => ({
+    index:           i,
+    locationId:      d.locationLabel || "unassigned",
+    travelBuffer,
+    sessionDuration: Math.round((new Date(d.endDateTime) - new Date(d.startDateTime)) / 60000),
+    startDateTime:   d.startDateTime,
+  }));
+
+  let result;
+  try {
+    result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a schedule optimizer. Reorder these anonymous session slots to minimise travel between different locationIds by grouping sessions at the same locationId consecutively on each day where possible. Do NOT add, remove, or rename any items. Return the same array reordered.
+Sessions: ${JSON.stringify(anonymized)}`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          optimized: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                index:           { type: "integer" },
+                locationId:      { type: "string" },
+                startDateTime:   { type: "string" },
+                sessionDuration: { type: "integer" },
+              },
+            },
+          },
+        },
+      },
+    });
+  } catch {
+    return drafts; // graceful fallback
+  }
+
+  if (!result?.optimized?.length) return drafts;
+
+  // Re-map anonymized result back onto original draft objects (PII restored from original array)
+  return result.optimized.map(opt => {
+    const original = drafts[opt.index] ?? drafts[0];
+    const newStart = new Date(opt.startDateTime);
+    const newEnd   = addMinutes(newStart, opt.sessionDuration);
+    return {
+      ...original,
+      startDateTime: newStart.toISOString(),
+      endDateTime:   newEnd.toISOString(),
+      locationLabel: opt.locationId !== "unassigned" ? opt.locationId : original.locationLabel,
+    };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+function pad(n) { return String(n).padStart(2, "0"); }
