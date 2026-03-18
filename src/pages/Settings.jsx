@@ -29,6 +29,12 @@ export default function SettingsPage() {
   const [subLoading, setSubLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
 
+  // Change password
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ current: "", newPass: "", confirm: "" });
+  const [passwordStatus, setPasswordStatus] = useState(null); // "saving" | "success" | "error"
+  const [passwordError, setPasswordError] = useState("");
+
   useEffect(() => {
     base44.auth.me().then((u) => {
       setUser(u);
@@ -63,6 +69,24 @@ export default function SettingsPage() {
     });
     setSubLoading(false);
     if (res.data?.url) window.location.href = res.data.url;
+  };
+
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    if (!passwordForm.current) { setPasswordError("Please enter your current password."); return; }
+    if (passwordForm.newPass.length < 8) { setPasswordError("New password must be at least 8 characters."); return; }
+    if (passwordForm.newPass !== passwordForm.confirm) { setPasswordError("Passwords do not match."); return; }
+    setPasswordStatus("saving");
+    try {
+      await base44.auth.updateMe({ password: passwordForm.newPass, currentPassword: passwordForm.current });
+      setPasswordStatus("success");
+      setPasswordForm({ current: "", newPass: "", confirm: "" });
+      setChangingPassword(false);
+      setTimeout(() => setPasswordStatus(null), 4000);
+    } catch (e) {
+      setPasswordError(e.message || "Failed to change password. Please check your current password.");
+      setPasswordStatus("error");
+    }
   };
 
   const handleManageBilling = async () => {
