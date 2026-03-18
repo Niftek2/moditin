@@ -290,11 +290,27 @@ export default function DistrictPricingPage() {
 
         {/* SECTION 1: Individual */}
         <h2 className="text-white font-bold text-xl mb-5">For Individual Teachers</h2>
+
+        {/* Billing toggle */}
+        <div className="flex justify-center mb-5">
+          <div className="inline-flex items-center bg-white/10 rounded-full p-1 gap-1">
+            <button
+              onClick={() => setBillingPeriod("monthly")}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "monthly" ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
+            >Monthly</button>
+            <button
+              onClick={() => setBillingPeriod("annual")}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "annual" ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
+            >Annual <span className="text-xs font-bold text-green-400">Save $39</span></button>
+          </div>
+        </div>
+
         <div className="flex justify-center mb-4">
           {(() => {
             const plan = INDIVIDUAL_PLAN;
             const Icon = plan.icon;
-            const price = isCAD ? plan.priceCAD : plan.priceUSD;
+            const annualPrice = isCAD ? plan.priceCAD : plan.priceUSD;
+            const isMonthly = billingPeriod === "monthly";
             return (
               <div className="relative rounded-2xl p-6 flex flex-col bg-white border-2 border-yellow-400 shadow-xl shadow-yellow-400/20 w-full max-w-xs">
                 <div className="absolute -top-3 left-6">
@@ -305,12 +321,25 @@ export default function DistrictPricingPage() {
                 </div>
                 <h3 className="font-bold text-lg text-[#400070] mb-0.5">{plan.name}</h3>
                 <p className="text-xs text-[#6B2FB9] mb-4">{plan.seatLabel}</p>
-                <div className="mb-0.5">
-                  <span className="text-3xl font-bold text-[#400070]">{isCAD ? "CA$" : "$"}{price}</span>
-                  <span className="text-sm text-[#6B2FB9] ml-1">{plan.perLabel}</span>
-                </div>
-                <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
-                <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                {isMonthly ? (
+                  <>
+                    <div className="mb-0.5">
+                      <span className="text-3xl font-bold text-[#400070]">${plan.monthlyUSD}</span>
+                      <span className="text-sm text-[#6B2FB9] ml-1">/month</span>
+                    </div>
+                    <p className="text-xs text-[#6B2FB9] mb-0.5">or ${annualPrice} billed annually</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-0.5">
+                      <span className="text-3xl font-bold text-[#400070]">{isCAD ? "CA$" : "$"}{annualPrice}</span>
+                      <span className="text-sm text-[#6B2FB9] ml-1">/year</span>
+                    </div>
+                    <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                  </>
+                )}
                 <p className="text-xs text-green-600 font-medium mb-4">✓ {plan.trial}</p>
                 <p className="text-xs text-gray-600 mb-4 flex-1">{plan.description}</p>
                 <ul className="space-y-2 mb-6">
