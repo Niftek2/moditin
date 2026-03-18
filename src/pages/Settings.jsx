@@ -163,6 +163,79 @@ export default function SettingsPage() {
           )}
         </div>
 
+        {/* Change Password */}
+        <div className="modal-card p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-[var(--modal-text)]">Password</h3>
+            {!changingPassword && (
+              <Button variant="ghost" size="sm" onClick={() => setChangingPassword(true)} className="gap-1 text-[#400070] hover:text-[#5B00A0] h-8 px-2">
+                <Pencil className="w-3.5 h-3.5" /> Change
+              </Button>
+            )}
+          </div>
+
+          {passwordStatus === "success" && (
+            <div className="flex items-center gap-2 text-green-600 text-sm mb-2">
+              <CheckCircle2 className="w-4 h-4" /> Password updated successfully!
+            </div>
+          )}
+
+          {changingPassword ? (
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label className="text-[var(--modal-text-muted)]">Current Password</Label>
+                <Input
+                  type="password"
+                  value={passwordForm.current}
+                  onChange={e => setPasswordForm(p => ({ ...p, current: e.target.value }))}
+                  placeholder="Your current password"
+                  className="bg-white border-[var(--modal-border)]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[var(--modal-text-muted)]">New Password</Label>
+                <Input
+                  type="password"
+                  value={passwordForm.newPass}
+                  onChange={e => setPasswordForm(p => ({ ...p, newPass: e.target.value }))}
+                  placeholder="At least 8 characters"
+                  className="bg-white border-[var(--modal-border)]"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[var(--modal-text-muted)]">Confirm New Password</Label>
+                <Input
+                  type="password"
+                  value={passwordForm.confirm}
+                  onChange={e => setPasswordForm(p => ({ ...p, confirm: e.target.value }))}
+                  placeholder="Repeat new password"
+                  className="bg-white border-[var(--modal-border)]"
+                />
+              </div>
+              {passwordError && <p className="text-red-600 text-sm">{passwordError}</p>}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={passwordStatus === "saving"}
+                  className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2"
+                >
+                  {passwordStatus === "saving" ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  Update Password
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => { setChangingPassword(false); setPasswordForm({ current: "", newPass: "", confirm: "" }); setPasswordError(""); }}
+                  className="border-[var(--modal-border)]"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--modal-text-muted)]">••••••••••</p>
+          )}
+        </div>
+
         {/* Subscription — hidden on iOS and only shown when active */}
         {!isIosMode && subStatus?.isActive && (
         <div className="modal-card p-6">
