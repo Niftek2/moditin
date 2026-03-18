@@ -138,6 +138,7 @@ const DISTRICT_PLANS = [
 const USD_PLANS = [INDIVIDUAL_PLAN, ...DISTRICT_PLANS];
 
 export default function DistrictPricingPage() {
+  const [billingPeriod, setBillingPeriod] = useState("monthly");
   const [currency, setCurrency] = useState("USD");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [seats, setSeats] = useState(2);
