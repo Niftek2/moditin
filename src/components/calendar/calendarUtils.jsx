@@ -45,37 +45,32 @@ export function getEventsForDay(events, day) {
     .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
 }
 
-// travelBufferMinutes: optional override (used by SchedulerEngine); falls back to event's own driveTimeMinutes
-export function checkDriveConflict(events, newEvent, day, travelBufferMinutes) {
+export function checkDriveConflict(events, newEvent, day) {
   if (!["InPerson", "Hybrid"].includes(newEvent.setting)) return null;
+  if (!newEvent.driveTimeIncluded || !newEvent.driveTimeMinutes) return null;
 
-  const driveMinutes = travelBufferMinutes != null
-    ? travelBufferMinutes
-    : (newEvent.driveTimeIncluded ? newEvent.driveTimeMinutes : null);
-  if (!driveMinutes) return null;
+  const allDayEvents = getEventsForDay(events, day).filter(e => e.id !== newEvent.id);
 
-  const dayEvents = getEventsForDay(events, day).filter(e => e.id !== newEvent.id);
-
-  // Check PRIOR event (original direction)
-  const priorEvents = dayEvents.filter(e => new Date(e.endDateTime) <= new Date(newEvent.startDateTime));
+  // Prior event — last event that ends at or before newEvent starts
+  const priorEvents = allDayEvents.filter(e => new Date(e.endDateTime) <= new Date(newEvent.startDateTime));
   if (priorEvents.length > 0) {
     const prior = priorEvents[priorEvents.length - 1];
     if (["InPerson", "Hybrid"].includes(prior.setting)) {
-      const gapMinutes = Math.round((new Date(newEvent.startDateTime) - new Date(prior.endDateTime)) / 60000);
-      if (gapMinutes < driveMinutes) {
-        return { gapMinutes, driveMinutes, priorEvent: prior };
+      const gap = Math.round((new Date(newEvent.startDateTime) - new Date(prior.endDateTime)) / 60000);
+      if (gap < newEvent.driveTimeMinutes) {
+        return { gapMinutes: gap, driveMinutes: newEvent.driveTimeMinutes, priorEvent: prior, direction: "before" };
       }
     }
   }
 
-  // Check NEXT event (bi-directional addition)
-  const nextEvents = dayEvents.filter(e => new Date(e.startDateTime) >= new Date(newEvent.endDateTime));
+  // Next event — first event that starts at or after newEvent ends (bi-directional check)
+  const nextEvents = allDayEvents.filter(e => new Date(e.startDateTime) >= new Date(newEvent.endDateTime));
   if (nextEvents.length > 0) {
     const next = nextEvents[0];
     if (["InPerson", "Hybrid"].includes(next.setting)) {
-      const gapMinutes = Math.round((new Date(next.startDateTime) - new Date(newEvent.endDateTime)) / 60000);
-      if (gapMinutes < driveMinutes) {
-        return { gapMinutes, driveMinutes, priorEvent: next };
+      const gap = Math.round((new Date(next.startDateTime) - new Date(newEvent.endDateTime)) / 60000);
+      if (gap < newEvent.driveTimeMinutes) {
+        return { gapMinutes: gap, driveMinutes: newEvent.driveTimeMinutes, nextEvent: next, direction: "after" };
       }
     }
   }

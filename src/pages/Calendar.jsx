@@ -4,15 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { format, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, parseISO } from "date-fns";
 const _addDays = addDays;
 const _addMonths = addMonths;
-import { ChevronLeft, ChevronRight, CalendarDays, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, CalendarDays, Wand2 } from "lucide-react";
 import DayView from "../components/calendar/DayView";
 import WeekView from "../components/calendar/WeekView";
 import MonthView from "../components/calendar/MonthView";
 import EventForm from "../components/calendar/EventForm";
 import EventDetailModal from "../components/calendar/EventDetailModal";
 import DriveConflictModal from "../components/calendar/DriveConflictModal";
-import SchedulerEngine from "../components/calendar/SchedulerEngine";
+import SchedulerPanel from "../components/calendar/SchedulerPanel";
 import { checkDriveConflict, getEventsForDay } from "../components/calendar/calendarUtils";
 import { useDemo } from "../components/demo/DemoContext";
 
@@ -27,7 +26,7 @@ export default function CalendarPage() {
   const [formInitialDate, setFormInitialDate] = useState(null);
   const [driveConflict, setDriveConflict] = useState(null);
   const [pendingSave, setPendingSave] = useState(null);
-  const [showScheduler, setShowScheduler] = useState(false);
+  const [schedulerOpen, setSchedulerOpen] = useState(false);
 
   const qc = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
@@ -42,8 +41,10 @@ export default function CalendarPage() {
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: currentUser?.email }, "-startDateTime", 200),
     enabled: !!currentUser?.id && !isDemoMode,
   });
-  // Live view always filters out draft events
-  const events = (isDemoMode ? demoData.calendarEvents : eventsRaw).filter(e => !e.isDraft);
+  // Separate committed (live) vs draft events — only committed shown in main views
+  const allEvents     = isDemoMode ? demoData.calendarEvents : eventsRaw;
+  const events        = allEvents.filter(e => !e.isDraft);
+  const draftEvents   = allEvents.filter(e => e.isDraft);
 
   const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],
@@ -163,17 +164,19 @@ export default function CalendarPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <h1 className="text-2xl font-bold text-[var(--modal-text)]">Calendar</h1>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Beta: Intelligent Scheduler */}
+          {/* Beta Scheduler toggle */}
           {!isDemoMode && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setShowScheduler(true)}
-              className="gap-1.5 border-[#400070]/40 text-[#400070] hover:bg-[#EADDF5] text-xs"
+            <button
+              onClick={() => setSchedulerOpen(o => !o)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold transition-all border ${
+                schedulerOpen
+                  ? "bg-[#400070] text-white border-[#400070]"
+                  : "border-[#400070]/30 text-[#400070] hover:bg-[#EADDF5]"
+              }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              Beta: Open Scheduler
-            </Button>
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Beta: Open Scheduler</span>
+            </button>
           )}
 
           {/* View switcher */}
@@ -210,7 +213,7 @@ export default function CalendarPage() {
         {view === "Day" && (
           <DayView
             date={currentDate}
-            events={events}
+            events={[...events, ...draftEvents]}
             onEventClick={setSelectedEvent}
             onAddClick={(d) => { setFormInitialDate(d); setShowForm(true); }}
           />
@@ -218,7 +221,7 @@ export default function CalendarPage() {
         {view === "Week" && (
           <WeekView
             date={currentDate}
-            events={events}
+            events={[...events, ...draftEvents]}
             onEventClick={setSelectedEvent}
             onDayClick={(d) => { setCurrentDate(d); setView("Day"); }}
           />
@@ -226,7 +229,7 @@ export default function CalendarPage() {
         {view === "Month" && (
           <MonthView
             date={currentDate}
-            events={events}
+            events={[...events, ...draftEvents]}
             onDayClick={(d) => { setCurrentDate(d); setView("Day"); }}
           />
         )}
@@ -252,13 +255,12 @@ export default function CalendarPage() {
         />
       )}
 
-      {showScheduler && !isDemoMode && (
-        <SchedulerEngine
+      {schedulerOpen && !isDemoMode && (
+        <SchedulerPanel
           students={students}
           committedEvents={events}
           currentUser={currentUser}
-          onClose={() => setShowScheduler(false)}
-          onFinalized={() => qc.invalidateQueries({ queryKey: ["calendarEvents"] })}
+          onClose={() => setSchedulerOpen(false)}
         />
       )}
 
