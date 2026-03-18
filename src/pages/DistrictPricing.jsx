@@ -426,6 +426,20 @@ export default function DistrictPricingPage() {
 
               {selectedPlan.key !== "individual" && (
                 <div>
+                  <label htmlFor="institution-name" className="text-sm font-bold text-gray-700 mb-1.5 block">Institution Name</label>
+                  <Input id="institution-name" placeholder="e.g. Springfield USD, Regional DHH Program" value={institutionName} onChange={e => setInstitutionName(e.target.value)} />
+                </div>
+              )}
+
+              {selectedPlan.key !== "individual" && (
+                <div>
+                  <label htmlFor="institution-state" className="text-sm font-bold text-gray-700 mb-1.5 block">State / Province</label>
+                  <Input id="institution-state" placeholder="e.g. Kansas, Ontario" value={institutionState} onChange={e => setInstitutionState(e.target.value)} />
+                </div>
+              )}
+
+              {selectedPlan.key !== "individual" && (
+                <div>
                   <label className="text-sm font-bold text-gray-700 mb-1.5 block">
                     Number of Teacher Licenses
                     <span className="text-gray-400 font-normal ml-1">({selectedPlan.minSeats}–{selectedPlan.maxSeats})</span>
