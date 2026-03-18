@@ -88,6 +88,23 @@ export default function StudentDetailPage() {
     enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
+  const { data: iepMeetings = [] } = useQuery({
+    queryKey: ["iepMeetings", studentId, currentUserEmail, isDemoMode],
+    queryFn: async () => {
+      if (isDemoMode) return (demoData.calendarEvents || []).filter(e => e.studentId === studentId && e.eventType === "IEPMeeting");
+      return base44.entities.CalendarEvent.filter({ studentId, eventType: "IEPMeeting", created_by: currentUserEmail });
+    },
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
+  });
+
+  const now = new Date();
+  const nextIepMeeting = iepMeetings
+    .filter(e => new Date(e.startDateTime) >= now)
+    .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime))[0] || null;
+  const lastIepMeeting = iepMeetings
+    .filter(e => new Date(e.startDateTime) < now)
+    .sort((a, b) => new Date(b.startDateTime) - new Date(a.startDateTime))[0] || null;
+
   if (!isDemoMode && (!currentUserEmail || studentLoading)) {
     return <div className="text-center py-16 text-[var(--modal-text-muted)]">Loading...</div>;
   }
