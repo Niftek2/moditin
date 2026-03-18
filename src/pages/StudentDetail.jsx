@@ -295,8 +295,25 @@ export default function StudentDetailPage() {
               <p className="text-sm text-[var(--modal-text)]">{student.readingLevelBand || "—"}</p>
             </div>
             <div>
-              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">Annual Review</p>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">Annual Review Due</p>
               <p className="text-sm text-[var(--modal-text)]">{student.iepAnnualReviewDate || "—"}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">IEP Meeting Scheduled</p>
+              {nextIepMeeting ? (
+                <p className="text-sm text-[#400070] font-semibold">
+                  {new Date(nextIepMeeting.startDateTime).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                  {nextIepMeeting.title && nextIepMeeting.title !== "IEP Meeting" && (
+                    <span className="text-xs font-normal text-[var(--modal-text-muted)] ml-1">· {nextIepMeeting.title}</span>
+                  )}
+                </p>
+              ) : lastIepMeeting ? (
+                <p className="text-sm text-[var(--modal-text-muted)]">
+                  Last: {new Date(lastIepMeeting.startDateTime).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                </p>
+              ) : (
+                <p className="text-sm text-[var(--modal-text-muted)]">None scheduled</p>
+              )}
             </div>
             <div>
               <p className="text-xs text-[var(--modal-text-muted)] mb-1 font-semibold">ASL Focus</p>
