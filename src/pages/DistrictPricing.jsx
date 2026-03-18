@@ -145,6 +145,8 @@ export default function DistrictPricingPage() {
   const [emails, setEmails] = useState([""]);
   const [purchaserEmail, setPurchaserEmail] = useState("");
   const [purchaserName, setPurchaserName] = useState("");
+  const [institutionName, setInstitutionName] = useState("");
+  const [institutionState, setInstitutionState] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
