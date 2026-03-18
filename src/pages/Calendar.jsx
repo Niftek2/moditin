@@ -5,6 +5,7 @@ import { format, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, par
 const _addDays = addDays;
 const _addMonths = addMonths;
 import { ChevronLeft, ChevronRight, CalendarDays, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import DayView from "../components/calendar/DayView";
 import WeekView from "../components/calendar/WeekView";
 import MonthView from "../components/calendar/MonthView";
