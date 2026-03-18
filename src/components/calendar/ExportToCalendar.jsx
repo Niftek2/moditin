@@ -51,6 +51,32 @@ function getOutlookUrl(event) {
   return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 }
 
+// Named export: download a single .ics containing multiple committed events
+export function downloadBulkICS(events, filename = "schedule") {
+  const committed = events.filter(e => !e.isDraft);
+  if (committed.length === 0) return;
+
+  const vevents = committed.map(event => [
+    "BEGIN:VEVENT",
+    `UID:${event.id || Date.now() + Math.random()}@hearingitinerant`,
+    `DTSTART:${formatICSDate(event.startDateTime)}`,
+    `DTEND:${formatICSDate(event.endDateTime)}`,
+    `SUMMARY:${event.title}`,
+    event.locationLabel ? `LOCATION:${event.locationLabel}` : "",
+    event.notes ? `DESCRIPTION:${event.notes.replace(/\n/g, "\\n")}` : "",
+    "END:VEVENT",
+  ].filter(Boolean).join("\r\n")).join("\r\n");
+
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//HearingItinerantApp//EN", vevents, "END:VCALENDAR"].join("\r\n");
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function ExportToCalendar({ event, className = "" }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
