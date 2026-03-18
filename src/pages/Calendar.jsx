@@ -4,13 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { format, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, parseISO } from "date-fns";
 const _addDays = addDays;
 const _addMonths = addMonths;
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, Sparkles } from "lucide-react";
 import DayView from "../components/calendar/DayView";
 import WeekView from "../components/calendar/WeekView";
 import MonthView from "../components/calendar/MonthView";
 import EventForm from "../components/calendar/EventForm";
 import EventDetailModal from "../components/calendar/EventDetailModal";
 import DriveConflictModal from "../components/calendar/DriveConflictModal";
+import SchedulerEngine from "../components/calendar/SchedulerEngine";
 import { checkDriveConflict, getEventsForDay } from "../components/calendar/calendarUtils";
 import { useDemo } from "../components/demo/DemoContext";
 
@@ -25,6 +26,7 @@ export default function CalendarPage() {
   const [formInitialDate, setFormInitialDate] = useState(null);
   const [driveConflict, setDriveConflict] = useState(null);
   const [pendingSave, setPendingSave] = useState(null);
+  const [showScheduler, setShowScheduler] = useState(false);
 
   const qc = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
@@ -39,7 +41,8 @@ export default function CalendarPage() {
     queryFn: () => base44.entities.CalendarEvent.filter({ created_by: currentUser?.email }, "-startDateTime", 200),
     enabled: !!currentUser?.id && !isDemoMode,
   });
-  const events = isDemoMode ? demoData.calendarEvents : eventsRaw;
+  // Live view always filters out draft events
+  const events = (isDemoMode ? demoData.calendarEvents : eventsRaw).filter(e => !e.isDraft);
 
   const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", currentUser?.email],
@@ -159,6 +162,19 @@ export default function CalendarPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <h1 className="text-2xl font-bold text-[var(--modal-text)]">Calendar</h1>
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Beta: Intelligent Scheduler */}
+          {!isDemoMode && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowScheduler(true)}
+              className="gap-1.5 border-[#400070]/40 text-[#400070] hover:bg-[#EADDF5] text-xs"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              Beta: Open Scheduler
+            </Button>
+          )}
+
           {/* View switcher */}
           <div className="flex bg-[#F7F3FA] rounded-xl p-1 border border-[var(--modal-border)]">
             {VIEWS.map(v => (
@@ -232,6 +248,16 @@ export default function CalendarPage() {
           onClose={() => setSelectedEvent(null)}
           onEdit={(e) => { setEditingEvent(e); setSelectedEvent(null); setShowForm(true); }}
           onDelete={(e) => { if (confirm("Delete this event?")) deleteEvent.mutate(e.id); }}
+        />
+      )}
+
+      {showScheduler && !isDemoMode && (
+        <SchedulerEngine
+          students={students}
+          committedEvents={events}
+          currentUser={currentUser}
+          onClose={() => setShowScheduler(false)}
+          onFinalized={() => qc.invalidateQueries({ queryKey: ["calendarEvents"] })}
         />
       )}
 
