@@ -12,6 +12,8 @@ Deno.serve(async (req) => {
       teacherEmails,
       purchaserEmail,
       purchaserName,
+      institutionName,
+      institutionState,
       planName,
       trialDays,
       currency,
@@ -23,7 +25,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    console.log(`District checkout: ${planName} | ${quantity} seats | purchaser: ${purchaserEmail}`);
+    console.log(`District checkout: ${planName} | ${quantity} seats | purchaser: ${purchaserEmail} | institution: ${institutionName}, ${institutionState}`);
 
     // Find or create Stripe customer
     const existingCustomers = await stripe.customers.list({ email: purchaserEmail, limit: 1 });
@@ -53,6 +55,8 @@ Deno.serve(async (req) => {
           teacher_emails: teacherEmailsStr,
           purchaser_email: purchaserEmail,
           purchaser_name: purchaserName,
+          institution_name: institutionName || '',
+          institution_state: institutionState || '',
           quantity: String(quantity || 1),
           currency,
           trial_days: String(trialDays || 14),
@@ -66,6 +70,8 @@ Deno.serve(async (req) => {
         plan_name: planName,
         purchaser_email: purchaserEmail,
         purchaser_name: purchaserName || '',
+        institution_name: institutionName || '',
+        institution_state: institutionState || '',
         teacher_emails: teacherEmailsStr,
         quantity: String(quantity || 1),
         trial_days: String(trialDays || 14),
