@@ -256,7 +256,7 @@ export default function CalendarPage() {
       )}
 
       {schedulerOpen && !isDemoMode && (
-        <SchedulerPanel
+        <SchedulerWizard
           students={students}
           committedEvents={events}
           currentUser={currentUser}
