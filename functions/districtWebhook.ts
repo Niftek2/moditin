@@ -25,6 +25,8 @@ Deno.serve(async (req) => {
     const teacherEmails = JSON.parse(metadata.teacher_emails || '[]');
     const purchaserEmail = metadata.purchaser_email || '';
     const purchaserName = metadata.purchaser_name || '';
+    const institutionName = metadata.institution_name || '';
+    const institutionState = metadata.institution_state || '';
     const planName = metadata.plan_name || 'Modal Itinerant';
     const trialDays = parseInt(metadata.trial_days || '14');
     const quantity = parseInt(metadata.quantity || '1');
@@ -84,7 +86,8 @@ Deno.serve(async (req) => {
           }
 
           const districtRecord = await base44.asServiceRole.entities.District.create({
-            districtName: `${purchaserName}'s District`,
+            districtName: institutionName || `${purchaserName}'s District`,
+            institutionState,
             managerUserId: purchaserUserId || '',
             managerEmail: purchaserEmail,
             planName,
