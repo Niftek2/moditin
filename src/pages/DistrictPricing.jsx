@@ -220,6 +220,8 @@ export default function DistrictPricingPage() {
           teacherEmails: emails,
           purchaserEmail,
           purchaserName,
+          institutionName,
+          institutionState,
           planName: selectedPlan.name,
           trialDays: selectedPlan.trialDays,
           currency,
