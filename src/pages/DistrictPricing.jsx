@@ -187,6 +187,10 @@ export default function DistrictPricingPage() {
       setError("Please enter your name and email.");
       return;
     }
+    if (selectedPlan.key !== "individual" && (!institutionName || !institutionState)) {
+      setError("Please enter your institution name and state.");
+      return;
+    }
     if (selectedPlan.key !== "individual" && emails.some(e => !e || !e.includes("@"))) {
       setError("Please enter a valid email address for each teacher license.");
       return;
