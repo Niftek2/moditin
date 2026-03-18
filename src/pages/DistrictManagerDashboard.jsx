@@ -153,9 +153,9 @@ export default function DistrictManagerDashboard() {
     setAddLoading(true);
     try {
       await base44.users.inviteUser(newEmail, "user");
-      await new Promise(r => setTimeout(r, 1500));
       await base44.functions.invoke("assignTeacherToDistrict", {
         teacherEmail: newEmail,
+        teacherName: newName.trim(),
         districtId: district.id,
       });
       setAddSuccess(true);
@@ -392,7 +392,7 @@ export default function DistrictManagerDashboard() {
             {addError && <p className="text-red-600 text-sm" role="alert">{addError}</p>}
             {addSuccess && (
               <p className="text-green-600 text-sm flex items-center gap-1">
-                <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with login instructions.
+                <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with their temporary password.
               </p>
             )}
             <Button
@@ -459,7 +459,7 @@ export default function DistrictManagerDashboard() {
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <h3 id="remove-dialog-title" className="text-lg font-bold text-gray-900 mb-2">Remove Teacher?</h3>
             <p className="text-gray-600 text-sm mb-1"><strong>{confirmRemove.email}</strong> will lose access immediately.</p>
-            <p className="text-gray-500 text-sm mb-5">Their account and data will be retained for 30 days.</p>
+            <p className="text-gray-500 text-sm mb-5">They will receive an email notification. Their account will be deactivated right away.</p>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setConfirmRemove(null)} disabled={removeLoading}>Cancel</Button>
               <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white" onClick={() => handleRemoveTeacher(confirmRemove)} disabled={removeLoading}>
