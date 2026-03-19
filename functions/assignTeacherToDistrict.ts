@@ -36,7 +36,6 @@ Deno.serve(async (req) => {
       });
       console.log(`Updated existing user ${teacherEmail} with district ${districtId}`);
 
-      // Send welcome email — works because user is already registered
       const emailBody = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -45,7 +44,7 @@ Deno.serve(async (req) => {
     <tr><td align="center">
       <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
         <tr>
-          <td style="background:linear-gradient(135deg,#400070 0%,#6B21A8 100%);padding:32px 40px;text-align:center;">
+          <td style="background:#400070;padding:32px 40px;text-align:center;">
             <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.7);text-transform:uppercase;">Modal Education</p>
             <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your license is active!</h1>
             <p style="margin:8px 0 0;font-size:15px;color:rgba(255,255,255,0.85);">${districtName} has activated your Modal Itinerant license</p>
@@ -54,7 +53,7 @@ Deno.serve(async (req) => {
         <tr>
           <td style="padding:32px 40px;">
             <p style="margin:0 0 20px;font-size:16px;color:#1a0028;line-height:1.6;">Hi ${displayName},</p>
-            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has activated a full license to <strong style="color:#400070;">Modal Itinerant</strong> for you. Your account is ready to go — just log in with your existing credentials.</p>
+            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has activated a full license to <strong style="color:#400070;">Modal Itinerant</strong> for you. Just log in with your existing credentials.</p>
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
               <tr><td align="center">
                 <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;">Log In to Modal Itinerant →</a>
@@ -79,10 +78,10 @@ Deno.serve(async (req) => {
         subject: `Your Modal Itinerant license is active — log in now`,
         body: emailBody,
       });
-
       console.log(`Sent welcome email to existing user ${teacherEmail}`);
+
     } else {
-      // New user — create a pending assignment so district is applied when they register
+      // New user — create pending assignment so district is applied when they register
       const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
       for (const ep of existingPending) {
         await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
@@ -96,13 +95,14 @@ Deno.serve(async (req) => {
       });
       console.log(`Created PendingTeacherAssignment for new user ${teacherEmail}`);
 
-      // For new users, use platform inviteUser — this is the only way to email unregistered addresses
-      await base44.asServiceRole.users.inviteUser(teacherEmail, 'user');
+      // Invite the user via the platform (correct API — not asServiceRole)
+      await base44.users.inviteUser(teacherEmail, 'user');
       console.log(`Sent platform invite to new user ${teacherEmail}`);
     }
 
     console.log(`assignTeacherToDistrict complete: ${teacherEmail} → district ${districtId} (existing: ${isExisting})`);
     return Response.json({ success: true, isNewUser: !isExisting });
+
   } catch (error) {
     console.error('assignTeacherToDistrict error:', error);
     return Response.json({ error: error.message }, { status: 500 });
