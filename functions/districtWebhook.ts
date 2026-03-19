@@ -224,8 +224,30 @@ Deno.serve(async (req) => {
     try {
       const districts = await base44.asServiceRole.entities.District.filter({ stripeCustomerId });
       if (districts.length > 0) {
-        await base44.asServiceRole.entities.District.update(districts[0].id, { status: 'canceled' });
-        console.log(`District ${districts[0].id} marked as canceled`);
+        const d = districts[0];
+        await base44.asServiceRole.entities.District.update(d.id, { status: 'canceled' });
+        console.log(`District ${d.id} marked as canceled`);
+        // Admin cancellation notification
+        try {
+          await base44.asServiceRole.integrations.Core.SendEmail({
+            to: 'nadiajiftekhar@gmail.com',
+            subject: `❌ Cancellation: ${d.data?.planName || 'District'} — ${d.data?.managerEmail || stripeCustomerId}`,
+            body: `<div style="font-family:Arial,sans-serif;color:#1a1028;background:#fff;padding:24px;max-width:600px">
+<h2 style="color:#b91c1c">Subscription Canceled</h2>
+<table style="width:100%;border-collapse:collapse;font-size:15px">
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070;width:160px">District ID</td><td style="padding:8px 0">${d.id}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">District Name</td><td style="padding:8px 0">${d.data?.districtName || '(unknown)'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Manager Email</td><td style="padding:8px 0">${d.data?.managerEmail || '(unknown)'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Plan</td><td style="padding:8px 0">${d.data?.planName || '(unknown)'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Seats</td><td style="padding:8px 0">${d.data?.licensedTeacherCount || '(unknown)'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Stripe Customer ID</td><td style="padding:8px 0">${stripeCustomerId}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Stripe Sub ID</td><td style="padding:8px 0">${sub.id}</td></tr>
+</table>
+</div>`,
+          });
+        } catch (e2) {
+          console.error('Failed to send admin cancellation notification:', e2.message);
+        }
       }
     } catch (e) {
       console.error('Failed to update district on subscription delete:', e.message);
