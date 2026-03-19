@@ -178,7 +178,6 @@ export default function DistrictManagerDashboard() {
     }
     setAddLoading(true);
     try {
-      await base44.users.inviteUser(newEmail, "user");
       await base44.functions.invoke("assignTeacherToDistrict", {
         teacherEmail: newEmail,
         teacherName: newName.trim(),
