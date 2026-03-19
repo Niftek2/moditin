@@ -139,6 +139,8 @@ const DISTRICT_PLANS = [
 const USD_PLANS = [INDIVIDUAL_PLAN, ...DISTRICT_PLANS];
 
 export default function DistrictPricingPage() {
+  const navigate = useNavigate();
+  const errorRef = useRef(null);
   const [billingPeriod, setBillingPeriod] = useState("monthly");
   const [currency, setCurrency] = useState("USD");
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -186,10 +188,12 @@ export default function DistrictPricingPage() {
     }
     if (!purchaserEmail || !purchaserName) {
       setError("Please enter your name and email.");
+      setTimeout(() => errorRef.current?.focus(), 50);
       return;
     }
     if (selectedPlan.key !== "individual" && (!institutionName || !institutionState)) {
       setError("Please enter your institution name and state.");
+      setTimeout(() => errorRef.current?.focus(), 50);
       return;
     }
     if (selectedPlan.key !== "individual" && emails.some(e => !e || !e.includes("@"))) {
@@ -248,9 +252,12 @@ export default function DistrictPricingPage() {
       <div className="text-center pt-14 pb-10 px-4">
         {/* Back + Sign In row */}
         <div className="flex items-center justify-between max-w-6xl mx-auto mb-8">
-          <Link to="/Join" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+          <button
+            onClick={() => window.history.length > 1 ? navigate(-1) : navigate(createPageUrl("Join"))}
+            className="flex items-center gap-1.5 text-white/85 hover:text-white text-sm transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" /> Back
-          </Link>
+          </button>
           <button
             onClick={() => base44.auth.redirectToLogin("/Dashboard")}
             className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
@@ -418,11 +425,11 @@ export default function DistrictPricingPage() {
             <div className="p-6 space-y-5">
               <div>
                 <label htmlFor="purchaser-name" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
-                <Input id="purchaser-name" placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} autoComplete="name" />
+                <Input id="purchaser-name" placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} autoComplete="name" aria-invalid={!!error && !purchaserName} />
                 </div>
                 <div>
                 <label htmlFor="purchaser-email" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
-                <Input id="purchaser-email" type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} autoComplete="email" />
+                <Input id="purchaser-email" type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} autoComplete="email" aria-invalid={!!error && !purchaserEmail} />
               </div>
 
               {selectedPlan.key !== "individual" && (
@@ -500,7 +507,7 @@ export default function DistrictPricingPage() {
                 </p>
               </div>
 
-              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2" role="alert">{error}</p>}
+              {error && <p ref={errorRef} tabIndex={-1} className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2" role="alert">{error}</p>}
 
               <Button
                 onClick={handleCheckout}

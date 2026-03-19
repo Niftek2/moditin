@@ -105,6 +105,8 @@ const DISTRICT_PLANS = [
 ];
 
 export default function SchoolsDistrictsPage() {
+  const navigate = useNavigate();
+  const errorRef = useRef(null);
   const [currency, setCurrency] = useState("USD");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [seats, setSeats] = useState(2);
@@ -139,6 +141,7 @@ export default function SchoolsDistrictsPage() {
     }
     if (!purchaserEmail || !purchaserName) {
       setError("Please enter your name and email.");
+      setTimeout(() => errorRef.current?.focus(), 50);
       return;
     }
     setLoading(true);
@@ -173,9 +176,12 @@ export default function SchoolsDistrictsPage() {
       {/* Header */}
       <div className="max-w-6xl mx-auto px-4 pt-10 pb-8">
         <div className="flex items-center justify-between mb-10">
-          <Link to="/DistrictPricing" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+          <button
+            onClick={() => window.history.length > 1 ? navigate(-1) : navigate(createPageUrl("Join"))}
+            className="flex items-center gap-1.5 text-white/85 hover:text-white text-sm transition-colors"
+          >
             <ArrowLeft className="w-4 h-4" /> Back to pricing
-          </Link>
+          </button>
           <button
             onClick={() => base44.auth.redirectToLogin("/Dashboard")}
             className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
@@ -288,11 +294,11 @@ export default function SchoolsDistrictsPage() {
             <div className="p-6 space-y-5">
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
-                <Input placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} />
+                <Input placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} aria-invalid={!!error && !purchaserName} />
               </div>
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
-                <Input type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} />
+                <Input type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} aria-invalid={!!error && !purchaserEmail} />
               </div>
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">
@@ -321,7 +327,7 @@ export default function SchoolsDistrictsPage() {
                 </div>
                 <p className="text-xs text-green-600 mt-1 font-medium">✓ No charge for {selectedPlan.trialDays} days</p>
               </div>
-              {error && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</p>}
+              {error && <p ref={errorRef} tabIndex={-1} className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2" role="alert">{error}</p>}
               <Button
                 onClick={handleCheckout}
                 disabled={loading}

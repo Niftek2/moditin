@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { base44 } from '@/api/base44Client';
 
 const UserNotRegisteredError = () => {
+  const [managerEmail, setManagerEmail] = useState(null);
+
+  useEffect(() => {
+    base44.functions.invoke("getAppPublicSettings").then(res => {
+      setManagerEmail(res?.data?.managerEmail || res?.data?.supportEmail || null);
+    }).catch(() => {});
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-slate-50">
       <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg border border-slate-100">
@@ -11,9 +20,17 @@ const UserNotRegisteredError = () => {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-4">Access Restricted</h1>
-          <p className="text-slate-600 mb-8">
+          <p className="text-slate-600 mb-6">
             You are not registered to use this application. Please contact the app administrator to request access.
           </p>
+          {managerEmail && (
+            <a
+              href={`mailto:${managerEmail}?subject=Access Request - Modal Itinerant`}
+              className="inline-flex items-center justify-center w-full mb-4 px-4 py-2 bg-[#400070] text-white rounded-lg text-sm font-semibold hover:bg-[#5B00A0] transition-colors"
+            >
+              Contact District Manager
+            </a>
+          )}
           <div className="p-4 bg-slate-50 rounded-md text-sm text-slate-600">
             <p>If you believe this is an error, you can:</p>
             <ul className="list-disc list-inside mt-2 space-y-1">
