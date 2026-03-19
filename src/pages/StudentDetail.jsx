@@ -20,6 +20,7 @@ import AudiologySnapshotView from "../components/audiology/AudiologySnapshotView
 import StudentInteractiveHistory from "../components/interactive/StudentInteractiveHistory";
 import ActivityHistory from "../components/labeling/ActivityHistory";
 import GoalBankModal from "../components/goalbank/GoalBankModal";
+import GoalProgressTracker from "../components/goals/GoalProgressTracker";
 import StudentContactsSection from "../components/students/StudentContactsSection";
 import StudentScheduleSection from "../components/students/StudentScheduleSection";
 import { useDemo } from "../components/demo/DemoContext";
