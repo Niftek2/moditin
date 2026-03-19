@@ -155,7 +155,7 @@ export default function DistrictManagerDashboard() {
       window.history.replaceState({}, "", url.toString());
       return;
     }
-    if (retryCount >= 6 || loading) return;
+    if (retryCount >= 6) return;
     const t = setTimeout(() => {
       setRetryCount(r => r + 1);
     }, 3000);
