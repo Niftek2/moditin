@@ -9,8 +9,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { teacherId, districtId } = await req.json();
-    if (!teacherId || !districtId) return Response.json({ error: 'Missing fields' }, { status: 400 });
+    const { teacherId, districtId, pendingAssignmentId } = await req.json();
+    if (!districtId) return Response.json({ error: 'Missing fields' }, { status: 400 });
+
+    // Handle removing a pending (not-yet-registered) assignment
+    if (pendingAssignmentId) {
+      if (user.role === 'manager') {
+        const districts = await base44.asServiceRole.entities.District.filter({ id: districtId, managerEmail: user.email });
+        if (districts.length === 0) return Response.json({ error: 'Forbidden' }, { status: 403 });
+      }
+      await base44.asServiceRole.entities.PendingTeacherAssignment.update(pendingAssignmentId, { status: 'applied' });
+      console.log(`Cancelled pending assignment ${pendingAssignmentId}`);
+      return Response.json({ success: true });
+    }
+
+    if (!teacherId) return Response.json({ error: 'Missing fields' }, { status: 400 });
 
     // Verify manager owns this district
     if (user.role === 'manager') {
