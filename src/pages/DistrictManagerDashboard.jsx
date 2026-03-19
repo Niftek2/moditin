@@ -47,6 +47,10 @@ export default function DistrictManagerDashboard() {
   const [confirmRemove, setConfirmRemove] = useState(null);
   const [removeLoading, setRemoveLoading] = useState(false);
 
+  // Resend invite
+  const [resendingId, setResendingId] = useState(null);
+  const [resendSuccess, setResendSuccess] = useState(null);
+
   // Billing portal
   const [portalLoading, setPortalLoading] = useState(false);
 
