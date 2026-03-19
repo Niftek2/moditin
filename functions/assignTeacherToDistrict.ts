@@ -29,58 +29,82 @@ Deno.serve(async (req) => {
     }
     const district = districts[0];
     const districtName = district.districtName || 'your district';
-    const displayName = teacherName || 'Colleague';
-    const loginUrl = 'https://run.base44.com/apps/6998a9f042c4eb98ea121183/Join';
+    const displayName = teacherName || 'Teacher';
+    const loginUrl = 'https://modaleducation.com/app';
 
-    // Try to find an already-registered user
+    const tempPassword = generateTempPassword();
+
+    // Check if user already exists
     const found = await base44.asServiceRole.entities.User.filter({ email: teacherEmail });
 
     if (found.length > 0) {
-      // User already exists — assign directly
-      const teacherUser = found[0];
-      const tempPassword = generateTempPassword();
-
-      await base44.asServiceRole.entities.User.update(teacherUser.id, {
+      // Existing user — update district info and temp password
+      await base44.asServiceRole.entities.User.update(found[0].id, {
         districtId,
         districtStatus: 'active',
         tempPassword,
         role: 'user',
       });
-
-      // Clean up any pending assignment for this email+district
-      const pending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId });
-      for (const p of pending) {
-        await base44.asServiceRole.entities.PendingTeacherAssignment.update(p.id, { status: 'applied' });
+    } else {
+      // New user — invite them via the platform so they can log in
+      await base44.users.inviteUser(teacherEmail, 'user');
+      // Store a pending assignment so their district is applied when they first log in
+      const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
+      for (const ep of existingPending) {
+        await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
       }
-
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: teacherEmail,
-        subject: `You've been added to ${districtName} on Modal Itinerant`,
-        body: `Hi ${displayName},\n\nYour administrator at ${districtName} has added you to Modal Itinerant.\n\nYour account is active. Sign in here: ${loginUrl}\n\nTemporary password: ${tempPassword}\n\nAfter signing in, go to Settings → Change Password to update your password.\n\n—\nThe Modal Itinerant Team`.trim(),
+      await base44.asServiceRole.entities.PendingTeacherAssignment.create({
+        teacherEmail,
+        teacherName: displayName,
+        districtId,
+        districtName,
+        status: 'pending',
+        tempPassword,
       });
-
-      console.log(`Directly assigned ${teacherEmail} to district ${districtId}`);
-      return Response.json({ assigned: true, emailSent: true });
     }
 
-    // User not yet registered — store a pending assignment and send platform invite
-    const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
-    for (const ep of existingPending) {
-      await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
-    }
+    // Send a single, clear welcome email with step-by-step instructions
+    const emailBody = [
+      `Hi ${displayName},`,
+      ``,
+      `Great news — ${districtName} has set up a Modal Itinerant account for you!`,
+      ``,
+      `Modal Itinerant is the tool your district uses to manage student caseloads, IEP goals, service logs, and more.`,
+      ``,
+      `━━━━━━━━━━━━━━━━━━━━`,
+      `HOW TO LOG IN`,
+      `━━━━━━━━━━━━━━━━━━━━`,
+      ``,
+      `Step 1 — Go to this website:`,
+      `${loginUrl}`,
+      ``,
+      `Step 2 — Click "Sign In"`,
+      ``,
+      `Step 3 — Enter your email address:`,
+      `${teacherEmail}`,
+      ``,
+      `Step 4 — Enter your temporary password:`,
+      `${tempPassword}`,
+      ``,
+      `Step 5 — Once you're in, go to Settings (top right corner) and choose a new password you'll remember.`,
+      ``,
+      `━━━━━━━━━━━━━━━━━━━━`,
+      ``,
+      `Your district license is already active — you have full access right away.`,
+      ``,
+      `If you run into any trouble logging in, just reply to this email and we'll help you out.`,
+      ``,
+      `— The Modal Itinerant Team`,
+    ].join('\n');
 
-    await base44.asServiceRole.entities.PendingTeacherAssignment.create({
-      teacherEmail,
-      teacherName: displayName,
-      districtId,
-      districtName,
-      status: 'pending',
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: teacherEmail,
+      subject: `Your Modal Itinerant account is ready — here's how to log in`,
+      body: emailBody,
     });
 
-    // The frontend will call base44.users.inviteUser() to send the platform invite email
-    // which creates their account and lets them set their own password.
-    console.log(`Created pending assignment for ${teacherEmail} to district ${districtId}`);
-    return Response.json({ assigned: false, pending: true });
+    console.log(`Assigned ${teacherEmail} to district ${districtId} (existing: ${found.length > 0})`);
+    return Response.json({ success: true, emailSent: true, isNewUser: found.length === 0 });
   } catch (error) {
     console.error('assignTeacherToDistrict error:', error);
     return Response.json({ error: error.message }, { status: 500 });
