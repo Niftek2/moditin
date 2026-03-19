@@ -8,8 +8,8 @@ import { createPageUrl } from "../utils";
 import {
   ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap, FileText, Download
 } from "lucide-react";
-import StudentAccommodationsTab from "../components/students/StudentAccommodationsTab";
-import StudentExportsTab from "../components/students/StudentExportsTab";
+import StudentAccommodationsTab from "@/components/students/StudentAccommodationsTab";
+import StudentExportsTab from "@/components/students/StudentExportsTab";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import PageHeader from "../components/shared/PageHeader";
 import Ling6SessionHistory from "../components/ling6/Ling6SessionHistory";
