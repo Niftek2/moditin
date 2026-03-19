@@ -134,9 +134,9 @@ export default function DistrictManagerDashboard() {
       const teacherRes = await base44.functions.invoke("getDistrictTeachers", { districtId: d.id });
       const allTeachers = teacherRes.data?.teachers || [];
       setTeachers(allTeachers.filter(t => t.id !== me.id));
+      setLoading(false);
     } catch (e) {
       setError(e.message || "Failed to load district data.");
-    } finally {
       setLoading(false);
     }
   }, [retryCount, isCheckoutSuccess]);
