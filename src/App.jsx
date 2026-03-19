@@ -42,6 +42,11 @@ const AuthenticatedApp = () => {
     }
   }
 
+  // Immediately redirect managers before any other page renders
+  if (user?.role === 'manager' && window.location.pathname !== '/DistrictManagerDashboard') {
+    return <Navigate to="/DistrictManagerDashboard" replace />;
+  }
+
   // Render the main app
   return (
     <Routes>
