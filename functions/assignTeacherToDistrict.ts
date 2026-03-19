@@ -77,6 +77,13 @@ Deno.serve(async (req) => {
       status: 'pending',
     });
 
+    // Send a branded welcome email explaining why they're getting an invite
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: teacherEmail,
+      subject: `You've been invited to Modal Itinerant by ${districtName}`,
+      body: `Hi ${displayName},\n\nYour administrator at ${districtName} has invited you to Modal Itinerant — a platform built for itinerant teachers of the Deaf and Hard of Hearing.\n\nYou'll receive a separate email momentarily with a link to set up your account and create your password.\n\nOnce you've signed in, your district license will be automatically applied and you'll have full access.\n\nIf you have any questions, contact your district administrator or reach us at support@modaleducation.com.\n\n—\nThe Modal Itinerant Team`.trim(),
+    });
+
     console.log(`Created pending assignment for ${teacherEmail} to district ${districtId}`);
     return Response.json({ assigned: false, pending: true, emailSent: true });
   } catch (error) {
