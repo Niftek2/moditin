@@ -1,14 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
-function generateTempPassword() {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result.slice(0, 3) + '-' + result.slice(3, 6) + '-' + result.slice(6);
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -30,25 +21,22 @@ Deno.serve(async (req) => {
     const district = districts[0];
     const districtName = district.districtName || 'your district';
     const displayName = teacherName || 'Teacher';
-    const loginUrl = 'https://modaleducation.com/app';
-
-    const tempPassword = generateTempPassword();
+    const loginUrl = 'https://itinerant.modaleducation.com';
 
     // Check if user already exists
     const found = await base44.asServiceRole.entities.User.filter({ email: teacherEmail });
 
     if (found.length > 0) {
-      // Existing user — update district info and temp password
+      // Existing user — update district info directly
       await base44.asServiceRole.entities.User.update(found[0].id, {
         districtId,
         districtStatus: 'active',
-        tempPassword,
         role: 'user',
       });
+      console.log(`Updated existing user ${teacherEmail} with district ${districtId}`);
     } else {
-      // New user — invite them via the platform so they can log in
-      await base44.users.inviteUser(teacherEmail, 'user');
-      // Store a pending assignment so their district is applied when they first log in
+      // New user — create a pending assignment; district will be applied when they sign up
+      // Cancel any existing pending assignments for this email+district
       const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
       for (const ep of existingPending) {
         await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
@@ -59,10 +47,12 @@ Deno.serve(async (req) => {
         districtId,
         districtName,
         status: 'pending',
-        tempPassword,
       });
+      console.log(`Created PendingTeacherAssignment for new user ${teacherEmail}`);
     }
 
+    // Send ONE clear welcome email
+    const isExisting = found.length > 0;
     const emailBody = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -71,25 +61,22 @@ Deno.serve(async (req) => {
     <tr><td align="center">
       <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 
-        <!-- Header -->
         <tr>
           <td style="background:linear-gradient(135deg,#400070 0%,#6B21A8 100%);padding:32px 40px;text-align:center;">
             <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.7);text-transform:uppercase;">Modal Education</p>
-            <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your account is ready</h1>
-            <p style="margin:8px 0 0;font-size:15px;color:rgba(255,255,255,0.85);">${districtName} has set you up on Modal Itinerant</p>
+            <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">You've been added to Modal Itinerant</h1>
+            <p style="margin:8px 0 0;font-size:15px;color:rgba(255,255,255,0.85);">${districtName} has activated your license</p>
           </td>
         </tr>
 
-        <!-- Body -->
         <tr>
           <td style="padding:32px 40px;">
             <p style="margin:0 0 20px;font-size:16px;color:#1a0028;line-height:1.6;">Hi ${displayName},</p>
-            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Modal Itinerant is the tool your district uses to manage student caseloads, IEP goals, service logs, and more. Your license is <strong style="color:#400070;">already active</strong> — you have full access right away.</p>
+            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has set you up with a full license to <strong style="color:#400070;">Modal Itinerant</strong> — a tool for managing student caseloads, IEP goals, service logs, and more. ${isExisting ? "Your account is ready to go." : "Here's how to get started:"}</p>
 
-            <!-- Steps -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:10px;padding:24px 28px;margin-bottom:28px;">
               <tr><td>
-                <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:1px;color:#400070;text-transform:uppercase;">How to log in</p>
+                <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:1px;color:#400070;text-transform:uppercase;">${isExisting ? 'How to log in' : 'How to create your account'}</p>
 
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
                   <tr>
@@ -97,7 +84,7 @@ Deno.serve(async (req) => {
                       <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">1</div>
                     </td>
                     <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      Go to <a href="${loginUrl}" style="color:#400070;font-weight:600;text-decoration:underline;">${loginUrl}</a>
+                      Go to <a href="${loginUrl}" style="color:#400070;font-weight:700;text-decoration:underline;">${loginUrl}</a>
                     </td>
                   </tr>
                 </table>
@@ -107,29 +94,11 @@ Deno.serve(async (req) => {
                     <td valign="top" style="width:32px;padding-right:12px;">
                       <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">2</div>
                     </td>
-                    <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">Click <strong>"Sign In"</strong></td>
-                  </tr>
-                </table>
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-                  <tr>
-                    <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">3</div>
-                    </td>
                     <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      Enter your email: <strong style="color:#400070;">${teacherEmail}</strong>
-                    </td>
-                  </tr>
-                </table>
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-                  <tr>
-                    <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">4</div>
-                    </td>
-                    <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      Enter your temporary password:
-                      <div style="margin-top:8px;display:inline-block;background:#ffffff;border:2px solid #d8b4fe;border-radius:8px;padding:10px 18px;font-size:18px;font-weight:700;font-family:monospace;letter-spacing:2px;color:#400070;">${tempPassword}</div>
+                      ${isExisting
+                        ? 'Click <strong>"Sign In"</strong> and enter your email and password'
+                        : 'Click <strong>"Sign Up"</strong> and create your account using this email address: <strong style="color:#400070;">' + teacherEmail + '</strong>'
+                      }
                     </td>
                   </tr>
                 </table>
@@ -137,28 +106,29 @@ Deno.serve(async (req) => {
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">5</div>
+                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">3</div>
                     </td>
                     <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      Once you're in, go to <strong>Settings</strong> (top right corner) and set a new password you'll remember.
+                      ${isExisting
+                        ? 'Your district license is already applied — you\'re all set!'
+                        : 'Once you create your account, your district license will be <strong>automatically applied</strong> — no extra steps needed.'
+                      }
                     </td>
                   </tr>
                 </table>
               </td></tr>
             </table>
 
-            <!-- CTA Button -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
               <tr><td align="center">
-                <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;">Log In to Modal Itinerant →</a>
+                <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;">${isExisting ? 'Log In to Modal Itinerant →' : 'Create My Account →'}</a>
               </td></tr>
             </table>
 
-            <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">Having trouble? Just reply to this email and we'll help you out.</p>
+            <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">Having trouble? Reply to this email and we'll help you out.</p>
           </td>
         </tr>
 
-        <!-- Footer -->
         <tr>
           <td style="background:#f9f5ff;padding:20px 40px;text-align:center;border-top:1px solid #ede9f6;">
             <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Modal Education, LLC · <a href="https://modaleducation.com" style="color:#400070;text-decoration:none;">modaleducation.com</a></p>
@@ -173,12 +143,14 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: teacherEmail,
-      subject: `Your Modal Itinerant account is ready — here's how to log in`,
+      subject: isExisting
+        ? `Your Modal Itinerant license is active — log in now`
+        : `You've been added to Modal Itinerant — create your account`,
       body: emailBody,
     });
 
-    console.log(`Assigned ${teacherEmail} to district ${districtId} (existing: ${found.length > 0})`);
-    return Response.json({ success: true, emailSent: true, isNewUser: found.length === 0 });
+    console.log(`Assigned ${teacherEmail} to district ${districtId} (existing user: ${isExisting}), email sent.`);
+    return Response.json({ success: true, emailSent: true, isNewUser: !isExisting });
   } catch (error) {
     console.error('assignTeacherToDistrict error:', error);
     return Response.json({ error: error.message }, { status: 500 });
