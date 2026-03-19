@@ -178,11 +178,15 @@ export default function DistrictManagerDashboard() {
     }
     setAddLoading(true);
     try {
-      await base44.functions.invoke("assignTeacherToDistrict", {
+      const res = await base44.functions.invoke("assignTeacherToDistrict", {
         teacherEmail: newEmail,
         teacherName: newName.trim(),
         districtId: district.id,
       });
+      // If user not yet registered, send platform invite from the client
+      if (res.data?.pending) {
+        await base44.users.inviteUser(newEmail, "user");
+      }
       setAddSuccess(true);
       setNewEmail("");
       setNewName("");
