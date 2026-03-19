@@ -25,13 +25,34 @@ Deno.serve(async (req) => {
     const teacherEmail = assignment.teacherEmail;
     const displayName = assignment.teacherName || 'Teacher';
     const districtName = assignment.districtName || 'your district';
-    const tempPassword = assignment.tempPassword || '(see previous email)';
+    const tempPassword = assignment.tempPassword;
     const loginUrl = 'https://modaleducation.com/app';
+
+    const passwordDisplay = tempPassword
+      ? `<div style="margin-top:8px;display:block;background:#ffffff;border:2px solid #d8b4fe;border-radius:8px;padding:10px 18px;font-size:20px;font-weight:700;font-family:monospace;letter-spacing:3px;color:#400070;">${tempPassword}</div>`
+      : `<div style="margin-top:8px;display:block;background:#fff8e1;border:2px solid #f59e0b;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600;color:#92400e;">Your temporary password was in your original welcome email. If you can't find it, please reply to this email and we'll reset it for you.</div>`;
 
     const emailBody = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  @media (prefers-color-scheme: dark) {
+    .email-body { background-color: #1a0030 !important; }
+    .email-card { background-color: #1e1e2e !important; }
+    .body-text { color: #e8e0f0 !important; }
+    .muted-text { color: #b0a0c0 !important; }
+    .steps-box { background-color: #2a1a3e !important; }
+    .steps-label { color: #c084fc !important; }
+    .step-text { color: #e8e0f0 !important; }
+    .password-box { background-color: #2a1a3e !important; border-color: #a855f7 !important; color: #f0e6ff !important; }
+    .footer-bar { background-color: #150025 !important; }
+    .footer-text { color: #9ca3af !important; }
+  }
+</style>
+</head>
+<body class="email-body" style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
     <tr><td align="center">
       <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
