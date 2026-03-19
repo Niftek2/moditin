@@ -63,8 +63,7 @@ Deno.serve(async (req) => {
       return Response.json({ assigned: true, emailSent: true });
     }
 
-    // User not yet registered — store a pending assignment
-    // Remove any existing pending for this email+district to avoid duplicates
+    // User not yet registered — store a pending assignment and send platform invite
     const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
     for (const ep of existingPending) {
       await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
@@ -78,12 +77,8 @@ Deno.serve(async (req) => {
       status: 'pending',
     });
 
-    // Send invitation email with context
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: teacherEmail,
-      subject: `You've been invited to join ${districtName} on Modal Itinerant`,
-      body: `Hi ${displayName},\n\nYour administrator at ${districtName} has invited you to join Modal Itinerant — a clinical tool built for itinerant teachers of students who are Deaf or Hard of Hearing.\n\nPlease create your account here: ${loginUrl}\n\nOnce you sign up with this email address (${teacherEmail}), you'll automatically be added to ${districtName} and have full access.\n\n—\nThe Modal Itinerant Team`.trim(),
-    });
+    // Use platform invite (handles email to unregistered users)
+    await base44.users.inviteUser(teacherEmail, 'user');
 
     console.log(`Created pending assignment for ${teacherEmail} to district ${districtId}`);
     return Response.json({ assigned: false, pending: true, emailSent: true });
