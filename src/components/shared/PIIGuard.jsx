@@ -1,5 +1,19 @@
 import React from "react";
 
+export const PII_REGEX_COMBINED = new RegExp(
+  [
+    /\b[A-Z][a-z]+\s[A-Z][a-z]+\b/,
+    /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/,
+    /\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b/,
+    /\b\d{1,5}\s\w+\s(St|Ave|Blvd|Dr|Rd|Ln|Way|Ct)\b/i,
+    /\b(student\s?id|sid)[:\s]?\d+/i,
+    /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/,
+    /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i,
+    /\b(Elementary|Middle|High|Academy|School|District|Charter|Preschool|Pre-K)\b/i,
+  ].map(r => r.source).join('|'),
+  'gi'
+);
+
 const PII_PATTERNS = [
   { pattern: /\b[A-Z][a-z]+\s[A-Z][a-z]+\b/, label: "full name" },
   { pattern: /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/, label: "date of birth" },

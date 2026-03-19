@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const checkAppState = async () => {
     try {
       setIsLoadingPublicSettings(true);
+      setIsLoadingAuth(true);
       setAuthError(null);
       
       // First, check app public settings (with token if available)
@@ -41,8 +42,8 @@ export const AuthProvider = ({ children }) => {
         if (appParams.token) {
           await checkUserAuth();
         } else {
-          setIsLoadingAuth(false);
           setIsAuthenticated(false);
+          setIsLoadingAuth(false);
         }
         setIsLoadingPublicSettings(false);
       } catch (appError) {

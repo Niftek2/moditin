@@ -50,16 +50,34 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     consultOnly: false,
   });
   const [piiWarnings, setPiiWarnings] = useState([]);
+  const [initialsError, setInitialsError] = useState("");
+  const [hardBlockError, setHardBlockError] = useState("");
+
+  const INITIALS_REGEX = /^[A-Za-z][A-Za-z]\.[A-Za-z][A-Za-z]\.$/;
 
   const updateField = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
     if (field === "notes" || field === "warmNotes" || field === "studentGoals" || field === "studentInitials") {
       setPiiWarnings(checkPII(value));
     }
+    if (field === "studentInitials") {
+      setInitialsError(value && !INITIALS_REGEX.test(value) ? "Format must be Xy.Za. (e.g. Fi.La.)" : "");
+    }
+    setHardBlockError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const fieldsToCheck = [form.studentInitials, form.notes, form.warmNotes, form.studentGoals].join(" ");
+    const warnings = checkPII(fieldsToCheck);
+    if (warnings.length > 0) {
+      setHardBlockError("Entry blocked: Please remove identifiable information (names, school names, dates) before saving.");
+      return;
+    }
+    if (form.studentInitials && !INITIALS_REGEX.test(form.studentInitials)) {
+      setInitialsError("Format must be Xy.Za. (e.g. Fi.La.)");
+      return;
+    }
     onSubmit(form);
   };
 
@@ -74,6 +92,11 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
+        {hardBlockError && (
+          <div className="bg-red-50 border-2 border-red-400 rounded-xl p-3 text-sm text-red-700 font-semibold">
+            🚫 {hardBlockError}
+          </div>
+        )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-x-hidden">
 
@@ -90,7 +113,8 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
               className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)] font-medium"
               required
             />
-            <p className="text-xs text-[var(--modal-text-muted)]">Format: Fi.La. — first and last initial only, no full names</p>
+            {initialsError && <p className="text-xs text-red-600 font-semibold">{initialsError}</p>}
+            {!initialsError && <p className="text-xs text-[var(--modal-text-muted)]">Format: Fi.La. — first and last initial only, no full names</p>}
             </div>
 
         <div className="space-y-2">
