@@ -220,55 +220,67 @@ export default function StudentDetailPage() {
         </div>
       )}
 
-      {/* View More Sections (Collapsible) */}
+      {/* View More Sections (Collapsible - one open at a time) */}
       {activeTab === "Overview" && (
         <div className="space-y-3 mb-6">
           <h3 className="text-sm font-bold text-[var(--modal-text-muted)] uppercase tracking-wider">More Information</h3>
           
           {/* Equipment */}
-          <Collapsible>
-            <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]" aria-expanded={expandedSection === "equipment"} aria-controls="equipment-content">
+          <div>
+            <button
+              className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+              aria-expanded={expandedSection === "equipment"}
+              onClick={() => setExpandedSection(s => s === "equipment" ? null : "equipment")}
+            >
               <span className="font-semibold text-[var(--modal-text)]">Equipment & Device</span>
-              <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]" id="equipment-content">
-              {equipment.length === 0 ? (
-                <p className="text-sm text-[var(--modal-text-muted)]">No equipment recorded</p>
-              ) : (
-                <div className="space-y-2" role="list">
-                  {equipment.slice(0, 5).map(eq => (
-                    <div key={eq.id} className="p-3 bg-[#F7F3FA] rounded-lg" role="listitem">
-                      <p className="text-sm font-semibold text-[var(--modal-text)]">{eq.type}</p>
-                      <p className="text-xs text-[var(--modal-text-muted)]">{eq.description || "—"}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CollapsibleContent>
-          </Collapsible>
+              <ChevronDown className={`w-4 h-4 text-[var(--modal-text-muted)] transition-transform ${expandedSection === "equipment" ? "rotate-180" : ""}`} aria-hidden="true" />
+            </button>
+            {expandedSection === "equipment" && (
+              <div className="modal-card p-4 mt-2 border-t border-[var(--modal-border)]">
+                {equipment.length === 0 ? (
+                  <p className="text-sm text-[var(--modal-text-muted)]">No equipment recorded</p>
+                ) : (
+                  <div className="space-y-2" role="list">
+                    {equipment.slice(0, 5).map(eq => (
+                      <div key={eq.id} className="p-3 bg-[#F7F3FA] rounded-lg" role="listitem">
+                        <p className="text-sm font-semibold text-[var(--modal-text)]">{eq.type}</p>
+                        <p className="text-xs text-[var(--modal-text-muted)]">{eq.description || "—"}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Notes */}
           {(student.notes || student.warmNotes) && (
-            <Collapsible>
-              <CollapsibleTrigger className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]" aria-expanded={expandedSection === "notes"} aria-controls="notes-content">
+            <div>
+              <button
+                className="w-full modal-card p-4 rounded-2xl flex items-center justify-between hover:shadow-md transition-all h-14 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]"
+                aria-expanded={expandedSection === "notes"}
+                onClick={() => setExpandedSection(s => s === "notes" ? null : "notes")}
+              >
                 <span className="font-semibold text-[var(--modal-text)]">Notes</span>
-                <ChevronDown className="w-4 h-4 text-[var(--modal-text-muted)]" aria-hidden="true" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="modal-card p-4 mt-2 space-y-3 border-t border-[var(--modal-border)]" id="notes-content">
-                {student.warmNotes && (
-                  <div>
-                    <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">Warm Notes</p>
-                    <p className="text-sm text-[var(--modal-text)]">{student.warmNotes}</p>
-                  </div>
-                )}
-                {student.notes && (
-                  <div>
-                    <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">General Notes</p>
-                    <p className="text-sm text-[var(--modal-text)]">{student.notes}</p>
-                  </div>
-                )}
-              </CollapsibleContent>
-            </Collapsible>
+                <ChevronDown className={`w-4 h-4 text-[var(--modal-text-muted)] transition-transform ${expandedSection === "notes" ? "rotate-180" : ""}`} aria-hidden="true" />
+              </button>
+              {expandedSection === "notes" && (
+                <div className="modal-card p-4 mt-2 space-y-3 border-t border-[var(--modal-border)]">
+                  {student.warmNotes && (
+                    <div>
+                      <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">Warm Notes</p>
+                      <p className="text-sm text-[var(--modal-text)]">{student.warmNotes}</p>
+                    </div>
+                  )}
+                  {student.notes && (
+                    <div>
+                      <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">General Notes</p>
+                      <p className="text-sm text-[var(--modal-text)]">{student.notes}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
