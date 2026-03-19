@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
 Deno.serve(async (req) => {
   try {
@@ -19,7 +19,18 @@ Deno.serve(async (req) => {
     }
 
     const teachers = await base44.asServiceRole.entities.User.filter({ districtId });
-    return Response.json({ teachers });
+
+    // Also fetch pending (not-yet-registered) invitations
+    const pendingAssignments = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ districtId, status: 'pending' });
+    const pendingTeachers = pendingAssignments.map(p => ({
+      id: `pending_${p.id}`,
+      email: p.teacherEmail,
+      full_name: p.teacherName || p.teacherEmail,
+      districtStatus: 'pending_invite',
+      isPendingInvite: true,
+    }));
+
+    return Response.json({ teachers: [...teachers, ...pendingTeachers] });
   } catch (error) {
     console.error('getDistrictTeachers error:', error);
     return Response.json({ error: error.message }, { status: 500 });
