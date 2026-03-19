@@ -8,6 +8,8 @@ import { createPageUrl } from "../utils";
 import {
   ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap, FileText, Download
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { redactPII } from "@/components/shared/PIIGuard";
 import StudentAccommodationsTab from "@/components/students/StudentAccommodationsTab";
 import StudentExportsTab from "@/components/students/StudentExportsTab";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
@@ -33,6 +35,7 @@ export default function StudentDetailPage() {
   const defaultTab = params.get("tab") || "Overview";
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [expandedSection, setExpandedSection] = useCollapsibleState(null);
+  const navigate = useNavigate();
   const [showGoalBank, setShowGoalBank] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
   const { isDemoMode, demoData } = useDemo();
@@ -126,9 +129,12 @@ export default function StudentDetailPage() {
 
   return (
     <div>
-      <Link to={createPageUrl("Students")} className="inline-flex items-center gap-2 text-sm text-[var(--modal-text-muted)] hover:text-[#400070] mb-4 transition-colors">
+      <button
+        onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate(createPageUrl("Students"))}
+        className="inline-flex items-center gap-2 text-sm text-[var(--modal-text-muted)] hover:text-[#400070] mb-4 transition-colors"
+      >
         <ArrowLeft className="w-4 h-4" /> Back to Students
-      </Link>
+      </button>
 
       <PageHeader
         title={student.studentInitials}
@@ -269,13 +275,13 @@ export default function StudentDetailPage() {
                   {student.warmNotes && (
                     <div>
                       <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">Warm Notes</p>
-                      <p className="text-sm text-[var(--modal-text)]">{student.warmNotes}</p>
+                      <p className="text-sm text-[var(--modal-text)]">{redactPII(student.warmNotes)}</p>
                     </div>
                   )}
                   {student.notes && (
                     <div>
                       <p className="text-xs text-[var(--modal-text-muted)] font-semibold mb-1">General Notes</p>
-                      <p className="text-sm text-[var(--modal-text)]">{student.notes}</p>
+                      <p className="text-sm text-[var(--modal-text)]">{redactPII(student.notes)}</p>
                     </div>
                   )}
                 </div>
@@ -388,7 +394,7 @@ export default function StudentDetailPage() {
                     </div>
                     <span className="text-sm font-semibold text-[#6B2FB9]">{entry.durationMinutes || entry.minutes || 0} min</span>
                   </div>
-                  {entry.notes && <p className="text-xs text-[var(--modal-text-muted)] mt-1 italic">{entry.notes}</p>}
+                  {entry.notes && <p className="text-xs text-[var(--modal-text-muted)] mt-1 italic">{redactPII(entry.notes)}</p>}
                 </div>
               ))}
             </div>

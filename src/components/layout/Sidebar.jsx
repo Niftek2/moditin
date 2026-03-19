@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -45,9 +45,33 @@ const navItems = [
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
 ];
 
+const RECENTLY_VIEWED_KEY = "modal_recently_viewed_students";
+
+function getRecentStudents() {
+  try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"); } catch { return []; }
+}
+
+export function trackStudentView(studentId, studentInitials) {
+  if (!studentId) return;
+  try {
+    const existing = getRecentStudents().filter(s => s.id !== studentId);
+    const updated = [{ id: studentId, initials: studentInitials || "?" }, ...existing].slice(0, 3);
+    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
+  } catch {}
+}
+
 export default function Sidebar({ currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [recentStudents, setRecentStudents] = useState(getRecentStudents);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const onStorage = () => setRecentStudents(getRecentStudents());
+    window.addEventListener("storage", onStorage);
+    // Also poll on page change
+    setRecentStudents(getRecentStudents());
+    return () => window.removeEventListener("storage", onStorage);
+  }, [currentPage]);
 
   const handleLogout = () => {
     // Purge all in-memory cached query data before logout
@@ -116,6 +140,28 @@ export default function Sidebar({ currentPage }) {
           );
         })}
       </nav>
+
+      {/* Recently Viewed */}
+      {recentStudents.length > 0 && (
+        <div className="px-3 pb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--modal-text-muted)] px-2 mb-1">Recently Viewed</p>
+          <div className="space-y-0.5">
+            {recentStudents.map(s => (
+              <Link
+                key={s.id}
+                to={`${createPageUrl("StudentDetail")}?id=${s.id}`}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA] transition-all"
+              >
+                <div className="w-6 h-6 rounded-full bg-[#EADDF5] flex items-center justify-center shrink-0">
+                  <span className="text-[9px] font-bold text-[#400070]">{s.initials?.slice(0, 2)}</span>
+                </div>
+                <span className="font-medium truncate">{s.initials}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Add-On Promo */}
       <div className="px-3 pb-3">
