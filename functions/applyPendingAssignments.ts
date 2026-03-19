@@ -46,11 +46,7 @@ Deno.serve(async (req) => {
 
     const emailBody = `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Modal Itinerant license is active</title>
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
     <tr><td align="center">
@@ -60,75 +56,27 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:#400070;padding:36px 40px;text-align:center;">
             <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:2px;color:#d4b8f0;text-transform:uppercase;">Modal Education</p>
-            <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#ffffff;line-height:1.3;">Your license is active! 🎉</h1>
-            <p style="margin:0;font-size:16px;color:#e0d0f5;line-height:1.5;">${districtName} has set you up on Modal Itinerant</p>
+            <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#ffffff;line-height:1.3;">You're all set! 🎉</h1>
+            <p style="margin:0;font-size:16px;color:#e0d0f5;line-height:1.5;">Your Modal Itinerant license from ${districtName} is ready</p>
           </td>
         </tr>
 
         <!-- Intro -->
         <tr>
-          <td style="padding:32px 40px 8px;">
-            <p style="margin:0 0 8px;font-size:17px;font-weight:700;color:#1a0028;">Hi ${displayName},</p>
-            <p style="margin:0;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has activated a full <strong style="color:#400070;">Modal Itinerant</strong> license for you. Follow the steps below to access your account right now.</p>
+          <td style="padding:32px 40px 16px;">
+            <p style="margin:0 0 12px;font-size:17px;font-weight:700;color:#1a0028;">Hi ${displayName},</p>
+            <p style="margin:0;font-size:15px;color:#3d3d3d;line-height:1.7;">Your account is ready to use! Just click the button below to sign in. It only takes a minute.</p>
           </td>
         </tr>
 
-        <!-- Steps -->
+        <!-- Email callout -->
         <tr>
-          <td style="padding:24px 40px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:10px;padding:28px;border:1px solid #e4d9f5;">
+          <td style="padding:0 40px 24px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff3cd;border-radius:10px;padding:20px 24px;border-left:5px solid #f59e0b;">
               <tr><td>
-                <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:1.5px;color:#400070;text-transform:uppercase;">How to get started — 3 easy steps</p>
-
-                <!-- Step 1 -->
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                  <tr>
-                    <td valign="top" style="width:40px;">
-                      <div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;" aria-hidden="true">1</div>
-                    </td>
-                    <td valign="top" style="padding-top:6px;">
-                      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Open the app</p>
-                      <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Go to <a href="${loginUrl}" style="color:#400070;font-weight:700;text-decoration:underline;" aria-label="Open Modal Itinerant at ${loginUrl}">${loginUrl}</a> in your browser.</p>
-                    </td>
-                  </tr>
-                </table>
-
-                <!-- Divider -->
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                  <tr><td style="border-top:1px solid #e4d9f5;"></td></tr>
-                </table>
-
-                <!-- Step 2 -->
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                  <tr>
-                    <td valign="top" style="width:40px;">
-                      <div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;" aria-hidden="true">2</div>
-                    </td>
-                    <td valign="top" style="padding-top:6px;">
-                      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Sign in with your email</p>
-                      <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Click <strong>"Sign In"</strong> and use this email address: <strong style="color:#400070;">${newUser.email}</strong>. Use the password you set when you created your account.</p>
-                    </td>
-                  </tr>
-                </table>
-
-                <!-- Divider -->
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
-                  <tr><td style="border-top:1px solid #e4d9f5;"></td></tr>
-                </table>
-
-                <!-- Step 3 -->
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td valign="top" style="width:40px;">
-                      <div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;" aria-hidden="true">3</div>
-                    </td>
-                    <td valign="top" style="padding-top:6px;">
-                      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">You're in — your license is already applied</p>
-                      <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Once you sign in, your <strong>${districtName}</strong> district license will be active automatically. No extra steps needed.</p>
-                    </td>
-                  </tr>
-                </table>
-
+                <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:1px;">⚠ Sign in using this email address:</p>
+                <p style="margin:0;font-size:20px;font-weight:700;color:#400070;">${newUser.email}</p>
+                <p style="margin:8px 0 0;font-size:13px;color:#78350f;">This is the email your district used to set up your account. Make sure to use it when signing in.</p>
               </td></tr>
             </table>
           </td>
@@ -136,21 +84,20 @@ Deno.serve(async (req) => {
 
         <!-- CTA Button -->
         <tr>
-          <td style="padding:8px 40px 32px;text-align:center;">
-            <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:17px;font-weight:700;text-decoration:none;padding:16px 44px;border-radius:8px;line-height:1.3;" aria-label="Open Modal Itinerant and sign in">Open Modal Itinerant →</a>
-            <p style="margin:16px 0 0;font-size:13px;color:#6b7280;">Or copy this link into your browser:<br><span style="color:#400070;">${loginUrl}</span></p>
+          <td style="padding:0 40px 32px;text-align:center;">
+            <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:18px;font-weight:700;text-decoration:none;padding:18px 48px;border-radius:8px;line-height:1.3;">Sign In to Modal Itinerant →</a>
+            <p style="margin:16px 0 0;font-size:13px;color:#6b7280;">Or copy this into your browser:<br><span style="color:#400070;">${loginUrl}</span></p>
           </td>
         </tr>
 
         <!-- Help -->
         <tr>
           <td style="padding:0 40px 28px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff8e1;border-radius:8px;padding:16px 20px;border-left:4px solid #f59e0b;">
-              <tr>
-                <td>
-                  <p style="margin:0;font-size:14px;color:#78350f;line-height:1.6;"><strong>Need help?</strong> Just reply to this email and we'll get you sorted out right away. We're happy to help!</p>
-                </td>
-              </tr>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:8px;padding:16px 20px;border-left:4px solid #400070;">
+              <tr><td>
+                <p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#400070;">Having trouble signing in?</p>
+                <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Just reply to this email and we'll walk you through it step by step. We're happy to help!</p>
+              </td></tr>
             </table>
           </td>
         </tr>
@@ -171,7 +118,7 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: newUser.email,
-      subject: `You're all set — your Modal Itinerant license is active`,
+      subject: `You're invited to Modal Itinerant — sign in with ${newUser.email}`,
       body: emailBody,
     });
 
