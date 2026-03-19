@@ -455,10 +455,12 @@ export default function StudentDetailPage() {
         </div>
       )}
 
-      {(activeTab === "Accommodations" || activeTab === "Exports") && (
-        <div className="modal-card p-10 text-center text-[var(--modal-text-muted)]" id={`tab-${activeTab}`} role="tabpanel" aria-labelledby={`tab-${activeTab}`}>
-          <p className="text-sm">This section is available from the main navigation.</p>
-        </div>
+      {activeTab === "Accommodations" && (
+        <StudentAccommodationsTab studentId={studentId} />
+      )}
+
+      {activeTab === "Exports" && (
+        <StudentExportsTab studentId={studentId} />
       )}
 
       <GoalBankModal
