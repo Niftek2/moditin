@@ -78,6 +78,17 @@ function AppShell({ children, currentPageName, agreed, setAgreed }) {
 export default function Layout({ children, currentPageName }) {
   const [agreed, setAgreed] = useState(hasAgreedToTerms());
   const [iosBlocked, setIosBlocked] = useState(false);
+
+  // Sync terms agreement from user profile (persists across devices/logouts)
+  useEffect(() => {
+    if (agreed) return;
+    base44.auth.me().then(user => {
+      if (user?.termsAgreedAt) {
+        localStorage.setItem("modal_itinerant_terms_agreed_v1", "true");
+        setAgreed(true);
+      }
+    }).catch(() => {});
+  }, []);
   const navigate = useNavigate();
   useAndroidBack();
 
