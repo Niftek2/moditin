@@ -467,15 +467,24 @@ export default function DistrictManagerDashboard() {
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-4">
             <h2 className="text-sm font-bold text-blue-800 mb-3">Pending Invitations ({pendingInviteTeachers.length})</h2>
             <ul className="space-y-2">
-              {pendingInviteTeachers.map(t => (
-                <li key={t.id} className="flex items-center justify-between text-sm">
-                  <div>
-                    <p className="font-semibold text-blue-900">{t.full_name}</p>
-                    <p className="text-blue-600 text-xs">{t.email}</p>
-                  </div>
-                  <span className="text-blue-500 text-xs">Invite sent · awaiting signup</span>
-                </li>
-              ))}
+              {pendingInviteTeachers.map(t => {
+                const pendingId = t.id.replace('pending_', '');
+                return (
+                  <li key={t.id} className="flex items-center justify-between text-sm">
+                    <div>
+                      <p className="font-semibold text-blue-900">{t.full_name}</p>
+                      <p className="text-blue-600 text-xs">{t.email}</p>
+                    </div>
+                    <button
+                      onClick={() => { removeOpenerRef.current = document.activeElement; setConfirmRemove({ ...t, pendingAssignmentId: pendingId }); }}
+                      aria-label={`Cancel invitation for ${t.full_name || t.email}`}
+                      className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
