@@ -198,6 +198,23 @@ export default function DistrictManagerDashboard() {
     }
   };
 
+  const handleResendInvite = async (pendingId) => {
+    setResendingId(pendingId);
+    setResendSuccess(null);
+    try {
+      await base44.functions.invoke("resendTeacherInvite", {
+        pendingAssignmentId: pendingId,
+        districtId: district.id,
+      });
+      setResendSuccess(pendingId);
+      setTimeout(() => setResendSuccess(null), 3000);
+    } catch (e) {
+      console.error("Failed to resend invite:", e);
+    } finally {
+      setResendingId(null);
+    }
+  };
+
   const handleRemoveTeacher = async (teacher) => {
     setRemoveLoading(true);
     try {
