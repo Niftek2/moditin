@@ -77,9 +77,6 @@ Deno.serve(async (req) => {
       status: 'pending',
     });
 
-    // Use platform invite (handles email to unregistered users)
-    await base44.users.inviteUser(teacherEmail, 'user');
-
     console.log(`Created pending assignment for ${teacherEmail} to district ${districtId}`);
     return Response.json({ assigned: false, pending: true, emailSent: true });
   } catch (error) {
