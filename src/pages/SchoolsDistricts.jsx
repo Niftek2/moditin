@@ -6,7 +6,6 @@ import { Check, X, Users, Building2, GraduationCap, Globe, ArrowLeft, FlaskConic
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import DemoEmailGate from "../components/demo/DemoEmailGate";
-import DemoEmailGate from "../components/demo/DemoEmailGate";
 
 const DISTRICT_PLANS = [
   {
