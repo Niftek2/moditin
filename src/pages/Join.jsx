@@ -9,7 +9,7 @@ const FEATURES = [
   { icon: Clock, text: "Service log & smart session notes" },
   { icon: Target, text: "AI-powered IEP goal bank & progress tracking" },
   { icon: CalendarDays, text: "Smart scheduling & calendar management" },
-  { icon: Ear, text: "Ling 6 listening checks & audiology snapshot" },
+  { icon: Ear, text: "Listening checks & audiology snapshot" },
   { icon: MapPin, text: "Mileage tracking & travel logs" },
   { icon: Wrench, text: "Hearing equipment logs & troubleshooting" },
   { icon: FileText, text: "Evaluation report wizard" },
