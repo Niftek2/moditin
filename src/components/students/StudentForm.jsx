@@ -8,6 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X } from "lucide-react";
 import PIIWarning, { checkPII } from "../shared/PIIGuard";
 
+const handleBlurPII = (value, setter) => {
+  const warnings = checkPII(value);
+  if (warnings.length > 0) setter(warnings);
+};
+
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12", "Transition", "Adult"];
 const SERVICE_MODELS = ["InPerson", "Telepractice", "Hybrid"];
 const COMMUNICATION_MODALITIES = ["LSL", "ASL", "Bilingual ASL/English", "Total Communication", "Other"];
@@ -50,6 +55,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
     consultOnly: false,
   });
   const [piiWarnings, setPiiWarnings] = useState([]);
+  const [blurWarnings, setBlurWarnings] = useState([]);
   const [initialsError, setInitialsError] = useState("");
   const [hardBlockError, setHardBlockError] = useState("");
 
@@ -64,6 +70,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       setInitialsError(value && !INITIALS_REGEX.test(value) ? "Format must be Xy.Za. (e.g. Fi.La.)" : "");
     }
     setHardBlockError("");
+    setBlurWarnings([]);
   };
 
   const handleSubmit = (e) => {
@@ -91,7 +98,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
-        {piiWarnings.length > 0 && <PIIWarning warnings={piiWarnings} />}
+        {(piiWarnings.length > 0 || blurWarnings.length > 0) && <PIIWarning warnings={blurWarnings.length > 0 ? blurWarnings : piiWarnings} />}
         {hardBlockError && (
           <div className="bg-red-50 border-2 border-red-400 rounded-xl p-3 text-sm text-red-700 font-semibold">
             🚫 {hardBlockError}
@@ -109,6 +116,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
                 const val = e.target.value.slice(0, 6);
                 updateField("studentInitials", val);
               }}
+              onBlur={(e) => handleBlurPII(e.target.value, setBlurWarnings)}
               maxLength={6}
               className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] placeholder:text-[var(--modal-text-muted)] font-medium"
               required
@@ -200,6 +208,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <Textarea
           value={form.notes}
           onChange={(e) => updateField("notes", e.target.value)}
+          onBlur={(e) => handleBlurPII(e.target.value, setBlurWarnings)}
           className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] h-20 font-medium"
           placeholder="General notes (no PII)"
         />
@@ -224,6 +233,7 @@ export default function StudentForm({ student, onSubmit, onCancel }) {
         <Textarea
           value={form.studentGoals || ""}
           onChange={(e) => updateField("studentGoals", e.target.value)}
+          onBlur={(e) => handleBlurPII(e.target.value, setBlurWarnings)}
           className="bg-white border-2 border-[var(--modal-border)] text-[var(--modal-text)] h-20 font-medium"
           placeholder="e.g., 'Will improve listening discrimination using auditory activities...'"
         />

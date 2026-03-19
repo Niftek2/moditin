@@ -25,6 +25,15 @@ const PII_PATTERNS = [
   { pattern: /\b(Elementary|Middle|High|Academy|School|District|Charter|Preschool|Pre-K)\b/i, label: "school name" },
 ];
 
+export function redactPII(text) {
+  if (!text) return text;
+  let result = text;
+  PII_PATTERNS.forEach(({ pattern }) => {
+    result = result.replace(new RegExp(pattern.source, "gi"), "[REDACTED]");
+  });
+  return result;
+}
+
 export function checkPII(text) {
   if (!text) return [];
   const warnings = [];

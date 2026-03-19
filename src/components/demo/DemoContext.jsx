@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const DemoContext = createContext(null);
 
@@ -215,6 +216,11 @@ export function DemoProvider({ children }) {
     new URLSearchParams(window.location.search).get("demo") === "1"
   );
   const [demoData, setDemoData] = useState(deepClone(SEED_DATA));
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.clear();
+  }, [isDemoMode]);
 
   const enterDemo = useCallback(() => {
     setDemoData(deepClone(SEED_DATA));
