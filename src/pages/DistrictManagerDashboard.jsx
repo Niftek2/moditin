@@ -37,6 +37,12 @@ export default function DistrictManagerDashboard() {
   const [addSuccess, setAddSuccess] = useState(false);
   const [addError, setAddError] = useState("");
 
+  // Focus trap refs for modals
+  const removeModalRef = useRef(null);
+  const upgradeModalRef = useRef(null);
+  const removeOpenerRef = useRef(null);
+  const upgradeOpenerRef = useRef(null);
+
   // Remove confirmation
   const [confirmRemove, setConfirmRemove] = useState(null);
   const [removeLoading, setRemoveLoading] = useState(false);
@@ -51,6 +57,26 @@ export default function DistrictManagerDashboard() {
   const [upgradePurchaserEmail, setUpgradePurchaserEmail] = useState("");
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [upgradeError, setUpgradeError] = useState("");
+
+  // Focus trap for remove modal
+  useEffect(() => {
+    if (confirmRemove) {
+      const el = removeModalRef.current?.querySelector('button');
+      el?.focus();
+    } else {
+      removeOpenerRef.current?.focus();
+    }
+  }, [confirmRemove]);
+
+  // Focus trap for upgrade modal
+  useEffect(() => {
+    if (showUpgrade) {
+      const el = upgradeModalRef.current?.querySelector('button');
+      el?.focus();
+    } else {
+      upgradeOpenerRef.current?.focus();
+    }
+  }, [showUpgrade]);
 
   const isCheckoutSuccess = typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("checkout_success") === "1";
@@ -303,7 +329,7 @@ export default function DistrictManagerDashboard() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-white">District Manager</h1>
-            <p className="text-white/60 text-sm">{user?.email}</p>
+            <p className="text-white/90 text-sm">{user?.email}</p>
           </div>
         </div>
 
@@ -326,7 +352,7 @@ export default function DistrictManagerDashboard() {
           </div>
 
           {district?.trialEndDate && district.status === "trialing" && (
-            <p className="text-white/60 text-sm mb-3">
+            <p className="text-white/90 text-sm mb-3">
               Trial ends {new Date(district.trialEndDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
             </p>
           )}
@@ -351,7 +377,7 @@ export default function DistrictManagerDashboard() {
             </Button>
             <Button
               size="sm"
-              onClick={() => { setShowUpgrade(true); setUpgradePlan(null); }}
+              onClick={() => { upgradeOpenerRef.current = document.activeElement; setShowUpgrade(true); setUpgradePlan(null); }}
               className="bg-white text-[#400070] hover:bg-white/90 text-xs"
             >
               <ArrowUpCircle className="w-3 h-3" />
@@ -367,13 +393,15 @@ export default function DistrictManagerDashboard() {
               <Users className="w-5 h-5 text-white/70" />
               <span className="text-white font-semibold">Teacher Licenses</span>
             </div>
-            <span className="text-white/60 text-sm">{seatsUsed} / {seatsTotal} used</span>
+            <span className="text-white/90 text-sm">{seatsUsed} / {seatsTotal} used</span>
           </div>
-          <div className="w-full bg-white/10 rounded-full h-2 mb-2">
+          <div className="w-full bg-white/20 rounded-full h-5 mb-2 relative overflow-hidden" role="progressbar" aria-valuenow={seatsUsed} aria-valuemin={0} aria-valuemax={seatsTotal} aria-label="Seat usage">
             <div
-              className="h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 transition-all"
+              className="h-5 rounded-full bg-purple-400 transition-all flex items-center justify-end pr-2"
               style={{ width: `${Math.min((seatsUsed / seatsTotal) * 100, 100)}%` }}
-            />
+            >
+              {seatsUsed > 0 && <span className="text-[10px] font-bold text-white whitespace-nowrap">Capacity</span>}
+            </div>
           </div>
           {seatsUsed >= seatsTotal && (
             <p className="text-amber-300 text-xs mt-1 font-medium">⚠ All seats in use. Change plan to add more.</p>
@@ -389,12 +417,14 @@ export default function DistrictManagerDashboard() {
           <div className="space-y-3">
             <Input placeholder="Teacher's full name" value={newName} onChange={e => setNewName(e.target.value)} />
             <Input type="email" placeholder="teacher@district.org" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
-            {addError && <p className="text-red-600 text-sm" role="alert">{addError}</p>}
-            {addSuccess && (
-              <p className="text-green-600 text-sm flex items-center gap-1">
-                <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with their temporary password.
-              </p>
-            )}
+            <div aria-live="polite" role="status">
+              {addError && <p className="text-red-600 text-sm" role="alert">{addError}</p>}
+              {addSuccess && (
+                <p className="text-green-600 text-sm flex items-center gap-1">
+                  <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with their temporary password.
+                </p>
+              )}
+            </div>
             <Button
               onClick={handleAddTeacher}
               disabled={addLoading || seatsUsed >= seatsTotal}
@@ -419,7 +449,8 @@ export default function DistrictManagerDashboard() {
                     <p className="text-gray-500 text-xs">{t.email}</p>
                   </div>
                   <button
-                    onClick={() => setConfirmRemove(t)}
+                    ref={confirmRemove?.id === t.id ? removeOpenerRef : undefined}
+                    onClick={() => { removeOpenerRef.current = document.activeElement; setConfirmRemove(t); }}
                     aria-label={`Remove ${t.full_name || t.email}`}
                     className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
                   >
@@ -456,7 +487,7 @@ export default function DistrictManagerDashboard() {
       {/* Remove Confirmation Modal */}
       {confirmRemove && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="remove-dialog-title">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+          <div ref={removeModalRef} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <h3 id="remove-dialog-title" className="text-lg font-bold text-gray-900 mb-2">Remove Teacher?</h3>
             <p className="text-gray-600 text-sm mb-1"><strong>{confirmRemove.email}</strong> will lose access immediately.</p>
             <p className="text-gray-500 text-sm mb-5">They will receive an email notification. Their account will be deactivated right away.</p>
@@ -473,7 +504,7 @@ export default function DistrictManagerDashboard() {
       {/* Upgrade/Change Plan Modal */}
       {showUpgrade && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="upgrade-dialog-title">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div ref={upgradeModalRef} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
               <h2 id="upgrade-dialog-title" className="text-lg font-bold text-[#400070]">Change Plan</h2>
               <button onClick={() => setShowUpgrade(false)} aria-label="Close dialog"><X className="w-5 h-5 text-gray-400" aria-hidden="true" /></button>
@@ -527,10 +558,10 @@ export default function DistrictManagerDashboard() {
                         Number of Seats <span className="text-gray-400 font-normal">({upgradePlan.minSeats}–{upgradePlan.maxSeats})</span>
                       </label>
                       <div className="flex items-center gap-3">
-                        <button type="button" aria-label="Decrease seats" onClick={() => setUpgradeSeats(s => Math.max(upgradePlan.minSeats, s - 1))}
+                        <button type="button" aria-label={`Decrease licensed seats to ${upgradeSeats - 1}`} onClick={() => setUpgradeSeats(s => Math.max(upgradePlan.minSeats, s - 1))}
                           className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">−</button>
                         <span className="text-2xl font-bold text-[#400070] w-8 text-center" aria-live="polite" aria-label={`${upgradeSeats} seats`}>{upgradeSeats}</span>
-                        <button type="button" aria-label="Increase seats" onClick={() => setUpgradeSeats(s => Math.min(upgradePlan.maxSeats, s + 1))}
+                        <button type="button" aria-label={`Increase licensed seats to ${upgradeSeats + 1}`} onClick={() => setUpgradeSeats(s => Math.min(upgradePlan.maxSeats, s + 1))}
                           className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:border-[#400070] text-lg font-bold">+</button>
                         <span className="text-sm text-gray-500">=&nbsp;${(upgradePlan.priceUSD * upgradeSeats).toLocaleString()}/yr</span>
                       </div>
