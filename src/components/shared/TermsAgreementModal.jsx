@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shield } from "lucide-react";
 import { queueTour } from "./GuidedTour";
+import { base44 } from "@/api/base44Client";
 
 const TERMS_KEY = "modal_itinerant_terms_agreed_v1";
 
@@ -11,8 +12,13 @@ export function hasAgreedToTerms() {
 }
 
 export default function TermsAgreementModal({ onAgree }) {
-  const handleAgree = () => {
+  const handleAgree = async () => {
     localStorage.setItem(TERMS_KEY, "true");
+    try {
+      await base44.auth.updateMe({ termsAgreedAt: new Date().toISOString() });
+    } catch (e) {
+      // non-blocking
+    }
     queueTour(); // start tour after terms agreed (first sign-in only)
     onAgree();
   };
