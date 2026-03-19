@@ -516,9 +516,9 @@ export default function DistrictManagerDashboard() {
       {confirmRemove && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="remove-dialog-title">
           <div ref={removeModalRef} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 id="remove-dialog-title" className="text-lg font-bold text-gray-900 mb-2">Remove Teacher?</h3>
-            <p className="text-gray-600 text-sm mb-1"><strong>{confirmRemove.email}</strong> will lose access immediately.</p>
-            <p className="text-gray-500 text-sm mb-5">They will receive an email notification. Their account will be deactivated right away.</p>
+            <h3 id="remove-dialog-title" className="text-lg font-bold text-gray-900 mb-2">{confirmRemove.pendingAssignmentId ? "Cancel Invitation?" : "Remove Teacher?"}</h3>
+            <p className="text-gray-600 text-sm mb-1"><strong>{confirmRemove.email}</strong> {confirmRemove.pendingAssignmentId ? "will have their invitation cancelled." : "will lose access immediately."}</p>
+            <p className="text-gray-500 text-sm mb-5">{confirmRemove.pendingAssignmentId ? "They won't be able to use the temporary credentials that were sent." : "They will receive an email notification. Their account will be deactivated right away."}</p>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setConfirmRemove(null)} disabled={removeLoading}>Cancel</Button>
               <Button className="flex-1 bg-red-600 hover:bg-red-700 text-white" onClick={() => handleRemoveTeacher(confirmRemove)} disabled={removeLoading}>
