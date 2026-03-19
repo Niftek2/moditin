@@ -94,10 +94,9 @@ export default function DistrictManagerDashboard() {
         return;
       }
       if (me.role !== "manager" && me.role !== "admin") {
-        // If checkout_success and not yet promoted, return null district so we retry
+        // If checkout_success and not yet promoted, keep loading and retry
         if (isCheckoutSuccess && retryCount < 6) {
-          setLoading(false);
-          return;
+          return; // stay in loading state, polling will retry
         }
         setError("Access denied. This dashboard is for district managers only.");
         setLoading(false);
@@ -109,8 +108,7 @@ export default function DistrictManagerDashboard() {
       let districts = await base44.entities.District.filter({ managerEmail: me.email });
       if (districts.length === 0) {
         if (isCheckoutSuccess && retryCount < 6) {
-          setLoading(false);
-          return;
+          return; // stay in loading state, polling will retry
         }
         // Auto-create a district for manually-promoted managers
         try {
