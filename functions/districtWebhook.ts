@@ -159,6 +159,29 @@ Deno.serve(async (req) => {
       console.error('Failed to send confirmation to purchaser:', e.message);
     }
 
+    // Admin notification email on new signup
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: 'nadiajiftekhar@gmail.com',
+        subject: `🎉 New Signup: ${planName} — ${purchaserEmail}`,
+        body: `<div style="font-family:Arial,sans-serif;color:#1a1028;background:#fff;padding:24px;max-width:600px">
+<h2 style="color:#400070">New District Signup</h2>
+<table style="width:100%;border-collapse:collapse;font-size:15px">
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070;width:160px">Plan</td><td style="padding:8px 0">${planName}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Seats</td><td style="padding:8px 0">${quantity}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Purchaser</td><td style="padding:8px 0">${purchaserName} &lt;${purchaserEmail}&gt;</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Institution</td><td style="padding:8px 0">${institutionName || '(not provided)'}, ${institutionState || ''}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Trial Ends</td><td style="padding:8px 0">${trialEndStr}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">District ID</td><td style="padding:8px 0">${districtId || 'N/A'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Stripe Sub ID</td><td style="padding:8px 0">${stripeSubscriptionId || 'N/A'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Teachers Invited</td><td style="padding:8px 0">${teacherEmails.filter(e => e && e !== purchaserEmail).join(', ') || '(none beyond purchaser)'}</td></tr>
+</table>
+</div>`,
+      });
+    } catch (e) {
+      console.error('Failed to send admin signup notification:', e.message);
+    }
+
     // Trial-ending reminder notification (2 days before)
     const reminderDate = new Date(trialEndDate);
     reminderDate.setDate(reminderDate.getDate() - 2);
