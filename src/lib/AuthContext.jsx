@@ -96,6 +96,11 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
+
+      // If this user has no district yet, check for a pending assignment and apply it
+      if (currentUser && !currentUser.districtId) {
+        base44.functions.invoke('checkAndApplyMyDistrict').catch(() => {});
+      }
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);
