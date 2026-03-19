@@ -497,13 +497,29 @@ export default function DistrictManagerDashboard() {
                       <p className="font-semibold text-blue-900">{t.full_name}</p>
                       <p className="text-blue-600 text-xs">{t.email}</p>
                     </div>
-                    <button
-                      onClick={() => { removeOpenerRef.current = document.activeElement; setConfirmRemove({ ...t, pendingAssignmentId: pendingId }); }}
-                      aria-label={`Cancel invitation for ${t.full_name || t.email}`}
-                      className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" aria-hidden="true" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleResendInvite(pendingId)}
+                        disabled={resendingId === pendingId}
+                        aria-label={`Resend invitation to ${t.full_name || t.email}`}
+                        className="text-blue-500 hover:text-blue-700 p-1 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+                        title="Resend invitation email"
+                      >
+                        {resendSuccess === pendingId
+                          ? <Check className="w-4 h-4 text-green-600" aria-hidden="true" />
+                          : resendingId === pendingId
+                            ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                            : <RefreshCw className="w-4 h-4" aria-hidden="true" />
+                        }
+                      </button>
+                      <button
+                        onClick={() => { removeOpenerRef.current = document.activeElement; setConfirmRemove({ ...t, pendingAssignmentId: pendingId }); }}
+                        aria-label={`Cancel invitation for ${t.full_name || t.email}`}
+                        className="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                    </div>
                   </li>
                 );
               })}
