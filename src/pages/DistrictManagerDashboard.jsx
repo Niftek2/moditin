@@ -198,8 +198,9 @@ export default function DistrictManagerDashboard() {
     setRemoveLoading(true);
     try {
       await base44.functions.invoke("removeTeacher", {
-        teacherId: teacher.id,
+        teacherId: teacher.pendingAssignmentId ? undefined : teacher.id,
         districtId: district.id,
+        pendingAssignmentId: teacher.pendingAssignmentId || undefined,
       });
       setConfirmRemove(null);
       await loadData();
