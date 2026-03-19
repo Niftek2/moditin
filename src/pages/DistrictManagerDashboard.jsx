@@ -312,9 +312,10 @@ export default function DistrictManagerDashboard() {
     );
   }
 
-  const activeTeachers = teachers.filter(t => t.districtStatus !== "pending_deletion");
+  const activeTeachers = teachers.filter(t => t.districtStatus !== "pending_deletion" && !t.isPendingInvite);
+  const pendingInviteTeachers = teachers.filter(t => t.isPendingInvite);
   const pendingTeachers = teachers.filter(t => t.districtStatus === "pending_deletion");
-  const seatsUsed = activeTeachers.length;
+  const seatsUsed = activeTeachers.length + pendingInviteTeachers.length;
   const seatsTotal = district?.licensedTeacherCount || 0;
   const currentPlanKey = PLANS.find(p => p.name === district?.planName)?.key;
 
@@ -460,6 +461,24 @@ export default function DistrictManagerDashboard() {
             </ul>
           )}
         </div>
+
+        {/* Pending Invites */}
+        {pendingInviteTeachers.length > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 mb-4">
+            <h2 className="text-sm font-bold text-blue-800 mb-3">Pending Invitations ({pendingInviteTeachers.length})</h2>
+            <ul className="space-y-2">
+              {pendingInviteTeachers.map(t => (
+                <li key={t.id} className="flex items-center justify-between text-sm">
+                  <div>
+                    <p className="font-semibold text-blue-900">{t.full_name}</p>
+                    <p className="text-blue-600 text-xs">{t.email}</p>
+                  </div>
+                  <span className="text-blue-500 text-xs">Invite sent · awaiting signup</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Pending Deletion */}
         {pendingTeachers.length > 0 && (
