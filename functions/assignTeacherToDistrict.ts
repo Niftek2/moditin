@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
     });
 
     // Send a branded welcome email with their temp password
-    const displayName = teacherName || teacherUser.full_name || 'Teacher';
+    const displayName = teacherName || teacherUser.full_name || 'Colleague';
     const districtName = district.districtName || 'your district';
     const loginUrl = 'https://run.base44.com/apps/6998a9f042c4eb98ea121183/Join';
 

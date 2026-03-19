@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, X, Users, Building2, GraduationCap, Globe, ArrowLeft, FlaskConical, LogIn } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "../utils";
 import DemoEmailGate from "../components/demo/DemoEmailGate";
 
 const DISTRICT_PLANS = [
