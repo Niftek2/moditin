@@ -367,17 +367,20 @@ export default function StudentDetailPage() {
                 const goal = goalMap[sg.goalId];
                 return (
                   <div key={sg.id} className="p-3 rounded-xl bg-[#F7F3FA] border border-[var(--modal-border)]">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm text-[var(--modal-text)]">{goal?.annualGoal || "Goal not found"}</p>
-                        <div className="flex gap-2 mt-2">
-                          <Badge variant="secondary" className="text-[10px] bg-[#EADDF5] text-[#400070] border-0">{goal?.domain}</Badge>
-                          <Badge variant="secondary" className={`text-[10px] border-0 ${sg.status === "Active" ? "bg-green-100 text-green-700" : sg.status === "Met" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
-                            {sg.status}
-                          </Badge>
-                        </div>
-                      </div>
+                    <p className="text-sm text-[var(--modal-text)]">{goal?.annualGoal || "Goal not found"}</p>
+                    <div className="flex gap-2 mt-2">
+                      <Badge variant="secondary" className="text-[10px] bg-[#EADDF5] text-[#400070] border-0">{goal?.domain}</Badge>
+                      <Badge variant="secondary" className={`text-[10px] border-0 ${sg.status === "Active" ? "bg-green-100 text-green-700" : sg.status === "Met" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                        {sg.status}
+                      </Badge>
                     </div>
+                    {!isDemoMode && (
+                      <GoalProgressTracker
+                        studentGoalId={sg.id}
+                        studentId={studentId}
+                        goalText={goal?.annualGoal}
+                      />
+                    )}
                   </div>
                 );
               })}
