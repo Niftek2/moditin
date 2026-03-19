@@ -23,10 +23,11 @@ Deno.serve(async (req) => {
     const displayName = teacherName || 'Teacher';
     const loginUrl = 'https://itinerant.modaleducation.com';
 
-    // Check if user already exists
+    // Check if user already exists in the app
     const found = await base44.asServiceRole.entities.User.filter({ email: teacherEmail });
+    const isExisting = found.length > 0;
 
-    if (found.length > 0) {
+    if (isExisting) {
       // Existing user — update district info directly
       await base44.asServiceRole.entities.User.update(found[0].id, {
         districtId,
@@ -34,9 +35,54 @@ Deno.serve(async (req) => {
         role: 'user',
       });
       console.log(`Updated existing user ${teacherEmail} with district ${districtId}`);
+
+      // Send welcome email — works because user is already registered
+      const emailBody = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#400070 0%,#6B21A8 100%);padding:32px 40px;text-align:center;">
+            <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.7);text-transform:uppercase;">Modal Education</p>
+            <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your license is active!</h1>
+            <p style="margin:8px 0 0;font-size:15px;color:rgba(255,255,255,0.85);">${districtName} has activated your Modal Itinerant license</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px;">
+            <p style="margin:0 0 20px;font-size:16px;color:#1a0028;line-height:1.6;">Hi ${displayName},</p>
+            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has activated a full license to <strong style="color:#400070;">Modal Itinerant</strong> for you. Your account is ready to go — just log in with your existing credentials.</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+              <tr><td align="center">
+                <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;">Log In to Modal Itinerant →</a>
+              </td></tr>
+            </table>
+            <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">Having trouble? Reply to this email and we'll help you out.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f9f5ff;padding:20px 40px;text-align:center;border-top:1px solid #ede9f6;">
+            <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Modal Education, LLC · <a href="https://modaleducation.com" style="color:#400070;text-decoration:none;">modaleducation.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: teacherEmail,
+        subject: `Your Modal Itinerant license is active — log in now`,
+        body: emailBody,
+      });
+
+      console.log(`Sent welcome email to existing user ${teacherEmail}`);
     } else {
-      // New user — create a pending assignment; district will be applied when they sign up
-      // Cancel any existing pending assignments for this email+district
+      // New user — create a pending assignment so district is applied when they register
       const existingPending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail, districtId, status: 'pending' });
       for (const ep of existingPending) {
         await base44.asServiceRole.entities.PendingTeacherAssignment.update(ep.id, { status: 'applied' });
@@ -49,108 +95,14 @@ Deno.serve(async (req) => {
         status: 'pending',
       });
       console.log(`Created PendingTeacherAssignment for new user ${teacherEmail}`);
+
+      // For new users, use platform inviteUser — this is the only way to email unregistered addresses
+      await base44.asServiceRole.users.inviteUser(teacherEmail, 'user');
+      console.log(`Sent platform invite to new user ${teacherEmail}`);
     }
 
-    // Send ONE clear welcome email
-    const isExisting = found.length > 0;
-    const emailBody = `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
-    <tr><td align="center">
-      <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-
-        <tr>
-          <td style="background:linear-gradient(135deg,#400070 0%,#6B21A8 100%);padding:32px 40px;text-align:center;">
-            <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:1px;color:rgba(255,255,255,0.7);text-transform:uppercase;">Modal Education</p>
-            <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">You've been added to Modal Itinerant</h1>
-            <p style="margin:8px 0 0;font-size:15px;color:rgba(255,255,255,0.85);">${districtName} has activated your license</p>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding:32px 40px;">
-            <p style="margin:0 0 20px;font-size:16px;color:#1a0028;line-height:1.6;">Hi ${displayName},</p>
-            <p style="margin:0 0 28px;font-size:15px;color:#3d3d3d;line-height:1.7;">Your district has set you up with a full license to <strong style="color:#400070;">Modal Itinerant</strong> — a tool for managing student caseloads, IEP goals, service logs, and more. ${isExisting ? "Your account is ready to go." : "Here's how to get started:"}</p>
-
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:10px;padding:24px 28px;margin-bottom:28px;">
-              <tr><td>
-                <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:1px;color:#400070;text-transform:uppercase;">${isExisting ? 'How to log in' : 'How to create your account'}</p>
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-                  <tr>
-                    <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">1</div>
-                    </td>
-                    <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      Go to <a href="${loginUrl}" style="color:#400070;font-weight:700;text-decoration:underline;">${loginUrl}</a>
-                    </td>
-                  </tr>
-                </table>
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
-                  <tr>
-                    <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">2</div>
-                    </td>
-                    <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      ${isExisting
-                        ? 'Click <strong>"Sign In"</strong> and enter your email and password'
-                        : 'Click <strong>"Sign Up"</strong> and create your account using this email address: <strong style="color:#400070;">' + teacherEmail + '</strong>'
-                      }
-                    </td>
-                  </tr>
-                </table>
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td valign="top" style="width:32px;padding-right:12px;">
-                      <div style="width:28px;height:28px;border-radius:50%;background:#400070;text-align:center;line-height:28px;font-size:13px;font-weight:700;color:#ffffff;">3</div>
-                    </td>
-                    <td valign="middle" style="font-size:15px;color:#1a0028;line-height:1.5;padding-top:4px;">
-                      ${isExisting
-                        ? 'Your district license is already applied — you\'re all set!'
-                        : 'Once you create your account, your district license will be <strong>automatically applied</strong> — no extra steps needed.'
-                      }
-                    </td>
-                  </tr>
-                </table>
-              </td></tr>
-            </table>
-
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-              <tr><td align="center">
-                <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;">${isExisting ? 'Log In to Modal Itinerant →' : 'Create My Account →'}</a>
-              </td></tr>
-            </table>
-
-            <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">Having trouble? Reply to this email and we'll help you out.</p>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="background:#f9f5ff;padding:20px 40px;text-align:center;border-top:1px solid #ede9f6;">
-            <p style="margin:0;font-size:12px;color:#9ca3af;">© 2026 Modal Education, LLC · <a href="https://modaleducation.com" style="color:#400070;text-decoration:none;">modaleducation.com</a></p>
-          </td>
-        </tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: teacherEmail,
-      subject: isExisting
-        ? `Your Modal Itinerant license is active — log in now`
-        : `You've been added to Modal Itinerant — create your account`,
-      body: emailBody,
-    });
-
-    console.log(`Assigned ${teacherEmail} to district ${districtId} (existing user: ${isExisting}), email sent.`);
-    return Response.json({ success: true, emailSent: true, isNewUser: !isExisting });
+    console.log(`assignTeacherToDistrict complete: ${teacherEmail} → district ${districtId} (existing: ${isExisting})`);
+    return Response.json({ success: true, isNewUser: !isExisting });
   } catch (error) {
     console.error('assignTeacherToDistrict error:', error);
     return Response.json({ error: error.message }, { status: 500 });
