@@ -43,17 +43,9 @@ const AuthenticatedApp = () => {
     }
   }
 
-  const navigate = useNavigate();
-
-  // Immediately redirect managers to their dashboard
-  useEffect(() => {
-    if (user?.role === 'manager' && window.location.pathname !== '/DistrictManagerDashboard') {
-      navigate('/DistrictManagerDashboard', { replace: true });
-    }
-  }, [user, navigate]);
-
-  // Show spinner while redirecting manager
+  // Immediately redirect managers to their dashboard — synchronous, no flash
   if (user?.role === 'manager' && window.location.pathname !== '/DistrictManagerDashboard') {
+    window.location.replace('/DistrictManagerDashboard');
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
