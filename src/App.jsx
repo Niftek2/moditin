@@ -43,9 +43,22 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Immediately redirect managers before any other page renders
+  const navigate = useNavigate();
+
+  // Immediately redirect managers to their dashboard
+  useEffect(() => {
+    if (user?.role === 'manager' && window.location.pathname !== '/DistrictManagerDashboard') {
+      navigate('/DistrictManagerDashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
+  // Show spinner while redirecting manager
   if (user?.role === 'manager' && window.location.pathname !== '/DistrictManagerDashboard') {
-    return <Navigate to="/DistrictManagerDashboard" replace />;
+    return (
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-3">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   // Render the main app
