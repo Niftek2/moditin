@@ -322,7 +322,7 @@ export default function DistrictPricingPage() {
             <button
               onClick={() => setBillingPeriod("annual")}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "annual" ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
-            >Annual <span className="text-xs font-bold text-green-400">Save $39</span></button>
+            >Annual <span className="text-xs font-bold text-green-400">Save $48</span></button>
           </div>
         </div>
 
