@@ -18,6 +18,29 @@ Deno.serve(async (req) => {
     });
 
     if (pending.length === 0) {
+      // Still notify admin of the new signup
+      try {
+        const signupTime = new Date(newUser.created_date || Date.now()).toLocaleString('en-US', {
+          timeZone: 'America/Chicago',
+          year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        });
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: 'nadiajiftekhar@gmail.com',
+          subject: `👋 New User Signed Up: ${newUser.email}`,
+          body: `<div style="font-family:Arial,sans-serif;color:#1a1028;background:#fff;padding:24px;max-width:600px">
+<h2 style="color:#400070;margin-top:0;">New User Sign Up</h2>
+<table style="width:100%;border-collapse:collapse;font-size:15px">
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070;width:160px">Name</td><td style="padding:8px 0">${newUser.full_name || '(not provided)'}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Email</td><td style="padding:8px 0">${newUser.email}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">State</td><td style="padding:8px 0">(not provided)</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Signed Up</td><td style="padding:8px 0">${signupTime} CT</td></tr>
+</table>
+</div>`,
+        });
+      } catch (e) {
+        console.error('Failed to send admin new user notification:', e.message);
+      }
       return Response.json({ skipped: true, reason: 'no pending assignments' });
     }
 
