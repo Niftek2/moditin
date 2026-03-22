@@ -344,14 +344,21 @@ export default function DistrictManagerDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-[#1a0030] via-[#2d0060] to-[#400070]">
       <div className="px-4 pt-10 pb-16 max-w-3xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-white" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">District Manager</h1>
+              <p className="text-white/90 text-sm">{user?.email}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">District Manager</h1>
-            <p className="text-white/90 text-sm">{user?.email}</p>
-          </div>
+          <Link to="/Settings" title="Settings & Billing">
+            <div className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 flex items-center justify-center transition-all">
+              <Settings className="w-5 h-5 text-white" />
+            </div>
+          </Link>
         </div>
 
         {/* Subscription Status Card */}
