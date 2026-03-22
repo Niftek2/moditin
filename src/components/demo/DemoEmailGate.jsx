@@ -22,18 +22,15 @@ export default function DemoEmailGate({ onEnter, onCancel }) {
     setLoading(true);
     setError("");
     try {
-      // Save to database
       await base44.entities.DemoSignup.create({ email: email.trim() });
     } catch (_) {}
     try {
-      await base44.integrations.Core.SendEmail({
-        to: "nadiajiftekhar@gmail.com",
-        subject: "New Demo Sign-Up — Modal Itinerant",
-        body: `Someone signed up to view the demo of Modal Itinerant.\n\nEmail: ${email.trim()}\nDate: ${new Date().toLocaleString()}`,
-      });
+      // Backend handles admin notification + geo lookup from IP
+      await base44.functions.invoke("demoSignupNotify", { email: email.trim() });
     } catch (_) {
-      // Don't block the user if email fails — just proceed
+      // Don't block the user if notification fails
     }
+    base44.analytics.track({ eventName: "demo_signup", properties: { email: email.trim() } });
     setLoading(false);
     onEnter();
   };
