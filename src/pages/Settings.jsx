@@ -98,6 +98,11 @@ export default function SettingsPage() {
     if (res.data?.url) window.location.href = res.data.url;
   };
 
+  const handleShowInstallGuide = () => {
+    setShowInstallGuide(true);
+    base44.analytics.track({ eventName: "pwa_install_guide_clicked" });
+  };
+
   const inquiryMutation = useMutation({
     mutationFn: (data) => base44.entities.SchoolInquiry.create(data),
     onSuccess: () => setSubmitted(true),
@@ -246,7 +251,7 @@ export default function SettingsPage() {
               <p className="text-xs text-[var(--modal-text-muted)] mt-1">Save Modal Itinerant to your iPhone home screen for easy access.</p>
             </div>
             <button
-              onClick={() => setShowInstallGuide(true)}
+              onClick={handleShowInstallGuide}
               className="flex items-center gap-2 text-sm font-semibold text-[#400070] hover:text-[#5B00A0] transition-colors whitespace-nowrap ml-4"
             >
               <Smartphone className="w-4 h-4" />
