@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import { motion } from "framer-motion";
 import {
-  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight, Activity, GripVertical } from
+  Target, Clock, Car, CalendarDays, FileText, ClipboardList, Plus, Ear, Zap, Search, ChevronRight, Activity, GripVertical, Settings } from
 "lucide-react";
 import HearingAidIcon from "../components/shared/HearingAidIcon";
 import { Button } from "@/components/ui/button";
