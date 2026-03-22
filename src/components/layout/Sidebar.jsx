@@ -63,7 +63,12 @@ export function trackStudentView(studentId, studentInitials) {
 export default function Sidebar({ currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [recentStudents, setRecentStudents] = useState(getRecentStudents);
+  const [userRole, setUserRole] = useState(null);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    base44.auth.me().then(u => setUserRole(u?.role)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const onStorage = () => setRecentStudents(getRecentStudents());
