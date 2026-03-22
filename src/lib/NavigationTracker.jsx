@@ -12,29 +12,26 @@ export default function NavigationTracker() {
 
     // Log user activity when navigating to a page
     useEffect(() => {
-        // Extract page name from pathname
         const pathname = location.pathname;
         let pageName;
 
         if (pathname === '/' || pathname === '') {
             pageName = mainPageKey;
         } else {
-            // Remove leading slash and get the first segment
             const pathSegment = pathname.replace(/^\//, '').split('/')[0];
 
-            // Try case-insensitive lookup in Pages config
+            // First try pagesConfig lookup (case-insensitive)
             const pageKeys = Object.keys(Pages);
             const matchedKey = pageKeys.find(
                 key => key.toLowerCase() === pathSegment.toLowerCase()
             );
 
-            pageName = matchedKey || null;
+            // Fall back to the raw path segment for routes outside pagesConfig (Join, DistrictPricing, etc.)
+            pageName = matchedKey || pathSegment || null;
         }
 
         if (isAuthenticated && pageName) {
-            base44.appLogs.logUserInApp(pageName).catch(() => {
-                // Silently fail - logging shouldn't break the app
-            });
+            base44.appLogs.logUserInApp(pageName).catch(() => {});
         }
 
         if (pageName) {
@@ -43,6 +40,7 @@ export default function NavigationTracker() {
                 properties: {
                     page: pageName,
                     path: pathname,
+                    authenticated: isAuthenticated,
                 },
             });
         }
