@@ -207,7 +207,7 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
         </div>
 
         {/* Column Headers */}
-        <div className="px-6 pt-4 pb-2 grid grid-cols-[1fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center">
+        <div className="px-6 pt-4 pb-2 grid grid-cols-[1.5fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center">
           <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Initials *</Label>
           <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Grade Band</Label>
           <Label className="text-xs font-semibold text-[var(--modal-text-muted)] uppercase tracking-wide">Delivery Model</Label>
@@ -223,7 +223,7 @@ export default function BulkEnrollForm({ onSubmit, onCancel, isSaving }) {
             const isFlagged = row._piiWarnings?.length > 0 || row._isDuplicate;
             return (
               <div key={row._key}>
-                <div className={`grid grid-cols-[1fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center rounded-lg px-1 py-0.5 ${isFlagged ? "bg-red-50 border border-red-300" : ""}`}>
+                <div className={`grid grid-cols-[1.5fr_1fr_1fr_1fr_auto_auto_2rem] gap-2 items-center rounded-lg px-1 py-0.5 ${isFlagged ? "bg-red-50 border border-red-300" : ""}`}>
                   <Input
                     placeholder="Fi.La."
                     value={row.studentInitials}
