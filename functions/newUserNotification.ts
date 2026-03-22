@@ -59,6 +59,7 @@ Deno.serve(async (req) => {
   <tr><td style="padding:8px 0;font-weight:bold;color:#400070;width:160px">Name</td><td style="padding:8px 0">${newUser.full_name || '(not provided)'}</td></tr>
   <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Email</td><td style="padding:8px 0">${newUser.email}</td></tr>
   <tr><td style="padding:8px 0;font-weight:bold;color:#400070">State</td><td style="padding:8px 0">${stateInfo}</td></tr>
+  <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Location (IP)</td><td style="padding:8px 0">${location || '(unavailable)'}</td></tr>
   <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Role</td><td style="padding:8px 0">${newUser.role || 'user'}</td></tr>
   <tr><td style="padding:8px 0;font-weight:bold;color:#400070">Signed Up</td><td style="padding:8px 0">${signupTime} CT</td></tr>
 </table>
