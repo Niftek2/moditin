@@ -337,6 +337,7 @@ export default function SettingsPage() {
 
       </div>
       <DeleteAccountDialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)} />
+      {showInstallGuide && <PWAInstallGuideModal onClose={() => setShowInstallGuide(false)} />}
     </>
   );
 }
