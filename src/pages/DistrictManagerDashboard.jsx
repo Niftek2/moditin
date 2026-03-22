@@ -3,9 +3,10 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import {
   Users, UserPlus, Trash2, Building2, AlertTriangle, Loader2,
-  Check, CreditCard, ArrowUpCircle, X, RefreshCw
+  Check, CreditCard, ArrowUpCircle, X, RefreshCw, Settings
 } from "lucide-react";
 
 const PLANS = [
