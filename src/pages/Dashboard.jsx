@@ -155,14 +155,21 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-[var(--modal-text)]">
             {firstName ? `Hi, ${firstName} 👋` : "Hi there 👋"}
           </h1>
-          <button
-            onClick={() => { resetTour(); setRunTour(true); }}
-            className="w-7 h-7 rounded-full border-2 border-[var(--modal-border)] bg-white text-[#6B2FB9] hover:border-[#6B2FB9] hover:bg-[#F7F3FA] transition-all flex items-center justify-center shrink-0 text-sm font-bold leading-none"
-            aria-label="Take the guided tour"
-            title="Take a guided tour"
-          >
-            ?
-          </button>
+          <div className="flex items-center gap-2">
+            <Link to="/Settings" aria-label="Go to Settings" title="Settings">
+              <div className="w-8 h-8 rounded-full border-2 border-[var(--modal-border)] bg-white text-[#6B2FB9] hover:border-[#6B2FB9] hover:bg-[#F7F3FA] transition-all flex items-center justify-center shrink-0">
+                <Settings className="w-4 h-4" />
+              </div>
+            </Link>
+            <button
+              onClick={() => { resetTour(); setRunTour(true); }}
+              className="w-8 h-8 rounded-full border-2 border-[var(--modal-border)] bg-white text-[#6B2FB9] hover:border-[#6B2FB9] hover:bg-[#F7F3FA] transition-all flex items-center justify-center shrink-0 text-sm font-bold leading-none"
+              aria-label="Take the guided tour"
+              title="Take a guided tour"
+            >
+              ?
+            </button>
+          </div>
         </div>
         <DailyQuote />
       </motion.div>
