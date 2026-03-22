@@ -187,15 +187,19 @@ export default function ServiceHoursPage() {
   };
 
   const handleExportPDF = async () => {
-    const { data } = await base44.functions.invoke('exportServiceLog', {
+    const res = await base44.functions.invoke('exportServiceLog', {
       month: selectedMonth,
       studentId: ""
     });
-    const blob = new Blob([data], { type: 'application/pdf' });
+    const { base64, filename } = res.data;
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `service-log-${selectedMonth}.pdf`;
+    a.download = filename || `service-log-${selectedMonth}.pdf`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);

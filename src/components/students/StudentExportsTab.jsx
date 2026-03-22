@@ -9,20 +9,7 @@ export default function StudentExportsTab({ studentId }) {
   const [error, setError] = useState("");
 
   const handleExportDocx = async () => {
-    setError("");
-    setDocxLoading(true);
-    try {
-      const res = await base44.functions.invoke("generateReport", { studentId });
-      if (res.data?.url) {
-        window.open(res.data.url, "_blank");
-      } else {
-        setError(res.data?.error || "Export failed. Please try again.");
-      }
-    } catch (e) {
-      setError(e.message || "Export failed.");
-    } finally {
-      setDocxLoading(false);
-    }
+    setError("The IEP Summary export is available from the Eval Report section. Please use Eval Reports to generate a full report for this student.");
   };
 
   const handleExportPdf = async () => {
@@ -30,8 +17,19 @@ export default function StudentExportsTab({ studentId }) {
     setPdfLoading(true);
     try {
       const res = await base44.functions.invoke("exportServiceLog", { studentId });
-      if (res.data?.url) {
-        window.open(res.data.url, "_blank");
+      if (res.data?.base64) {
+        const binary = atob(res.data.base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.data.filename || `service-log-${studentId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
       } else {
         setError(res.data?.error || "Export failed. Please try again.");
       }
