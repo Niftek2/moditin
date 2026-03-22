@@ -285,6 +285,23 @@ export default function SettingsPage() {
         </div>
         )}
 
+        {/* Add to Home Screen */}
+        <div className="modal-card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-[var(--modal-text)]">Add App to Your Phone</h3>
+              <p className="text-xs text-[var(--modal-text-muted)] mt-1">Save Modal Itinerant to your iPhone home screen for easy access.</p>
+            </div>
+            <button
+              onClick={() => setShowInstallGuide(true)}
+              className="flex items-center gap-2 text-sm font-semibold text-[#400070] hover:text-[#5B00A0] transition-colors whitespace-nowrap ml-4"
+            >
+              <Smartphone className="w-4 h-4" />
+              How to
+            </button>
+          </div>
+        </div>
+
         {/* Audio Settings */}
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-4">Audio Settings</h3>
