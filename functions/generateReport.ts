@@ -9,12 +9,14 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { reportData, assessments, backgroundData, hearingData, presentLevels, accommodations, recommendations } = body;
 
+    if (!reportData) return Response.json({ error: 'reportData is required' }, { status: 400 });
+
     const pronouns = getPronounSet(reportData.pronouns || 'they/them');
 
     // Generate each section narrative
     const backgroundNarrative = generateBackgroundNarrative(backgroundData, reportData, pronouns);
     const hearingNarrative = generateHearingNarrative(hearingData, reportData, pronouns);
-    const assessmentNarratives = assessments.map(a => ({
+    const assessmentNarratives = (assessments || []).map(a => ({
       ...a,
       generatedNarrative: generateAssessmentNarrative(a, reportData, pronouns)
     }));
