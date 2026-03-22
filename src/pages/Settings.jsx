@@ -271,6 +271,53 @@ export default function SettingsPage() {
           </p>
         </div>
 
+        {/* Subscription — always shown (except iOS) */}
+        {!isIosMode && (
+        <div className="modal-card p-6 border-2 border-[var(--modal-border)]">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="w-4 h-4 text-[#400070]" />
+            <h3 className="font-semibold text-[var(--modal-text)]">Subscription & Billing</h3>
+          </div>
+          {subLoading ? (
+            <div className="flex items-center gap-2 text-sm text-[var(--modal-text-muted)]">
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading subscription status…
+            </div>
+          ) : subStatus?.isActive ? (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${subStatus.isTrial ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800"}`}>
+                  {subStatus.isTrial ? "Free Trial" : "Active"}
+                </span>
+                {subStatus.trialEnd && subStatus.isTrial && (
+                  <span className="text-xs text-[var(--modal-text-muted)]">
+                    Trial ends {new Date(subStatus.trialEnd * 1000).toLocaleDateString()}
+                  </span>
+                )}
+                {subStatus.currentPeriodEnd && !subStatus.isTrial && (
+                  <span className="text-xs text-[var(--modal-text-muted)]">
+                    Renews {new Date(subStatus.currentPeriodEnd * 1000).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[var(--modal-text-muted)]">To cancel or update your plan, click "Manage Billing" below. You can cancel anytime from the billing portal.</p>
+              <Button
+                onClick={handleManageBilling}
+                disabled={portalLoading}
+                className="w-full sm:w-auto gap-2 bg-[#400070] hover:bg-[#5B00A0] text-white"
+              >
+                {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                Manage / Cancel Subscription
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">No Active Subscription</span>
+              <p className="text-xs text-[var(--modal-text-muted)]">No active subscription found. If you believe this is an error, please contact support.</p>
+            </div>
+          )}
+        </div>
+        )}
+
         {/* Delete Account */}
         {!isDemo && <div className="modal-card p-6 border border-red-200">
           <h3 className="font-semibold text-red-600 mb-2">Danger Zone</h3>
