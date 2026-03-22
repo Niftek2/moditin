@@ -349,7 +349,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/month</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${annualPrice} billed annually</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $48 with annual billing</p>
                   </>
                 ) : (
                   <>
@@ -358,7 +358,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/year</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $39 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $48 with annual billing</p>
                   </>
                 )}
                 <p className="text-xs text-green-600 font-medium mb-4">✓ {plan.trial}</p>
