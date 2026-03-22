@@ -186,18 +186,33 @@ export default function Sidebar({ currentPage }) {
 
       {/* Footer */}
       <div className="p-3 border-t border-[var(--modal-border)]">
-        <Link
-          to={createPageUrl("Settings")}
-          onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all
-            ${currentPage === "Settings"
-              ? "bg-[#EADDF5] text-[#400070] font-semibold"
-              : "text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA]"
-            }`}
-        >
-          <Settings className={`w-5 h-5 ${currentPage === "Settings" ? "text-[#6B2FB9]" : "text-[#5A5A5A]"}`} />
-          <span className="font-medium">Settings</span>
-        </Link>
+        {userRole === 'manager' ? (
+          <Link
+            to="/DistrictManagerDashboard"
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all
+              ${currentPage === "DistrictManagerDashboard"
+                ? "bg-[#EADDF5] text-[#400070] font-semibold"
+                : "text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA]"
+              }`}
+          >
+            <Settings className={`w-5 h-5 ${currentPage === "DistrictManagerDashboard" ? "text-[#6B2FB9]" : "text-[#5A5A5A]"}`} />
+            <span className="font-medium">Manage Subscription</span>
+          </Link>
+        ) : (
+          <Link
+            to={createPageUrl("Settings")}
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all
+              ${currentPage === "Settings"
+                ? "bg-[#EADDF5] text-[#400070] font-semibold"
+                : "text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA]"
+              }`}
+          >
+            <Settings className={`w-5 h-5 ${currentPage === "Settings" ? "text-[#6B2FB9]" : "text-[#5A5A5A]"}`} />
+            <span className="font-medium">Settings</span>
+          </Link>
+        )}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-[#4A4A4A] hover:text-red-500 hover:bg-red-50 w-full transition-all"
