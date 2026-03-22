@@ -36,6 +36,16 @@ export default function NavigationTracker() {
                 // Silently fail - logging shouldn't break the app
             });
         }
+
+        if (pageName) {
+            base44.analytics.track({
+                eventName: "page_view",
+                properties: {
+                    page: pageName,
+                    path: pathname,
+                },
+            });
+        }
     }, [location, isAuthenticated, Pages, mainPageKey]);
 
     return null;
