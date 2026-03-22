@@ -194,7 +194,7 @@ Deno.serve(async (req) => {
         <!-- CTA Button -->
         <tr>
           <td style="padding:8px 40px 32px;text-align:center;">
-            <a href="${signUpUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:18px;font-weight:700;text-decoration:none;padding:18px 48px;border-radius:8px;line-height:1.3;">Get Started →</a>
+            <a href="${signUpUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:18px;font-weight:700;text-decoration:none;padding:18px 48px;border-radius:8px;line-height:1.3;">Create My Account →</a>
             <p style="margin:16px 0 0;font-size:13px;color:#6b7280;">Or copy this into your browser:<br><span style="color:#400070;">${signUpUrl}</span></p>
           </td>
         </tr>
