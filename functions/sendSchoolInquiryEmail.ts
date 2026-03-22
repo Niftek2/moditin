@@ -22,7 +22,7 @@ Notes:
 ${notes || 'No notes provided'}`;
 
     await base44.asServiceRole.integrations.Core.SendEmail({
-      to: 'contact@modalmath.com',
+      to: 'nadiajiftekhar@gmail.com',
       subject: `School Inquiry Modal Itinerant - ${schoolDistrict || name}`,
       body: emailBody,
       from_name: 'Modal Itinerant'
