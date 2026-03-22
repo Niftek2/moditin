@@ -127,10 +127,92 @@ Deno.serve(async (req) => {
 
       // Welcome email to teacher
       try {
+        const loginUrl = 'https://itinerant.modaleducation.com';
+        const teacherWelcomeHtml = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" style="max-width:580px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:#400070;padding:36px 40px;text-align:center;">
+            <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:2px;color:#d4b8f0;text-transform:uppercase;">Modal Education</p>
+            <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#ffffff;line-height:1.3;">You've been invited! 🎉</h1>
+            <p style="margin:0;font-size:16px;color:#e0d0f5;line-height:1.5;">${purchaserName} has given you access to Modal Itinerant</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px 16px;">
+            <p style="margin:0 0 12px;font-size:17px;font-weight:700;color:#1a0028;">Hi there,</p>
+            <p style="margin:0;font-size:15px;color:#3d3d3d;line-height:1.7;">Great news — you've been added to Modal Itinerant as part of the <strong style="color:#400070;">${planName}</strong> plan. Your ${trialDays}-day free trial is now active and you won't be charged until ${trialEndStr}.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 40px 24px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff3cd;border-radius:10px;padding:20px 24px;border-left:5px solid #f59e0b;">
+              <tr><td>
+                <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:1px;">⚠ Sign in using this exact email address:</p>
+                <p style="margin:0;font-size:20px;font-weight:700;color:#400070;">${email}</p>
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 40px 24px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:10px;padding:28px;border:1px solid #e4d9f5;">
+              <tr><td>
+                <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:1.5px;color:#400070;text-transform:uppercase;">How to get started</p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                  <tr>
+                    <td valign="top" style="width:44px;"><div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;">1</div></td>
+                    <td valign="top" style="padding-top:6px;"><p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Click the button below</p><p style="margin:0;font-size:14px;color:#3d3d3d;">It will take you to the Modal Itinerant website.</p></td>
+                  </tr>
+                </table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;"><tr><td style="border-top:1px solid #e4d9f5;"></td></tr></table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                  <tr>
+                    <td valign="top" style="width:44px;"><div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;">2</div></td>
+                    <td valign="top" style="padding-top:6px;"><p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Click "Sign In" and enter your email</p><p style="margin:0;font-size:14px;color:#3d3d3d;">Use <strong style="color:#400070;">${email}</strong> — you'll receive a one-time login link (no password needed!).</p></td>
+                  </tr>
+                </table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;"><tr><td style="border-top:1px solid #e4d9f5;"></td></tr></table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td valign="top" style="width:44px;"><div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;">3</div></td>
+                    <td valign="top" style="padding-top:6px;"><p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">You're in!</p><p style="margin:0;font-size:14px;color:#3d3d3d;">Your license will be applied automatically. No extra steps needed.</p></td>
+                  </tr>
+                </table>
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 40px 32px;text-align:center;">
+            <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:18px;font-weight:700;text-decoration:none;padding:18px 48px;border-radius:8px;">Get Started →</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 40px 28px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff8e1;border-radius:8px;padding:16px 20px;border-left:4px solid #f59e0b;">
+              <tr><td><p style="margin:0;font-size:14px;color:#78350f;line-height:1.6;"><strong>Need help?</strong> Just reply to this email and we'll walk you through it.</p></td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f9f5ff;padding:20px 40px;text-align:center;border-top:1px solid #ede9f6;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2026 Modal Education, LLC · <a href="https://modaleducation.com" style="color:#400070;text-decoration:none;">modaleducation.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: email,
-          subject: `Welcome to Modal Itinerant — Your ${planName} Access is Ready`,
-          body: `Hi there,\n\nYou've been invited to Modal Itinerant as part of the ${planName} plan by ${purchaserName} (${purchaserEmail}).\n\nYour ${trialDays}-day free trial is now active — you won't be charged until ${trialEndStr}.\n\nTo get started:\n1. Visit https://app.base44.com and click "Sign In"\n2. Use the email address this was sent to: ${email}\n3. Click "Forgot Password" to set up your password\n\nIf you have any questions, visit https://www.modaleducation.com/contact-5\n\nWelcome aboard!\nThe Modal Education Team`,
+          subject: `You've been invited to Modal Itinerant — ${planName} Plan`,
+          body: teacherWelcomeHtml,
         });
       } catch (e) {
         console.error(`Failed to send welcome email to ${email}:`, e.message);
