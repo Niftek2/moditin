@@ -1,5 +1,20 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
+// Helper: get approximate location from IP
+async function getLocationFromIP(ip) {
+  try {
+    if (!ip || ip === '127.0.0.1' || ip.startsWith('::')) return null;
+    const res = await fetch(`http://ip-api.com/json/${ip}?fields=country,regionName,city,status`);
+    const data = await res.json();
+    if (data.status === 'success') {
+      return `${data.city || ''}, ${data.regionName || ''}, ${data.country || ''}`.replace(/^,\s*|,\s*$/g, '').replace(/,\s*,/g, ',');
+    }
+  } catch (e) {
+    console.log('Geo lookup failed:', e.message);
+  }
+  return null;
+}
+
 // Triggered by entity automation on User create.
 // Sends an admin notification email with the new user's details.
 Deno.serve(async (req) => {
@@ -12,10 +27,15 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'no email' });
     }
 
+    // Get location from IP
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('x-real-ip')
+      || null;
+    const location = await getLocationFromIP(ip);
+
     // Try to find their state from District (if manager) or TeacherProfile
     let stateInfo = '(not provided)';
     try {
-      // Check if they're a district manager
       const districts = await base44.asServiceRole.entities.District.filter({ managerEmail: newUser.email });
       if (districts.length > 0 && districts[0].institutionState) {
         stateInfo = districts[0].institutionState;
