@@ -325,10 +325,10 @@ export default function MyDay() {
       {showEventForm && (
         <EventForm
           event={null}
-          defaultDate={now}
+          initialDate={now}
           students={students}
           onSave={async (data) => { createEventMutation.mutate(data); }}
-          onClose={() => setShowEventForm(false)}
+          onCancel={() => setShowEventForm(false)}
         />
       )}
     </div>
