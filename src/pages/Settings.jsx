@@ -25,6 +25,7 @@ export default function SettingsPage() {
   const [inquiryForm, setInquiryForm] = useState({ name: "", email: "", schoolDistrict: "", estimatedUsers: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
   const [subStatus, setSubStatus] = useState(null);
   const [subLoading, setSubLoading] = useState(false);
