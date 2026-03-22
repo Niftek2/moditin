@@ -69,6 +69,12 @@ export default function StudentDetailPage() {
     enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
+  React.useEffect(() => {
+    if (student) {
+      trackStudentView(studentId, student.studentInitials);
+    }
+  }, [student?.id]);
+
   const { data: goals = [] } = useQuery({
     queryKey: ["goals", isDemoMode],
     queryFn: () => {
