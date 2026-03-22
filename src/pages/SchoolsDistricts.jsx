@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, X, Users, Building2, GraduationCap, Globe, ArrowLeft, FlaskConical, LogIn } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Check, X, Users, Building2, GraduationCap, Globe, ArrowLeft, FlaskConical, LogIn, UserCircle } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import DemoEmailGate from "../components/demo/DemoEmailGate";
 
@@ -106,6 +107,8 @@ const DISTRICT_PLANS = [
 
 export default function SchoolsDistrictsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated, isLoadingAuth } = useAuth();
   const errorRef = useRef(null);
   const [currency, setCurrency] = useState("USD");
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -118,14 +121,47 @@ export default function SchoolsDistrictsPage() {
 
   const isCAD = currency === "CAD";
 
+  // After login redirect back: auto-open the plan the user selected
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (!isAuthenticated) return;
+    const params = new URLSearchParams(location.search);
+    const planKey = params.get("planKey");
+    if (!planKey) return;
+
+    const cur = params.get("cur") || "USD";
+    const plan = DISTRICT_PLANS.find(p => p.key === planKey);
+    if (!plan || plan.key === "cooperative") return;
+
+    setCurrency(cur);
+    openCheckoutModal(plan, user);
+
+    // Clean up URL params
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [isAuthenticated, isLoadingAuth, location.search]);
+
+  const openCheckoutModal = (plan, currentUser) => {
+    setSelectedPlan(plan);
+    setSeats(plan.minSeats);
+    setPurchaserEmail(currentUser?.email || "");
+    setPurchaserName(currentUser?.full_name || "");
+    setError("");
+  };
+
   const handleSelectPlan = (plan) => {
     if (plan.key === "cooperative") {
       window.open("https://www.modaleducation.com/contact-5", "_blank");
       return;
     }
-    setSelectedPlan(plan);
-    setSeats(plan.minSeats);
-    setError("");
+
+    if (!isAuthenticated) {
+      // Redirect to login/signup; on return, auto-open this plan
+      const returnUrl = `${window.location.origin}/SchoolsDistricts?planKey=${plan.key}&cur=${currency}`;
+      base44.auth.redirectToLogin(returnUrl);
+      return;
+    }
+
+    openCheckoutModal(plan, user);
   };
 
   const handleSeatChange = (n) => {
@@ -182,13 +218,20 @@ export default function SchoolsDistrictsPage() {
           >
             <ArrowLeft className="w-4 h-4" /> Back to pricing
           </button>
-          <button
-            onClick={() => base44.auth.redirectToLogin("/Dashboard")}
-            className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
-          >
-            <LogIn className="w-4 h-4" />
-            Already have an account? Sign in
-          </button>
+          {isAuthenticated ? (
+            <span className="flex items-center gap-1.5 text-white/70 text-sm">
+              <UserCircle className="w-4 h-4" />
+              Signed in as {user?.full_name || user?.email}
+            </span>
+          ) : (
+            <button
+              onClick={() => base44.auth.redirectToLogin("/Dashboard")}
+              className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              Already have an account? Sign in
+            </button>
+          )}
         </div>
 
         <div className="text-center mb-4">
@@ -197,7 +240,7 @@ export default function SchoolsDistrictsPage() {
             Multi-seat plans for programs, schools, districts, cooperatives, and ESAs. Every plan includes a 14-day free trial.
           </p>
 
-          {/* Demo CTA for admins */}
+          {/* Demo CTA */}
           <div className="inline-flex items-center gap-3 bg-amber-400/10 border border-amber-400/30 rounded-2xl px-5 py-3 mb-8">
             <FlaskConical className="w-4 h-4 text-amber-300 flex-shrink-0" />
             <span className="text-white/80 text-sm">Want to see it before buying?</span>
@@ -292,6 +335,14 @@ export default function SchoolsDistrictsPage() {
               </button>
             </div>
             <div className="p-6 space-y-5">
+              {/* Signed-in badge */}
+              {isAuthenticated && (
+                <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
+                  <UserCircle className="w-4 h-4 text-green-600 shrink-0" />
+                  <p className="text-sm text-green-700 font-medium">Signed in as {user?.email}</p>
+                </div>
+              )}
+
               <div>
                 <label className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
                 <Input placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} aria-invalid={!!error && !purchaserName} />
@@ -336,7 +387,7 @@ export default function SchoolsDistrictsPage() {
                 {loading ? "Redirecting to Checkout…" : `Start ${selectedPlan.trial}`}
               </Button>
               <p className="text-xs text-gray-400 text-center">
-                Secure checkout powered by Stripe. You'll receive login instructions by email after checkout.
+                Secure checkout powered by Stripe. Your subscription will be linked to your account.
               </p>
             </div>
           </div>

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft, ArrowRight, FlaskConical } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft, ArrowRight, FlaskConical, UserCircle } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 
 const INDIVIDUAL_PLAN = {
@@ -20,8 +21,8 @@ const INDIVIDUAL_PLAN = {
   trialDays: 14,
   minSeats: 1,
   maxSeats: 1,
-  priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",        // $240/year
-  monthlyPriceIdUSD: "price_1TDfeRG8v8oKpU6mkpx3g2OC",  // $24/month
+  priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",
+  monthlyPriceIdUSD: "price_1TDfeRG8v8oKpU6mkpx3g2OC",
   priceIdCAD: "price_1T6xgSG8v8oKpU6mtmnmPVet",
   cta: "Start Free Trial",
   highlight: true,
@@ -137,10 +138,12 @@ const DISTRICT_PLANS = [
   },
 ];
 
-const USD_PLANS = [INDIVIDUAL_PLAN, ...DISTRICT_PLANS];
+const ALL_PLANS = [INDIVIDUAL_PLAN, ...DISTRICT_PLANS];
 
 export default function DistrictPricingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated, isLoadingAuth } = useAuth();
   const errorRef = useRef(null);
   const [billingPeriod, setBillingPeriod] = useState("monthly");
   const [currency, setCurrency] = useState("USD");
@@ -156,15 +159,50 @@ export default function DistrictPricingPage() {
 
   const isCAD = currency === "CAD";
 
+  // After login redirect back: auto-open the plan the user selected
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (!isAuthenticated) return;
+    const params = new URLSearchParams(location.search);
+    const planKey = params.get("planKey");
+    if (!planKey) return;
+
+    const bp = params.get("bp") || "monthly";
+    const cur = params.get("cur") || "USD";
+    const plan = ALL_PLANS.find(p => p.key === planKey);
+    if (!plan || plan.key === "cooperative") return;
+
+    setBillingPeriod(bp);
+    setCurrency(cur);
+    openCheckoutModal(plan, user);
+
+    // Clean up URL params without re-render
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [isAuthenticated, isLoadingAuth, location.search]);
+
+  const openCheckoutModal = (plan, currentUser) => {
+    setSelectedPlan(plan);
+    setSeats(plan.minSeats);
+    setEmails(Array(plan.minSeats).fill(""));
+    setPurchaserEmail(currentUser?.email || "");
+    setPurchaserName(currentUser?.full_name || "");
+    setError("");
+  };
+
   const handleSelectPlan = (plan) => {
     if (plan.key === "cooperative") {
       window.open("https://www.modaleducation.com/contact-5", "_blank");
       return;
     }
-    setSelectedPlan(plan);
-    setSeats(plan.minSeats);
-    setEmails(Array(plan.minSeats).fill(""));
-    setError("");
+
+    if (!isAuthenticated) {
+      // Redirect to login/signup; on return, auto-open this plan
+      const returnUrl = `${window.location.origin}/DistrictPricing?planKey=${plan.key}&bp=${billingPeriod}&cur=${currency}`;
+      base44.auth.redirectToLogin(returnUrl);
+      return;
+    }
+
+    openCheckoutModal(plan, user);
   };
 
   const handleSeatChange = (n) => {
@@ -205,11 +243,9 @@ export default function DistrictPricingPage() {
     setLoading(true);
     try {
       if (selectedPlan.key === "individual") {
-        // Pick monthly or annual price based on billing toggle
         const individualPriceId = billingPeriod === "monthly"
           ? selectedPlan.monthlyPriceIdUSD
           : (isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD);
-        // Use simple stripeCheckout for individual
         const res = await base44.functions.invoke("stripeCheckout", {
           priceId: individualPriceId,
           trialDays: selectedPlan.trialDays,
@@ -255,7 +291,7 @@ export default function DistrictPricingPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#1a0030] via-[#2d0060] to-[#400070]">
       {/* Header */}
       <div className="text-center pt-14 pb-10 px-4">
-        {/* Back + Sign In row */}
+        {/* Back + Auth row */}
         <div className="flex items-center justify-between max-w-6xl mx-auto mb-8">
           <button
             onClick={() => window.history.length > 1 ? navigate(-1) : navigate(createPageUrl("Join"))}
@@ -263,13 +299,20 @@ export default function DistrictPricingPage() {
           >
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
-          <button
-            onClick={() => base44.auth.redirectToLogin("/Dashboard")}
-            className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
-          >
-            <LogIn className="w-4 h-4" />
-            Already have an account? Sign in
-          </button>
+          {isAuthenticated ? (
+            <span className="flex items-center gap-1.5 text-white/70 text-sm">
+              <UserCircle className="w-4 h-4" />
+              Signed in as {user?.full_name || user?.email}
+            </span>
+          ) : (
+            <button
+              onClick={() => base44.auth.redirectToLogin("/Dashboard")}
+              className="flex items-center gap-1.5 text-white/70 hover:text-white text-sm font-medium transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              Already have an account? Sign in
+            </button>
+          )}
         </div>
 
         <div className="flex justify-center mb-6">
@@ -286,7 +329,6 @@ export default function DistrictPricingPage() {
           Purpose-built for itinerant teachers of the Deaf and Hard of Hearing. Free trial on every plan.
         </p>
 
-        {/* Currency Toggle — only show for multi-seat plans */}
         <div className="inline-flex items-center bg-white/10 rounded-full p-1 gap-1" role="group" aria-label="Currency selection">
           <button
             onClick={() => setCurrency("USD")}
@@ -303,8 +345,6 @@ export default function DistrictPricingPage() {
 
       {/* Plans */}
       <div className="max-w-6xl mx-auto px-4 pb-24">
-
-        {/* Helper line */}
         <p className="text-center text-white/50 text-sm mb-10 max-w-xl mx-auto">
           Choose the plan that fits your role. Individual teachers typically start with the Individual plan, while schools and districts can choose a multi-seat option.
         </p>
@@ -428,11 +468,19 @@ export default function DistrictPricingPage() {
             </div>
 
             <div className="p-6 space-y-5">
+              {/* Signed-in badge */}
+              {isAuthenticated && (
+                <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
+                  <UserCircle className="w-4 h-4 text-green-600 shrink-0" />
+                  <p className="text-sm text-green-700 font-medium">Signed in as {user?.email}</p>
+                </div>
+              )}
+
               <div>
                 <label htmlFor="purchaser-name" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Name</label>
                 <Input id="purchaser-name" placeholder="Full name" value={purchaserName} onChange={e => setPurchaserName(e.target.value)} autoComplete="name" aria-invalid={!!error && !purchaserName} />
-                </div>
-                <div>
+              </div>
+              <div>
                 <label htmlFor="purchaser-email" className="text-sm font-bold text-gray-700 mb-1.5 block">Your Email</label>
                 <Input id="purchaser-email" type="email" placeholder="you@district.org" value={purchaserEmail} onChange={e => setPurchaserEmail(e.target.value)} autoComplete="email" aria-invalid={!!error && !purchaserEmail} />
               </div>
@@ -527,7 +575,7 @@ export default function DistrictPricingPage() {
               </Button>
 
               <p className="text-xs text-gray-400 text-center">
-                Secure checkout powered by Stripe. You'll receive login instructions by email after checkout.
+                Secure checkout powered by Stripe. Your subscription will be linked to your account.
               </p>
             </div>
           </div>
