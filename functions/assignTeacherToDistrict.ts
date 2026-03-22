@@ -166,8 +166,8 @@ Deno.serve(async (req) => {
                       <div style="width:34px;height:34px;border-radius:50%;background:#400070;text-align:center;line-height:34px;font-size:15px;font-weight:700;color:#ffffff;">2</div>
                     </td>
                     <td valign="top" style="padding-top:6px;">
-                      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Click "Sign In" and enter your email</p>
-                      <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Use <strong style="color:#400070;">${teacherEmail}</strong> — this is the email your account was created with. You'll receive a one-time login link (no password needed!).</p>
+                      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:#1a0028;">Click "Sign Up" and create your account</p>
+                      <p style="margin:0;font-size:14px;color:#3d3d3d;line-height:1.6;">Use <strong style="color:#400070;">${teacherEmail}</strong> — this is the email your district set up for you. You'll need to create an account with this exact email.</p>
                     </td>
                   </tr>
                 </table>
