@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle2, Trash2, Loader2, Pencil, Sparkles, ExternalLink } from "lucide-react";
+import { CheckCircle2, Trash2, Loader2, Pencil, Sparkles, ExternalLink, Smartphone } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
+import PWAInstallGuideModal from "../components/shared/PWAInstallGuideModal";
 
 const isIosMode = typeof window !== "undefined" && (
   window.ModalApp?.platform === "ios" ||
