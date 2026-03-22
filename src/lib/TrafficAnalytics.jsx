@@ -12,21 +12,42 @@ export default function TrafficAnalytics() {
     const referrer = document.referrer || null;
     const landing_page = window.location.pathname;
 
-    // Only track if there's something meaningful to record
     const hasData = utm_source || utm_medium || utm_campaign || referrer;
     if (!hasData) return;
 
-    base44.analytics.track({
-      eventName: "traffic_source",
-      properties: {
-        ...(utm_source && { utm_source }),
-        ...(utm_medium && { utm_medium }),
-        ...(utm_campaign && { utm_campaign }),
-        ...(utm_content && { utm_content }),
-        ...(referrer && { referrer }),
-        landing_page,
-      },
-    });
+    // Fetch geo data then track
+    fetch("https://ipapi.co/json/")
+      .then(r => r.json())
+      .then(geo => {
+        base44.analytics.track({
+          eventName: "traffic_source",
+          properties: {
+            ...(utm_source && { utm_source }),
+            ...(utm_medium && { utm_medium }),
+            ...(utm_campaign && { utm_campaign }),
+            ...(utm_content && { utm_content }),
+            ...(referrer && { referrer }),
+            landing_page,
+            ...(geo.country_name && { country: geo.country_name }),
+            ...(geo.region && { state: geo.region }),
+            ...(geo.city && { city: geo.city }),
+          },
+        });
+      })
+      .catch(() => {
+        // Fall back to tracking without geo
+        base44.analytics.track({
+          eventName: "traffic_source",
+          properties: {
+            ...(utm_source && { utm_source }),
+            ...(utm_medium && { utm_medium }),
+            ...(utm_campaign && { utm_campaign }),
+            ...(utm_content && { utm_content }),
+            ...(referrer && { referrer }),
+            landing_page,
+          },
+        });
+      });
   }, []);
 
   return null;
