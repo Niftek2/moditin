@@ -10,9 +10,9 @@ const INDIVIDUAL_PLAN = {
   key: "individual",
   name: "Individual",
   icon: User,
-  priceUSD: 249,
+  priceUSD: 179,
   priceCAD: 325,
-  monthlyUSD: 24,
+  monthlyUSD: 19.99,
   perLabel: "/year",
   seatLabel: "1 seat",
   description: "Perfect for a single itinerant teacher of the Deaf/HH.",
@@ -20,7 +20,8 @@ const INDIVIDUAL_PLAN = {
   trialDays: 14,
   minSeats: 1,
   maxSeats: 1,
-  priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",
+  priceIdUSD: "price_1T4B1rG8v8oKpU6my9bQBS46",       // $179/year
+  monthlyPriceIdUSD: "price_1T6xs1G8v8oKpU6mG5VLBRA6", // $19.99/month
   priceIdCAD: "price_1T6xgSG8v8oKpU6mtmnmPVet",
   cta: "Start Free Trial",
   highlight: true,
