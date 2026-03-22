@@ -275,17 +275,9 @@ export default function SettingsPage() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">No Active Subscription</span>
-              <p className="text-xs text-[var(--modal-text-muted)]">Subscribe to get full access to Modal Itinerant.</p>
-              <Button
-                onClick={handleSubscribe}
-                disabled={subLoading}
-                className="w-full sm:w-auto gap-2 bg-[#400070] hover:bg-[#5B00A0] text-white"
-              >
-                {subLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                Subscribe Now
-              </Button>
+              <p className="text-xs text-[var(--modal-text-muted)]">No active subscription found. If you believe this is an error, please contact support.</p>
             </div>
           )}
         </div>
