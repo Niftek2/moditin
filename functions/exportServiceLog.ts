@@ -12,8 +12,13 @@ Deno.serve(async (req) => {
 
     const { month, studentId } = await req.json();
 
-    const entries = await base44.asServiceRole.entities.ServiceEntry.filter({ monthKey: month });
-    const filteredEntries = studentId ? entries.filter(e => e.studentId === studentId) : entries;
+    let allEntries;
+    if (month) {
+      allEntries = await base44.asServiceRole.entities.ServiceEntry.filter({ monthKey: month });
+    } else {
+      allEntries = await base44.asServiceRole.entities.ServiceEntry.list('-date', 500);
+    }
+    const filteredEntries = studentId ? allEntries.filter(e => e.studentId === studentId) : allEntries;
 
     const students = await base44.asServiceRole.entities.Student.list();
     const studentMap = {};
@@ -280,12 +285,14 @@ Deno.serve(async (req) => {
     }
 
     const pdfBytes = doc.output('arraybuffer');
-    return new Response(pdfBytes, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename=service-log-${month}.pdf`
-      }
+    const bytes = new Uint8Array(pdfBytes);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    const base64 = btoa(binary);
+
+    return Response.json({
+      base64,
+      filename: `service-log-${month || 'all'}.pdf`
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
