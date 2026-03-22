@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SchoolsDistricts from './pages/SchoolsDistricts';
 import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
+import DemoSignups from './pages/DemoSignups';
 
 
 const { Pages, Layout, mainPage } = pagesConfig;

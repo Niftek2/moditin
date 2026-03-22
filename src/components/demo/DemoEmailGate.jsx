@@ -22,6 +22,10 @@ export default function DemoEmailGate({ onEnter, onCancel }) {
     setLoading(true);
     setError("");
     try {
+      // Save to database
+      await base44.entities.DemoSignup.create({ email: email.trim() });
+    } catch (_) {}
+    try {
       await base44.integrations.Core.SendEmail({
         to: "nadiajiftekhar@gmail.com",
         subject: "New Demo Sign-Up — Modal Itinerant",
