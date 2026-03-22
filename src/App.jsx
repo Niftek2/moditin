@@ -75,6 +75,7 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/SchoolsDistricts" element={<SchoolsDistricts />} />
       <Route path="/DistrictManagerDashboard" element={<DistrictManagerDashboard />} />
+      <Route path="/DemoSignups" element={<DemoSignups />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
