@@ -23,7 +23,7 @@ export default function DemoEmailGate({ onEnter, onCancel }) {
     setError("");
     try {
       await base44.integrations.Core.SendEmail({
-        to: "contact@modalmath.com",
+        to: "nadiajiftekhar@gmail.com",
         subject: "New Demo Sign-Up — Modal Itinerant",
         body: `Someone signed up to view the demo of Modal Itinerant.\n\nEmail: ${email.trim()}\nDate: ${new Date().toLocaleString()}`,
       });
