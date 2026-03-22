@@ -205,9 +205,13 @@ export default function DistrictPricingPage() {
     setLoading(true);
     try {
       if (selectedPlan.key === "individual") {
+        // Pick monthly or annual price based on billing toggle
+        const individualPriceId = billingPeriod === "monthly"
+          ? selectedPlan.monthlyPriceIdUSD
+          : (isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD);
         // Use simple stripeCheckout for individual
         const res = await base44.functions.invoke("stripeCheckout", {
-          priceId: isCAD ? selectedPlan.priceIdCAD : selectedPlan.priceIdUSD,
+          priceId: individualPriceId,
           trialDays: selectedPlan.trialDays,
           successUrl: window.location.origin + "/Dashboard?checkout_success=1",
           cancelUrl: window.location.href,
