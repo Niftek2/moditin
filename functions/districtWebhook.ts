@@ -230,12 +230,66 @@ Deno.serve(async (req) => {
 
     // Confirmation email to purchaser
     try {
-      const teacherList = teacherEmails.filter(e => e && e !== purchaserEmail)
-        .map((e, i) => `${i + 1}. ${e}`).join('\n');
+      const loginUrl = 'https://itinerant.modaleducation.com';
+      const teacherListHtml = teacherEmails.filter(e => e && e !== purchaserEmail)
+        .map(e => `<li style="padding:4px 0;color:#3d3d3d;">${e}</li>`).join('');
+      const purchaserHtml = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background-color:#f4f0f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0f9;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" style="max-width:580px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:#400070;padding:36px 40px;text-align:center;">
+            <p style="margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:2px;color:#d4b8f0;text-transform:uppercase;">Modal Education</p>
+            <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#ffffff;line-height:1.3;">Your trial has started! 🎉</h1>
+            <p style="margin:0;font-size:16px;color:#e0d0f5;line-height:1.5;">Welcome to Modal Itinerant — ${planName} Plan</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 40px 24px;">
+            <p style="margin:0 0 12px;font-size:17px;font-weight:700;color:#1a0028;">Hi ${purchaserName},</p>
+            <p style="margin:0 0 24px;font-size:15px;color:#3d3d3d;line-height:1.7;">Thank you for choosing Modal Itinerant! Your <strong style="color:#400070;">${trialDays}-day free trial</strong> for the <strong>${planName}</strong> plan is now active.</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f5ff;border-radius:10px;padding:24px 28px;margin-bottom:24px;border:1px solid #e4d9f5;">
+              <tr><td>
+                <p style="margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:1px;color:#400070;text-transform:uppercase;">Subscription Summary</p>
+                <table width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;color:#1a0028;">
+                  <tr><td style="padding:5px 0;font-weight:600;width:140px;">Plan</td><td style="padding:5px 0;">${planName}</td></tr>
+                  <tr><td style="padding:5px 0;font-weight:600;">Seats</td><td style="padding:5px 0;">${quantity}</td></tr>
+                  <tr><td style="padding:5px 0;font-weight:600;">Trial Ends</td><td style="padding:5px 0;">${trialEndStr}</td></tr>
+                </table>
+                ${teacherListHtml ? `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:1px;color:#400070;text-transform:uppercase;">Teachers Invited</p><ul style="margin:0;padding-left:20px;">${teacherListHtml}</ul>` : ''}
+              </td></tr>
+            </table>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff3cd;border-radius:10px;padding:20px 24px;margin-bottom:24px;border-left:5px solid #f59e0b;">
+              <tr><td>
+                <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:1px;">⚠ Sign in using this email address:</p>
+                <p style="margin:0;font-size:18px;font-weight:700;color:#400070;">${purchaserEmail}</p>
+              </td></tr>
+            </table>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr><td align="center">
+                <a href="${loginUrl}" style="display:inline-block;background:#400070;color:#ffffff;font-size:18px;font-weight:700;text-decoration:none;padding:18px 48px;border-radius:8px;">Access Modal Itinerant →</a>
+              </td></tr>
+            </table>
+            <p style="margin:0;font-size:14px;color:#6b7280;line-height:1.6;">Questions? Reply to this email or visit <a href="https://www.modaleducation.com/contact-5" style="color:#400070;">modaleducation.com/contact-5</a></p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f9f5ff;padding:20px 40px;text-align:center;border-top:1px solid #ede9f6;">
+            <p style="margin:0;font-size:12px;color:#6b7280;">© 2026 Modal Education, LLC · <a href="https://modaleducation.com" style="color:#400070;text-decoration:none;">modaleducation.com</a></p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: purchaserEmail,
         subject: `Your Modal Itinerant ${planName} Trial Has Started!`,
-        body: `Hi ${purchaserName},\n\nThank you for choosing Modal Itinerant! Your ${trialDays}-day free trial for the ${planName} plan is now active.\n\nPlan: ${planName}\nSeats: ${quantity}\nTrial ends: ${trialEndStr}\n\n${teacherList ? `Teachers invited:\n${teacherList}\n\n` : ''}To access your account:\n1. Visit https://app.base44.com\n2. Sign in with ${purchaserEmail}\n\nQuestions? Visit https://www.modaleducation.com/contact-5\n\nThank you!\nThe Modal Education Team`,
+        body: purchaserHtml,
       });
     } catch (e) {
       console.error('Failed to send confirmation to purchaser:', e.message);
