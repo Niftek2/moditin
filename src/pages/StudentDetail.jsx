@@ -48,12 +48,6 @@ export default function StudentDetailPage() {
     }
   }, [isDemoMode]);
 
-  React.useEffect(() => {
-    if (student) {
-      trackStudentView(studentId, student.studentInitials);
-    }
-  }, [student?.id]);
-
   const { data: student, isLoading: studentLoading } = useQuery({
     queryKey: ["student", studentId, currentUserEmail, isDemoMode],
     queryFn: async () => {
