@@ -79,6 +79,7 @@ export default function TermsAgreementModal({ onAgree }) {
 
             <Section title="6. Artificial Intelligence (AI) Disclaimer">
               <p>AI outputs may contain errors or omissions. AI does not replace professional evaluation or diagnosis. AI-generated content must be reviewed before use. You assume full responsibility for use of AI-generated material.</p>
+              <p>AI features in this App process only de-identified, initials-based student references. Student data entered into the App is <strong>not</strong> used to train any AI or machine learning models by Modal Education, LLC or its AI service providers.</p>
             </Section>
 
             <Section title="Privacy Policy">
@@ -88,8 +89,9 @@ export default function TermsAgreementModal({ onAgree }) {
               <p>Modal Education, LLC does not sell user data, share educational content for marketing, or distribute user-generated educational content. We may use anonymized aggregate analytics to improve the product.</p>
               <p className="font-semibold">9. Data Security</p>
               <p>We implement commercially reasonable security safeguards. No internet-based system can guarantee absolute security. By using the App, you acknowledge inherent online risks.</p>
-              <p className="font-semibold">10. FERPA & HIPAA Clarification</p>
-              <p>Modal Education, LLC does not act as a School Official under FERPA, is not a HIPAA Business Associate, and does not certify regulatory compliance. You remain solely responsible for compliance with FERPA, IDEA, ADA, and applicable state and district policies.</p>
+              <p className="font-semibold">10. FERPA Compliance & Data Handling</p>
+              <p>Modal Itinerant is designed to support FERPA compliance by prohibiting the entry of personally identifiable student information (PII). The App enforces an initials-only policy and uses real-time PII detection to prevent storage of student names, dates of birth, addresses, or ID numbers.</p>
+              <p>Modal Education, LLC acts as a service provider under the direct control of your educational institution, consistent with the FERPA "school official" exception (34 CFR § 99.31(a)(1)). You (the teacher/district) remain the data controller. Student data is never shared for marketing and is never used to train AI models. Modal Education, LLC is not a HIPAA Business Associate. You remain solely responsible for compliance with FERPA, IDEA, ADA, and applicable state and district policies.</p>
             </Section>
 
             <Section title="Data Processing Addendum (DPA)">

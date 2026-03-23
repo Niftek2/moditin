@@ -119,9 +119,12 @@ const SECTIONS = {
       ],
     },
     {
-      title: "10. FERPA & HIPAA Clarification",
+      title: "10. FERPA Compliance & Data Handling",
       content: [
-        "Modal Education, LLC does not act as a School Official under FERPA, is not a HIPAA Business Associate, and does not certify regulatory compliance. You remain solely responsible for compliance with FERPA, IDEA, ADA, and applicable state and district policies.",
+        "Modal Itinerant is designed to support FERPA compliance by prohibiting the entry of personally identifiable student information (PII). The App enforces an initials-only policy for student references and uses real-time PII detection to prevent the storage of names, dates of birth, addresses, student ID numbers, or school names.",
+        "Modal Education, LLC acts as a service provider operating under the direct control of the educational institution (the User), consistent with the FERPA 'school official' exception (34 CFR § 99.31(a)(1)). The User (teacher/district) remains the data controller and is responsible for ensuring that data entered into the App complies with their institution's FERPA obligations.",
+        "Student data entered into the App is not shared with third parties for marketing purposes and is not used to train AI models. AI features process only de-identified, initials-based references.",
+        "Modal Education, LLC is not a HIPAA Business Associate and does not certify full regulatory compliance. You remain solely responsible for compliance with FERPA, IDEA, ADA, and applicable state and district policies.",
       ],
     },
     {

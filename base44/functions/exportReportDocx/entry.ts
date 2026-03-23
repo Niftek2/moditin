@@ -14,7 +14,8 @@ Deno.serve(async (req) => {
       'Draft Evaluation Report – Teacher Review Required\n\n' +
       'This document was generated using a structured draft generator to assist Teachers of the Deaf and Hard of Hearing in preparing evaluation language.\n\n' +
       'All highlighted sections contain automatically generated or inserted content and must be reviewed, edited, and verified by the evaluating teacher before use in any official IEP documentation.\n\n' +
-      'This tool does not replace professional judgment or district procedures.';
+      'This tool does not replace professional judgment or district procedures.\n\n' +
+      'FERPA NOTICE: This document may contain confidential student education records protected under the Family Educational Rights and Privacy Act (FERPA), 20 U.S.C. § 1232g. Unauthorized disclosure or re-disclosure of this information is prohibited. Handle, store, and transmit this document in accordance with your institution\'s FERPA policies.';
 
     const docChildren = [];
 

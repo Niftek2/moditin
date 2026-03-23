@@ -280,7 +280,7 @@ Deno.serve(async (req) => {
       doc.setTextColor(...textMuted);
       doc.setFontSize(6.5);
       doc.setFont('helvetica', 'normal');
-      doc.text('Modal Educator Platform  |  Confidential  |  Not for diagnostic use', marginL, pageHeight - 4);
+      doc.text('FERPA NOTICE: This document contains confidential student education records. Unauthorized disclosure is prohibited by 20 U.S.C. § 1232g.', marginL, pageHeight - 6, { maxWidth: pageWidth - marginL - marginR - 20 });
       doc.text(`Page ${p} of ${totalPages}`, pageWidth - marginR, pageHeight - 4, { align: 'right' });
     }
 
