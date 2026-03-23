@@ -72,6 +72,14 @@ export default function StudentDetailPage() {
   React.useEffect(() => {
     if (student) {
       trackStudentView(studentId, student.studentInitials);
+      // Fire-and-forget server-side access log (FERPA § 99.32)
+      if (!isDemoMode) {
+        base44.functions.invoke("logStudentAccess", {
+          action: "StudentViewed",
+          studentId: student.id,
+          studentInitials: student.studentInitials,
+        }).catch(() => {});
+      }
     }
   }, [student?.id]);
 
