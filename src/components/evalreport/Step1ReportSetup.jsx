@@ -64,6 +64,11 @@ export default function Step1ReportSetup({ data, onChange }) {
           <Label>Evaluator Name <span className="text-red-500">*</span></Label>
           <Input value={data.evaluatorName || ""} onChange={e => set("evaluatorName", e.target.value)}
             placeholder="Your name" className="border-[var(--modal-border)]" />
+          {data.evaluatorName && /\b([A-Z][a-z]{1,}\.?\s){2,}/.test(data.evaluatorName) && (
+            <div className="flex items-center gap-1.5 text-amber-600 text-xs">
+              <AlertTriangle className="w-3 h-3" /> Make sure this is the evaluator's name, not a student name.
+            </div>
+          )}
         </div>
 
         {/* Report Date */}

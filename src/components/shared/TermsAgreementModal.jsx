@@ -14,8 +14,23 @@ export function hasAgreedToTerms() {
 export default function TermsAgreementModal({ onAgree }) {
   const handleAgree = async () => {
     localStorage.setItem(TERMS_KEY, "true");
+    const agreedAt = new Date().toISOString();
     try {
-      await base44.auth.updateMe({ termsAgreedAt: new Date().toISOString() });
+      await base44.auth.updateMe({ termsAgreedAt: agreedAt });
+    } catch (e) {
+      // non-blocking
+    }
+    // Write server-side audit record for DPA consent (fire-and-forget)
+    try {
+      const user = await base44.auth.me();
+      if (user) {
+        await base44.functions.invoke("logTermsAgreement", {
+          userId: user.id,
+          userEmail: user.email,
+          agreedAt,
+          version: "v1",
+        });
+      }
     } catch (e) {
       // non-blocking
     }

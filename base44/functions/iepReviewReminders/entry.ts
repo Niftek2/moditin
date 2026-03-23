@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
       const alreadyNotified = existing.some(n => n.body?.includes(targetDateStr));
 
       if (alreadyNotified) {
-        console.log(`Skipping ${student.studentInitials} — already notified`);
+        console.log(`Skipping student ${student.id} — already notified`);
         continue;
       }
 
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       });
 
       created++;
-      console.log(`Created reminder for ${student.studentInitials}`);
+      console.log(`Created reminder for student ${student.id}`);
     }
 
     return Response.json({ success: true, checked: upcoming.length, created });

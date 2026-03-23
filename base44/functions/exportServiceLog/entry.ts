@@ -12,15 +12,37 @@ Deno.serve(async (req) => {
 
     const { month, studentId } = await req.json();
 
+    const userEmail = user.email;
+
     let allEntries;
     if (month) {
-      allEntries = await base44.asServiceRole.entities.ServiceEntry.filter({ monthKey: month });
+      allEntries = await base44.asServiceRole.entities.ServiceEntry.filter({ monthKey: month, created_by: userEmail });
     } else {
-      allEntries = await base44.asServiceRole.entities.ServiceEntry.list('-date', 500);
+      allEntries = await base44.asServiceRole.entities.ServiceEntry.filter({ created_by: userEmail });
     }
+
+    // If a specific studentId was requested, verify the student belongs to this user
+    if (studentId) {
+      const studentCheck = await base44.asServiceRole.entities.Student.filter({ id: studentId, created_by: userEmail });
+      if (!studentCheck || studentCheck.length === 0) {
+        return Response.json({ error: 'Forbidden: student does not belong to requesting user' }, { status: 403 });
+      }
+    }
+
     const filteredEntries = studentId ? allEntries.filter(e => e.studentId === studentId) : allEntries;
 
-    const students = await base44.asServiceRole.entities.Student.list();
+    const students = await base44.asServiceRole.entities.Student.filter({ created_by: userEmail });
+
+    // Log the export event (fire-and-forget)
+    base44.asServiceRole.entities.AccessLog.create({
+      userId: user.id,
+      userEmail: user.email,
+      action: 'ServiceLogExported',
+      studentId: studentId || null,
+      ipAddress: req.headers.get('x-forwarded-for') || 'unknown',
+      timestamp: new Date().toISOString(),
+      details: month ? `month: ${month}` : 'all months',
+    }).catch(() => {});
     const studentMap = {};
     students.forEach(s => { studentMap[s.id] = s.studentInitials; });
 

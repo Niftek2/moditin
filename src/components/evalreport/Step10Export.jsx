@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
-import { FileDown, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { FileDown, AlertTriangle, CheckCircle, Loader2, ShieldAlert } from "lucide-react";
 
 export default function Step10Export({ reportData, generated, assessments, profile }) {
   const [exporting, setExporting] = useState(false);
   const [exported, setExported] = useState(false);
   const [error, setError] = useState(null);
+  const [ferpaAcknowledged, setFerpaAcknowledged] = useState(false);
 
   // Validation
   const missing = [];
@@ -140,10 +141,32 @@ export default function Step10Export({ reportData, generated, assessments, profi
         </div>
       )}
 
+      {/* FERPA acknowledgment */}
+      <div
+        className="mb-4 p-4 rounded-xl border border-amber-200 bg-amber-50 flex items-start gap-3 cursor-pointer"
+        onClick={() => setFerpaAcknowledged(v => !v)}
+      >
+        <input
+          type="checkbox"
+          checked={ferpaAcknowledged}
+          onChange={e => setFerpaAcknowledged(e.target.checked)}
+          className="mt-0.5 shrink-0 accent-[#400070]"
+          onClick={e => e.stopPropagation()}
+        />
+        <div>
+          <p className="text-xs font-semibold text-amber-800 flex items-center gap-1 mb-0.5">
+            <ShieldAlert className="w-3.5 h-3.5" /> FERPA Education Record Acknowledgment
+          </p>
+          <p className="text-xs text-amber-700">
+            I understand that the exported report may constitute an education record under FERPA (20 U.S.C. § 1232g). I will store, share, and transmit this document in accordance with my institution's data handling policies and will not share it via unsecured email or personal storage.
+          </p>
+        </div>
+      </div>
+
       <Button
         className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2 w-full py-6 text-base"
         onClick={handleExport}
-        disabled={missing.length > 0 || exporting}
+        disabled={missing.length > 0 || exporting || !ferpaAcknowledged}
       >
         {exporting ? (
           <><Loader2 className="w-5 h-5 animate-spin" /> Generating Document...</>

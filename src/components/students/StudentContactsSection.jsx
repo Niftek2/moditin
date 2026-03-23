@@ -32,7 +32,8 @@ export default function StudentContactsSection({ studentId }) {
     queryKey: ["studentContacts", studentId, isDemoMode],
     queryFn: async () => {
       if (isDemoMode) return demoData.contacts.find(c => c.studentId === studentId) || null;
-      const all = await base44.entities.StudentContacts.filter({ studentId });
+      const me = await base44.auth.me();
+      const all = await base44.entities.StudentContacts.filter({ studentId, created_by: me.email });
       return all[0] || null;
     },
     enabled: !!studentId,
@@ -40,12 +41,13 @@ export default function StudentContactsSection({ studentId }) {
 
   const saveMutation = useMutation({
     mutationFn: async (newMember) => {
+      const me = await base44.auth.me();
       const currentMembers = contacts?.additionalTeamMembers || [];
       const updated = [...currentMembers, newMember];
       if (contacts?.id) {
         return base44.entities.StudentContacts.update(contacts.id, { additionalTeamMembers: updated });
       } else {
-        return base44.entities.StudentContacts.create({ studentId, additionalTeamMembers: updated });
+        return base44.entities.StudentContacts.create({ studentId, created_by: me.email, additionalTeamMembers: updated });
       }
     },
     onSuccess: () => {
@@ -72,13 +74,16 @@ export default function StudentContactsSection({ studentId }) {
           <UserCheck className="w-5 h-5 text-[#6B2FB9]" />
           School Staff Contacts
         </h2>
-        <Button
-          size="sm"
-          onClick={() => setShowForm(!showForm)}
-          className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-1 text-xs"
-        >
-          <Plus className="w-3.5 h-3.5" /> Add Contact
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[var(--modal-text-muted)] hidden sm:block">For your reference only · not shared · not exported</span>
+          <Button
+            size="sm"
+            onClick={() => setShowForm(!showForm)}
+            className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl gap-1 text-xs"
+          >
+            <Plus className="w-3.5 h-3.5" /> Add Contact
+          </Button>
+        </div>
       </div>
 
       {showForm && (
