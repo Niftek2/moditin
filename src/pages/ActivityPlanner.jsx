@@ -1,184 +1,222 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { CalendarDays, Sparkles, Loader2 } from "lucide-react";
 import PageHeader from "../components/shared/PageHeader";
-import EmptyState from "../components/shared/EmptyState";
-import AIDisclaimer from "../components/shared/AIDisclaimer";
+import PlanSetupForm from "../components/activityplanner/PlanSetupForm";
+import PlanDisplay from "../components/activityplanner/PlanDisplay";
+import PlanHistory from "../components/activityplanner/PlanHistory";
+import { useDemo } from "../components/demo/DemoContext";
 
 export default function ActivityPlannerPage() {
+  const queryClient = useQueryClient();
+  const { isDemoMode, demoData } = useDemo();
+
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  useEffect(() => {
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
+
+  // ── Form state ──
   const [studentId, setStudentId] = useState("");
   const [goalId, setGoalId] = useState("");
   const [serviceModel, setServiceModel] = useState("InPerson");
   const [sessionLength, setSessionLength] = useState("30");
+  const [communicationFocus, setCommunicationFocus] = useState([]);
+  const [hearingTech, setHearingTech] = useState("");
+  const [sessionDate, setSessionDate] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(false);
-  const [plan, setPlan] = useState(null);
+  const [activePlan, setActivePlan] = useState(null); // currently displayed plan
 
-  const queryClient = useQueryClient();
-
-  const { data: students = [] } = useQuery({ queryKey: ["students"], queryFn: () => base44.entities.Student.list() });
-  const { data: studentGoals = [] } = useQuery({
-    queryKey: ["studentGoals", studentId],
-    queryFn: () => base44.entities.StudentGoal.filter({ studentId }),
-    enabled: !!studentId,
+  // ── Data — all filtered to current user to prevent cross-user leakage ──
+  const { data: students = [] } = useQuery({
+    queryKey: ["students", currentUserEmail],
+    queryFn: () => base44.entities.Student.filter({ created_by: currentUserEmail }, "-created_date"),
+    enabled: !!currentUserEmail && !isDemoMode,
   });
-  const { data: goals = [] } = useQuery({ queryKey: ["goals"], queryFn: () => base44.entities.Goal.list("-created_date", 200) });
-  const { data: plans = [] } = useQuery({ queryKey: ["activityPlans"], queryFn: () => base44.entities.ActivityPlan.list("-created_date", 50) });
+
+  const { data: studentGoals = [] } = useQuery({
+    queryKey: ["studentGoals", studentId, currentUserEmail],
+    queryFn: () => base44.entities.StudentGoal.filter({ studentId, created_by: currentUserEmail }),
+    enabled: !!studentId && !!currentUserEmail && !isDemoMode,
+  });
+
+  const { data: allStudentGoals = [] } = useQuery({
+    queryKey: ["allStudentGoals", currentUserEmail],
+    queryFn: () => base44.entities.StudentGoal.filter({ created_by: currentUserEmail }),
+    enabled: !!currentUserEmail && !isDemoMode,
+  });
+
+  const { data: goals = [] } = useQuery({
+    queryKey: ["goals"],
+    queryFn: () => base44.entities.Goal.list("-created_date", 300),
+  });
+
+  const { data: plans = [] } = useQuery({
+    queryKey: ["activityPlans", currentUserEmail],
+    // Filter by created_by so users only see their own plans
+    queryFn: () => base44.entities.ActivityPlan.filter({ created_by: currentUserEmail }, "-created_date", 50),
+    enabled: !!currentUserEmail && !isDemoMode,
+  });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.ActivityPlan.create(data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["activityPlans"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["activityPlans", currentUserEmail] }),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.ActivityPlan.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["activityPlans", currentUserEmail] }),
+  });
+
+  // ── Lookup maps ──
+  const studentMap = {};
+  (isDemoMode ? demoData.students : students).forEach(s => { studentMap[s.id] = s; });
 
   const goalMap = {};
   goals.forEach(g => { goalMap[g.id] = g; });
 
-  const studentMap = {};
-  students.forEach(s => { studentMap[s.id] = s; });
+  const studentGoalMap = {};
+  allStudentGoals.forEach(sg => { studentGoalMap[sg.id] = sg; });
 
-  const selectedGoal = goalId ? goalMap[studentGoals.find(sg => sg.id === goalId)?.goalId] : null;
   const selectedStudentGoal = studentGoals.find(sg => sg.id === goalId);
+  const selectedGoal = selectedStudentGoal ? goalMap[selectedStudentGoal.goalId] : null;
 
+  // ── Generate plan via AI ──
   const handleGenerate = async () => {
     setLoading(true);
+    const student = studentMap[studentId];
     const goal = goalMap[selectedStudentGoal?.goalId];
+
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an expert TODHH session planner. Create a therapy session plan.
-Student grade band: ${studentMap[studentId]?.gradeBand}
-Goal: ${goal?.annualGoal}
-Objectives: ${goal?.objectives?.join("; ")}
-Measurement type: ${goal?.measurementType}
+      prompt: `You are an expert Teacher of the Deaf and Hard of Hearing (TODHH) session planner.
+Create a detailed, TODHH-specific lesson plan for this session.
+
+Student grade band: ${student?.gradeBand || "Unknown"}
+Communication modality: ${student?.communicationModality || "Not specified"}
+Primary language: ${student?.primaryLanguage || "Not specified"}
+Communication focus for this session: ${communicationFocus.join(", ") || "Not specified"}
+Hearing tech considerations: ${hearingTech || "None specified"}
+IEP Goal: ${goal?.annualGoal || "Not specified"}
+Objectives: ${goal?.objectives?.join("; ") || "None"}
+Measurement type: ${goal?.measurementType || "Not specified"}
 Service model: ${serviceModel}
 Session length: ${sessionLength} minutes
 
-Return JSON with: warmup, coreActivity, wrapUp, telepracticeAdaptations, materialsList (array of strings), dataCollectionPrompt.`,
+Return a JSON object with these fields:
+- warmup: a brief engaging warm-up activity (1-3 sentences)
+- coreActivity: the main instructional activity aligned to the goal (2-4 sentences)
+- wrapUp: a closure activity reinforcing learning (1-2 sentences)
+- environmentalAdaptations: specific environmental or telepractice adaptations for this student's needs (1-2 sentences)
+- visualSupportsPlanned: any visual supports or materials to prepare (1-2 sentences)
+- materialsList: array of specific materials needed (5-8 items)
+- dataCollectionPrompt: a precise data collection prompt aligned to the measurement type
+
+Make the plan highly specific to Deaf/HH education — reference hearing technology, acoustic environment, visual access, communication modality, and auditory skill building where appropriate.`,
       response_json_schema: {
         type: "object",
         properties: {
           warmup: { type: "string" },
           coreActivity: { type: "string" },
           wrapUp: { type: "string" },
-          telepracticeAdaptations: { type: "string" },
+          environmentalAdaptations: { type: "string" },
+          visualSupportsPlanned: { type: "string" },
           materialsList: { type: "array", items: { type: "string" } },
           dataCollectionPrompt: { type: "string" },
         },
       },
     });
 
-    setPlan(result);
+    // Save to DB — created_by is automatically set to the current user
     const saved = await createMutation.mutateAsync({
       studentId,
       studentGoalId: goalId,
       serviceModel,
       sessionLength: parseInt(sessionLength),
+      date: sessionDate,
+      communicationFocus,
+      hearingTechConsiderations: hearingTech,
       ...result,
-      date: new Date().toISOString().split("T")[0],
     });
+
+    setActivePlan({ ...result, communicationFocus, hearingTechConsiderations: hearingTech });
     setLoading(false);
   };
 
+  // ── Load a past plan into the display ──
+  const handleSelectPlan = (plan) => {
+    // Verify this plan belongs to current user before displaying
+    if (!isDemoMode && plan.created_by !== currentUserEmail) return;
+    setActivePlan(plan);
+    setStudentId(plan.studentId || "");
+    setGoalId(plan.studentGoalId || "");
+    setServiceModel(plan.serviceModel || "InPerson");
+    setSessionLength(String(plan.sessionLength || 30));
+    setCommunicationFocus(plan.communicationFocus || []);
+    setHearingTech(plan.hearingTechConsiderations || "");
+    setSessionDate(plan.date || new Date().toISOString().split("T")[0]);
+  };
+
+  const handleDeletePlan = (id) => {
+    if (confirm("Delete this plan?")) {
+      deleteMutation.mutate(id);
+      if (activePlan?.id === id) setActivePlan(null);
+    }
+  };
+
+  const displayedStudents = isDemoMode ? demoData.students : students;
+  const canGenerate = !!studentId && !!goalId && !loading && (isDemoMode || !!currentUserEmail);
+
   return (
     <div>
-      <PageHeader title="Activity Planner" subtitle="AI-powered session planning" />
+      <PageHeader title="Lesson Planner" subtitle="AI-powered TODHH session planning" />
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Config */}
-        <div className="modal-card p-5 space-y-4">
-          <h3 className="font-semibold text-[var(--modal-text)] text-sm">Session Setup</h3>
-          <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Student</Label>
-            <Select value={studentId} onValueChange={(v) => { setStudentId(v); setGoalId(""); }}>
-              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select student" /></SelectTrigger>
-              <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.studentInitials} ({s.gradeBand})</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          {studentId && (
-            <div className="space-y-2">
-              <Label className="text-[var(--modal-text-muted)]">Goal</Label>
-              <Select value={goalId} onValueChange={setGoalId}>
-                <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue placeholder="Select goal" /></SelectTrigger>
-                <SelectContent>
-                  {studentGoals.filter(sg => sg.status === "Active").map(sg => (
-                    <SelectItem key={sg.id} value={sg.id}>{goalMap[sg.goalId]?.annualGoal?.slice(0, 60) || "Goal"}...</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Service Model</Label>
-            <Select value={serviceModel} onValueChange={setServiceModel}>
-              <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="InPerson">In Person</SelectItem>
-                <SelectItem value="Telepractice">Telepractice</SelectItem>
-                <SelectItem value="Hybrid">Hybrid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-[var(--modal-text-muted)]">Session Length (min)</Label>
-            <Input type="number" value={sessionLength} onChange={(e) => setSessionLength(e.target.value)} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]" />
-          </div>
-          <Button onClick={handleGenerate} disabled={!studentId || !goalId || loading} className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            Generate Plan
-          </Button>
-          <AIDisclaimer compact />
+        {/* Left: Setup */}
+        <div>
+          <PlanSetupForm
+            students={displayedStudents}
+            studentGoals={studentGoals}
+            goalMap={goalMap}
+            studentId={studentId}
+            setStudentId={setStudentId}
+            goalId={goalId}
+            setGoalId={setGoalId}
+            serviceModel={serviceModel}
+            setServiceModel={setServiceModel}
+            sessionLength={sessionLength}
+            setSessionLength={setSessionLength}
+            communicationFocus={communicationFocus}
+            setCommunicationFocus={setCommunicationFocus}
+            hearingTech={hearingTech}
+            setHearingTech={setHearingTech}
+            sessionDate={sessionDate}
+            setSessionDate={setSessionDate}
+            onGenerate={handleGenerate}
+            loading={loading}
+            canGenerate={canGenerate}
+          />
+
+          <PlanHistory
+            plans={plans}
+            studentMap={studentMap}
+            goalMap={goalMap}
+            studentGoalMap={studentGoalMap}
+            onSelect={handleSelectPlan}
+            onDelete={handleDeletePlan}
+          />
         </div>
 
-        {/* Plan Display */}
-        <div className="lg:col-span-2 space-y-4">
-          {plan ? (
-            <>
-              {selectedGoal && (
-                <div className="modal-card p-5">
-                  <h3 className="text-xs uppercase tracking-wider text-[var(--modal-text-muted)] mb-2">Goal</h3>
-                  <p className="text-sm text-[var(--modal-text)]">{selectedGoal.annualGoal}</p>
-                  {selectedGoal.objectives?.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-xs text-[var(--modal-text-muted)] mb-1">Objectives</p>
-                      <ol className="space-y-1">{selectedGoal.objectives.map((o, i) => <li key={i} className="text-xs text-[var(--modal-text)]">{i + 1}. {o}</li>)}</ol>
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className="grid sm:grid-cols-3 gap-4">
-                {[
-                  { label: "Warmup", content: plan.warmup },
-                  { label: "Core Activity", content: plan.coreActivity },
-                  { label: "Wrap-Up", content: plan.wrapUp },
-                ].map((section) => (
-                  <div key={section.label} className="modal-card p-4">
-                    <h4 className="text-xs uppercase tracking-wider text-[var(--modal-purple-glow)] mb-2">{section.label}</h4>
-                    <p className="text-sm text-[var(--modal-text)]">{section.content}</p>
-                  </div>
-                ))}
-              </div>
-              {plan.telepracticeAdaptations && (
-                <div className="modal-card p-4">
-                  <h4 className="text-xs uppercase tracking-wider text-[var(--modal-text-muted)] mb-2">Telepractice Adaptations</h4>
-                  <p className="text-sm text-[var(--modal-text)]">{plan.telepracticeAdaptations}</p>
-                </div>
-              )}
-              {plan.materialsList?.length > 0 && (
-                <div className="modal-card p-4">
-                  <h4 className="text-xs uppercase tracking-wider text-[var(--modal-text-muted)] mb-2">Materials</h4>
-                  <ul className="space-y-1">{plan.materialsList.map((m, i) => <li key={i} className="text-sm text-[var(--modal-text)] flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[var(--modal-purple-glow)]" />{m}</li>)}</ul>
-                </div>
-              )}
-              <div className="modal-card p-4">
-                <h4 className="text-xs uppercase tracking-wider text-[var(--modal-text-muted)] mb-2">Data Collection Prompt</h4>
-                <p className="text-sm text-[var(--modal-text)]">{plan.dataCollectionPrompt}</p>
-              </div>
-            </>
-          ) : (
-            <EmptyState icon={CalendarDays} title="No plan generated" description="Select a student, goal, and session details, then click Generate Plan." />
-          )}
+        {/* Right: Plan Display */}
+        <div className="lg:col-span-2">
+          <PlanDisplay
+            plan={activePlan}
+            selectedGoal={selectedGoal}
+            serviceModel={serviceModel}
+            communicationFocus={activePlan?.communicationFocus || communicationFocus}
+            hearingTech={activePlan?.hearingTechConsiderations || hearingTech}
+          />
         </div>
       </div>
     </div>
