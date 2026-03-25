@@ -527,6 +527,14 @@ export default function QuoteGenerator({ defaultCurrency = "USD" }) {
             >
               <FileText className="w-4 h-4 mr-2" /> Generate Quote
             </Button>
+
+            {/* Legal / Compliance */}
+            <p className="text-white/30 text-xs text-center">
+              Legal &amp; Compliance:{" "}
+              <a href="/FerpaDpa" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white/80 underline underline-offset-2 transition-colors">
+                FERPA Compliance &amp; Data Processing Agreement
+              </a>
+            </p>
           </div>
 
           {/* Quote Preview */}
