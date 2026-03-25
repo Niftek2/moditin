@@ -1,4 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
+import * as base64 from 'npm:base64-js@1.5.1';
+
+function encodeMessage(rawMessage) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(rawMessage);
+  // URL-safe base64
+  let b64 = btoa(String.fromCharCode(...bytes));
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
 Deno.serve(async (req) => {
   try {
@@ -92,10 +101,10 @@ Deno.serve(async (req) => {
             <p style="margin:0 0 12px;color:#9ca3af;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Line Items</p>
             <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
               <tr style="background:#f3e8ff;">
-                <th style="text-align:left;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;border-radius:8px 0 0 0;">Description</th>
+                <th style="text-align:left;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;">Description</th>
                 <th style="text-align:center;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;">Seats</th>
                 <th style="text-align:center;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;">Rate / Seat</th>
-                <th style="text-align:right;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;border-radius:0 8px 0 0;">Total</th>
+                <th style="text-align:right;padding:10px 14px;color:#400070;font-size:12px;font-weight:700;">Total</th>
               </tr>
               <tr style="border-bottom:1px solid #f3f4f6;">
                 <td style="padding:14px;color:#111827;font-size:13px;font-weight:600;">
@@ -156,7 +165,7 @@ Deno.serve(async (req) => {
               <p style="margin:0 0 8px;color:#374151;font-size:12px;font-weight:700;">Notes & Terms</p>
               <ul style="margin:0;padding-left:16px;color:#6b7280;font-size:12px;line-height:1.8;">
                 <li>This quote is valid for 30 days from the issue date and is subject to review and written approval by Modal Education prior to becoming binding.</li>
-                <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education. Modal Education reserves the right to modify, withdraw, or revise any quoted rates or terms at any time prior to such written confirmation.</li>
+                <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education.</li>
                 <li>No payment is due until after the 14-day free trial period ends.</li>
                 <li>Subscriptions renew annually unless cancelled before the renewal date.</li>
                 <li>Purchase orders accepted — contact contact@modaleducation.com for PO invoicing.</li>
@@ -186,6 +195,50 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
+    // Get Gmail access token
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+    // Helper to send via Gmail API
+    async function sendViaGmail(to, subject, htmlContent, fromLabel) {
+      const fromAddress = `${fromLabel} <contact@modaleducation.com>`;
+      const boundary = `boundary_${Date.now()}`;
+      const rawMessage = [
+        `From: ${fromAddress}`,
+        `To: ${to}`,
+        `Subject: ${subject}`,
+        `MIME-Version: 1.0`,
+        `Content-Type: multipart/alternative; boundary="${boundary}"`,
+        ``,
+        `--${boundary}`,
+        `Content-Type: text/html; charset=UTF-8`,
+        `Content-Transfer-Encoding: quoted-printable`,
+        ``,
+        htmlContent,
+        `--${boundary}--`,
+      ].join('\r\n');
+
+      const encoded = btoa(unescape(encodeURIComponent(rawMessage)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+
+      const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ raw: encoded }),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error(`Gmail send error to ${to}:`, err);
+        throw new Error(`Gmail API error: ${err}`);
+      }
+      return res.json();
+    }
+
     // Save quote to database
     await base44.asServiceRole.entities.Quote.create({
       quoteNumber,
@@ -204,22 +257,22 @@ Deno.serve(async (req) => {
     });
 
     // Send to the requester
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: contactEmail,
-      from_name: "Modal Education",
-      subject: `Quote #${quoteNumber} — Modal Itinerant for ${schoolName}`,
-      body: htmlBody,
-    });
+    await sendViaGmail(
+      contactEmail,
+      `Quote #${quoteNumber} — Modal Itinerant for ${schoolName}`,
+      htmlBody,
+      "Modal Education"
+    );
 
     // Send a copy to Modal Education
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: "contact@modaleducation.com",
-      from_name: "Modal Education Quote System",
-      subject: `[Quote Copy] #${quoteNumber} — ${schoolName} (${seats} seats, ${currencySymbol}${totalPrice.toLocaleString()} ${currencyLabel})`,
-      body: htmlBody,
-    });
+    await sendViaGmail(
+      "contact@modaleducation.com",
+      `[Quote Copy] #${quoteNumber} — ${schoolName} (${seats} seats, ${currencySymbol}${totalPrice.toLocaleString()} ${currencyLabel})`,
+      htmlBody,
+      "Modal Education Quote System"
+    );
 
-    console.log(`Quote ${quoteNumber} sent to ${contactEmail} and contact@modaleducation.com for ${schoolName}`);
+    console.log(`Quote ${quoteNumber} sent via Gmail to ${contactEmail} and contact@modaleducation.com`);
     return Response.json({ success: true });
 
   } catch (error) {
