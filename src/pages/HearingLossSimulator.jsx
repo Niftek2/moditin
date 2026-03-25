@@ -46,6 +46,14 @@ const PRESETS = [
 const BAND_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const BAND_LABELS = ["250", "500", "1k", "2k", "3k", "4k", "6k", "8k"];
 
+const NOISE_ENVIRONMENTS = [
+  { id: "none", label: "None", description: "No background noise added.", profile: { gain: 0, lowShelfGain: 0, highShelfGain: 0 } },
+  { id: "quiet_classroom", label: "Quiet Classroom", description: "Soft HVAC hum, occasional paper rustling.", profile: { gain: 0.08, lowShelfGain: 6, highShelfGain: -18 } },
+  { id: "noisy_classroom", label: "Noisy Classroom", description: "Multiple children talking, chairs moving. SNR ~+5 dB.", profile: { gain: 0.28, lowShelfGain: 8, highShelfGain: -10 } },
+  { id: "cafeteria", label: "Cafeteria / Lunch", description: "Loud, reverberant environment with high noise floor.", profile: { gain: 0.45, lowShelfGain: 10, highShelfGain: -8 } },
+  { id: "restaurant", label: "Restaurant", description: "Moderate ambient noise, music, background conversation.", profile: { gain: 0.35, lowShelfGain: 6, highShelfGain: -12 } },
+];
+
 // Apply filter chain to an AudioBuffer, returns a new AudioBuffer
 async function applyFiltersToBuffer(audioCtx, inputBuffer, gainValues) {
   const offlineCtx = new OfflineAudioContext(
@@ -78,6 +86,71 @@ async function applyFiltersToBuffer(audioCtx, inputBuffer, gainValues) {
   return offlineCtx.startRendering();
 }
 
+async function applyFiltersUnilateral(audioCtx, inputBuffer, gainValues, affectedEar) {
+  const offlineCtx = new OfflineAudioContext(2, inputBuffer.length, inputBuffer.sampleRate);
+  const source = offlineCtx.createBufferSource();
+  source.buffer = inputBuffer;
+  const splitter = offlineCtx.createChannelSplitter(2);
+  const merger = offlineCtx.createChannelMerger(2);
+  const filters = gainValues.map((gain, i) => {
+    const f = offlineCtx.createBiquadFilter();
+    f.type = "peaking";
+    f.frequency.value = BAND_FREQUENCIES[i];
+    f.Q.value = 1.4;
+    f.gain.value = gain;
+    return f;
+  });
+  for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+  source.connect(splitter);
+  const affectedChannelIndex = affectedEar === "right" ? 1 : 0;
+  const clearChannelIndex = affectedEar === "right" ? 0 : 1;
+  splitter.connect(merger, clearChannelIndex, clearChannelIndex);
+  splitter.connect(filters[0], affectedChannelIndex);
+  filters[filters.length - 1].connect(merger, 0, affectedChannelIndex);
+  merger.connect(offlineCtx.destination);
+  source.start(0);
+  return offlineCtx.startRendering();
+}
+
+function generateNoiseMix(audioCtx, durationSeconds, sampleRate, noiseProfile) {
+  const frameCount = Math.ceil(durationSeconds * sampleRate);
+  const buffer = audioCtx.createBuffer(1, frameCount, sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < frameCount; i++) {
+    data[i] = (Math.random() * 2 - 1) * noiseProfile.gain;
+  }
+  return buffer;
+}
+
+async function renderNoiseMixed(audioCtx, filteredBuffer, noiseProfile) {
+  if (!noiseProfile || noiseProfile.gain === 0) return filteredBuffer;
+  const offlineCtx = new OfflineAudioContext(filteredBuffer.numberOfChannels, filteredBuffer.length, filteredBuffer.sampleRate);
+  const speechSrc = offlineCtx.createBufferSource();
+  speechSrc.buffer = filteredBuffer;
+  const noiseBuffer = generateNoiseMix(offlineCtx, filteredBuffer.duration, filteredBuffer.sampleRate, noiseProfile);
+  const noiseSrc = offlineCtx.createBufferSource();
+  noiseSrc.buffer = noiseBuffer;
+  noiseSrc.loop = true;
+  const lowShelf = offlineCtx.createBiquadFilter();
+  lowShelf.type = "lowshelf";
+  lowShelf.frequency.value = 800;
+  lowShelf.gain.value = noiseProfile.lowShelfGain;
+  const highShelf = offlineCtx.createBiquadFilter();
+  highShelf.type = "highshelf";
+  highShelf.frequency.value = 3000;
+  highShelf.gain.value = noiseProfile.highShelfGain;
+  const noiseGain = offlineCtx.createGain();
+  noiseGain.gain.value = 1.0;
+  noiseSrc.connect(lowShelf);
+  lowShelf.connect(highShelf);
+  highShelf.connect(noiseGain);
+  noiseGain.connect(offlineCtx.destination);
+  speechSrc.connect(offlineCtx.destination);
+  speechSrc.start(0);
+  noiseSrc.start(0);
+  return offlineCtx.startRendering();
+}
+
 // ─── Main component ──────────────────────────────────────────────────────────
 export default function HearingLossSimulator() {
   // status: idle | recording | processing | ready | playing_normal | playing_simulated | error | permission_denied
@@ -89,6 +162,8 @@ export default function HearingLossSimulator() {
   const [playingMode, setPlayingMode] = useState(null); // 'normal' | 'simulated'
   const [studentSimLabel, setStudentSimLabel] = useState(null);
   const [studentSimInterpretation, setStudentSimInterpretation] = useState(null);
+  const [laterality, setLaterality] = useState("bilateral");
+  const [noiseEnvId, setNoiseEnvId] = useState("none");
 
   const audioCtxRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -167,15 +242,14 @@ export default function HearingLossSimulator() {
 
       // Pre-render filtered version
       const gains = isCustomMode ? customGains : activePreset.gains;
-      const filtered = await applyFiltersToBuffer(ctx, decoded, gains);
-      filteredBufferRef.current = filtered;
+      filteredBufferRef.current = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId);
 
       setStatus("ready");
     };
 
     recorder.start();
     setStatus("recording");
-  }, [activePreset, isCustomMode, customGains]);
+  }, [activePreset, isCustomMode, customGains, buildFilteredBuffer, laterality, noiseEnvId]);
 
   // ── Stop recording ─────────────────────────────────────────────────────────
   const handleStopRecording = useCallback(() => {
@@ -237,6 +311,40 @@ export default function HearingLossSimulator() {
     setPlayingMode(null);
   }, [stopPlayback]);
 
+  // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
+  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId) => {
+    const ctx = getAudioCtx();
+    const noiseProfile = NOISE_ENVIRONMENTS.find(e => e.id === noiseId)?.profile;
+    const intermediate = lat === "bilateral"
+      ? await applyFiltersToBuffer(ctx, rawBuffer, gains)
+      : await applyFiltersUnilateral(ctx, rawBuffer, gains, lat);
+    return noiseId === "none" ? intermediate : await renderNoiseMixed(ctx, intermediate, noiseProfile);
+  }, []);
+
+  // ── Laterality change ──────────────────────────────────────────────────────
+  const handleLateralityChange = useCallback(async (newLaterality) => {
+    setLaterality(newLaterality);
+    if (rawBufferRef.current) {
+      setStatus("processing");
+      stopPlayback();
+      const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
+      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId);
+      setStatus("ready");
+    }
+  }, [buildFilteredBuffer, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback]);
+
+  // ── Noise environment change ───────────────────────────────────────────────
+  const handleNoiseChange = useCallback(async (newNoiseId) => {
+    setNoiseEnvId(newNoiseId);
+    if (rawBufferRef.current) {
+      setStatus("processing");
+      stopPlayback();
+      const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
+      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId);
+      setStatus("ready");
+    }
+  }, [buildFilteredBuffer, isCustomMode, customGains, activePreset, laterality, stopPlayback]);
+
   // ── Student profile load ───────────────────────────────────────────────────
   const handleStudentGainsLoaded = useCallback(async (gains, label, source, interpretation) => {
     if (!gains) {
@@ -253,12 +361,10 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const ctx = getAudioCtx();
-      const filtered = await applyFiltersToBuffer(ctx, rawBufferRef.current, gains);
-      filteredBufferRef.current = filtered;
+      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId);
       setStatus("ready");
     }
-  }, [stopPlayback]);
+  }, [stopPlayback, buildFilteredBuffer, laterality, noiseEnvId]);
 
   // ── Preset selection ───────────────────────────────────────────────────────
   const handlePresetSelect = useCallback(async (preset) => {
@@ -272,12 +378,10 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const ctx = getAudioCtx();
-      const filtered = await applyFiltersToBuffer(ctx, rawBufferRef.current, preset.gains);
-      filteredBufferRef.current = filtered;
+      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId);
       setStatus("ready");
     }
-  }, [stopPlayback]);
+  }, [stopPlayback, buildFilteredBuffer, laterality, noiseEnvId]);
 
   // ── Slider change ──────────────────────────────────────────────────────────
   const handleSliderChange = useCallback(async (bandIndex, value) => {
@@ -288,14 +392,12 @@ export default function HearingLossSimulator() {
 
     if (rawBufferRef.current) {
       stopPlayback();
-      const ctx = getAudioCtx();
-      const filtered = await applyFiltersToBuffer(ctx, rawBufferRef.current, newGains);
-      filteredBufferRef.current = filtered;
+      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId);
       if (status === "ready" || status === "playing_normal" || status === "playing_simulated") {
         setStatus("ready");
       }
     }
-  }, [customGains, stopPlayback, status]);
+  }, [customGains, stopPlayback, status, buildFilteredBuffer, laterality, noiseEnvId]);
 
   // ── Cleanup on unmount ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -369,6 +471,39 @@ export default function HearingLossSimulator() {
         <h2 className="text-base font-bold text-[#1A1028]">
           {studentSimLabel ? "Or Override with a Preset" : "Select Hearing Loss Type"}
         </h2>
+
+        {/* Laterality selector */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold text-[#1A1028]">Affected Ear</h3>
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { id: "bilateral", label: "Both Ears" },
+              { id: "right", label: "Right Ear Only" },
+              { id: "left", label: "Left Ear Only" },
+            ].map(opt => (
+              <button
+                key={opt.id}
+                onClick={() => handleLateralityChange(opt.id)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                  laterality === opt.id
+                    ? "bg-[#400070] text-white border-[#400070]"
+                    : "bg-white text-[#4A4A4A] border-[var(--modal-border)] hover:bg-[#F7F3FA] hover:border-[#C4A8E0]"
+                }`}
+                aria-pressed={laterality === opt.id}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {laterality !== "bilateral" && (
+            <p className="text-xs text-[#4A4A4A]">
+              {laterality === "right"
+                ? "Right ear hears with the selected hearing loss. Left ear hears normally."
+                : "Left ear hears with the selected hearing loss. Right ear hears normally."}
+            </p>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {PRESETS.map((preset) => {
             const isActive = activePresetId === preset.id && !isCustomMode;
@@ -389,6 +524,41 @@ export default function HearingLossSimulator() {
             );
           })}
         </div>
+      </div>
+
+      {/* Listening Environment card */}
+      <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-4">
+        <h2 className="text-base font-bold text-[#1A1028]">Listening Environment</h2>
+        <p className="text-xs text-[#4A4A4A]">
+          Add procedurally generated background noise to the simulated track only.
+          Demonstrates how hearing loss impacts speech understanding in realistic settings.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {NOISE_ENVIRONMENTS.map(env => {
+            const isActive = noiseEnvId === env.id;
+            return (
+              <button
+                key={env.id}
+                onClick={() => handleNoiseChange(env.id)}
+                className={`text-left rounded-xl border px-4 py-3 transition-all ${
+                  isActive
+                    ? "bg-[#EADDF5] border-[#6B2FB9]"
+                    : "bg-white border-[var(--modal-border)] hover:bg-[#F7F3FA] hover:border-[#C4A8E0]"
+                }`}
+                aria-pressed={isActive}
+              >
+                <p className={`text-sm font-semibold ${isActive ? "text-[#400070]" : "text-[#1A1028]"}`}>{env.label}</p>
+                <p className="text-xs text-[#4A4A4A] mt-0.5 leading-snug">{env.description}</p>
+              </button>
+            );
+          })}
+        </div>
+        {noiseEnvId !== "none" && (
+          <p className="text-xs text-[#4A4A4A] bg-[#F7F3FA] rounded-xl px-3 py-2">
+            Background noise is added to the <strong>simulated track only</strong>.
+            Play Normal vs. Play Simulated to hear the combined effect of hearing loss and environment.
+          </p>
+        )}
       </div>
 
       {/* Manual sliders */}
