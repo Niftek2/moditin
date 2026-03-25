@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
               <tr>
                 <td>
                   <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png"
-                    alt="Modal Education" height="48" style="filter:brightness(0) invert(1);display:block;margin-bottom:12px;" />
+                    alt="Modal Education" height="48" style="display:block;margin-bottom:12px;background:#fff;border-radius:6px;padding:4px 8px;" />
                   <p style="margin:0;color:rgba(255,255,255,0.7);font-size:13px;">Modal Education</p>
                   <p style="margin:4px 0 0;color:rgba(255,255,255,0.5);font-size:12px;">www.modaleducation.com</p>
                 </td>
@@ -173,7 +173,7 @@ Deno.serve(async (req) => {
                 Start Your Free Trial →
               </a>
               <p style="margin:16px 0 0;color:#9ca3af;font-size:12px;">
-                Questions? <a href="mailto:support@modaleducation.com" style="color:#400070;font-weight:600;">support@modaleducation.com</a>
+                Questions? <a href="mailto:contact@modaleducation.com" style="color:#400070;font-weight:600;">contact@modaleducation.com</a>
               </p>
               <p style="margin:8px 0 0;color:#d1d5db;font-size:11px;">Modal Education · www.modaleducation.com</p>
             </div>
