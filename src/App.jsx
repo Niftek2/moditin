@@ -12,6 +12,7 @@ import SchoolsDistricts from './pages/SchoolsDistricts';
 import FerpaDpa from './pages/FerpaDpa';
 import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import DemoSignups from './pages/DemoSignups';
+import QuotesAdmin from './pages/QuotesAdmin';
 
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -79,6 +80,7 @@ const AuthenticatedApp = () => {
       <Route path="/DistrictManagerDashboard" element={<DistrictManagerDashboard />} />
       <Route path="/DemoSignups" element={<DemoSignups />} />
       <Route path="/FerpaDpa" element={<FerpaDpa />} />
+      <Route path="/QuotesAdmin" element={<QuotesAdmin />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
