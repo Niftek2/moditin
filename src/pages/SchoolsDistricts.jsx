@@ -267,7 +267,7 @@ export default function SchoolsDistrictsPage() {
         </div>
 
         {/* Plans grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch mt-8">
           {DISTRICT_PLANS.map(plan => {
             const Icon = plan.icon;
             const price = isCAD ? plan.priceCAD : plan.priceUSD;
