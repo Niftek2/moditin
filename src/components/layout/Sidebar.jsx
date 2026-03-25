@@ -21,7 +21,8 @@ import {
   Bell,
   Sun,
   Activity,
-  Sparkles
+  Sparkles,
+  AudioWaveform
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
@@ -43,6 +44,7 @@ const navItems = [
   { name: "Activities", icon: Zap, page: "InteractiveActivities" },
   { name: "Labeling Activities", icon: Activity, page: "LabelingActivities" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
+  { name: "Hearing Simulator", icon: AudioWaveform, page: "HearingLossSimulator" },
 ];
 
 const RECENTLY_VIEWED_KEY = "modal_recently_viewed_students";
