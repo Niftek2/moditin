@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Ear, Mic, Square, Play, AlertCircle, Info, Volume2, RefreshCw, ArrowLeftRight } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import StudentAudiogramLoader from "../components/simulator/StudentAudiogramLoader";
 import WaveformComparison from "../components/simulator/WaveformComparison";
 import { base44 } from "@/api/base44Client";
@@ -48,6 +47,44 @@ const PRESETS = [
 
 const BAND_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const BAND_LABELS = ["250", "500", "1k", "2k", "3k", "4k", "6k", "8k"];
+
+const BAND_FREQUENCIES_LABELS = ["250", "500", "1k", "2k", "3k", "4k", "6k", "8k"];
+const DB_HL_MIN = -10;
+const DB_HL_MAX = 120;
+
+// Speech banana: approximate upper and lower dB HL bounds per frequency band
+const SPEECH_BANANA = [
+  { freqIndex: 0, top: 20, bottom: 55 },  // 250 Hz
+  { freqIndex: 1, top: 20, bottom: 60 },  // 500 Hz
+  { freqIndex: 2, top: 20, bottom: 65 },  // 1k Hz
+  { freqIndex: 3, top: 20, bottom: 70 },  // 2k Hz
+  { freqIndex: 4, top: 25, bottom: 65 },  // 3k Hz
+  { freqIndex: 5, top: 30, bottom: 65 },  // 4k Hz
+  { freqIndex: 6, top: 35, bottom: 65 },  // 6k Hz
+  { freqIndex: 7, top: 40, bottom: 65 },  // 8k Hz
+];
+
+// Convert gain value (−60 to 0) → dB HL (0 to 120)
+function gainToDbHL(gain) {
+  return Math.round((gain * -2) / 5) * 5; // snap to nearest 5
+}
+
+// Convert dB HL → gain value (−60 to 0)
+function dbHLToGain(dbHL) {
+  return Math.max(-60, Math.min(0, -(dbHL / 2)));
+}
+
+// Convert dB HL → percentage position within the chart (0% = top = −10 dB, 100% = bottom = 120 dB)
+function dbHLToPercent(dbHL) {
+  return ((dbHL - DB_HL_MIN) / (DB_HL_MAX - DB_HL_MIN)) * 100;
+}
+
+// Convert a pixel Y offset within the chart container → dB HL, snapped to 5 dB
+function pixelToDbHL(pixelY, chartHeightPx) {
+  const raw = DB_HL_MIN + (pixelY / chartHeightPx) * (DB_HL_MAX - DB_HL_MIN);
+  const snapped = Math.round(raw / 5) * 5;
+  return Math.max(DB_HL_MIN, Math.min(DB_HL_MAX, snapped));
+}
 
 const STATIC_NOISE_NONE = { id: "none", label: "None", description: "No background noise added.", profile: { gain: 0, lowShelfGain: 0, highShelfGain: 0 } };
 
@@ -307,6 +344,7 @@ export default function HearingLossSimulator() {
   const [studentSimInterpretation, setStudentSimInterpretation] = useState(null);
   const [laterality, setLaterality] = useState("bilateral");
   const [noiseEnvId, setNoiseEnvId] = useState("none");
+  const [activeAudiogramEar, setActiveAudiogramEar] = useState("right"); // "right" | "left"
   // Mirror state for canvas re-renders (refs don't trigger renders)
   const [rawBufferState, setRawBufferState] = useState(null);
   const [filteredBufferState, setFilteredBufferState] = useState(null);
@@ -315,6 +353,8 @@ export default function HearingLossSimulator() {
 
   const audioCtxRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const audiogramChartRef = useRef(null); // ref to the chart container div for height measurement
+  const draggingRef = useRef(null); // { bandIndex, ear } while a drag is in progress, else null
   const chunksRef = useRef([]);
   const rawBufferRef = useRef(null);       // original recorded AudioBuffer
   const filteredBufferRef = useRef(null);  // filter-processed AudioBuffer
@@ -625,6 +665,26 @@ export default function HearingLossSimulator() {
     }
   }, [customGains, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
+  // ── Audiogram drag handlers ────────────────────────────────────────────────
+  const handleMarkerDragStart = useCallback((e, bandIndex) => {
+    e.preventDefault();
+    draggingRef.current = { bandIndex, ear: activeAudiogramEar };
+  }, [activeAudiogramEar]);
+
+  const handleChartPointerMove = useCallback((e) => {
+    if (!draggingRef.current || !audiogramChartRef.current) return;
+    const rect = audiogramChartRef.current.getBoundingClientRect();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const relY = clientY - rect.top;
+    const dbHL = pixelToDbHL(relY, rect.height);
+    const gain = dbHLToGain(dbHL);
+    handleSliderChange(draggingRef.current.bandIndex, gain);
+  }, [handleSliderChange]);
+
+  const handleChartPointerUp = useCallback(() => {
+    draggingRef.current = null;
+  }, []);
+
   // ── Cleanup on unmount ─────────────────────────────────────────────────────
   useEffect(() => {
     return () => {
@@ -787,31 +847,217 @@ export default function HearingLossSimulator() {
         )}
       </div>
 
-      {/* Manual sliders */}
+      {/* Manual Adjustment — Interactive Audiogram */}
       <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-base font-bold text-[#1A1028]">Manual Adjustment</h2>
-          {isCustomMode && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#EADDF5] text-[#6B2FB9]">Custom</span>
-          )}
+          <div className="flex items-center gap-2">
+            {isCustomMode && (
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#EADDF5] text-[#6B2FB9]">Custom</span>
+            )}
+          </div>
         </div>
+
         <p className="text-xs text-[#4A4A4A]">
-          Adjust individual frequency bands. 0 dB = no change. −60 dB = near-total attenuation. Changes re-process the recording automatically.
+          Drag the markers on the audiogram to set hearing thresholds per frequency.
+          The shaded region is the <strong>speech banana</strong> — where most speech sounds occur.
+          Changes re-process the recording automatically.
         </p>
-        <div className="space-y-4">
-          {BAND_LABELS.map((label, i) => (
-            <div key={label} className="flex items-center gap-4">
-              <span className="text-xs font-semibold text-[#4A4A4A] w-8 text-right shrink-0">{label}</span>
-              <div className="flex-1">
-                <Slider
-                  min={-60} max={0} step={1}
-                  value={[displayGains[i]]}
-                  onValueChange={([val]) => handleSliderChange(i, val)}
-                  aria-label={`${label}Hz gain`}
-                  className="w-full"
-                />
-              </div>
-              <span className="text-xs font-mono text-[#4A4A4A] w-10 shrink-0">{displayGains[i]} dB</span>
+
+        {/* Ear selector */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-semibold text-[#4A4A4A]">Editing ear:</span>
+          <button
+            onClick={() => setActiveAudiogramEar("right")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+              activeAudiogramEar === "right"
+                ? "bg-red-600 text-white border-red-600"
+                : "bg-white text-[#4A4A4A] border-[var(--modal-border)] hover:border-red-300"
+            }`}
+            aria-pressed={activeAudiogramEar === "right"}
+          >
+            Right Ear (O)
+          </button>
+          <button
+            onClick={() => setActiveAudiogramEar("left")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+              activeAudiogramEar === "left"
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-[#4A4A4A] border-[var(--modal-border)] hover:border-blue-300"
+            }`}
+            aria-pressed={activeAudiogramEar === "left"}
+          >
+            Left Ear (X)
+          </button>
+        </div>
+
+        {/* Audiogram chart */}
+        <div className="relative select-none" style={{ paddingLeft: "36px", paddingBottom: "20px" }}>
+
+          {/* Y-axis dB labels */}
+          <div className="absolute left-0 top-0 bottom-5 flex flex-col justify-between" style={{ width: "32px" }}>
+            {[-10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].map(db => (
+              <span key={db} className="text-[9px] text-[#4A4A4A] text-right leading-none" style={{ lineHeight: 1 }}>
+                {db}
+              </span>
+            ))}
+          </div>
+
+          {/* Chart area */}
+          <div
+            ref={audiogramChartRef}
+            className="relative border border-[var(--modal-border)] rounded-xl overflow-hidden"
+            style={{ height: "280px", cursor: "default" }}
+            onMouseMove={handleChartPointerMove}
+            onMouseUp={handleChartPointerUp}
+            onMouseLeave={handleChartPointerUp}
+            onTouchMove={handleChartPointerMove}
+            onTouchEnd={handleChartPointerUp}
+          >
+            {/* Horizontal grid lines — one per 10 dB */}
+            {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].map(db => (
+              <div
+                key={db}
+                className="absolute left-0 right-0"
+                style={{
+                  top: `${dbHLToPercent(db)}%`,
+                  height: "1px",
+                  backgroundColor: db % 20 === 0 ? "#C0B8CC" : "#EDE8F4",
+                }}
+              />
+            ))}
+
+            {/* Normal hearing range shading (−10 to 25 dB) */}
+            <div
+              className="absolute left-0 right-0 pointer-events-none"
+              style={{
+                top: `${dbHLToPercent(-10)}%`,
+                height: `${dbHLToPercent(25) - dbHLToPercent(-10)}%`,
+                backgroundColor: "rgba(200, 230, 200, 0.35)",
+              }}
+            />
+
+            {/* Speech banana — per-column trapezoid approximation using flex columns */}
+            <div className="absolute inset-0 flex pointer-events-none">
+              {SPEECH_BANANA.map((band) => (
+                <div key={band.freqIndex} className="flex-1 relative">
+                  <div
+                    className="absolute left-0 right-0"
+                    style={{
+                      top: `${dbHLToPercent(band.top)}%`,
+                      height: `${dbHLToPercent(band.bottom) - dbHLToPercent(band.top)}%`,
+                      backgroundColor: "rgba(250, 220, 100, 0.30)",
+                      borderTop: "1px dashed rgba(200, 160, 0, 0.4)",
+                      borderBottom: "1px dashed rgba(200, 160, 0, 0.4)",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Frequency columns + markers */}
+            <div className="absolute inset-0 flex">
+              {BAND_FREQUENCIES_LABELS.map((label, i) => {
+                const rightDbHL = gainToDbHL(displayGains[i]);
+                const leftDbHL = gainToDbHL(displayGains[i]);
+                const rightTop = dbHLToPercent(rightDbHL);
+                const leftTop = dbHLToPercent(leftDbHL);
+                const isActiveCol = draggingRef.current?.bandIndex === i;
+
+                return (
+                  <div
+                    key={label}
+                    className={`flex-1 relative border-l border-[#EDE8F4] first:border-l-0 ${isActiveCol ? "bg-[#F7F3FA]" : ""}`}
+                  >
+                    {/* Column frequency label at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+                      <span className="text-[9px] text-[#4A4A4A] font-semibold translate-y-full pt-1">{label}</span>
+                    </div>
+
+                    {/* Right ear marker — O (open circle) */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
+                      style={{ top: `${rightTop}%` }}
+                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                      aria-label={`Right ear ${label}Hz: ${rightDbHL} dB HL`}
+                      role="slider"
+                      aria-valuenow={rightDbHL}
+                      aria-valuemin={DB_HL_MIN}
+                      aria-valuemax={DB_HL_MAX}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 transition-shadow ${
+                          activeAudiogramEar === "right"
+                            ? "border-red-600 bg-white shadow-md hover:shadow-lg"
+                            : "border-red-300 bg-white opacity-60"
+                        }`}
+                      />
+                    </div>
+
+                    {/* Left ear marker — X */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
+                      style={{ top: `${leftTop}%`, marginLeft: "2px" }}
+                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                      aria-label={`Left ear ${label}Hz: ${leftDbHL} dB HL`}
+                      role="slider"
+                      aria-valuenow={leftDbHL}
+                      aria-valuemin={DB_HL_MIN}
+                      aria-valuemax={DB_HL_MAX}
+                    >
+                      <div
+                        className={`w-5 h-5 flex items-center justify-center font-bold transition-opacity ${
+                          activeAudiogramEar === "left"
+                            ? "text-blue-600 opacity-100"
+                            : "text-blue-300 opacity-60"
+                        }`}
+                        style={{ fontSize: "16px", lineHeight: 1, userSelect: "none" }}
+                      >
+                        ×
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* X-axis label */}
+          <p className="text-center text-[10px] text-[#4A4A4A] mt-5">Frequency (Hz)</p>
+        </div>
+
+        {/* Y-axis label */}
+        <p className="text-[10px] text-[#4A4A4A] text-center -mt-2">↑ Better hearing &nbsp;|&nbsp; dB HL &nbsp;|&nbsp; More loss ↓</p>
+
+        {/* Legend */}
+        <div className="flex items-center gap-5 flex-wrap pt-1">
+          <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
+            <div className="w-4 h-4 rounded-full border-2 border-red-600 bg-white" />
+            Right ear
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
+            <span className="text-blue-600 font-bold text-base leading-none">×</span>
+            Left ear
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
+            <div className="w-4 h-3 rounded-sm" style={{ backgroundColor: "rgba(250, 220, 100, 0.5)", border: "1px dashed rgba(200,160,0,0.5)" }} />
+            Speech banana
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
+            <div className="w-4 h-3 rounded-sm" style={{ backgroundColor: "rgba(200, 230, 200, 0.5)" }} />
+            Normal range
+          </div>
+        </div>
+
+        {/* Current threshold readout */}
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 pt-1">
+          {BAND_FREQUENCIES_LABELS.map((label, i) => (
+            <div key={label} className="text-center bg-[#F7F3FA] rounded-lg py-1.5 px-1 border border-[var(--modal-border)]">
+              <p className="text-[9px] font-semibold text-[#4A4A4A]">{label}</p>
+              <p className="text-[10px] font-mono font-bold text-[#1A1028]">{gainToDbHL(displayGains[i])}</p>
+              <p className="text-[8px] text-[#4A4A4A]">dB HL</p>
             </div>
           ))}
         </div>
