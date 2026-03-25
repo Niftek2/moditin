@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Ear, Mic, Square, Play, AlertCircle, Info, Volume2, RefreshCw, ArrowLeftRight } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import StudentAudiogramLoader from "../components/simulator/StudentAudiogramLoader";
+import WaveformComparison from "../components/simulator/WaveformComparison";
 
 // ─── Hearing loss presets ────────────────────────────────────────────────────
 const PRESETS = [
@@ -164,6 +165,9 @@ export default function HearingLossSimulator() {
   const [studentSimInterpretation, setStudentSimInterpretation] = useState(null);
   const [laterality, setLaterality] = useState("bilateral");
   const [noiseEnvId, setNoiseEnvId] = useState("none");
+  // Mirror state for canvas re-renders (refs don't trigger renders)
+  const [rawBufferState, setRawBufferState] = useState(null);
+  const [filteredBufferState, setFilteredBufferState] = useState(null);
 
   const audioCtxRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -238,11 +242,10 @@ export default function HearingLossSimulator() {
         return;
       }
 
-      rawBufferRef.current = decoded;
-
       // Pre-render filtered version
       const gains = isCustomMode ? customGains : activePreset.gains;
-      filteredBufferRef.current = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId);
+      commitBuffers(decoded, filtered);
 
       setStatus("ready");
     };
@@ -307,6 +310,8 @@ export default function HearingLossSimulator() {
     stopPlayback();
     rawBufferRef.current = null;
     filteredBufferRef.current = null;
+    setRawBufferState(null);
+    setFilteredBufferState(null);
     setStatus("idle");
     setPlayingMode(null);
   }, [stopPlayback]);
@@ -321,6 +326,14 @@ export default function HearingLossSimulator() {
     return noiseId === "none" ? intermediate : await renderNoiseMixed(ctx, intermediate, noiseProfile);
   }, []);
 
+  // ── Sync buffer refs → state so WaveformComparison re-draws ──────────────
+  const commitBuffers = useCallback((raw, filtered) => {
+    rawBufferRef.current = raw;
+    filteredBufferRef.current = filtered;
+    setRawBufferState(raw);
+    setFilteredBufferState(filtered);
+  }, []);
+
   // ── Laterality change ──────────────────────────────────────────────────────
   const handleLateralityChange = useCallback(async (newLaterality) => {
     setLaterality(newLaterality);
@@ -328,10 +341,11 @@ export default function HearingLossSimulator() {
       setStatus("processing");
       stopPlayback();
       const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId);
+      commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback]);
 
   // ── Noise environment change ───────────────────────────────────────────────
   const handleNoiseChange = useCallback(async (newNoiseId) => {
@@ -340,10 +354,11 @@ export default function HearingLossSimulator() {
       setStatus("processing");
       stopPlayback();
       const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId);
+      commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, isCustomMode, customGains, activePreset, laterality, stopPlayback]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, laterality, stopPlayback]);
 
   // ── Student profile load ───────────────────────────────────────────────────
   const handleStudentGainsLoaded = useCallback(async (gains, label, source, interpretation) => {
@@ -361,10 +376,11 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId);
+      commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [stopPlayback, buildFilteredBuffer, laterality, noiseEnvId]);
+  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
 
   // ── Preset selection ───────────────────────────────────────────────────────
   const handlePresetSelect = useCallback(async (preset) => {
@@ -378,10 +394,11 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId);
+      commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [stopPlayback, buildFilteredBuffer, laterality, noiseEnvId]);
+  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
 
   // ── Slider change ──────────────────────────────────────────────────────────
   const handleSliderChange = useCallback(async (bandIndex, value) => {
@@ -392,12 +409,13 @@ export default function HearingLossSimulator() {
 
     if (rawBufferRef.current) {
       stopPlayback();
-      filteredBufferRef.current = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId);
+      commitBuffers(rawBufferRef.current, filtered);
       if (status === "ready" || status === "playing_normal" || status === "playing_simulated") {
         setStatus("ready");
       }
     }
-  }, [customGains, stopPlayback, status, buildFilteredBuffer, laterality, noiseEnvId]);
+  }, [customGains, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
 
   // ── Cleanup on unmount ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -696,6 +714,15 @@ export default function HearingLossSimulator() {
           <span>Wear headphones for best results and to prevent microphone feedback.</span>
         </div>
       </div>
+
+      {/* Waveform comparison — shown once a recording is ready */}
+      {rawBufferState && filteredBufferState && (
+        <WaveformComparison
+          rawBuffer={rawBufferState}
+          filteredBuffer={filteredBufferState}
+          playingMode={playingMode}
+        />
+      )}
 
       {/* Disclaimer */}
       <p className="text-xs text-[#4A4A4A] text-center pb-4">
