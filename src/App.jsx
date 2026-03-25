@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SchoolsDistricts from './pages/SchoolsDistricts';
+import AudioManagement from './pages/AudioManagement';
 import FerpaDpa from './pages/FerpaDpa';
 import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import DemoSignups from './pages/DemoSignups';
@@ -81,6 +82,7 @@ const AuthenticatedApp = () => {
       <Route path="/DemoSignups" element={<DemoSignups />} />
       <Route path="/FerpaDpa" element={<FerpaDpa />} />
       <Route path="/QuotesAdmin" element={<QuotesAdmin />} />
+      <Route path="/AudioManagement" element={<AudioManagement />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
