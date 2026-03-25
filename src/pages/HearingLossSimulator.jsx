@@ -220,8 +220,11 @@ async function renderNoiseMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, n
 }
 
 async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
-  // FM simulation on top of already-filtered (hearing loss applied) speech.
-  // Speech is boosted +5 dB. Noise is same character but 75% quieter.
+  // FM/DM lapel mic worn by the speaker: mic is 2–6 inches from the speaker's mouth,
+  // so it captures speech directly before it ever enters the noisy room.
+  // The hearing aid still applies hearing-loss filtering to the speech signal,
+  // but room noise is massively attenuated (~95%, ~-13 dB relative to normal).
+  // Speech is boosted +10 dB to simulate the close-mic advantage.
   if (!noiseProfile || noiseProfile.gain === 0) return filteredBuffer;
 
   const offlineCtx = new OfflineAudioContext(
@@ -230,16 +233,16 @@ async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
     filteredBuffer.sampleRate
   );
 
-  // Speech source — boosted +5 dB
+  // Speech — boosted +10 dB (close-mic proximity advantage)
   const speechSrc = offlineCtx.createBufferSource();
   speechSrc.buffer = filteredBuffer;
   const speechGain = offlineCtx.createGain();
-  speechGain.gain.value = 1.78; // +5 dB = 10^(5/20)
+  speechGain.gain.value = 3.16; // +10 dB = 10^(10/20)
   speechSrc.connect(speechGain);
   speechGain.connect(offlineCtx.destination);
 
-  // Noise — same shaping filters, gain multiplied by 0.25 (75% reduction)
-  const fmNoiseProfile = { ...noiseProfile, gain: noiseProfile.gain * 0.25 };
+  // Room noise — reduced to ~5% (room noise is picked up by hearing aid mic, not FM mic)
+  const fmNoiseProfile = { ...noiseProfile, gain: noiseProfile.gain * 0.05 };
   const noiseBuffer = generateNoiseMix(
     offlineCtx,
     filteredBuffer.duration,
@@ -271,8 +274,8 @@ async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
 }
 
 async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, noiseProfile) {
-  // FM version of renderNoiseMixedFromBuffer:
-  // speech boosted +5 dB, noise GainNode set to 25% of normal level.
+  // FM/DM lapel mic worn by the speaker: close-mic speech capture before room noise.
+  // Speech boosted +10 dB (proximity advantage), room noise reduced to 5%.
   const offlineCtx = new OfflineAudioContext(
     speechBuffer.numberOfChannels,
     speechBuffer.length,
@@ -282,7 +285,7 @@ async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, nois
   const speechSrc = offlineCtx.createBufferSource();
   speechSrc.buffer = speechBuffer;
   const speechGain = offlineCtx.createGain();
-  speechGain.gain.value = 1.78; // +5 dB
+  speechGain.gain.value = 3.16; // +10 dB = 10^(10/20)
   speechSrc.connect(speechGain);
   speechGain.connect(offlineCtx.destination);
 
@@ -301,7 +304,7 @@ async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, nois
   highShelf.gain.value = noiseProfile.highShelfGain;
 
   const noiseGain = offlineCtx.createGain();
-  noiseGain.gain.value = noiseProfile.gain * 0.25; // 75% reduction
+  noiseGain.gain.value = noiseProfile.gain * 0.05; // ~95% noise reduction
 
   noiseSrc.connect(lowShelf);
   lowShelf.connect(highShelf);
@@ -1166,8 +1169,8 @@ export default function HearingLossSimulator() {
                   ) : (
                     <Mic className="w-5 h-5" />
                   )}
-                  <span className="text-center leading-tight">With FM Mic</span>
-                  <span className="text-xs font-normal opacity-70">SNR improved</span>
+                  <span className="text-center leading-tight">With FM/DM Mic</span>
+                  <span className="text-xs font-normal opacity-70">Worn by speaker</span>
                 </button>
               )}
             </div>
