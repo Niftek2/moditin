@@ -190,6 +190,24 @@ export default function HearingLossSimulator() {
     return audioCtxRef.current;
   };
 
+  // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
+  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId) => {
+    const ctx = getAudioCtx();
+    const noiseProfile = NOISE_ENVIRONMENTS.find(e => e.id === noiseId)?.profile;
+    const intermediate = lat === "bilateral"
+      ? await applyFiltersToBuffer(ctx, rawBuffer, gains)
+      : await applyFiltersUnilateral(ctx, rawBuffer, gains, lat);
+    return noiseId === "none" ? intermediate : await renderNoiseMixed(ctx, intermediate, noiseProfile);
+  }, []);
+
+  // ── Sync buffer refs → state so WaveformComparison re-draws ──────────────
+  const commitBuffers = useCallback((raw, filtered) => {
+    rawBufferRef.current = raw;
+    filteredBufferRef.current = filtered;
+    setRawBufferState(raw);
+    setFilteredBufferState(filtered);
+  }, []);
+
   // ── Start recording ────────────────────────────────────────────────────────
   const handleRecord = useCallback(async () => {
     setErrorMessage("");
@@ -315,24 +333,6 @@ export default function HearingLossSimulator() {
     setStatus("idle");
     setPlayingMode(null);
   }, [stopPlayback]);
-
-  // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
-  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId) => {
-    const ctx = getAudioCtx();
-    const noiseProfile = NOISE_ENVIRONMENTS.find(e => e.id === noiseId)?.profile;
-    const intermediate = lat === "bilateral"
-      ? await applyFiltersToBuffer(ctx, rawBuffer, gains)
-      : await applyFiltersUnilateral(ctx, rawBuffer, gains, lat);
-    return noiseId === "none" ? intermediate : await renderNoiseMixed(ctx, intermediate, noiseProfile);
-  }, []);
-
-  // ── Sync buffer refs → state so WaveformComparison re-draws ──────────────
-  const commitBuffers = useCallback((raw, filtered) => {
-    rawBufferRef.current = raw;
-    filteredBufferRef.current = filtered;
-    setRawBufferState(raw);
-    setFilteredBufferState(filtered);
-  }, []);
 
   // ── Laterality change ──────────────────────────────────────────────────────
   const handleLateralityChange = useCallback(async (newLaterality) => {
