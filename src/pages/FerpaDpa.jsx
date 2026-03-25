@@ -206,7 +206,7 @@ export default function FerpaDpaPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-[var(--modal-text-muted)] pb-8">
-          Questions? Contact <a href="mailto:contact@modalmath.com" className="text-[#6B2FB9] hover:underline">contact@modalmath.com</a> · Modal Education, LLC · Effective February 23, 2026
+          Questions? Contact <a href="mailto:schools@modaleducation.com" className="text-[#6B2FB9] hover:underline">schools@modaleducation.com</a> · Modal Education, LLC · Effective February 23, 2026
         </p>
       </div>
     </div>
