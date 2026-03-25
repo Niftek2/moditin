@@ -79,6 +79,7 @@ import TestingDecisions from './pages/TestingDecisions';
 import UploadLing6Sounds from './pages/UploadLing6Sounds';
 import Worksheets from './pages/Worksheets';
 import HearingLossSimulator from './pages/HearingLossSimulator';
+import AudiogramPlotter from './pages/AudiogramPlotter';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +116,7 @@ export const PAGES = {
     "UploadLing6Sounds": UploadLing6Sounds,
     "Worksheets": Worksheets,
     "HearingLossSimulator": HearingLossSimulator,
+    "AudiogramPlotter": AudiogramPlotter,
 }
 
 export const pagesConfig = {

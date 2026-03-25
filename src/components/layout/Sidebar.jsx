@@ -22,7 +22,8 @@ import {
   Sun,
   Activity,
   Sparkles,
-  AudioWaveform
+  AudioWaveform,
+  BarChart2
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
@@ -45,6 +46,7 @@ const navItems = [
   { name: "Labeling Activities", icon: Activity, page: "LabelingActivities" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
   { name: "Hearing Simulator", icon: AudioWaveform, page: "HearingLossSimulator" },
+  { name: "Audiogram Plotter", icon: BarChart2, page: "AudiogramPlotter" },
 ];
 
 const RECENTLY_VIEWED_KEY = "modal_recently_viewed_students";
