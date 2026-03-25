@@ -155,10 +155,11 @@ Deno.serve(async (req) => {
             <div style="border:1px solid #e9d5ff;border-radius:12px;padding:16px 20px;">
               <p style="margin:0 0 8px;color:#374151;font-size:12px;font-weight:700;">Notes & Terms</p>
               <ul style="margin:0;padding-left:16px;color:#6b7280;font-size:12px;line-height:1.8;">
-                <li>This quote is valid for 30 days from the issue date.</li>
+                <li>This quote is valid for 30 days from the issue date and is subject to review and written approval by Modal Education prior to becoming binding.</li>
+                <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education. Modal Education reserves the right to modify, withdraw, or revise any quoted rates or terms at any time prior to such written confirmation.</li>
                 <li>No payment is due until after the 14-day free trial period ends.</li>
                 <li>Subscriptions renew annually unless cancelled before the renewal date.</li>
-                <li>Purchase orders accepted — contact support@modaleducation.com for PO invoicing.</li>
+                <li>Purchase orders accepted — contact contact@modaleducation.com for PO invoicing.</li>
               </ul>
             </div>
           </td>
@@ -185,6 +186,7 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
+    // Send to the requester
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: contactEmail,
       from_name: "Modal Education",
@@ -192,7 +194,15 @@ Deno.serve(async (req) => {
       body: htmlBody,
     });
 
-    console.log(`Quote ${quoteNumber} sent to ${contactEmail} for ${schoolName}`);
+    // Send a copy to Modal Education
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: "contact@modaleducation.com",
+      from_name: "Modal Education Quote System",
+      subject: `[Quote Copy] #${quoteNumber} — ${schoolName} (${seats} seats, ${currencySymbol}${totalPrice.toLocaleString()} ${currencyLabel})`,
+      body: htmlBody,
+    });
+
+    console.log(`Quote ${quoteNumber} sent to ${contactEmail} and contact@modaleducation.com for ${schoolName}`);
     return Response.json({ success: true });
 
   } catch (error) {
