@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, X, Users, User, Building2, GraduationCap, Globe, LogIn, ArrowLeft, ArrowRight, FlaskConical, UserCircle } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import QuoteGenerator from "../components/pricing/QuoteGenerator";
 import { createPageUrl } from "../utils";
 
 const INDIVIDUAL_PLAN = {
@@ -447,6 +448,8 @@ export default function DistrictPricingPage() {
             <ArrowRight className="w-5 h-5 text-white/50 group-hover:text-white transition-colors flex-shrink-0 ml-4" />
           </div>
         </Link>
+
+        <QuoteGenerator defaultCurrency={currency} />
 
         <p className="text-center text-white/40 text-sm mt-10">
           No charge until your 14-day free trial ends. Cancel anytime.

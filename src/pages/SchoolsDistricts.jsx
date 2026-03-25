@@ -7,6 +7,7 @@ import { Check, X, Users, Building2, GraduationCap, Globe, ArrowLeft, FlaskConic
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import DemoEmailGate from "../components/demo/DemoEmailGate";
+import QuoteGenerator from "../components/pricing/QuoteGenerator";
 
 const DISTRICT_PLANS = [
   {
@@ -315,6 +316,8 @@ export default function SchoolsDistrictsPage() {
             );
           })}
         </div>
+
+        <QuoteGenerator defaultCurrency={currency} />
 
         <p className="text-center text-white/40 text-sm mt-10">
           No charge until your 14-day free trial ends. Cancel anytime.
