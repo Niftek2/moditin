@@ -146,6 +146,63 @@ async function applyFiltersUnilateral(audioCtx, inputBuffer, gainValues, affecte
   return offlineCtx.startRendering();
 }
 
+async function applyFiltersBinaural(audioCtx, inputBuffer, rightGainValues, leftGainValues) {
+  // Always outputs exactly 2 channels.
+  // Channel 0 = left ear, Channel 1 = right ear (Web Audio API convention).
+  const offlineCtx = new OfflineAudioContext(
+    2,
+    inputBuffer.length,
+    inputBuffer.sampleRate
+  );
+
+  const source = offlineCtx.createBufferSource();
+  source.buffer = inputBuffer;
+
+  const splitter = offlineCtx.createChannelSplitter(2);
+  const merger = offlineCtx.createChannelMerger(2);
+
+  // Right ear filter chain (channel index 1)
+  const rightFilters = BAND_FREQUENCIES.map((freq, i) => {
+    const f = offlineCtx.createBiquadFilter();
+    f.type = "peaking";
+    f.frequency.value = freq;
+    f.Q.value = 1.4;
+    f.gain.value = rightGainValues[i];
+    return f;
+  });
+  for (let i = 0; i < rightFilters.length - 1; i++) {
+    rightFilters[i].connect(rightFilters[i + 1]);
+  }
+
+  // Left ear filter chain (channel index 0)
+  const leftFilters = BAND_FREQUENCIES.map((freq, i) => {
+    const f = offlineCtx.createBiquadFilter();
+    f.type = "peaking";
+    f.frequency.value = freq;
+    f.Q.value = 1.4;
+    f.gain.value = leftGainValues[i];
+    return f;
+  });
+  for (let i = 0; i < leftFilters.length - 1; i++) {
+    leftFilters[i].connect(leftFilters[i + 1]);
+  }
+
+  source.connect(splitter);
+
+  // Right ear: splitter channel 1 → right filter chain → merger channel 1
+  splitter.connect(rightFilters[0], 1);
+  rightFilters[rightFilters.length - 1].connect(merger, 0, 1);
+
+  // Left ear: splitter channel 0 → left filter chain → merger channel 0
+  splitter.connect(leftFilters[0], 0);
+  leftFilters[leftFilters.length - 1].connect(merger, 0, 0);
+
+  merger.connect(offlineCtx.destination);
+  source.start(0);
+
+  return offlineCtx.startRendering();
+}
+
 function generateNoiseMix(audioCtx, durationSeconds, sampleRate, noiseProfile) {
   const frameCount = Math.ceil(durationSeconds * sampleRate);
   const buffer = audioCtx.createBuffer(1, frameCount, sampleRate);
@@ -340,7 +397,9 @@ export default function HearingLossSimulator() {
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [activePresetId, setActivePresetId] = useState("mild_hf");
-  const [customGains, setCustomGains] = useState(PRESETS.find(p => p.id === "mild_hf").gains.slice());
+  const defaultGains = PRESETS.find(p => p.id === "mild_hf").gains.slice();
+  const [rightGains, setRightGains] = useState(defaultGains.slice());
+  const [leftGains, setLeftGains] = useState(defaultGains.slice());
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [playingMode, setPlayingMode] = useState(null); // 'normal' | 'simulated' | 'fm'
   const [studentSimLabel, setStudentSimLabel] = useState(null);
@@ -365,7 +424,9 @@ export default function HearingLossSimulator() {
   const playbackSourceRef = useRef(null);
 
   const activePreset = PRESETS.find(p => p.id === activePresetId);
-  const displayGains = isCustomMode ? customGains : activePreset.gains;
+  const displayGains = isCustomMode
+    ? (activeAudiogramEar === "right" ? rightGains : leftGains)
+    : activePreset.gains;
 
   const isReady = ["ready", "playing_normal", "playing_simulated", "playing_fm"].includes(status);
 
@@ -379,20 +440,24 @@ export default function HearingLossSimulator() {
   };
 
   // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
-  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId, noiseEnvs) => {
+  const buildFilteredBuffer = useCallback(async (rawBuffer, rightGainsArg, leftGainsArg, lat, noiseId, noiseEnvs) => {
     const ctx = getAudioCtx();
     const envList = noiseEnvs || NOISE_ENVIRONMENTS;
     const selectedEnv = envList.find(e => e.id === noiseId);
     const noiseProfile = selectedEnv?.profile;
     const fileUrl = selectedEnv?.fileUrl;
 
-    const intermediate = lat === "bilateral"
-      ? await applyFiltersToBuffer(ctx, rawBuffer, gains)
-      : await applyFiltersUnilateral(ctx, rawBuffer, gains, lat);
+    // For unilateral modes, use the affected ear's gains for the filter
+    const unilateralGains = lat === "right" ? rightGainsArg : leftGainsArg;
+
+    const intermediate = lat === "right"
+      ? await applyFiltersUnilateral(ctx, rawBuffer, unilateralGains, "right")
+      : lat === "left"
+      ? await applyFiltersUnilateral(ctx, rawBuffer, unilateralGains, "left")
+      : await applyFiltersBinaural(ctx, rawBuffer, rightGainsArg, leftGainsArg);
 
     if (noiseId === "none" || !noiseProfile) return intermediate;
 
-    // If a real audio file URL is available, decode and mix it
     if (fileUrl) {
       const response = await fetch(fileUrl);
       const arrayBuffer = await response.arrayBuffer();
@@ -489,8 +554,9 @@ export default function HearingLossSimulator() {
       }
 
       // Pre-render filtered version
-      const gains = isCustomMode ? customGains : activePreset.gains;
-      const filtered = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
+      const rGains = isCustomMode ? rightGains : activePreset.gains;
+      const lGains = isCustomMode ? leftGains : activePreset.gains;
+      const filtered = await buildFilteredBuffer(decoded, rGains, lGains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       await commitBuffers(decoded, filtered, noiseEnvId, NOISE_ENVIRONMENTS);
 
       setStatus("ready");
@@ -498,7 +564,7 @@ export default function HearingLossSimulator() {
 
     recorder.start();
     setStatus("recording");
-  }, [activePreset, isCustomMode, customGains, buildFilteredBuffer, laterality, noiseEnvId]);
+  }, [activePreset, isCustomMode, rightGains, leftGains, buildFilteredBuffer, laterality, noiseEnvId]);
 
   // ── Stop recording ─────────────────────────────────────────────────────────
   const handleStopRecording = useCallback(() => {
@@ -592,12 +658,13 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId, NOISE_ENVIRONMENTS);
+      const rGains = isCustomMode ? rightGains : activePreset?.gains || rightGains;
+      const lGains = isCustomMode ? leftGains : activePreset?.gains || leftGains;
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, rGains, lGains, newLaterality, noiseEnvId, NOISE_ENVIRONMENTS);
       await commitBuffers(rawBufferRef.current, filtered, noiseEnvId, NOISE_ENVIRONMENTS);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback, NOISE_ENVIRONMENTS]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, rightGains, leftGains, activePreset, noiseEnvId, stopPlayback, NOISE_ENVIRONMENTS]);
 
   // ── Noise environment change ───────────────────────────────────────────────
   const handleNoiseChange = useCallback(async (newNoiseId) => {
@@ -605,21 +672,27 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId, NOISE_ENVIRONMENTS);
+      const rGains = isCustomMode ? rightGains : activePreset?.gains || rightGains;
+      const lGains = isCustomMode ? leftGains : activePreset?.gains || leftGains;
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, rGains, lGains, laterality, newNoiseId, NOISE_ENVIRONMENTS);
       await commitBuffers(rawBufferRef.current, filtered, newNoiseId, NOISE_ENVIRONMENTS);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, laterality, stopPlayback, NOISE_ENVIRONMENTS]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, rightGains, leftGains, activePreset, laterality, stopPlayback, NOISE_ENVIRONMENTS]);
 
   // ── Student profile load ───────────────────────────────────────────────────
-  const handleStudentGainsLoaded = useCallback(async (gains, label, source, interpretation) => {
-    if (!gains) {
+  const handleStudentGainsLoaded = useCallback(async (rGains, lGains, label, source, interpretation) => {
+    if (!rGains && !lGains) {
       setStudentSimLabel(null);
       setStudentSimInterpretation(null);
       return;
     }
-    setCustomGains(gains);
+
+    const safeRight = rGains || new Array(8).fill(0);
+    const safeLeft = lGains || new Array(8).fill(0);
+
+    setRightGains(safeRight);
+    setLeftGains(safeLeft);
     setIsCustomMode(true);
     setActivePresetId(null);
     setStudentSimLabel(label);
@@ -628,7 +701,7 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, safeRight, safeLeft, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       await commitBuffers(rawBufferRef.current, filtered, noiseEnvId, NOISE_ENVIRONMENTS);
       setStatus("ready");
     }
@@ -638,7 +711,8 @@ export default function HearingLossSimulator() {
   const handlePresetSelect = useCallback(async (preset) => {
     setActivePresetId(preset.id);
     setIsCustomMode(false);
-    setCustomGains(preset.gains.slice());
+    setRightGains(preset.gains.slice());
+    setLeftGains(preset.gains.slice());
     setStudentSimLabel(null);
     setStudentSimInterpretation(null);
 
@@ -646,7 +720,7 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, preset.gains, preset.gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       await commitBuffers(rawBufferRef.current, filtered, noiseEnvId, NOISE_ENVIRONMENTS);
       setStatus("ready");
     }
@@ -654,20 +728,28 @@ export default function HearingLossSimulator() {
 
   // ── Slider change ──────────────────────────────────────────────────────────
   const handleSliderChange = useCallback(async (bandIndex, value) => {
-    const newGains = customGains.slice();
-    newGains[bandIndex] = value;
-    setCustomGains(newGains);
+    const newRightGains = rightGains.slice();
+    const newLeftGains = leftGains.slice();
+
+    if (activeAudiogramEar === "right") {
+      newRightGains[bandIndex] = value;
+      setRightGains(newRightGains);
+    } else {
+      newLeftGains[bandIndex] = value;
+      setLeftGains(newLeftGains);
+    }
+
     setIsCustomMode(true);
 
     if (rawBufferRef.current) {
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, newRightGains, newLeftGains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       await commitBuffers(rawBufferRef.current, filtered, noiseEnvId, NOISE_ENVIRONMENTS);
-      if (status === "ready" || status === "playing_normal" || status === "playing_simulated") {
+      if (status === "ready" || status === "playing_normal" || status === "playing_simulated" || status === "playing_fm") {
         setStatus("ready");
       }
     }
-  }, [customGains, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
+  }, [rightGains, leftGains, activeAudiogramEar, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
   // ── Audiogram drag handlers ────────────────────────────────────────────────
   const handleMarkerDragStart = useCallback((e, bandIndex) => {
@@ -964,8 +1046,8 @@ export default function HearingLossSimulator() {
             {/* Frequency columns + markers */}
             <div className="absolute inset-0 flex">
               {BAND_FREQUENCIES_LABELS.map((label, i) => {
-                const rightDbHL = gainToDbHL(displayGains[i]);
-                const leftDbHL = gainToDbHL(displayGains[i]);
+                const rightDbHL = gainToDbHL(isCustomMode ? rightGains[i] : activePreset.gains[i]);
+                const leftDbHL = gainToDbHL(isCustomMode ? leftGains[i] : activePreset.gains[i]);
                 const rightTop = dbHLToPercent(rightDbHL);
                 const leftTop = dbHLToPercent(leftDbHL);
                 const isActiveCol = draggingBandIndex === i;
@@ -980,44 +1062,48 @@ export default function HearingLossSimulator() {
                       <span className="text-[9px] text-[#4A4A4A] font-semibold translate-y-full pt-1">{label}</span>
                     </div>
 
-                    {/* Right ear marker — O (open circle) — only shown when right ear active or both visible */}
-                    {activeAudiogramEar === "right" && (
-                      <div
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
-                        style={{ top: `${rightTop}%` }}
-                        onMouseDown={(e) => handleMarkerDragStart(e, i)}
-                        onTouchStart={(e) => handleMarkerDragStart(e, i)}
-                        aria-label={`Right ear ${label}Hz: ${rightDbHL} dB HL`}
-                        role="slider"
-                        aria-valuenow={rightDbHL}
-                        aria-valuemin={DB_HL_MIN}
-                        aria-valuemax={DB_HL_MAX}
-                      >
-                        <div className="w-5 h-5 rounded-full border-2 border-red-600 bg-white shadow-md hover:shadow-lg" />
-                      </div>
-                    )}
+                    {/* Right ear marker — O (open circle) — always visible, dimmed when inactive */}
+                    <div
+                      className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20 transition-opacity ${
+                        activeAudiogramEar === "right" ? "opacity-100" : "opacity-40"
+                      }`}
+                      style={{ top: `${rightTop}%` }}
+                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                      aria-label={`Right ear ${label}Hz: ${rightDbHL} dB HL`}
+                      role="slider"
+                      aria-valuenow={rightDbHL}
+                      aria-valuemin={DB_HL_MIN}
+                      aria-valuemax={DB_HL_MAX}
+                    >
+                      <div className={`w-5 h-5 rounded-full border-2 bg-white ${
+                        activeAudiogramEar === "right" ? "border-red-600 shadow-md" : "border-red-300"
+                      }`} />
+                    </div>
 
-                    {/* Left ear marker — X */}
-                    {activeAudiogramEar === "left" && (
+                    {/* Left ear marker — X — always visible, dimmed when inactive */}
+                    <div
+                      className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20 transition-opacity ${
+                        activeAudiogramEar === "left" ? "opacity-100" : "opacity-40"
+                      }`}
+                      style={{ top: `${leftTop}%` }}
+                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                      aria-label={`Left ear ${label}Hz: ${leftDbHL} dB HL`}
+                      role="slider"
+                      aria-valuenow={leftDbHL}
+                      aria-valuemin={DB_HL_MIN}
+                      aria-valuemax={DB_HL_MAX}
+                    >
                       <div
-                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
-                        style={{ top: `${leftTop}%` }}
-                        onMouseDown={(e) => handleMarkerDragStart(e, i)}
-                        onTouchStart={(e) => handleMarkerDragStart(e, i)}
-                        aria-label={`Left ear ${label}Hz: ${leftDbHL} dB HL`}
-                        role="slider"
-                        aria-valuenow={leftDbHL}
-                        aria-valuemin={DB_HL_MIN}
-                        aria-valuemax={DB_HL_MAX}
+                        className={`w-5 h-5 flex items-center justify-center font-bold ${
+                          activeAudiogramEar === "left" ? "text-blue-600" : "text-blue-300"
+                        }`}
+                        style={{ fontSize: "18px", lineHeight: 1, userSelect: "none" }}
                       >
-                        <div
-                          className="w-5 h-5 flex items-center justify-center font-bold text-blue-600"
-                          style={{ fontSize: "18px", lineHeight: 1, userSelect: "none", textShadow: "0 1px 3px rgba(0,0,0,0.15)" }}
-                        >
-                          ×
-                        </div>
+                        ×
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
@@ -1051,15 +1137,54 @@ export default function HearingLossSimulator() {
           </div>
         </div>
 
-        {/* Current threshold readout */}
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-1 pt-1">
-          {BAND_FREQUENCIES_LABELS.map((label, i) => (
-            <div key={label} className="text-center bg-[#F7F3FA] rounded-lg py-1.5 px-1 border border-[var(--modal-border)]">
-              <p className="text-[9px] font-semibold text-[#4A4A4A]">{label}</p>
-              <p className="text-[10px] font-mono font-bold text-[#1A1028]">{gainToDbHL(displayGains[i])}</p>
-              <p className="text-[8px] text-[#4A4A4A]">dB HL</p>
+        {/* Current threshold readout — two rows, one per ear */}
+        <div className="space-y-1 pt-1">
+          {/* Right ear row */}
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] font-semibold text-red-600 w-6 shrink-0 text-right">R</span>
+            <div className="grid grid-cols-8 gap-1 flex-1">
+              {BAND_FREQUENCIES_LABELS.map((label, i) => (
+                <div
+                  key={label}
+                  className={`text-center rounded-lg py-1 px-0.5 border cursor-pointer transition-colors ${
+                    activeAudiogramEar === "right"
+                      ? "bg-red-50 border-red-200"
+                      : "bg-[#F7F3FA] border-[var(--modal-border)]"
+                  }`}
+                  onClick={() => setActiveAudiogramEar("right")}
+                >
+                  <p className="text-[8px] font-semibold text-[#4A4A4A]">{label}</p>
+                  <p className="text-[10px] font-mono font-bold text-red-700">
+                    {gainToDbHL(isCustomMode ? rightGains[i] : activePreset.gains[i])}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Left ear row */}
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] font-semibold text-blue-600 w-6 shrink-0 text-right">L</span>
+            <div className="grid grid-cols-8 gap-1 flex-1">
+              {BAND_FREQUENCIES_LABELS.map((label, i) => (
+                <div
+                  key={label}
+                  className={`text-center rounded-lg py-1 px-0.5 border cursor-pointer transition-colors ${
+                    activeAudiogramEar === "left"
+                      ? "bg-blue-50 border-blue-200"
+                      : "bg-[#F7F3FA] border-[var(--modal-border)]"
+                  }`}
+                  onClick={() => setActiveAudiogramEar("left")}
+                >
+                  <p className="text-[8px] font-semibold text-[#4A4A4A]">{label}</p>
+                  <p className="text-[10px] font-mono font-bold text-blue-700">
+                    {gainToDbHL(isCustomMode ? leftGains[i] : activePreset.gains[i])}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="text-[9px] text-[#4A4A4A] text-center">dB HL — click a row to switch editing ear</p>
         </div>
       </div>
 

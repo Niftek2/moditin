@@ -20,17 +20,6 @@ function audiogramPointsToGains(points) {
   return gains;
 }
 
-// Combine right + left ear by taking the better ear (less loss) per frequency
-function combineBothEars(rightPoints, leftPoints) {
-  return FREQUENCIES.map((freq, i) => {
-    const r = rightPoints.find(p => p.freq === freq);
-    const l = leftPoints.find(p => p.freq === freq);
-    if (r && l) return Math.max(-(r.db / 2), -(l.db / 2)); // better ear = less attenuation
-    if (r) return -(r.db / 2);
-    if (l) return -(l.db / 2);
-    return 0;
-  }).map(g => Math.max(-60, g));
-}
 
 export default function StudentAudiogramLoader({ onGainsLoaded }) {
   const { isDemoMode, demoData } = useDemo();
@@ -80,11 +69,12 @@ export default function StudentAudiogramLoader({ onGainsLoaded }) {
           const right = parsed.right || [];
           const left = parsed.left || [];
           if (right.length > 0 || left.length > 0) {
-            const gains = combineBothEars(right, left);
+            const rightGainsOut = audiogramPointsToGains(right);
+            const leftGainsOut = audiogramPointsToGains(left);
             const label = parsed.label ? `Audiogram: "${parsed.label}"` : "Audiogram Plotter data";
             setSourceLabel(label);
             setLoadState("structured");
-            onGainsLoaded(gains, label, "structured");
+            onGainsLoaded(rightGainsOut, leftGainsOut, label, "structured");
             return;
           }
         } catch {}
@@ -152,11 +142,12 @@ Rules:
           const right = result.right || [];
           const left = result.left || [];
           if (right.length > 0 || left.length > 0) {
-            const gains = combineBothEars(right, left);
+            const rightGainsOut = audiogramPointsToGains(right);
+            const leftGainsOut = audiogramPointsToGains(left);
             const label = `AI estimate · ${snapshot.configuration || ""} ${snapshot.severityRange || ""}`.trim();
             setSourceLabel(label);
             setLoadState("ai");
-            onGainsLoaded(gains, label, "ai", result.interpretation);
+            onGainsLoaded(rightGainsOut, leftGainsOut, label, "ai", result.interpretation);
             return;
           }
         } catch (err) {
@@ -167,7 +158,7 @@ Rules:
       // ── No usable data ────────────────────────────────────────────────────
       setLoadState("error");
       setSourceLabel("No audiology data found for this student.");
-      onGainsLoaded(null, null, "none");
+      onGainsLoaded(null, null, null, "none");
     };
 
     run();
@@ -177,7 +168,7 @@ Rules:
     setSelectedStudentId(val);
     setLoadState(null);
     setSourceLabel("");
-    onGainsLoaded(null, null, "none");
+    onGainsLoaded(null, null, null, "none");
   };
 
   return (
@@ -222,7 +213,7 @@ Rules:
           <Sparkles className="w-4 h-4 text-[#6B2FB9] mt-0.5 shrink-0" />
           <div className="text-xs text-[#1A1028]">
             <p className="font-semibold text-[#400070]">AI-estimated from hearing profile</p>
-            <p className="text-[#4A4A4A]">{sourceLabel} · Filters set to estimated best-ear thresholds</p>
+            <p className="text-[#4A4A4A]">{sourceLabel} · Per-ear thresholds applied independently</p>
             <p className="mt-1 text-[#6B2FB9] font-medium">Educational estimate only — not a clinical audiogram</p>
           </div>
         </div>
