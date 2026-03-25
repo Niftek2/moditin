@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
 
     // Send to Modal admin
     await base44.asServiceRole.integrations.Core.SendEmail({
-      to: 'contact@modalmath.com',
+      to: 'schools@modaleducation.com',
       subject: `New FERPA DPA Executed — ${institutionName}`,
       body: adminBody,
       from_name: 'Modal Itinerant System',
