@@ -589,13 +589,6 @@ export default function QuoteGenerator({ defaultCurrency = "USD" }) {
         </div>
       )}
 
-      {/* Print styles */}
-      <style>{`
-        @media print {
-          body > *:not(#quote-print-root) { display: none !important; }
-          #quote-preview { box-shadow: none !important; }
-        }
-      `}</style>
     </div>
   );
 }
