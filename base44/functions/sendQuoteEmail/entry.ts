@@ -186,6 +186,23 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
+    // Save quote to database
+    await base44.asServiceRole.entities.Quote.create({
+      quoteNumber,
+      contactName,
+      contactTitle: contactTitle || "",
+      contactEmail,
+      schoolName,
+      schoolAddress: schoolAddress || "",
+      seats,
+      planName: plan.name,
+      currency,
+      pricePerSeat,
+      totalPrice,
+      quoteDate,
+      status: "sent",
+    });
+
     // Send to the requester
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: contactEmail,
