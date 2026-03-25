@@ -141,17 +141,18 @@ function QuotePreview({ quoteData, currency }) {
         <div className="border border-[#D8CDE5] rounded-xl p-4">
           <p className="text-xs font-semibold text-gray-600 mb-1">Notes & Terms</p>
           <ul className="text-xs text-gray-500 space-y-1 list-disc list-inside">
-            <li>This quote is valid for 30 days from the issue date.</li>
+            <li>This quote is valid for 30 days from the issue date and is subject to review and written approval by Modal Education prior to becoming binding.</li>
+            <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education. Modal Education reserves the right to modify, withdraw, or revise any quoted rates or terms at any time prior to such written confirmation.</li>
             <li>No payment is due until after the 14-day free trial period ends.</li>
             <li>Subscriptions renew annually unless cancelled before the renewal date.</li>
-            <li>Purchase orders accepted. Contact support@modaleducation.com for PO invoicing.</li>
+            <li>Purchase orders accepted. Contact contact@modaleducation.com for PO invoicing.</li>
           </ul>
         </div>
 
         {/* Footer */}
         <div className="text-center pt-2 border-t border-gray-100">
           <p className="text-xs text-gray-400">
-            Questions? Contact us at <span className="text-[#400070] font-medium">support@modaleducation.com</span>
+            Questions? Contact us at <span className="text-[#400070] font-medium">contact@modaleducation.com</span>
           </p>
           <p className="text-xs text-gray-300 mt-1">Modal Education · www.modaleducation.com</p>
         </div>
