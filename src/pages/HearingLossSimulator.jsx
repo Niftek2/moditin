@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Ear, Mic, Square, Play, AlertCircle, Info, Volume2, RefreshCw, ArrowLeftRight } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import StudentAudiogramLoader from "../components/simulator/StudentAudiogramLoader";
 
 // ─── Hearing loss presets ────────────────────────────────────────────────────
 const PRESETS = [
@@ -86,6 +87,8 @@ export default function HearingLossSimulator() {
   const [customGains, setCustomGains] = useState(PRESETS.find(p => p.id === "mild_hf").gains.slice());
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [playingMode, setPlayingMode] = useState(null); // 'normal' | 'simulated'
+  const [studentSimLabel, setStudentSimLabel] = useState(null);
+  const [studentSimInterpretation, setStudentSimInterpretation] = useState(null);
 
   const audioCtxRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -234,11 +237,36 @@ export default function HearingLossSimulator() {
     setPlayingMode(null);
   }, [stopPlayback]);
 
+  // ── Student profile load ───────────────────────────────────────────────────
+  const handleStudentGainsLoaded = useCallback(async (gains, label, source, interpretation) => {
+    if (!gains) {
+      setStudentSimLabel(null);
+      setStudentSimInterpretation(null);
+      return;
+    }
+    setCustomGains(gains);
+    setIsCustomMode(true);
+    setActivePresetId(null);
+    setStudentSimLabel(label);
+    setStudentSimInterpretation(interpretation || null);
+
+    if (rawBufferRef.current) {
+      setStatus("processing");
+      stopPlayback();
+      const ctx = getAudioCtx();
+      const filtered = await applyFiltersToBuffer(ctx, rawBufferRef.current, gains);
+      filteredBufferRef.current = filtered;
+      setStatus("ready");
+    }
+  }, [stopPlayback]);
+
   // ── Preset selection ───────────────────────────────────────────────────────
   const handlePresetSelect = useCallback(async (preset) => {
     setActivePresetId(preset.id);
     setIsCustomMode(false);
     setCustomGains(preset.gains.slice());
+    setStudentSimLabel(null);
+    setStudentSimInterpretation(null);
 
     // Re-render filtered buffer if we already have a recording
     if (rawBufferRef.current) {
@@ -325,9 +353,22 @@ export default function HearingLossSimulator() {
         </div>
       )}
 
+      {/* Student hearing profile loader */}
+      <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-4">
+        <StudentAudiogramLoader onGainsLoaded={handleStudentGainsLoaded} />
+        {studentSimInterpretation && (
+          <div className="text-xs text-[#4A4A4A] bg-[#F7F3FA] rounded-xl p-3 border border-[#D8CDE5]">
+            <span className="font-semibold text-[#400070]">AI interpretation: </span>
+            {studentSimInterpretation}
+          </div>
+        )}
+      </div>
+
       {/* Preset selector */}
       <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-4">
-        <h2 className="text-base font-bold text-[#1A1028]">Select Hearing Loss Type</h2>
+        <h2 className="text-base font-bold text-[#1A1028]">
+          {studentSimLabel ? "Or Override with a Preset" : "Select Hearing Loss Type"}
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {PRESETS.map((preset) => {
             const isActive = activePresetId === preset.id && !isCustomMode;
@@ -463,8 +504,12 @@ export default function HearingLossSimulator() {
                 ) : (
                   <Ear className="w-5 h-5" />
                 )}
-                <span>{isCustomMode ? "Custom" : activePreset.label}</span>
-                <span className="text-xs font-normal opacity-70">Simulated loss</span>
+                <span className="text-center leading-tight">
+                  {studentSimLabel ? "Student Profile" : isCustomMode ? "Custom" : activePreset?.label}
+                </span>
+                <span className="text-xs font-normal opacity-70">
+                  {studentSimLabel ? "AI-estimated" : "Simulated loss"}
+                </span>
               </button>
             </div>
 
