@@ -139,7 +139,7 @@ export default function AudiologySnapshotView({ studentId }) {
   const { isDemoMode, demoData } = useDemo();
 
   const { data: snapshot, isLoading } = useQuery({
-    queryKey: ["audiologySnapshot", studentId, isDemoMode],
+    queryKey: ["audiologySnapshot", studentId],
     queryFn: async () => {
       if (isDemoMode) return demoData.audiologySnapshots.find(s => s.studentId === studentId) || null;
       const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId });

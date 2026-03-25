@@ -116,7 +116,7 @@ export default function AudiogramPlotter() {
 
   // ── Existing snapshot ─────────────────────────────────────────────────────────
   const { data: snapshot, isLoading: snapshotLoading } = useQuery({
-    queryKey: ["audiologySnapshot", selectedStudentId, isDemoMode],
+    queryKey: ["audiologySnapshot", selectedStudentId],
     queryFn: async () => {
       if (isDemoMode) {
         return (demoData.audiologySnapshots || []).find(s => s.studentId === selectedStudentId) || null;

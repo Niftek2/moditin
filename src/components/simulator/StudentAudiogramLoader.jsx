@@ -44,7 +44,7 @@ export default function StudentAudiogramLoader({ onGainsLoaded }) {
   });
 
   const { data: snapshot } = useQuery({
-    queryKey: ["audiologySnapshot", selectedStudentId, isDemoMode],
+    queryKey: ["audiologySnapshot", selectedStudentId],
     queryFn: async () => {
       if (isDemoMode) {
         return (demoData.audiologySnapshots || []).find(s => s.studentId === selectedStudentId) || null;
