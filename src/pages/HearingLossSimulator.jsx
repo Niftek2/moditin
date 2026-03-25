@@ -345,6 +345,7 @@ export default function HearingLossSimulator() {
   const [laterality, setLaterality] = useState("bilateral");
   const [noiseEnvId, setNoiseEnvId] = useState("none");
   const [activeAudiogramEar, setActiveAudiogramEar] = useState("right"); // "right" | "left"
+  const [draggingBandIndex, setDraggingBandIndex] = useState(null); // for column highlight re-render
   // Mirror state for canvas re-renders (refs don't trigger renders)
   const [rawBufferState, setRawBufferState] = useState(null);
   const [filteredBufferState, setFilteredBufferState] = useState(null);
@@ -669,6 +670,7 @@ export default function HearingLossSimulator() {
   const handleMarkerDragStart = useCallback((e, bandIndex) => {
     e.preventDefault();
     draggingRef.current = { bandIndex, ear: activeAudiogramEar };
+    setDraggingBandIndex(bandIndex);
   }, [activeAudiogramEar]);
 
   const handleChartPointerMove = useCallback((e) => {
@@ -683,6 +685,7 @@ export default function HearingLossSimulator() {
 
   const handleChartPointerUp = useCallback(() => {
     draggingRef.current = null;
+    setDraggingBandIndex(null);
   }, []);
 
   // ── Cleanup on unmount ─────────────────────────────────────────────────────
@@ -937,18 +940,18 @@ export default function HearingLossSimulator() {
               }}
             />
 
-            {/* Speech banana — per-column trapezoid approximation using flex columns */}
-            <div className="absolute inset-0 flex pointer-events-none">
+            {/* Speech banana — rendered as a single continuous SVG-free polygon using absolute positioned divs */}
+            <div className="absolute inset-0 pointer-events-none" style={{ display: "grid", gridTemplateColumns: `repeat(${SPEECH_BANANA.length}, 1fr)` }}>
               {SPEECH_BANANA.map((band) => (
-                <div key={band.freqIndex} className="flex-1 relative">
+                <div key={band.freqIndex} className="relative">
                   <div
-                    className="absolute left-0 right-0"
+                    className="absolute inset-x-0"
                     style={{
                       top: `${dbHLToPercent(band.top)}%`,
                       height: `${dbHLToPercent(band.bottom) - dbHLToPercent(band.top)}%`,
-                      backgroundColor: "rgba(250, 220, 100, 0.30)",
-                      borderTop: "1px dashed rgba(200, 160, 0, 0.4)",
-                      borderBottom: "1px dashed rgba(200, 160, 0, 0.4)",
+                      backgroundColor: "rgba(245, 200, 50, 0.22)",
+                      borderTop: "1.5px dashed rgba(180, 140, 0, 0.45)",
+                      borderBottom: "1.5px dashed rgba(180, 140, 0, 0.45)",
                     }}
                   />
                 </div>
@@ -962,62 +965,56 @@ export default function HearingLossSimulator() {
                 const leftDbHL = gainToDbHL(displayGains[i]);
                 const rightTop = dbHLToPercent(rightDbHL);
                 const leftTop = dbHLToPercent(leftDbHL);
-                const isActiveCol = draggingRef.current?.bandIndex === i;
+                const isActiveCol = draggingBandIndex === i;
 
                 return (
                   <div
                     key={label}
-                    className={`flex-1 relative border-l border-[#EDE8F4] first:border-l-0 ${isActiveCol ? "bg-[#F7F3FA]" : ""}`}
+                    className={`flex-1 relative border-l border-[#EDE8F4] first:border-l-0 ${isActiveCol ? "bg-purple-50" : ""}`}
                   >
                     {/* Column frequency label at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 flex justify-center">
                       <span className="text-[9px] text-[#4A4A4A] font-semibold translate-y-full pt-1">{label}</span>
                     </div>
 
-                    {/* Right ear marker — O (open circle) */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
-                      style={{ top: `${rightTop}%` }}
-                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
-                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
-                      aria-label={`Right ear ${label}Hz: ${rightDbHL} dB HL`}
-                      role="slider"
-                      aria-valuenow={rightDbHL}
-                      aria-valuemin={DB_HL_MIN}
-                      aria-valuemax={DB_HL_MAX}
-                    >
+                    {/* Right ear marker — O (open circle) — only shown when right ear active or both visible */}
+                    {activeAudiogramEar === "right" && (
                       <div
-                        className={`w-5 h-5 rounded-full border-2 transition-shadow ${
-                          activeAudiogramEar === "right"
-                            ? "border-red-600 bg-white shadow-md hover:shadow-lg"
-                            : "border-red-300 bg-white opacity-60"
-                        }`}
-                      />
-                    </div>
+                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
+                        style={{ top: `${rightTop}%` }}
+                        onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                        onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                        aria-label={`Right ear ${label}Hz: ${rightDbHL} dB HL`}
+                        role="slider"
+                        aria-valuenow={rightDbHL}
+                        aria-valuemin={DB_HL_MIN}
+                        aria-valuemax={DB_HL_MAX}
+                      >
+                        <div className="w-5 h-5 rounded-full border-2 border-red-600 bg-white shadow-md hover:shadow-lg" />
+                      </div>
+                    )}
 
                     {/* Left ear marker — X */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
-                      style={{ top: `${leftTop}%`, marginLeft: "2px" }}
-                      onMouseDown={(e) => handleMarkerDragStart(e, i)}
-                      onTouchStart={(e) => handleMarkerDragStart(e, i)}
-                      aria-label={`Left ear ${label}Hz: ${leftDbHL} dB HL`}
-                      role="slider"
-                      aria-valuenow={leftDbHL}
-                      aria-valuemin={DB_HL_MIN}
-                      aria-valuemax={DB_HL_MAX}
-                    >
+                    {activeAudiogramEar === "left" && (
                       <div
-                        className={`w-5 h-5 flex items-center justify-center font-bold transition-opacity ${
-                          activeAudiogramEar === "left"
-                            ? "text-blue-600 opacity-100"
-                            : "text-blue-300 opacity-60"
-                        }`}
-                        style={{ fontSize: "16px", lineHeight: 1, userSelect: "none" }}
+                        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20"
+                        style={{ top: `${leftTop}%` }}
+                        onMouseDown={(e) => handleMarkerDragStart(e, i)}
+                        onTouchStart={(e) => handleMarkerDragStart(e, i)}
+                        aria-label={`Left ear ${label}Hz: ${leftDbHL} dB HL`}
+                        role="slider"
+                        aria-valuenow={leftDbHL}
+                        aria-valuemin={DB_HL_MIN}
+                        aria-valuemax={DB_HL_MAX}
                       >
-                        ×
+                        <div
+                          className="w-5 h-5 flex items-center justify-center font-bold text-blue-600"
+                          style={{ fontSize: "18px", lineHeight: 1, userSelect: "none", textShadow: "0 1px 3px rgba(0,0,0,0.15)" }}
+                        >
+                          ×
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 );
               })}
@@ -1035,14 +1032,14 @@ export default function HearingLossSimulator() {
         <div className="flex items-center gap-5 flex-wrap pt-1">
           <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
             <div className="w-4 h-4 rounded-full border-2 border-red-600 bg-white" />
-            Right ear
+            Right ear (O)
           </div>
           <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
             <span className="text-blue-600 font-bold text-base leading-none">×</span>
-            Left ear
+            Left ear (X)
           </div>
           <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
-            <div className="w-4 h-3 rounded-sm" style={{ backgroundColor: "rgba(250, 220, 100, 0.5)", border: "1px dashed rgba(200,160,0,0.5)" }} />
+            <div className="w-4 h-3 rounded-sm" style={{ backgroundColor: "rgba(245, 200, 50, 0.35)", border: "1px dashed rgba(180,140,0,0.45)" }} />
             Speech banana
           </div>
           <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
