@@ -3,6 +3,8 @@ import { Ear, Mic, Square, Play, AlertCircle, Info, Volume2, RefreshCw, ArrowLef
 import { Slider } from "@/components/ui/slider";
 import StudentAudiogramLoader from "../components/simulator/StudentAudiogramLoader";
 import WaveformComparison from "../components/simulator/WaveformComparison";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 // ─── Hearing loss presets ────────────────────────────────────────────────────
 const PRESETS = [
@@ -47,13 +49,7 @@ const PRESETS = [
 const BAND_FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
 const BAND_LABELS = ["250", "500", "1k", "2k", "3k", "4k", "6k", "8k"];
 
-const NOISE_ENVIRONMENTS = [
-  { id: "none", label: "None", description: "No background noise added.", profile: { gain: 0, lowShelfGain: 0, highShelfGain: 0 } },
-  { id: "quiet_classroom", label: "Quiet Classroom", description: "Soft HVAC hum, occasional paper rustling.", profile: { gain: 0.08, lowShelfGain: 6, highShelfGain: -18 } },
-  { id: "noisy_classroom", label: "Noisy Classroom", description: "Multiple children talking, chairs moving. SNR ~+5 dB.", profile: { gain: 0.28, lowShelfGain: 8, highShelfGain: -10 } },
-  { id: "cafeteria", label: "Cafeteria / Lunch", description: "Loud, reverberant environment with high noise floor.", profile: { gain: 0.45, lowShelfGain: 10, highShelfGain: -8 } },
-  { id: "restaurant", label: "Restaurant", description: "Moderate ambient noise, music, background conversation.", profile: { gain: 0.35, lowShelfGain: 6, highShelfGain: -12 } },
-];
+const STATIC_NOISE_NONE = { id: "none", label: "None", description: "No background noise added.", profile: { gain: 0, lowShelfGain: 0, highShelfGain: 0 } };
 
 // Apply filter chain to an AudioBuffer, returns a new AudioBuffer
 async function applyFiltersToBuffer(audioCtx, inputBuffer, gainValues) {
@@ -152,8 +148,59 @@ async function renderNoiseMixed(audioCtx, filteredBuffer, noiseProfile) {
   return offlineCtx.startRendering();
 }
 
+async function renderNoiseMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, noiseProfile) {
+  const offlineCtx = new OfflineAudioContext(speechBuffer.numberOfChannels, speechBuffer.length, speechBuffer.sampleRate);
+
+  const speechSrc = offlineCtx.createBufferSource();
+  speechSrc.buffer = speechBuffer;
+
+  const noiseSrc = offlineCtx.createBufferSource();
+  noiseSrc.buffer = noiseBuffer;
+  noiseSrc.loop = true;
+
+  const lowShelf = offlineCtx.createBiquadFilter();
+  lowShelf.type = "lowshelf";
+  lowShelf.frequency.value = 800;
+  lowShelf.gain.value = noiseProfile.lowShelfGain;
+
+  const highShelf = offlineCtx.createBiquadFilter();
+  highShelf.type = "highshelf";
+  highShelf.frequency.value = 3000;
+  highShelf.gain.value = noiseProfile.highShelfGain;
+
+  const noiseGain = offlineCtx.createGain();
+  noiseGain.gain.value = noiseProfile.gain;
+
+  noiseSrc.connect(lowShelf);
+  lowShelf.connect(highShelf);
+  highShelf.connect(noiseGain);
+  noiseGain.connect(offlineCtx.destination);
+  speechSrc.connect(offlineCtx.destination);
+
+  speechSrc.start(0);
+  noiseSrc.start(0);
+  return offlineCtx.startRendering();
+}
+
 // ─── Main component ──────────────────────────────────────────────────────────
 export default function HearingLossSimulator() {
+  const { data: dbEnvironments = [] } = useQuery({
+    queryKey: ["audioEnvironments"],
+    queryFn: () => base44.entities.AudioEnvironment.list("order"),
+  });
+
+  // Combine static "None" with DB environments
+  const NOISE_ENVIRONMENTS = [
+    STATIC_NOISE_NONE,
+    ...dbEnvironments.map(e => ({
+      id: e.id,
+      label: e.name,
+      description: e.description || "",
+      fileUrl: e.fileUrl,
+      profile: { gain: e.gain ?? 0.3, lowShelfGain: e.lowShelfGain ?? 6, highShelfGain: e.highShelfGain ?? -12 },
+    })),
+  ];
+
   // status: idle | recording | processing | ready | playing_normal | playing_simulated | error | permission_denied
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -191,14 +238,29 @@ export default function HearingLossSimulator() {
   };
 
   // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
-  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId) => {
+  const buildFilteredBuffer = useCallback(async (rawBuffer, gains, lat, noiseId, noiseEnvs) => {
     const ctx = getAudioCtx();
-    const noiseProfile = NOISE_ENVIRONMENTS.find(e => e.id === noiseId)?.profile;
+    const envList = noiseEnvs || NOISE_ENVIRONMENTS;
+    const selectedEnv = envList.find(e => e.id === noiseId);
+    const noiseProfile = selectedEnv?.profile;
+    const fileUrl = selectedEnv?.fileUrl;
+
     const intermediate = lat === "bilateral"
       ? await applyFiltersToBuffer(ctx, rawBuffer, gains)
       : await applyFiltersUnilateral(ctx, rawBuffer, gains, lat);
-    return noiseId === "none" ? intermediate : await renderNoiseMixed(ctx, intermediate, noiseProfile);
-  }, []);
+
+    if (noiseId === "none" || !noiseProfile) return intermediate;
+
+    // If a real audio file URL is available, decode and mix it
+    if (fileUrl) {
+      const response = await fetch(fileUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const noiseBuffer = await ctx.decodeAudioData(arrayBuffer);
+      return await renderNoiseMixedFromBuffer(ctx, intermediate, noiseBuffer, noiseProfile);
+    }
+
+    return await renderNoiseMixed(ctx, intermediate, noiseProfile);
+  }, [NOISE_ENVIRONMENTS]);
 
   // ── Sync buffer refs → state so WaveformComparison re-draws ──────────────
   const commitBuffers = useCallback((raw, filtered) => {
@@ -262,7 +324,7 @@ export default function HearingLossSimulator() {
 
       // Pre-render filtered version
       const gains = isCustomMode ? customGains : activePreset.gains;
-      const filtered = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(decoded, gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       commitBuffers(decoded, filtered);
 
       setStatus("ready");
@@ -341,11 +403,11 @@ export default function HearingLossSimulator() {
       setStatus("processing");
       stopPlayback();
       const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, newLaterality, noiseEnvId, NOISE_ENVIRONMENTS);
       commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, noiseEnvId, stopPlayback, NOISE_ENVIRONMENTS]);
 
   // ── Noise environment change ───────────────────────────────────────────────
   const handleNoiseChange = useCallback(async (newNoiseId) => {
@@ -354,11 +416,11 @@ export default function HearingLossSimulator() {
       setStatus("processing");
       stopPlayback();
       const gains = isCustomMode ? customGains : activePreset?.gains || customGains;
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, newNoiseId, NOISE_ENVIRONMENTS);
       commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, laterality, stopPlayback]);
+  }, [buildFilteredBuffer, commitBuffers, isCustomMode, customGains, activePreset, laterality, stopPlayback, NOISE_ENVIRONMENTS]);
 
   // ── Student profile load ───────────────────────────────────────────────────
   const handleStudentGainsLoaded = useCallback(async (gains, label, source, interpretation) => {
@@ -376,11 +438,11 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
+  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
   // ── Preset selection ───────────────────────────────────────────────────────
   const handlePresetSelect = useCallback(async (preset) => {
@@ -394,11 +456,11 @@ export default function HearingLossSimulator() {
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, preset.gains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       commitBuffers(rawBufferRef.current, filtered);
       setStatus("ready");
     }
-  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
+  }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
   // ── Slider change ──────────────────────────────────────────────────────────
   const handleSliderChange = useCallback(async (bandIndex, value) => {
@@ -409,13 +471,13 @@ export default function HearingLossSimulator() {
 
     if (rawBufferRef.current) {
       stopPlayback();
-      const filtered = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId);
+      const filtered = await buildFilteredBuffer(rawBufferRef.current, newGains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
       commitBuffers(rawBufferRef.current, filtered);
       if (status === "ready" || status === "playing_normal" || status === "playing_simulated") {
         setStatus("ready");
       }
     }
-  }, [customGains, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId]);
+  }, [customGains, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
   // ── Cleanup on unmount ─────────────────────────────────────────────────────
   useEffect(() => {
