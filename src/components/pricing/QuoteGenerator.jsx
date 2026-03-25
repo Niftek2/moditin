@@ -208,7 +208,178 @@ export default function QuoteGenerator({ defaultCurrency = "USD" }) {
   };
 
   const handleDownload = () => {
-    window.print();
+    const isCAD = currency === "CAD";
+    const currencySymbol = isCAD ? "CA$" : "$";
+    const { contactName, contactTitle, schoolName, schoolAddress, seats, plan, totalPrice, quoteDate, quoteNumber } = quoteData;
+    const pricePerSeat = isCAD ? plan.priceCAD : plan.priceUSD;
+
+    const features = [
+      "Full access to Modal Itinerant for every licensed teacher",
+      "AI-powered goal bank & lesson planner",
+      "Service log, calendar & scheduling tools",
+      "Listening checks & audiology tools",
+      "Worksheet & activity generators",
+      "District manager dashboard",
+      "Centralized team management",
+      "14-day free trial — no charge until trial ends",
+    ];
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>Quote ${quoteNumber} — ${schoolName}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f1f8; padding: 32px 16px; color: #111827; }
+    .page { background: #fff; max-width: 720px; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+    .header { background: linear-gradient(135deg, #400070 0%, #6B2FB9 100%); padding: 36px 40px; }
+    .header-inner { display: flex; justify-content: space-between; align-items: flex-start; }
+    .logo { height: 48px; display: block; margin-bottom: 12px; filter: brightness(0) invert(1); }
+    .company-name { color: rgba(255,255,255,0.7); font-size: 13px; }
+    .company-url { color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 3px; }
+    .quote-meta { text-align: right; }
+    .quote-label { color: rgba(255,255,255,0.5); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .quote-num { color: #fff; font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .quote-date { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 6px; }
+    .body { padding: 36px 40px; }
+    .section-label { color: #9ca3af; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .prepared-row { display: flex; justify-content: space-between; margin-bottom: 28px; }
+    .prepared-left { max-width: 55%; }
+    .prepared-right { text-align: right; }
+    .contact-name { font-size: 17px; font-weight: 700; }
+    .contact-title { color: #6b7280; font-size: 13px; margin-top: 2px; }
+    .school-name { font-size: 14px; font-weight: 600; color: #374151; margin-top: 5px; }
+    .school-addr { color: #6b7280; font-size: 13px; margin-top: 2px; }
+    .total-amount { color: #400070; font-size: 38px; font-weight: 800; }
+    .total-sub { color: #9ca3af; font-size: 12px; margin-top: 2px; }
+    .trial-badge { display: inline-block; background: #dcfce7; color: #166534; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 8px; }
+    .divider { border: none; border-top: 1px solid #f3f4f6; margin: 0 0 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    th { background: #f3e8ff; color: #400070; font-weight: 700; padding: 10px 14px; text-align: left; }
+    th:nth-child(2), th:nth-child(3) { text-align: center; }
+    th:last-child { text-align: right; }
+    td { padding: 13px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+    td:nth-child(2), td:nth-child(3) { text-align: center; }
+    td:last-child { text-align: right; }
+    .item-name { font-weight: 600; color: #111827; }
+    .item-sub { color: #9ca3af; font-size: 11px; font-weight: 400; margin-top: 2px; }
+    .trial-row td { background: #f0fdf4; color: #166534; font-size: 12px; }
+    .total-row td { padding-top: 16px; border-bottom: none; }
+    .total-label { text-align: right; font-weight: 700; color: #374151; font-size: 13px; }
+    .total-value { text-align: right; font-size: 22px; font-weight: 800; color: #400070; }
+    .features-box { background: #f9f5ff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-top: 12px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #374151; }
+    .check { color: #400070; font-weight: 700; }
+    .terms-box { border: 1px solid #e9d5ff; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; }
+    .terms-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+    .terms-list { padding-left: 16px; color: #6b7280; font-size: 11px; line-height: 1.9; }
+    .footer { text-align: center; border-top: 1px solid #f3f4f6; padding-top: 20px; }
+    .footer-contact { font-size: 12px; color: #6b7280; }
+    .footer-brand { font-size: 11px; color: #d1d5db; margin-top: 4px; }
+    .purple { color: #400070; font-weight: 600; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .page { box-shadow: none; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="header-inner">
+        <div>
+          <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6998a9f042c4eb98ea121183/1d36446be_ModalitinerantLogo.png" class="logo" alt="Modal Education" />
+          <div class="company-name">Modal Education</div>
+          <div class="company-url">www.modaleducation.com</div>
+          <div class="company-url">contact@modaleducation.com</div>
+        </div>
+        <div class="quote-meta">
+          <div class="quote-label">Official Quote</div>
+          <div class="quote-num">#${quoteNumber}</div>
+          <div class="quote-date">Issued: ${quoteDate}</div>
+          <div class="quote-date">Valid for 30 days</div>
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="prepared-row">
+        <div class="prepared-left">
+          <div class="section-label">Prepared For</div>
+          <div class="contact-name">${contactName}</div>
+          ${contactTitle ? `<div class="contact-title">${contactTitle}</div>` : ""}
+          <div class="school-name">${schoolName}</div>
+          ${schoolAddress ? `<div class="school-addr">${schoolAddress}</div>` : ""}
+        </div>
+        <div class="prepared-right">
+          <div class="section-label">Annual Total</div>
+          <div class="total-amount">${currencySymbol}${totalPrice.toLocaleString()}</div>
+          <div class="total-sub">${currency} / year</div>
+          <div class="trial-badge">✓ 14-day free trial included</div>
+        </div>
+      </div>
+      <hr class="divider" />
+      <div class="section-label" style="margin-bottom:12px;">Line Items</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Seats</th>
+            <th>Rate / Seat / Year</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="item-name">Modal Itinerant — ${plan.name} Plan</div><div class="item-sub">Annual subscription · All features included</div></td>
+            <td>${seats}</td>
+            <td>${currencySymbol}${pricePerSeat}</td>
+            <td><strong>${currencySymbol}${totalPrice.toLocaleString()}</strong></td>
+          </tr>
+          <tr class="trial-row">
+            <td>14-Day Free Trial</td>
+            <td>${seats}</td>
+            <td>Complimentary</td>
+            <td><strong>$0.00</strong></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" class="total-label">Annual Total (${currency})</td>
+            <td class="total-value">${currencySymbol}${totalPrice.toLocaleString()}</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="features-box">
+        <div class="section-label">What's Included</div>
+        <div class="features-grid">
+          ${features.map(f => `<div class="feature-item"><span class="check">✓</span><span>${f}</span></div>`).join("")}
+        </div>
+      </div>
+      <div class="terms-box">
+        <div class="terms-title">Notes &amp; Terms</div>
+        <ul class="terms-list">
+          <li>This quote is valid for 30 days from the issue date and is subject to review and written approval by Modal Education prior to becoming binding.</li>
+          <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education. Modal Education reserves the right to modify, withdraw, or revise any quoted rates or terms at any time prior to such written confirmation.</li>
+          <li>No payment is due until after the 14-day free trial period ends.</li>
+          <li>Subscriptions renew annually unless cancelled before the renewal date.</li>
+          <li>Purchase orders accepted — contact contact@modaleducation.com for PO invoicing.</li>
+        </ul>
+      </div>
+      <div class="footer">
+        <div class="footer-contact">Questions? <span class="purple">contact@modaleducation.com</span></div>
+        <div class="footer-brand">Modal Education · www.modaleducation.com</div>
+      </div>
+    </div>
+  </div>
+  <script>window.onload = function() { window.print(); }</script>
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
   };
 
   const handleSendEmail = async () => {
