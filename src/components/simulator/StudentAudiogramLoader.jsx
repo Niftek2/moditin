@@ -53,6 +53,7 @@ export default function StudentAudiogramLoader({ onGainsLoaded }) {
       return results[0] || null;
     },
     enabled: !!selectedStudentId,
+    staleTime: 0,
   });
 
   // When snapshot loads, derive gains
@@ -162,7 +163,7 @@ Rules:
     };
 
     run();
-  }, [snapshot, selectedStudentId]);
+  }, [snapshot?.id, snapshot?.audiogramData, snapshot?.configuration, snapshot?.severityRange, snapshot?.hearingLossType, selectedStudentId]);
 
   const handleStudentChange = (val) => {
     setSelectedStudentId(val);
