@@ -794,7 +794,7 @@ export default function HearingLossSimulator() {
           <Ear className="w-6 h-6 text-[#400070]" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1028]">Hearing Loss Simulator</h1>
+          <h1 className="text-2xl font-bold text-[#1A1028]">Hearing Simulator</h1>
           <p className="text-[#4A4A4A] mt-0.5">
             Record a short clip, then compare how it sounds with and without simulated hearing loss.
             Intended for professional awareness and parent/educator education.
@@ -843,7 +843,7 @@ export default function HearingLossSimulator() {
       {/* Preset selector */}
       <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-4">
         <h2 className="text-base font-bold text-[#1A1028]">
-          {studentSimLabel ? "Or Override with a Preset" : "Select Hearing Loss Type"}
+          {studentSimLabel ? "Or Override with a Preset" : "Select Hearing Profile Type"}
         </h2>
 
         {/* Laterality selector */}
