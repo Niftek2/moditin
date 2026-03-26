@@ -45,7 +45,7 @@ const navItems = [
   { name: "Activities", icon: Zap, page: "InteractiveActivities" },
   { name: "Labeling Activities", icon: Activity, page: "LabelingActivities" },
   { name: "Worksheets", icon: FileText, page: "Worksheets" },
-  { name: "Hearing Simulator", icon: AudioWaveform, page: "HearingLossSimulator" },
+  { name: "Hearing Simulator", icon: AudioWaveform, page: "HearingSimulator" },
   { name: "Audiogram Plotter", icon: BarChart2, page: "AudiogramPlotter" },
 ];
 

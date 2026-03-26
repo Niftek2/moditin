@@ -147,13 +147,7 @@ async function applyFiltersUnilateral(audioCtx, inputBuffer, gainValues, affecte
 }
 
 async function applyFiltersBinaural(audioCtx, inputBuffer, rightGainValues, leftGainValues) {
-  // Always outputs exactly 2 channels.
-  // Channel 0 = left ear, Channel 1 = right ear (Web Audio API convention).
-  const offlineCtx = new OfflineAudioContext(
-    2,
-    inputBuffer.length,
-    inputBuffer.sampleRate
-  );
+  const offlineCtx = new OfflineAudioContext(2, inputBuffer.length, inputBuffer.sampleRate);
 
   const source = offlineCtx.createBufferSource();
   source.buffer = inputBuffer;
@@ -161,7 +155,6 @@ async function applyFiltersBinaural(audioCtx, inputBuffer, rightGainValues, left
   const splitter = offlineCtx.createChannelSplitter(2);
   const merger = offlineCtx.createChannelMerger(2);
 
-  // Right ear filter chain (channel index 1)
   const rightFilters = BAND_FREQUENCIES.map((freq, i) => {
     const f = offlineCtx.createBiquadFilter();
     f.type = "peaking";
@@ -174,7 +167,6 @@ async function applyFiltersBinaural(audioCtx, inputBuffer, rightGainValues, left
     rightFilters[i].connect(rightFilters[i + 1]);
   }
 
-  // Left ear filter chain (channel index 0)
   const leftFilters = BAND_FREQUENCIES.map((freq, i) => {
     const f = offlineCtx.createBiquadFilter();
     f.type = "peaking";
@@ -189,11 +181,9 @@ async function applyFiltersBinaural(audioCtx, inputBuffer, rightGainValues, left
 
   source.connect(splitter);
 
-  // Right ear: splitter channel 1 → right filter chain → merger channel 1
   splitter.connect(rightFilters[0], 1);
   rightFilters[rightFilters.length - 1].connect(merger, 0, 1);
 
-  // Left ear: splitter channel 0 → left filter chain → merger channel 0
   splitter.connect(leftFilters[0], 0);
   leftFilters[leftFilters.length - 1].connect(merger, 0, 0);
 
@@ -277,11 +267,6 @@ async function renderNoiseMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, n
 }
 
 async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
-  // FM/DM lapel mic worn by the speaker: mic is 2–6 inches from the speaker's mouth,
-  // so it captures speech directly before it ever enters the noisy room.
-  // The hearing aid still applies hearing-loss filtering to the speech signal,
-  // but room noise is massively attenuated (~95%, ~-13 dB relative to normal).
-  // Speech is boosted +10 dB to simulate the close-mic advantage.
   if (!noiseProfile || noiseProfile.gain === 0) return filteredBuffer;
 
   const offlineCtx = new OfflineAudioContext(
@@ -290,15 +275,13 @@ async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
     filteredBuffer.sampleRate
   );
 
-  // Speech — boosted +10 dB (close-mic proximity advantage)
   const speechSrc = offlineCtx.createBufferSource();
   speechSrc.buffer = filteredBuffer;
   const speechGain = offlineCtx.createGain();
-  speechGain.gain.value = 3.16; // +10 dB = 10^(10/20)
+  speechGain.gain.value = 3.16;
   speechSrc.connect(speechGain);
   speechGain.connect(offlineCtx.destination);
 
-  // Room noise — reduced to ~5% (room noise is picked up by hearing aid mic, not FM mic)
   const fmNoiseProfile = { ...noiseProfile, gain: noiseProfile.gain * 0.05 };
   const noiseBuffer = generateNoiseMix(
     offlineCtx,
@@ -331,8 +314,6 @@ async function renderFmMixed(audioCtx, filteredBuffer, noiseProfile) {
 }
 
 async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, noiseProfile) {
-  // FM/DM lapel mic worn by the speaker: close-mic speech capture before room noise.
-  // Speech boosted +10 dB (proximity advantage), room noise reduced to 5%.
   const offlineCtx = new OfflineAudioContext(
     speechBuffer.numberOfChannels,
     speechBuffer.length,
@@ -342,7 +323,7 @@ async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, nois
   const speechSrc = offlineCtx.createBufferSource();
   speechSrc.buffer = speechBuffer;
   const speechGain = offlineCtx.createGain();
-  speechGain.gain.value = 3.16; // +10 dB = 10^(10/20)
+  speechGain.gain.value = 3.16;
   speechSrc.connect(speechGain);
   speechGain.connect(offlineCtx.destination);
 
@@ -361,7 +342,7 @@ async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, nois
   highShelf.gain.value = noiseProfile.highShelfGain;
 
   const noiseGain = offlineCtx.createGain();
-  noiseGain.gain.value = noiseProfile.gain * 0.05; // ~95% noise reduction
+  noiseGain.gain.value = noiseProfile.gain * 0.05;
 
   noiseSrc.connect(lowShelf);
   lowShelf.connect(highShelf);
@@ -375,13 +356,12 @@ async function renderFmMixedFromBuffer(audioCtx, speechBuffer, noiseBuffer, nois
 }
 
 // ─── Main component ──────────────────────────────────────────────────────────
-export default function HearingLossSimulator() {
+export default function HearingSimulator() {
   const { data: dbEnvironments = [] } = useQuery({
     queryKey: ["audioEnvironments"],
     queryFn: () => base44.entities.AudioEnvironment.list("order"),
   });
 
-  // Combine static "None" with DB environments
   const NOISE_ENVIRONMENTS = [
     STATIC_NOISE_NONE,
     ...dbEnvironments.map(e => ({
@@ -393,7 +373,6 @@ export default function HearingLossSimulator() {
     })),
   ];
 
-  // status: idle | recording | processing | ready | playing_normal | playing_simulated | error | permission_denied
   const [status, setStatus] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [activePresetId, setActivePresetId] = useState("mild_hf");
@@ -401,14 +380,13 @@ export default function HearingLossSimulator() {
   const [rightGains, setRightGains] = useState(defaultGains.slice());
   const [leftGains, setLeftGains] = useState(defaultGains.slice());
   const [isCustomMode, setIsCustomMode] = useState(false);
-  const [playingMode, setPlayingMode] = useState(null); // 'normal' | 'simulated' | 'fm'
+  const [playingMode, setPlayingMode] = useState(null);
   const [studentSimLabel, setStudentSimLabel] = useState(null);
   const [studentSimInterpretation, setStudentSimInterpretation] = useState(null);
   const [laterality, setLaterality] = useState("bilateral");
   const [noiseEnvId, setNoiseEnvId] = useState("none");
-  const [activeAudiogramEar, setActiveAudiogramEar] = useState("right"); // "right" | "left"
-  const [draggingBandIndex, setDraggingBandIndex] = useState(null); // for column highlight re-render
-  // Mirror state for canvas re-renders (refs don't trigger renders)
+  const [activeAudiogramEar, setActiveAudiogramEar] = useState("right");
+  const [draggingBandIndex, setDraggingBandIndex] = useState(null);
   const [rawBufferState, setRawBufferState] = useState(null);
   const [filteredBufferState, setFilteredBufferState] = useState(null);
   const fmBufferRef = useRef(null);
@@ -416,21 +394,16 @@ export default function HearingLossSimulator() {
 
   const audioCtxRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const audiogramChartRef = useRef(null); // ref to the chart container div for height measurement
-  const draggingRef = useRef(null); // { bandIndex, ear } while a drag is in progress, else null
+  const audiogramChartRef = useRef(null);
+  const draggingRef = useRef(null);
   const chunksRef = useRef([]);
-  const rawBufferRef = useRef(null);       // original recorded AudioBuffer
-  const filteredBufferRef = useRef(null);  // filter-processed AudioBuffer
+  const rawBufferRef = useRef(null);
+  const filteredBufferRef = useRef(null);
   const playbackSourceRef = useRef(null);
 
   const activePreset = PRESETS.find(p => p.id === activePresetId);
-  const displayGains = isCustomMode
-    ? (activeAudiogramEar === "right" ? rightGains : leftGains)
-    : activePreset.gains;
-
   const isReady = ["ready", "playing_normal", "playing_simulated", "playing_fm"].includes(status);
 
-  // ── Get or create AudioContext ─────────────────────────────────────────────
   const getAudioCtx = () => {
     if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
       const Cls = window.AudioContext || window.webkitAudioContext;
@@ -439,7 +412,6 @@ export default function HearingLossSimulator() {
     return audioCtxRef.current;
   };
 
-  // ── Build filtered buffer (full pipeline: HL filters + optional noise) ────
   const buildFilteredBuffer = useCallback(async (rawBuffer, rightGainsArg, leftGainsArg, lat, noiseId, noiseEnvs) => {
     const ctx = getAudioCtx();
     const envList = noiseEnvs || NOISE_ENVIRONMENTS;
@@ -447,7 +419,6 @@ export default function HearingLossSimulator() {
     const noiseProfile = selectedEnv?.profile;
     const fileUrl = selectedEnv?.fileUrl;
 
-    // For unilateral modes, use the affected ear's gains for the filter
     const unilateralGains = lat === "right" ? rightGainsArg : leftGainsArg;
 
     const intermediate = lat === "right"
@@ -468,7 +439,6 @@ export default function HearingLossSimulator() {
     return await renderNoiseMixed(ctx, intermediate, noiseProfile);
   }, [NOISE_ENVIRONMENTS]);
 
-  // ── Build FM buffer (same HL + reduced noise + boosted speech) ───────────
   const buildFmBuffer = useCallback(async (filteredBuffer, noiseId, noiseEnvs) => {
     const ctx = getAudioCtx();
     const envList = noiseEnvs || NOISE_ENVIRONMENTS;
@@ -488,20 +458,17 @@ export default function HearingLossSimulator() {
     return await renderFmMixed(ctx, filteredBuffer, noiseProfile);
   }, [NOISE_ENVIRONMENTS]);
 
-  // ── Sync buffer refs → state so WaveformComparison re-draws ──────────────
   const commitBuffers = useCallback(async (raw, filtered, noiseId, noiseEnvs) => {
     rawBufferRef.current = raw;
     filteredBufferRef.current = filtered;
     setRawBufferState(raw);
     setFilteredBufferState(filtered);
 
-    // Build FM buffer in parallel — null when noise is "none"
     const fm = await buildFmBuffer(filtered, noiseId, noiseEnvs);
     fmBufferRef.current = fm;
     setFmBufferState(fm);
   }, [buildFmBuffer]);
 
-  // ── Start recording ────────────────────────────────────────────────────────
   const handleRecord = useCallback(async () => {
     setErrorMessage("");
 
@@ -536,7 +503,6 @@ export default function HearingLossSimulator() {
     };
 
     recorder.onstop = async () => {
-      // Stop all mic tracks
       stream.getTracks().forEach(t => t.stop());
 
       setStatus("processing");
@@ -553,7 +519,6 @@ export default function HearingLossSimulator() {
         return;
       }
 
-      // Pre-render filtered version
       const rGains = isCustomMode ? rightGains : activePreset.gains;
       const lGains = isCustomMode ? leftGains : activePreset.gains;
       const filtered = await buildFilteredBuffer(decoded, rGains, lGains, laterality, noiseEnvId, NOISE_ENVIRONMENTS);
@@ -566,14 +531,12 @@ export default function HearingLossSimulator() {
     setStatus("recording");
   }, [activePreset, isCustomMode, rightGains, leftGains, buildFilteredBuffer, laterality, noiseEnvId]);
 
-  // ── Stop recording ─────────────────────────────────────────────────────────
   const handleStopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
     }
   }, []);
 
-  // ── Stop any active playback ───────────────────────────────────────────────
   const stopPlayback = useCallback(() => {
     if (playbackSourceRef.current) {
       try { playbackSourceRef.current.stop(); } catch {}
@@ -605,7 +568,6 @@ export default function HearingLossSimulator() {
     setStatus("playing_fm");
   }, [stopPlayback, playingMode]);
 
-  // ── Play a buffer ──────────────────────────────────────────────────────────
   const playBuffer = useCallback((buffer, mode) => {
     if (playbackSourceRef.current) {
       try { playbackSourceRef.current.stop(); } catch {}
@@ -639,7 +601,6 @@ export default function HearingLossSimulator() {
     playBuffer(filteredBufferRef.current, "simulated");
   }, [playBuffer, stopPlayback, playingMode]);
 
-  // ── Re-record ──────────────────────────────────────────────────────────────
   const handleReset = useCallback(() => {
     stopPlayback();
     rawBufferRef.current = null;
@@ -652,7 +613,6 @@ export default function HearingLossSimulator() {
     setPlayingMode(null);
   }, [stopPlayback]);
 
-  // ── Laterality change ──────────────────────────────────────────────────────
   const handleLateralityChange = useCallback(async (newLaterality) => {
     setLaterality(newLaterality);
     if (rawBufferRef.current) {
@@ -666,7 +626,6 @@ export default function HearingLossSimulator() {
     }
   }, [buildFilteredBuffer, commitBuffers, isCustomMode, rightGains, leftGains, activePreset, noiseEnvId, stopPlayback, NOISE_ENVIRONMENTS]);
 
-  // ── Noise environment change ───────────────────────────────────────────────
   const handleNoiseChange = useCallback(async (newNoiseId) => {
     setNoiseEnvId(newNoiseId);
     if (rawBufferRef.current) {
@@ -680,7 +639,6 @@ export default function HearingLossSimulator() {
     }
   }, [buildFilteredBuffer, commitBuffers, isCustomMode, rightGains, leftGains, activePreset, laterality, stopPlayback, NOISE_ENVIRONMENTS]);
 
-  // ── Student profile load ───────────────────────────────────────────────────
   const handleStudentGainsLoaded = useCallback(async (rGains, lGains, label, source, interpretation) => {
     if (!rGains && !lGains) {
       setStudentSimLabel(null);
@@ -707,7 +665,6 @@ export default function HearingLossSimulator() {
     }
   }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
-  // ── Preset selection ───────────────────────────────────────────────────────
   const handlePresetSelect = useCallback(async (preset) => {
     setActivePresetId(preset.id);
     setIsCustomMode(false);
@@ -716,7 +673,6 @@ export default function HearingLossSimulator() {
     setStudentSimLabel(null);
     setStudentSimInterpretation(null);
 
-    // Re-render filtered buffer if we already have a recording
     if (rawBufferRef.current) {
       setStatus("processing");
       stopPlayback();
@@ -726,7 +682,6 @@ export default function HearingLossSimulator() {
     }
   }, [stopPlayback, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
-  // ── Slider change ──────────────────────────────────────────────────────────
   const handleSliderChange = useCallback(async (bandIndex, value) => {
     const newRightGains = rightGains.slice();
     const newLeftGains = leftGains.slice();
@@ -751,7 +706,6 @@ export default function HearingLossSimulator() {
     }
   }, [rightGains, leftGains, activeAudiogramEar, stopPlayback, status, buildFilteredBuffer, commitBuffers, laterality, noiseEnvId, NOISE_ENVIRONMENTS]);
 
-  // ── Audiogram drag handlers ────────────────────────────────────────────────
   const handleMarkerDragStart = useCallback((e, bandIndex) => {
     e.preventDefault();
     draggingRef.current = { bandIndex, ear: activeAudiogramEar };
@@ -773,7 +727,6 @@ export default function HearingLossSimulator() {
     setDraggingBandIndex(null);
   }, []);
 
-  // ── Cleanup on unmount ─────────────────────────────────────────────────────
   useEffect(() => {
     return () => {
       if (playbackSourceRef.current) { try { playbackSourceRef.current.stop(); } catch {} }
@@ -784,7 +737,6 @@ export default function HearingLossSimulator() {
     };
   }, []);
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-3xl mx-auto space-y-6">
 
@@ -807,7 +759,7 @@ export default function HearingLossSimulator() {
         <Info className="w-5 h-5 text-[#6B2FB9] shrink-0 mt-0.5" aria-hidden="true" />
         <div className="text-sm text-[#1A1028]">
           <span className="font-semibold">How to use: </span>
-          Select a hearing loss type, press <strong>Record</strong> and speak for a few seconds, then press <strong>Stop Recording</strong>.
+          Select a hearing profile type, press <strong>Record</strong> and speak for a few seconds, then press <strong>Stop Recording</strong>.
           Use the <strong>Play Normal</strong> and <strong>Play Simulated</strong> buttons to compare. Wear headphones for best results.
         </div>
       </div>
@@ -1002,7 +954,6 @@ export default function HearingLossSimulator() {
             onTouchMove={handleChartPointerMove}
             onTouchEnd={handleChartPointerUp}
           >
-            {/* Horizontal grid lines — one per 10 dB */}
             {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120].map(db => (
               <div
                 key={db}
@@ -1015,7 +966,6 @@ export default function HearingLossSimulator() {
               />
             ))}
 
-            {/* Normal hearing range shading (−10 to 25 dB) */}
             <div
               className="absolute left-0 right-0 pointer-events-none"
               style={{
@@ -1025,7 +975,6 @@ export default function HearingLossSimulator() {
               }}
             />
 
-            {/* Speech banana — rendered as a single continuous SVG-free polygon using absolute positioned divs */}
             <div className="absolute inset-0 pointer-events-none" style={{ display: "grid", gridTemplateColumns: `repeat(${SPEECH_BANANA.length}, 1fr)` }}>
               {SPEECH_BANANA.map((band) => (
                 <div key={band.freqIndex} className="relative">
@@ -1043,7 +992,6 @@ export default function HearingLossSimulator() {
               ))}
             </div>
 
-            {/* Frequency columns + markers */}
             <div className="absolute inset-0 flex">
               {BAND_FREQUENCIES_LABELS.map((label, i) => {
                 const rightDbHL = gainToDbHL(isCustomMode ? rightGains[i] : activePreset.gains[i]);
@@ -1057,12 +1005,10 @@ export default function HearingLossSimulator() {
                     key={label}
                     className={`flex-1 relative border-l border-[#EDE8F4] first:border-l-0 ${isActiveCol ? "bg-purple-50" : ""}`}
                   >
-                    {/* Column frequency label at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 flex justify-center">
                       <span className="text-[9px] text-[#4A4A4A] font-semibold translate-y-full pt-1">{label}</span>
                     </div>
 
-                    {/* Right ear marker — O (open circle) — always visible, dimmed when inactive */}
                     <div
                       className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20 transition-opacity ${
                         activeAudiogramEar === "right" ? "opacity-100" : "opacity-40"
@@ -1081,7 +1027,6 @@ export default function HearingLossSimulator() {
                       }`} />
                     </div>
 
-                    {/* Left ear marker — X — always visible, dimmed when inactive */}
                     <div
                       className={`absolute left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing touch-none z-20 transition-opacity ${
                         activeAudiogramEar === "left" ? "opacity-100" : "opacity-40"
@@ -1110,14 +1055,11 @@ export default function HearingLossSimulator() {
             </div>
           </div>
 
-          {/* X-axis label */}
           <p className="text-center text-[10px] text-[#4A4A4A] mt-5">Frequency (Hz)</p>
         </div>
 
-        {/* Y-axis label */}
         <p className="text-[10px] text-[#4A4A4A] text-center -mt-2">↑ Better hearing &nbsp;|&nbsp; dB HL &nbsp;|&nbsp; More loss ↓</p>
 
-        {/* Legend */}
         <div className="flex items-center gap-5 flex-wrap pt-1">
           <div className="flex items-center gap-2 text-xs text-[#4A4A4A]">
             <div className="w-4 h-4 rounded-full border-2 border-red-600 bg-white" />
@@ -1137,9 +1079,7 @@ export default function HearingLossSimulator() {
           </div>
         </div>
 
-        {/* Current threshold readout — two rows, one per ear */}
         <div className="space-y-1 pt-1">
-          {/* Right ear row */}
           <div className="flex items-center gap-1">
             <span className="text-[9px] font-semibold text-red-600 w-6 shrink-0 text-right">R</span>
             <div className="grid grid-cols-8 gap-1 flex-1">
@@ -1162,7 +1102,6 @@ export default function HearingLossSimulator() {
             </div>
           </div>
 
-          {/* Left ear row */}
           <div className="flex items-center gap-1">
             <span className="text-[9px] font-semibold text-blue-600 w-6 shrink-0 text-right">L</span>
             <div className="grid grid-cols-8 gap-1 flex-1">
@@ -1191,7 +1130,6 @@ export default function HearingLossSimulator() {
       {/* Record + Compare controls */}
       <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-6 shadow-sm space-y-5">
 
-        {/* Step 1 — Record */}
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-[#6B2FB9] mb-3">Step 1 — Record</p>
           <div className="flex items-center gap-3 flex-wrap">
@@ -1234,12 +1172,10 @@ export default function HearingLossSimulator() {
           </div>
         </div>
 
-        {/* Step 2 — Compare */}
         {isReady && (
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B2FB9] mb-3">Step 2 — Compare</p>
             <div className={`grid gap-3 ${fmBufferState ? "grid-cols-3" : "grid-cols-2"}`}>
-              {/* Normal */}
               <button
                 onClick={handlePlayNormal}
                 className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 px-4 py-5 transition-all font-semibold text-sm ${
@@ -1248,16 +1184,11 @@ export default function HearingLossSimulator() {
                     : "bg-white border-[var(--modal-border)] text-[#1A1028] hover:bg-[#F7F3FA] hover:border-[#C4A8E0]"
                 }`}
               >
-                {playingMode === "normal" ? (
-                  <Square className="w-5 h-5" />
-                ) : (
-                  <Play className="w-5 h-5 text-slate-600" />
-                )}
+                {playingMode === "normal" ? <Square className="w-5 h-5" /> : <Play className="w-5 h-5 text-slate-600" />}
                 <span>Normal Hearing</span>
                 <span className="text-xs font-normal opacity-60">Unfiltered</span>
               </button>
 
-              {/* Simulated */}
               <button
                 onClick={handlePlaySimulated}
                 className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 px-4 py-5 transition-all font-semibold text-sm ${
@@ -1266,11 +1197,7 @@ export default function HearingLossSimulator() {
                     : "bg-white border-[#6B2FB9] text-[#400070] hover:bg-[#EADDF5]"
                 }`}
               >
-                {playingMode === "simulated" ? (
-                  <Square className="w-5 h-5" />
-                ) : (
-                  <Ear className="w-5 h-5" />
-                )}
+                {playingMode === "simulated" ? <Square className="w-5 h-5" /> : <Ear className="w-5 h-5" />}
                 <span className="text-center leading-tight">
                   {studentSimLabel ? "Student Profile" : isCustomMode ? "Custom" : activePreset?.label}
                 </span>
@@ -1279,7 +1206,6 @@ export default function HearingLossSimulator() {
                 </span>
               </button>
 
-              {/* FM Mic — only shown when a noise environment is active */}
               {fmBufferState && (
                 <button
                   onClick={handlePlayFm}
@@ -1289,11 +1215,7 @@ export default function HearingLossSimulator() {
                       : "bg-white border-emerald-600 text-emerald-700 hover:bg-emerald-50"
                   }`}
                 >
-                  {playingMode === "fm" ? (
-                    <Square className="w-5 h-5" />
-                  ) : (
-                    <Mic className="w-5 h-5" />
-                  )}
+                  {playingMode === "fm" ? <Square className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                   <span className="text-center leading-tight">With FM/DM Mic</span>
                   <span className="text-xs font-normal opacity-70">Worn by speaker</span>
                 </button>
@@ -1313,14 +1235,12 @@ export default function HearingLossSimulator() {
           </div>
         )}
 
-        {/* Headphone tip */}
         <div className="flex items-center gap-2 text-xs text-[#4A4A4A] pt-1 border-t border-[var(--modal-border)]">
           <Volume2 className="w-4 h-4 shrink-0" />
           <span>Wear headphones for best results and to prevent microphone feedback.</span>
         </div>
       </div>
 
-      {/* Waveform comparison — shown once a recording is ready */}
       {rawBufferState && filteredBufferState && (
         <WaveformComparison
           rawBuffer={rawBufferState}
@@ -1329,7 +1249,6 @@ export default function HearingLossSimulator() {
         />
       )}
 
-      {/* Disclaimer */}
       <p className="text-xs text-[#4A4A4A] text-center pb-4">
         This simulator is an educational awareness tool for itinerant professionals and caregivers.
         It does not replicate the full experience of hearing loss and should not be used for clinical assessment or diagnosis.
