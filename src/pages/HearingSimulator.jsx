@@ -652,7 +652,7 @@ export default function HearingSimulator() {
     setRightGains(safeRight);
     setLeftGains(safeLeft);
     setIsCustomMode(true);
-    setActivePresetId(null);
+    setActivePresetId(""); // keep a non-null value to avoid activePreset being undefined
     setStudentSimLabel(label);
     setStudentSimInterpretation(interpretation || null);
 
@@ -994,8 +994,8 @@ export default function HearingSimulator() {
 
             <div className="absolute inset-0 flex">
               {BAND_FREQUENCIES_LABELS.map((label, i) => {
-                const rightDbHL = gainToDbHL(isCustomMode ? rightGains[i] : activePreset.gains[i]);
-                const leftDbHL = gainToDbHL(isCustomMode ? leftGains[i] : activePreset.gains[i]);
+                const rightDbHL = gainToDbHL(isCustomMode || !activePreset ? rightGains[i] : activePreset.gains[i]);
+                const leftDbHL = gainToDbHL(isCustomMode || !activePreset ? leftGains[i] : activePreset.gains[i]);
                 const rightTop = dbHLToPercent(rightDbHL);
                 const leftTop = dbHLToPercent(leftDbHL);
                 const isActiveCol = draggingBandIndex === i;
@@ -1095,7 +1095,7 @@ export default function HearingSimulator() {
                 >
                   <p className="text-[8px] font-semibold text-[#4A4A4A]">{label}</p>
                   <p className="text-[10px] font-mono font-bold text-red-700">
-                    {gainToDbHL(isCustomMode ? rightGains[i] : activePreset.gains[i])}
+                    {gainToDbHL(isCustomMode || !activePreset ? rightGains[i] : activePreset.gains[i])}
                   </p>
                 </div>
               ))}
@@ -1117,7 +1117,7 @@ export default function HearingSimulator() {
                 >
                   <p className="text-[8px] font-semibold text-[#4A4A4A]">{label}</p>
                   <p className="text-[10px] font-mono font-bold text-blue-700">
-                    {gainToDbHL(isCustomMode ? leftGains[i] : activePreset.gains[i])}
+                    {gainToDbHL(isCustomMode || !activePreset ? leftGains[i] : activePreset.gains[i])}
                   </p>
                 </div>
               ))}
