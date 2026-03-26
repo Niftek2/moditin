@@ -196,7 +196,7 @@ export default function AudiologySnapshotView({ studentId }) {
             <Button onClick={() => setEditing(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
               Add Audiology Snapshot
             </Button>
-            <Button variant="outline" onClick={() => navigate("/AudiogramPlotter")} className="rounded-xl border-[#C4A8E0] text-[#400070]">
+            <Button variant="outline" onClick={() => navigate(`/AudiogramPlotter?studentId=${studentId}`)} className="rounded-xl border-[#C4A8E0] text-[#400070]">
               <Activity className="w-4 h-4 mr-1" /> Open Audiogram Plotter
             </Button>
           </div>
@@ -243,7 +243,7 @@ export default function AudiologySnapshotView({ studentId }) {
 
           {/* Link to Audiogram Plotter */}
           <button
-            onClick={() => navigate("/AudiogramPlotter")}
+            onClick={() => navigate(`/AudiogramPlotter?studentId=${studentId}`)}
             className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-[#6B2FB9] border border-[#C4A8E0] bg-[#F7F3FA] hover:bg-[#EADDF5] rounded-xl py-3 transition-colors"
           >
             <Activity className="w-4 h-4" />

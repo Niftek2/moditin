@@ -87,7 +87,8 @@ export default function AudiogramPlotter() {
   const { isDemoMode, demoData } = useDemo();
 
   const [currentUser, setCurrentUser] = useState(null);
-  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const urlParams = new URLSearchParams(window.location.search);
+  const [selectedStudentId, setSelectedStudentId] = useState(urlParams.get("studentId") || "");
   const [activeEar, setActiveEar] = useState("right");
   const [activeFreq, setActiveFreq] = useState(null);
   const [dbInput, setDbInput] = useState(DEFAULT_DB);
