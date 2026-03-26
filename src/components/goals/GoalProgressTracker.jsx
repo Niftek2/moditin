@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -37,11 +37,16 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function GoalProgressTracker({ studentGoalId, studentId, goalText }) {
   const [showModal, setShowModal] = useState(false);
   const [showChart, setShowChart] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+  }, []);
 
   const { data: entries = [] } = useQuery({
-    queryKey: ["goalProgress", studentGoalId],
-    queryFn: () => base44.entities.GoalProgressEntry.filter({ studentGoalId }),
-    enabled: !!studentGoalId,
+    queryKey: ["goalProgress", studentGoalId, currentUserEmail],
+    queryFn: () => base44.entities.GoalProgressEntry.filter({ studentGoalId, created_by: currentUserEmail }),
+    enabled: !!studentGoalId && !!currentUserEmail,
   });
 
   const sorted = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));

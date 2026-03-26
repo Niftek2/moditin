@@ -119,15 +119,15 @@ export default function AudiogramPlotter() {
 
   // ── Existing snapshot ─────────────────────────────────────────────────────────
   const { data: snapshot, isLoading: snapshotLoading } = useQuery({
-    queryKey: ["audiologySnapshot", selectedStudentId],
+    queryKey: ["audiologySnapshot", selectedStudentId, currentUser?.email],
     queryFn: async () => {
       if (isDemoMode) {
         return (demoData.audiologySnapshots || []).find(s => s.studentId === selectedStudentId) || null;
       }
-      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
+      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId, created_by: currentUser?.email });
       return results[0] || null;
     },
-    enabled: !!selectedStudentId,
+    enabled: isDemoMode ? !!selectedStudentId : (!!selectedStudentId && !!currentUser?.email),
   });
 
   // Populate chart when snapshot loads
@@ -169,7 +169,7 @@ export default function AudiogramPlotter() {
       }
 
       // Always do a fresh lookup to avoid stale closure issue
-      const existing = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
+      const existing = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId, created_by: currentUser?.email });
       const newEntry = { url: audiogramImageUrl, savedAt: new Date().toISOString() };
       if (existing.length > 0) {
         const prev = existing[0].audiogramImages || [];

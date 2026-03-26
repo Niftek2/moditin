@@ -71,9 +71,11 @@ export default function ServiceHoursPage() {
   const students = isDemoMode ? demoData.students : studentsRaw;
 
   const { data: studentGoals = [] } = useQuery({
-    queryKey: ["studentGoals", form.studentId],
-    queryFn: () => form.studentId ? base44.entities.StudentGoal.filter({ studentId: form.studentId }) : [],
-    enabled: !!form.studentId,
+    queryKey: ["studentGoals", form.studentId, currentUser?.email],
+    queryFn: () => form.studentId && currentUser?.email
+      ? base44.entities.StudentGoal.filter({ studentId: form.studentId, created_by: currentUser?.email })
+      : [],
+    enabled: !!form.studentId && !!currentUser?.email,
   });
 
   const createMutation = useMutation({

@@ -44,15 +44,15 @@ export default function StudentAudiogramLoader({ onGainsLoaded }) {
   });
 
   const { data: snapshot } = useQuery({
-    queryKey: ["audiologySnapshot", selectedStudentId],
+    queryKey: ["audiologySnapshot", selectedStudentId, currentUserEmail],
     queryFn: async () => {
       if (isDemoMode) {
         return (demoData.audiologySnapshots || []).find(s => s.studentId === selectedStudentId) || null;
       }
-      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
+      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId, created_by: currentUserEmail });
       return results[0] || null;
     },
-    enabled: !!selectedStudentId,
+    enabled: isDemoMode ? !!selectedStudentId : (!!selectedStudentId && !!currentUserEmail),
     staleTime: 0,
   });
 

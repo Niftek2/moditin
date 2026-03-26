@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
@@ -13,14 +13,21 @@ import { useDemo } from "../demo/DemoContext";
 export default function StudentInteractiveHistory({ studentId }) {
   const [filterTemplate, setFilterTemplate] = useState("all");
   const { isDemoMode, demoData } = useDemo();
+  const [currentUserEmail, setCurrentUserEmail] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
 
   const { data: sessions = [], isLoading } = useQuery({
-    queryKey: ["interactiveSessions", studentId, isDemoMode],
+    queryKey: ["interactiveSessions", studentId, currentUserEmail, isDemoMode],
     queryFn: () => {
       if (isDemoMode) return demoData.interactiveSessions.filter(s => s.studentId === studentId);
-      return base44.entities.InteractiveActivitySession.filter({ studentId }, "-created_date", 50);
+      return base44.entities.InteractiveActivitySession.filter({ studentId, created_by: currentUserEmail }, "-created_date", 50);
     },
-    enabled: !!studentId,
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
   });
 
   const filtered = filterTemplate === "all" ? sessions : sessions.filter(s => s.templateType === filterTemplate);

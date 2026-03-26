@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -22,18 +22,25 @@ const HL_TYPE_LABELS = {
 
 export default function AudiologySnapshotView({ studentId }) {
   const [editing, setEditing] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const queryClient = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!isDemoMode) {
+      base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    }
+  }, [isDemoMode]);
+
   const { data: snapshot, isLoading } = useQuery({
-    queryKey: ["audiologySnapshot", studentId],
+    queryKey: ["audiologySnapshot", studentId, currentUserEmail],
     queryFn: async () => {
       if (isDemoMode) return demoData.audiologySnapshots.find(s => s.studentId === studentId) || null;
-      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId });
+      const results = await base44.entities.StudentAudiologySnapshot.filter({ studentId, created_by: currentUserEmail });
       return results[0] || null;
     },
-    enabled: !!studentId,
+    enabled: isDemoMode ? !!studentId : (!!studentId && !!currentUserEmail),
     staleTime: 0,
   });
 
