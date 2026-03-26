@@ -161,8 +161,10 @@ export default function AudiogramPlotter() {
         label: audiogramLabel,
         savedAt: new Date().toISOString(),
       });
-      if (snapshot?.id) {
-        return base44.entities.StudentAudiologySnapshot.update(snapshot.id, { audiogramData });
+      // Always do a fresh lookup to avoid stale closure issue
+      const existing = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
+      if (existing.length > 0) {
+        return base44.entities.StudentAudiologySnapshot.update(existing[0].id, { audiogramData });
       }
       return base44.entities.StudentAudiologySnapshot.create({ studentId: selectedStudentId, audiogramData });
     },
