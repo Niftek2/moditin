@@ -170,10 +170,14 @@ export default function AudiogramPlotter() {
 
       // Always do a fresh lookup to avoid stale closure issue
       const existing = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
+      const newEntry = { url: audiogramImageUrl, savedAt: new Date().toISOString() };
       if (existing.length > 0) {
-        return base44.entities.StudentAudiologySnapshot.update(existing[0].id, { audiogramImageUrl });
+        const prev = existing[0].audiogramImages || [];
+        return base44.entities.StudentAudiologySnapshot.update(existing[0].id, {
+          audiogramImages: [...prev, newEntry]
+        });
       }
-      return base44.entities.StudentAudiologySnapshot.create({ studentId: selectedStudentId, audiogramImageUrl });
+      return base44.entities.StudentAudiologySnapshot.create({ studentId: selectedStudentId, audiogramImages: [newEntry] });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audiologySnapshot", selectedStudentId] });

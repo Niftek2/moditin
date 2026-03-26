@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, AlertTriangle, CalendarDays, Ear, Activity, ExternalLink } from "lucide-react";
+import { Pencil, AlertTriangle, CalendarDays, Ear, Activity, ExternalLink, Trash2 } from "lucide-react";
 import AudiologySnapshotForm from "./AudiologySnapshotForm";
 import { useDemo } from "../demo/DemoContext";
 import { useNavigate } from "react-router-dom";
@@ -124,23 +124,57 @@ export default function AudiologySnapshotView({ studentId }) {
             )}
           </div>
 
-          {/* Audiogram image — saved from Audiogram Plotter */}
-          {snapshot.audiogramImageUrl && (
-            <div className="modal-card p-5 space-y-3">
-              <h3 className="font-semibold text-[var(--modal-text)] flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#6B2FB9]" />
-                Audiogram Plotter
-              </h3>
-              <img
-                src={snapshot.audiogramImageUrl}
-                alt="Audiogram chart"
-                className="w-full rounded-xl border border-[var(--modal-border)]"
-              />
-              <p className="text-[10px] text-[var(--modal-text-muted)] text-center">
-                Educational reference · Plotted via Audiogram Plotter · Not diagnostic
-              </p>
-            </div>
-          )}
+          {/* Audiogram images — saved from Audiogram Plotter */}
+          {(() => {
+            const images = snapshot.audiogramImages?.length
+              ? snapshot.audiogramImages
+              : snapshot.audiogramImageUrl
+              ? [{ url: snapshot.audiogramImageUrl, savedAt: null }]
+              : [];
+            if (!images.length) return null;
+            return (
+              <div className="modal-card p-5 space-y-4">
+                <h3 className="font-semibold text-[var(--modal-text)] flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-[#6B2FB9]" />
+                  Audiogram Plotter
+                  <span className="text-xs font-normal text-[var(--modal-text-muted)]">({images.length} saved)</span>
+                </h3>
+                <div className="space-y-4">
+                  {[...images].reverse().map((img, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-[var(--modal-text-muted)]">
+                          {img.savedAt
+                            ? new Date(img.savedAt).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })
+                            : "Saved"}
+                        </span>
+                        {!isDemoMode && (
+                          <button
+                            onClick={async () => {
+                              const updated = (snapshot.audiogramImages || []).filter((_, i) => i !== (images.length - 1 - idx));
+                              await base44.entities.StudentAudiologySnapshot.update(snapshot.id, { audiogramImages: updated });
+                              queryClient.invalidateQueries({ queryKey: ["audiologySnapshot", studentId] });
+                            }}
+                            className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" /> Delete
+                          </button>
+                        )}
+                      </div>
+                      <img
+                        src={img.url}
+                        alt={`Audiogram saved ${img.savedAt || ""}`}
+                        className="w-full rounded-xl border border-[var(--modal-border)]"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-[var(--modal-text-muted)] text-center">
+                  Educational reference · Plotted via Audiogram Plotter · Not diagnostic
+                </p>
+              </div>
+            );
+          })()}
 
           {/* Link to Audiogram Plotter */}
           <button
@@ -148,7 +182,7 @@ export default function AudiologySnapshotView({ studentId }) {
             className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-[#6B2FB9] border border-[#C4A8E0] bg-[#F7F3FA] hover:bg-[#EADDF5] rounded-xl py-3 transition-colors"
           >
             <Activity className="w-4 h-4" />
-            {snapshot.audiogramData ? "Edit in Audiogram Plotter" : "Plot Thresholds in Audiogram Plotter"}
+            {(snapshot.audiogramImages?.length || snapshot.audiogramImageUrl) ? "Open Audiogram Plotter" : "Plot Thresholds in Audiogram Plotter"}
             <ExternalLink className="w-3.5 h-3.5 opacity-60" />
           </button>
 
