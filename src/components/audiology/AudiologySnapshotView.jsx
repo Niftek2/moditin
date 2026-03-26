@@ -3,9 +3,10 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, AlertTriangle, CalendarDays, Ear, Activity } from "lucide-react";
+import { Pencil, AlertTriangle, CalendarDays, Ear, Activity, ExternalLink } from "lucide-react";
 import AudiologySnapshotForm from "./AudiologySnapshotForm";
 import { useDemo } from "../demo/DemoContext";
+import { useNavigate } from "react-router-dom";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine
@@ -137,6 +138,7 @@ export default function AudiologySnapshotView({ studentId }) {
   const [editing, setEditing] = useState(false);
   const queryClient = useQueryClient();
   const { isDemoMode, demoData } = useDemo();
+  const navigate = useNavigate();
 
   const { data: snapshot, isLoading } = useQuery({
     queryKey: ["audiologySnapshot", studentId],
@@ -190,9 +192,14 @@ export default function AudiologySnapshotView({ studentId }) {
         <div className="modal-card p-10 text-center">
           <Ear className="w-8 h-8 text-[#6B2FB9] mx-auto mb-3 opacity-50" />
           <p className="text-sm text-[var(--modal-text-muted)] mb-4">No audiology snapshot recorded yet.</p>
-          <Button onClick={() => setEditing(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
-            Add Audiology Snapshot
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Button onClick={() => setEditing(true)} className="bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl">
+              Add Audiology Snapshot
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/AudiogramPlotter")} className="rounded-xl border-[#C4A8E0] text-[#400070]">
+              <Activity className="w-4 h-4 mr-1" /> Open Audiogram Plotter
+            </Button>
+          </div>
         </div>
       ) : (
         <>
@@ -233,6 +240,16 @@ export default function AudiologySnapshotView({ studentId }) {
 
           {/* Audiogram Plotter data — shown if plotted thresholds exist */}
           {snapshot.audiogramData && <AudiogramChart audiogramData={snapshot.audiogramData} />}
+
+          {/* Link to Audiogram Plotter */}
+          <button
+            onClick={() => navigate("/AudiogramPlotter")}
+            className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-[#6B2FB9] border border-[#C4A8E0] bg-[#F7F3FA] hover:bg-[#EADDF5] rounded-xl py-3 transition-colors"
+          >
+            <Activity className="w-4 h-4" />
+            {snapshot.audiogramData ? "Edit in Audiogram Plotter" : "Plot Thresholds in Audiogram Plotter"}
+            <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+          </button>
 
           {/* Instructional Notes */}
           {(snapshot.listeningAccessNotes || snapshot.hlHistoryNotes || snapshot.equipmentDetails || snapshot.etiologyNotes) && (
