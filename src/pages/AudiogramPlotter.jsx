@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDemo } from "../components/demo/DemoContext";
+import html2canvas from "html2canvas";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -97,6 +98,7 @@ export default function AudiogramPlotter() {
   const [audiogramLabel, setAudiogramLabel] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [hasUnsaved, setHasUnsaved] = useState(false);
+  const chartRef = useRef(null);
 
   useEffect(() => {
     if (!isDemoMode) {
@@ -155,18 +157,23 @@ export default function AudiogramPlotter() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!selectedStudentId) throw new Error("No student selected");
-      const audiogramData = JSON.stringify({
-        right: rightPoints,
-        left: leftPoints,
-        label: audiogramLabel,
-        savedAt: new Date().toISOString(),
-      });
+
+      // Capture chart as image
+      let audiogramImageUrl = null;
+      if (chartRef.current) {
+        const canvas = await html2canvas(chartRef.current, { backgroundColor: "#ffffff", scale: 2 });
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        const file = new File([blob], "audiogram.png", { type: "image/png" });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        audiogramImageUrl = file_url;
+      }
+
       // Always do a fresh lookup to avoid stale closure issue
       const existing = await base44.entities.StudentAudiologySnapshot.filter({ studentId: selectedStudentId });
       if (existing.length > 0) {
-        return base44.entities.StudentAudiologySnapshot.update(existing[0].id, { audiogramData });
+        return base44.entities.StudentAudiologySnapshot.update(existing[0].id, { audiogramImageUrl });
       }
-      return base44.entities.StudentAudiologySnapshot.create({ studentId: selectedStudentId, audiogramData });
+      return base44.entities.StudentAudiologySnapshot.create({ studentId: selectedStudentId, audiogramImageUrl });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audiologySnapshot", selectedStudentId] });
@@ -314,7 +321,7 @@ export default function AudiogramPlotter() {
       {selectedStudentId && (
         <>
           {/* Audiogram chart */}
-          <div className="bg-white rounded-2xl border border-[var(--modal-border)] p-5 shadow-sm">
+          <div ref={chartRef} className="bg-white rounded-2xl border border-[var(--modal-border)] p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
               <h2 className="text-base font-bold text-[#1A1028]">
                 Audiogram

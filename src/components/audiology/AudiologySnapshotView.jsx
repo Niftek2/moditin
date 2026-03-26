@@ -7,121 +7,7 @@ import { Pencil, AlertTriangle, CalendarDays, Ear, Activity, ExternalLink } from
 import AudiologySnapshotForm from "./AudiologySnapshotForm";
 import { useDemo } from "../demo/DemoContext";
 import { useNavigate } from "react-router-dom";
-import {
-  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine
-} from "recharts";
 
-const FREQUENCIES = [250, 500, 1000, 2000, 3000, 4000, 6000, 8000];
-const FREQ_LABELS = { 250: "250", 500: "500", 1000: "1k", 2000: "2k", 3000: "3k", 4000: "4k", 6000: "6k", 8000: "8k" };
-const SEVERITY_BANDS = [
-  { label: "Normal",     min: -10, max: 25,  color: "#E8F5E9" },
-  { label: "Mild",       min: 25,  max: 40,  color: "#FFF9C4" },
-  { label: "Moderate",   min: 40,  max: 55,  color: "#FFE0B2" },
-  { label: "Mod-Severe", min: 55,  max: 70,  color: "#FFCCBC" },
-  { label: "Severe",     min: 70,  max: 90,  color: "#FFCDD2" },
-  { label: "Profound",   min: 90,  max: 120, color: "#F3E5F5" },
-];
-
-function RightEarDot({ cx, cy }) {
-  if (cx == null || cy == null) return null;
-  return <circle cx={cx} cy={cy} r={6} fill="white" stroke="#DC2626" strokeWidth={2} />;
-}
-function LeftEarDot({ cx, cy }) {
-  if (cx == null || cy == null) return null;
-  const d = 5;
-  return (
-    <g>
-      <line x1={cx-d} y1={cy-d} x2={cx+d} y2={cy+d} stroke="#2563EB" strokeWidth={2} strokeLinecap="round" />
-      <line x1={cx+d} y1={cy-d} x2={cx-d} y2={cy+d} stroke="#2563EB" strokeWidth={2} strokeLinecap="round" />
-    </g>
-  );
-}
-function AudiogramTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  const pt = payload[0]?.payload;
-  if (!pt) return null;
-  return (
-    <div className="bg-white border border-[#D8CDE5] rounded-xl px-3 py-2 shadow-md text-xs">
-      <p className="font-semibold">{FREQ_LABELS[pt.freq] || pt.freq} Hz — {pt.db} dB HL</p>
-      <p className="text-[#4A4A4A]">{pt.ear === "right" ? "Right" : "Left"} ear</p>
-    </div>
-  );
-}
-
-function AudiogramChart({ audiogramData }) {
-  let rightPoints = [], leftPoints = [], label = "";
-  try {
-    const parsed = JSON.parse(audiogramData);
-    rightPoints = parsed.right || [];
-    leftPoints = parsed.left || [];
-    label = parsed.label || "";
-  } catch {
-    return null;
-  }
-  if (!rightPoints.length && !leftPoints.length) return null;
-
-  const freqIndex = (freq) => FREQUENCIES.indexOf(freq);
-  const rightData = rightPoints.map(p => ({ x: freqIndex(p.freq), y: p.db, freq: p.freq, ear: "right" }));
-  const leftData  = leftPoints.map(p  => ({ x: freqIndex(p.freq), y: p.db, freq: p.freq, ear: "left"  }));
-
-  return (
-    <div className="modal-card p-5 space-y-3">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="font-semibold text-[var(--modal-text)] flex items-center gap-2">
-          <Activity className="w-4 h-4 text-[#6B2FB9]" />
-          Audiogram Plotter Data
-          {label && <span className="text-xs font-normal text-[var(--modal-text-muted)]">— {label}</span>}
-        </h3>
-        <div className="flex items-center gap-3 text-xs text-[#4A4A4A]">
-          <span className="flex items-center gap-1">
-            <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4" fill="white" stroke="#DC2626" strokeWidth="2"/></svg>
-            Right
-          </span>
-          <span className="flex items-center gap-1">
-            <svg width="12" height="12" viewBox="0 0 12 12">
-              <line x1="2" y1="2" x2="10" y2="10" stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
-              <line x1="10" y1="2" x2="2" y2="10" stroke="#2563EB" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            Left
-          </span>
-        </div>
-      </div>
-      <ResponsiveContainer width="100%" height={220}>
-        <ScatterChart margin={{ top: 5, right: 50, bottom: 25, left: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#EDE8F4" />
-          {SEVERITY_BANDS.map(b => (
-            <ReferenceArea key={b.label} y1={b.min} y2={b.max} fill={b.color} fillOpacity={0.6} ifOverflow="hidden" />
-          ))}
-          <XAxis
-            dataKey="x" type="number" domain={[-0.5, 7.5]}
-            ticks={[0,1,2,3,4,5,6,7]}
-            tickFormatter={(v) => FREQ_LABELS[FREQUENCIES[v]] || v}
-            tick={{ fontSize: 10, fill: "#4A4A4A" }}
-            label={{ value: "Frequency (Hz)", position: "insideBottom", offset: -12, fontSize: 10, fill: "#4A4A4A" }}
-          />
-          <YAxis
-            dataKey="y" type="number" domain={[120, -10]}
-            ticks={[-10,0,10,20,30,40,50,60,70,80,90,100,110,120]}
-            tick={{ fontSize: 10, fill: "#4A4A4A" }}
-            label={{ value: "dB HL", angle: -90, position: "insideLeft", offset: 10, fontSize: 10, fill: "#4A4A4A" }}
-            reversed
-          />
-          <Tooltip content={<AudiogramTooltip />} />
-          <Scatter name="Right" data={rightData} shape={<RightEarDot />} line={{ stroke: "#DC2626", strokeWidth: 1.5 }} lineType="joint" />
-          <Scatter name="Left"  data={leftData}  shape={<LeftEarDot />}  line={{ stroke: "#2563EB", strokeWidth: 1.5 }} lineType="joint" />
-          {SEVERITY_BANDS.map(b => (
-            <ReferenceLine key={`lbl-${b.label}`} y={(b.min+b.max)/2} stroke="transparent"
-              label={{ value: b.label, position: "right", fontSize: 8, fill: "#9E9E9E" }} />
-          ))}
-        </ScatterChart>
-      </ResponsiveContainer>
-      <p className="text-[10px] text-[var(--modal-text-muted)] text-center">
-        Educational reference · Plotted via Audiogram Plotter · Not diagnostic
-      </p>
-    </div>
-  );
-}
 
 const EQUIPMENT_LABELS = {
   HearingAids: "Hearing Aids", CochlearImplant: "CI", BAHA: "BAHA",
@@ -238,8 +124,23 @@ export default function AudiologySnapshotView({ studentId }) {
             )}
           </div>
 
-          {/* Audiogram Plotter data — shown if plotted thresholds exist */}
-          {snapshot.audiogramData && <AudiogramChart audiogramData={snapshot.audiogramData} />}
+          {/* Audiogram image — saved from Audiogram Plotter */}
+          {snapshot.audiogramImageUrl && (
+            <div className="modal-card p-5 space-y-3">
+              <h3 className="font-semibold text-[var(--modal-text)] flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#6B2FB9]" />
+                Audiogram Plotter
+              </h3>
+              <img
+                src={snapshot.audiogramImageUrl}
+                alt="Audiogram chart"
+                className="w-full rounded-xl border border-[var(--modal-border)]"
+              />
+              <p className="text-[10px] text-[var(--modal-text-muted)] text-center">
+                Educational reference · Plotted via Audiogram Plotter · Not diagnostic
+              </p>
+            </div>
+          )}
 
           {/* Link to Audiogram Plotter */}
           <button
