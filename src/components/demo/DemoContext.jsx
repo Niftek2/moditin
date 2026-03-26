@@ -162,10 +162,23 @@ const SEED_DATA = {
     { id: "demo-lt42", ling6SessionId: "demo-l7", sound: "s", trialNumber: 1, responseType: "NoResponse", promptLevel: "VisualCue" },
   ],
   audiologySnapshots: [
-    { id: "demo-as1", studentId: "demo-s1", lastAudiogramDate: "2025-11-15", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Sloping", severityRange: "Moderate", onset: "Congenital", progression: "Stable", etiologyKnown: "Unknown", equipmentUsed: ["HearingAids"], hearingLossDetail: ["Bilateral"], listeningAccessNotes: "Performs best in quiet settings with hearing aids. Benefits from FM system in noisy environments.", confirmNoIdentifying: true },
-    { id: "demo-as2", studentId: "demo-s2", lastAudiogramDate: "2025-09-20", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Flat", severityRange: "Profound", onset: "Congenital", progression: "Stable", etiologyKnown: "Known", equipmentUsed: ["CochlearImplant", "FM_DM"], hearingLossDetail: ["Bilateral", "Genetic"], listeningAccessNotes: "CI user. FM microphone required in all instructional settings.", confirmNoIdentifying: true },
+    { id: "demo-as1", studentId: "demo-s1", lastAudiogramDate: "2025-11-15", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Sloping", severityRange: "Moderate", onset: "Congenital", progression: "Stable", etiologyKnown: "Unknown", equipmentUsed: ["HearingAids"], hearingLossDetail: ["Bilateral"], listeningAccessNotes: "Performs best in quiet settings with hearing aids. Benefits from FM system in noisy environments.", confirmNoIdentifying: true,
+      audiogramImages: [
+        { url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80", savedAt: "2025-11-15T10:00:00Z" },
+        { url: "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=600&q=80", savedAt: "2026-02-10T09:30:00Z" },
+      ]
+    },
+    { id: "demo-as2", studentId: "demo-s2", lastAudiogramDate: "2025-09-20", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Flat", severityRange: "Profound", onset: "Congenital", progression: "Stable", etiologyKnown: "Known", equipmentUsed: ["CochlearImplant", "FM_DM"], hearingLossDetail: ["Bilateral", "Genetic"], listeningAccessNotes: "CI user. FM microphone required in all instructional settings.", confirmNoIdentifying: true,
+      audiogramImages: [
+        { url: "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=600&q=80", savedAt: "2025-09-20T11:00:00Z" },
+      ]
+    },
     { id: "demo-as3", studentId: "demo-s3", lastAudiogramDate: "2026-01-10", hearingLossType: "Conductive", hearingLossLaterality: "Bilateral", configuration: "Flat", severityRange: "Mild", onset: "Acquired", progression: "Fluctuating", etiologyKnown: "Known", equipmentUsed: ["HearingAids"], hearingLossDetail: ["Bilateral", "HistoryOfOtitisMedia", "HistoryOfTubes"], listeningAccessNotes: "Mild conductive loss. Consistent hearing aid wear is being established.", confirmNoIdentifying: true },
-    { id: "demo-as4", studentId: "demo-s4", lastAudiogramDate: "2025-08-05", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Sloping", severityRange: "ModeratelySevere", onset: "Congenital", progression: "Stable", etiologyKnown: "Unknown", equipmentUsed: ["HearingAids", "FM_DM"], hearingLossDetail: ["Bilateral", "EnlargedVestibularAqueduct"], listeningAccessNotes: "Wears hearing aids and uses FM system independently. Very self-sufficient.", confirmNoIdentifying: true },
+    { id: "demo-as4", studentId: "demo-s4", lastAudiogramDate: "2025-08-05", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Sloping", severityRange: "ModeratelySevere", onset: "Congenital", progression: "Stable", etiologyKnown: "Unknown", equipmentUsed: ["HearingAids", "FM_DM"], hearingLossDetail: ["Bilateral", "EnlargedVestibularAqueduct"], listeningAccessNotes: "Wears hearing aids and uses FM system independently. Very self-sufficient.", confirmNoIdentifying: true,
+      audiogramImages: [
+        { url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80", savedAt: "2025-08-05T14:00:00Z" },
+      ]
+    },
     { id: "demo-as5", studentId: "demo-s5", lastAudiogramDate: "2026-02-20", hearingLossType: "Sensorineural", hearingLossLaterality: "Bilateral", configuration: "Sloping", severityRange: "Moderate", onset: "Congenital", progression: "Stable", etiologyKnown: "Unknown", equipmentUsed: ["HearingAids"], hearingLossDetail: ["Bilateral"], listeningAccessNotes: "New hearing aid user. Building tolerance and consistent wear habits.", confirmNoIdentifying: true },
   ],
   interactiveSessions: [
