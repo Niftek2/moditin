@@ -257,6 +257,10 @@ export default function Dashboard() {
             <Ear className="w-6 h-6 text-[#6B2FB9] mx-auto mb-2" aria-hidden="true" />
             <p className="text-sm font-bold text-[var(--modal-text)]">Listening Check</p>
           </Link>
+          <Link to={createPageUrl("Equipment")} className="modal-card p-4 text-center hover:shadow-md hover:-translate-y-0.5 transition-all rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC]">
+            <HearingAidIcon size={24} strokeColor="#6B2FB9" />
+            <p className="text-sm font-bold text-[var(--modal-text)] mt-2">Equipment</p>
+          </Link>
           </div>
           </motion.div>
 
