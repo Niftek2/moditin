@@ -146,6 +146,7 @@ export default function AudiologySnapshotView({ studentId }) {
       return results[0] || null;
     },
     enabled: !!studentId,
+    staleTime: 0,
   });
 
   const saveMutation = useMutation({
