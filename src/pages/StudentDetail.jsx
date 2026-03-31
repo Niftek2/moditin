@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 import {
-  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap, FileText, Download
+  ArrowLeft, Target, Clock, CalendarDays, Plus, Ear, Zap, FileText, Download,
+  Wrench, BookOpen, Layers, Users, BarChart2, Headphones, Activity, Search, CheckSquare, Settings
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { redactPII } from "@/components/shared/PIIGuard";
@@ -25,7 +26,21 @@ import StudentContactsSection from "../components/students/StudentContactsSectio
 import StudentScheduleSection from "../components/students/StudentScheduleSection";
 import { useDemo } from "../components/demo/DemoContext";
 
-const TABS = ["Overview", "Details", "Goals", "Accommodations", "Schedule", "Service Log", "Equipment", "Listening", "Audiology", "Interactive", "Activities", "Contacts", "Exports"];
+const TABS = [
+  { id: "Overview",       label: "Overview",       icon: Layers,      desc: "Summary & quick actions" },
+  { id: "Goals",          label: "Goals",           icon: Target,      desc: "IEP goals & progress" },
+  { id: "Service Log",    label: "Service Log",     icon: Clock,       desc: "Sessions & hours" },
+  { id: "Audiology",      label: "Audiology",       icon: Ear,         desc: "Hearing snapshot" },
+  { id: "Listening",      label: "Listening",       icon: Headphones,  desc: "Ling 6 check history" },
+  { id: "Equipment",      label: "Equipment",       icon: Wrench,      desc: "Devices & maintenance" },
+  { id: "Interactive",    label: "Interactive",     icon: BarChart2,   desc: "Activity sessions" },
+  { id: "Activities",     label: "Activities",      icon: Activity,    desc: "Labeling activities" },
+  { id: "Accommodations", label: "Accommodations",  icon: CheckSquare, desc: "IEP accommodations" },
+  { id: "Schedule",       label: "Schedule",        icon: CalendarDays,desc: "Availability windows" },
+  { id: "Details",        label: "Details",         icon: Zap,         desc: "Profile info" },
+  { id: "Contacts",       label: "Contacts",        icon: Users,       desc: "Team members" },
+  { id: "Exports",        label: "Exports",         icon: FileText,    desc: "Reports & exports" },
+];
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
@@ -36,6 +51,7 @@ export default function StudentDetailPage() {
   const studentId = params.get("id");
   const defaultTab = params.get("tab") || "Overview";
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [sectionSearch, setSectionSearch] = useState("");
   const [expandedSection, setExpandedSection] = useCollapsibleState(null);
   const navigate = useNavigate();
   const [showGoalBank, setShowGoalBank] = useState(false);
@@ -157,25 +173,56 @@ export default function StudentDetailPage() {
         subtitle={`${student.gradeBand} · ${student.serviceDeliveryModel} · ${student.primaryEligibility || "No eligibility set"}`}
       />
 
-      {/* Tab Navigation */}
-      <div className="flex gap-1.5 overflow-x-auto pb-2 mb-6 scrollbar-thin" role="tablist" aria-label="Student information sections">
-        {TABS.map(tab => (
+      {/* Section Navigation — card grid with search */}
+      {activeTab === "Overview" ? (
+        <div className="mb-6">
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--modal-text-muted)]" />
+            <input
+              type="text"
+              placeholder="Search sections…"
+              value={sectionSearch}
+              onChange={e => setSectionSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[var(--modal-border)] bg-white text-sm text-[var(--modal-text)] placeholder-[var(--modal-text-muted)] focus:outline-none focus:border-[#6B2FB9]"
+            />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {TABS.filter(t => t.id !== "Overview" && t.label.toLowerCase().includes(sectionSearch.toLowerCase())).map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setSectionSearch(""); }}
+                className="flex items-start gap-3 p-4 rounded-2xl bg-white border border-[var(--modal-border)] hover:border-[#6B2FB9] hover:bg-[#F7F3FA] hover:shadow-sm transition-all text-left group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-[#EADDF5] flex items-center justify-center shrink-0 group-hover:bg-[#DBC8F5] transition-colors">
+                  <tab.icon className="w-4 h-4 text-[#400070]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[var(--modal-text)] leading-tight">{tab.label}</p>
+                  <p className="text-[11px] text-[var(--modal-text-muted)] leading-tight mt-0.5 truncate">{tab.desc}</p>
+                </div>
+              </button>
+            ))}
+            {TABS.filter(t => t.id !== "Overview" && t.label.toLowerCase().includes(sectionSearch.toLowerCase())).length === 0 && (
+              <p className="text-sm text-[var(--modal-text-muted)] col-span-3 text-center py-4">No sections match "{sectionSearch}"</p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 mb-5">
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            role="tab"
-            aria-selected={activeTab === tab}
-            aria-controls={`tab-${tab}`}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0066CC] ${
-              activeTab === tab
-                ? "bg-[#400070] text-white"
-                : "bg-white text-[var(--modal-text)] border border-[var(--modal-border)] hover:border-[#6B2FB9] hover:text-[#6B2FB9]"
-            }`}
+            onClick={() => setActiveTab("Overview")}
+            className="flex items-center gap-1.5 text-sm text-[var(--modal-text-muted)] hover:text-[#400070] transition-colors"
           >
-            {tab}
+            <ArrowLeft className="w-4 h-4" /> All Sections
           </button>
-        ))}
-      </div>
+          <span className="text-[var(--modal-border)]">/</span>
+          {(() => { const t = TABS.find(t => t.id === activeTab); return t ? (
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-[#400070]">
+              <t.icon className="w-4 h-4" /> {t.label}
+            </span>
+          ) : null; })()}
+        </div>
+      )}
 
       {/* 3 Main Cards: Overview */}
       {activeTab === "Overview" && (
