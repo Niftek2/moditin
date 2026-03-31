@@ -12,6 +12,7 @@ Deno.serve(async (req) => {
     const sessionParams = {
       mode: 'subscription',
       payment_method_types: ['card'],
+      allow_promotion_codes: true,
       line_items: [{ price: priceId, quantity: 1 }],
       subscription_data: {
         trial_period_days: trialDays || 14,
