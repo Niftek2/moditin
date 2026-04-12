@@ -363,7 +363,7 @@ export default function DistrictPricingPage() {
             <button
               onClick={() => setBillingPeriod("annual")}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "annual" ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
-            >Annual <span className="text-xs font-bold text-green-400">Save $38</span></button>
+            >Annual <span className="text-xs font-bold text-green-400">Save 17%</span></button>
           </div>
         </div>
 
@@ -390,7 +390,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/month</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${annualPrice} billed annually</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $38 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">{isCAD ? "Save CA$12/mo" : "Save $38"} with annual billing</p>
                   </>
                 ) : (
                   <>
@@ -399,7 +399,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/year</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $38 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">{isCAD ? "Save CA$12/mo" : "Save $38"} with annual billing</p>
                   </>
                 )}
                 <p className="text-xs text-green-600 font-medium mb-4">✓ {plan.trial}</p>
