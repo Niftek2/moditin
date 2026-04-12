@@ -12,9 +12,9 @@ const INDIVIDUAL_PLAN = {
   key: "individual",
   name: "Individual",
   icon: User,
-  priceUSD: 240,
+  priceUSD: 190,
   priceCAD: 325,
-  monthlyUSD: 24,
+  monthlyUSD: 18.99,
   perLabel: "/year",
   seatLabel: "1 seat",
   description: "Perfect for a single itinerant teacher of the Deaf/HH.",
@@ -23,7 +23,7 @@ const INDIVIDUAL_PLAN = {
   minSeats: 1,
   maxSeats: 1,
   priceIdUSD: "price_1T6xgSG8v8oKpU6mWxd1o56o",
-  monthlyPriceIdUSD: "price_1TDfeRG8v8oKpU6mkpx3g2OC",
+  monthlyPriceIdUSD: "price_1TLSg2G8v8oKpU6mLKiEmjjB",
   priceIdCAD: "price_1T6xgSG8v8oKpU6mtmnmPVet",
   cta: "Start Free Trial",
   highlight: true,
@@ -363,7 +363,7 @@ export default function DistrictPricingPage() {
             <button
               onClick={() => setBillingPeriod("annual")}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${billingPeriod === "annual" ? "bg-white text-[#400070]" : "text-white/70 hover:text-white"}`}
-            >Annual <span className="text-xs font-bold text-green-400">Save $48</span></button>
+            >Annual <span className="text-xs font-bold text-green-400">Save $38</span></button>
           </div>
         </div>
 
@@ -390,7 +390,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/month</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${annualPrice} billed annually</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $48 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $38 with annual billing</p>
                   </>
                 ) : (
                   <>
@@ -399,7 +399,7 @@ export default function DistrictPricingPage() {
                       <span className="text-sm text-[#6B2FB9] ml-1">/year</span>
                     </div>
                     <p className="text-xs text-[#6B2FB9] mb-0.5">or ${plan.monthlyUSD} / month</p>
-                    <p className="text-xs text-green-600 font-semibold mb-2">Save $48 with annual billing</p>
+                    <p className="text-xs text-green-600 font-semibold mb-2">Save $38 with annual billing</p>
                   </>
                 )}
                 <p className="text-xs text-green-600 font-medium mb-4">✓ {plan.trial}</p>

@@ -61,7 +61,7 @@ export default function Step10Export({ reportData, generated, assessments, profi
         logoBase64,
       });
 
-      const { base64, filename } = result.data;
+      const { base64, filename } = response.data;
 
       // Decode base64 to binary and trigger download
       const binaryStr = atob(base64);
