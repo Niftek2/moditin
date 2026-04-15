@@ -216,6 +216,9 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <p className="text-xs text-[var(--modal-text-muted)] mt-10 text-center">
+          Privacy questions? <a href="mailto:privacy@modaleducation.com" className="text-[#6B2FB9] hover:underline">privacy@modaleducation.com</a>
+        </p>
+        <p className="text-xs text-[var(--modal-text-muted)] mt-2 text-center">
           © {new Date().getFullYear()} Modal Education, LLC. All rights reserved.
         </p>
       </div>

@@ -168,7 +168,7 @@ Deno.serve(async (req) => {
                 <li>All pricing, rates, and terms set forth in this quote are estimates only and are not guaranteed until a purchase order or subscription agreement is executed and confirmed in writing by an authorized representative of Modal Education.</li>
                 <li>No payment is due until after the 14-day free trial period ends.</li>
                 <li>Subscriptions renew annually unless cancelled before the renewal date.</li>
-                <li>Purchase orders accepted — contact contact@modaleducation.com for PO invoicing.</li>
+                <li>Purchase orders accepted — contact sales@modaleducation.com for PO invoicing.</li>
               </ul>
             </div>
           </td>
@@ -182,7 +182,7 @@ Deno.serve(async (req) => {
                 Start Your Free Trial →
               </a>
               <p style="margin:16px 0 0;color:#9ca3af;font-size:12px;">
-                Questions? <a href="mailto:contact@modaleducation.com" style="color:#400070;font-weight:600;">contact@modaleducation.com</a>
+                Questions? <a href="mailto:sales@modaleducation.com" style="color:#400070;font-weight:600;">sales@modaleducation.com</a>
               </p>
               <p style="margin:8px 0 0;color:#d1d5db;font-size:11px;">Modal Education · www.modaleducation.com</p>
             </div>
@@ -200,7 +200,7 @@ Deno.serve(async (req) => {
 
     // Helper to send via Gmail API
     async function sendViaGmail(to, subject, htmlContent, fromLabel) {
-      const fromAddress = `${fromLabel} <contact@modaleducation.com>`;
+      const fromAddress = `${fromLabel} <sales@modaleducation.com>`;
       const boundary = `boundary_${Date.now()}`;
       const rawMessage = [
         `From: ${fromAddress}`,
@@ -266,13 +266,13 @@ Deno.serve(async (req) => {
 
     // Send a copy to Modal Education
     await sendViaGmail(
-      "contact@modaleducation.com",
+      "sales@modaleducation.com",
       `[Quote Copy] #${quoteNumber} — ${schoolName} (${seats} seats, ${currencySymbol}${totalPrice.toLocaleString()} ${currencyLabel})`,
       htmlBody,
       "Modal Education Quote System"
     );
 
-    console.log(`Quote ${quoteNumber} sent via Gmail to ${contactEmail} and contact@modaleducation.com`);
+    console.log(`Quote ${quoteNumber} sent via Gmail to ${contactEmail} and sales@modaleducation.com`);
     return Response.json({ success: true });
 
   } catch (error) {

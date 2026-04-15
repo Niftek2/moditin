@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
             This Agreement is effective as of the date signed above and remains in effect for the duration of your active subscription and data retention period (Section 7 of the Agreement).
           </p>
           <p style="font-size:13px;color:#4a4a4a;">
-            Questions? Contact us at <a href="mailto:schools@modaleducation.com" style="color:#6b2fb9;">schools@modaleducation.com</a>
+            Questions? Contact us at <a href="mailto:privacy@modaleducation.com" style="color:#6b2fb9;">privacy@modaleducation.com</a>
           </p>
         </div>
         <div style="background:#f7f3fa;padding:16px 32px;border:1px solid #d8cde5;border-top:none;border-radius:0 0 8px 8px;font-size:11px;color:#888;text-align:center;">
@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
 
     // Send to Modal admin
     await base44.asServiceRole.integrations.Core.SendEmail({
-      to: 'schools@modaleducation.com',
+      to: 'privacy@modaleducation.com',
       subject: `New FERPA DPA Executed — ${institutionName}`,
       body: adminBody,
       from_name: 'Modal Itinerant System',
