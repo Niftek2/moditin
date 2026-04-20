@@ -267,6 +267,31 @@ export default function SettingsPage() {
           <AudioSettings />
         </div>
 
+        {/* Service Minutes Reminder */}
+        <div className="modal-card p-6">
+          <h3 className="font-semibold text-[var(--modal-text)] mb-1">Service Minutes Reminder</h3>
+          <p className="text-xs text-[var(--modal-text-muted)] mb-3">Get a reminder when students are falling behind on required service minutes.</p>
+          <div className="flex gap-2 flex-wrap">
+            {["Off", "Weekly", "Monthly"].map(opt => (
+              <button
+                key={opt}
+                onClick={async () => {
+                  const val = opt === "Off" ? null : opt;
+                  await base44.auth.updateMe({ minutesReminderFrequency: val });
+                  setUser(u => ({ ...u, minutesReminderFrequency: val }));
+                }}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  (user?.minutesReminderFrequency || "Off") === opt || (!user?.minutesReminderFrequency && opt === "Off")
+                    ? "bg-[#400070] text-white border-[#400070]"
+                    : "bg-white text-[var(--modal-text)] border-[var(--modal-border)] hover:border-[#6B2FB9]"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Restart Tutorial */}
         <div className="modal-card p-6">
           <div className="flex items-center justify-between">

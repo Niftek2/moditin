@@ -24,6 +24,7 @@ import GoalBankModal from "../components/goalbank/GoalBankModal";
 import GoalProgressTracker from "../components/goals/GoalProgressTracker";
 import StudentContactsSection from "../components/students/StudentContactsSection";
 import StudentScheduleSection from "../components/students/StudentScheduleSection";
+import StudentMinuteTracker from "../components/students/StudentMinuteTracker";
 import { useDemo } from "../components/demo/DemoContext";
 
 const TABS = [
@@ -244,7 +245,9 @@ export default function StudentDetailPage() {
             </Button>
           </div>
 
-          {/* Card 2: Sessions */}
+          {/* Card 2: Sessions + Minute Tracker */}
+          <StudentMinuteTracker student={student} services={services} studentId={studentId} />
+
           <div className="modal-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-[var(--modal-text)] flex items-center gap-2">
@@ -256,7 +259,7 @@ export default function StudentDetailPage() {
             <p className="text-xs text-[var(--modal-text-muted)] mb-4">
               {services.length === 0 ? "No sessions logged" : `Last logged: ${services[0]?.date || "—"}`}
             </p>
-            <Link to={createPageUrl("ServiceHours")} className="w-full">
+            <Link to={`${createPageUrl("ServiceHours")}?studentId=${studentId}`} className="w-full">
               <Button className="w-full bg-[#400070] hover:bg-[#5B00A0] text-white rounded-xl h-12" aria-label="Log a new session for this student">
                 <Plus className="w-4 h-4 mr-2" aria-hidden="true" /> Log Session
               </Button>

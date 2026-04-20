@@ -10,7 +10,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { month, studentId } = await req.json();
+    const body = await req.json();
+    const { month, studentId, includeNotes = false, includeMissedReasons = false } = body;
 
     const userEmail = user.email;
 
@@ -43,6 +44,7 @@ Deno.serve(async (req) => {
       timestamp: new Date().toISOString(),
       details: month ? `month: ${month}` : 'all months',
     }).catch(() => {});
+
     const studentMap = {};
     students.forEach(s => { studentMap[s.id] = s.studentInitials; });
 
@@ -62,13 +64,10 @@ Deno.serve(async (req) => {
     const white = [255, 255, 255];
     const borderGray = [216, 205, 229]; // --modal-border
 
-    // ── Helper: safe ASCII bullet ──
-    const bullet = '  |  ';
-
     // ── Month label ──
-    const [year, mon] = month.split('-');
-    const monthLabel = new Date(parseInt(year), parseInt(mon) - 1, 1)
-      .toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const monthLabel = month
+      ? (() => { const [year, mon] = month.split('-'); return new Date(parseInt(year), parseInt(mon) - 1, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' }); })()
+      : 'All Months';
 
     // ════════════════════════════════════════════
     // HEADER BANNER
@@ -236,7 +235,8 @@ Deno.serve(async (req) => {
         yPos += 7;
       }
 
-      const rowH = entry.notes ? 12 : 8;
+      const hasExtraRow = (includeNotes && entry.notes) || (includeMissedReasons && entry.missedReason);
+      const rowH = hasExtraRow ? 14 : 8;
       // Alternating row bg
       if (idx % 2 === 0) {
         doc.setFillColor(247, 243, 250);
@@ -273,12 +273,18 @@ Deno.serve(async (req) => {
       doc.setFont('helvetica', 'bold');
       doc.text(durationLabel, pageWidth - marginR - 3, yPos + 5.2, { align: 'right' });
 
-      if (entry.notes) {
+      if (hasExtraRow) {
         doc.setTextColor(...textMuted);
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(6.5);
-        const noteLines = doc.splitTextToSize(entry.notes, contentWidth - 10);
-        doc.text(noteLines[0] + (noteLines.length > 1 ? '...' : ''), marginL + 5, yPos + 9.5);
+        let extraText = '';
+        if (includeNotes && entry.notes) extraText += `Notes: ${entry.notes}`;
+        if (includeMissedReasons && entry.missedReason) {
+          const reasonLabel = entry.missedReason.replace(/([A-Z])/g, ' $1').trim();
+          extraText += (extraText ? ' | ' : '') + `Missed: ${reasonLabel}` + (entry.missedReasonNote ? ` (${entry.missedReasonNote})` : '');
+        }
+        const lines = doc.splitTextToSize(extraText, contentWidth - 10);
+        doc.text(lines[0] + (lines.length > 1 ? '...' : ''), marginL + 5, yPos + 10.5);
       }
 
       // Row bottom border

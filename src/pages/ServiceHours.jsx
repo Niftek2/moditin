@@ -20,10 +20,20 @@ const CATEGORY_LABELS = {
   DirectService: "Direct Service", Planning: "Planning", Consultation: "Consultation",
   Evaluation: "Evaluation", IEPMeeting: "IEP Meeting", Travel: "Travel"
 };
+const MISSED_REASONS = [
+  { value: "StudentAbsent",   label: "Student absent" },
+  { value: "ProviderAbsent",  label: "Provider absent" },
+  { value: "Meeting",         label: "Meeting" },
+  { value: "Testing",         label: "Testing" },
+  { value: "ScheduleConflict",label: "Schedule conflict" },
+  { value: "NoSchool",        label: "No school" },
+  { value: "Other",           label: "Other" },
+];
 
 export default function ServiceHoursPage() {
   useOnboardingProgress("log_session");
-  const [showForm, setShowForm] = useState(false);
+  const prefillStudentId = new URLSearchParams(window.location.search).get("studentId") || "";
+  const [showForm, setShowForm] = useState(!!prefillStudentId);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
@@ -36,10 +46,14 @@ export default function ServiceHoursPage() {
     date: new Date().toISOString().split("T")[0],
     category: "DirectService",
     minutes: "",
-    studentId: "",
+    studentId: prefillStudentId,
     notes: "",
     sessionNotes: "",
+    missedReason: "",
+    missedReasonNote: "",
   });
+  const [exportIncludeNotes, setExportIncludeNotes] = useState(false);
+  const [exportIncludeMissed, setExportIncludeMissed] = useState(false);
 
   const [activeTab, setActiveTab] = useState("basic");
 
@@ -136,25 +150,22 @@ export default function ServiceHoursPage() {
   };
 
   const handleManualSubmit = () => {
+    const payload = {
+      ...form,
+      minutes: parseInt(form.minutes),
+      entryMethod: "Manual",
+      monthKey: form.date.slice(0, 7),
+    };
+    // Clean up optional missed reason fields
+    if (!payload.missedReason) { delete payload.missedReason; delete payload.missedReasonNote; }
+    if (payload.missedReason !== "Other") { delete payload.missedReasonNote; }
+
     if (editingId) {
-      updateMutation.mutate({
-        id: editingId,
-        data: {
-          ...form,
-          minutes: parseInt(form.minutes),
-          entryMethod: "Manual",
-          monthKey: form.date.slice(0, 7),
-        }
-      });
+      updateMutation.mutate({ id: editingId, data: payload });
     } else {
-      createMutation.mutate({
-        ...form,
-        minutes: parseInt(form.minutes),
-        entryMethod: "Manual",
-        monthKey: form.date.slice(0, 7),
-      });
+      createMutation.mutate(payload);
     }
-    setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "" });
+    setForm({ date: new Date().toISOString().split("T")[0], category: "DirectService", minutes: "", studentId: "", notes: "", sessionNotes: "", missedReason: "", missedReasonNote: "" });
     setActiveTab("basic");
   };
 
@@ -166,6 +177,8 @@ export default function ServiceHoursPage() {
       studentId: entry.studentId || "",
       notes: entry.notes || "",
       sessionNotes: entry.sessionNotes || "",
+      missedReason: entry.missedReason || "",
+      missedReasonNote: entry.missedReasonNote || "",
     });
     setEditingId(entry.id);
     setShowForm(true);
@@ -193,7 +206,9 @@ export default function ServiceHoursPage() {
   const handleExportPDF = async () => {
     const res = await base44.functions.invoke('exportServiceLog', {
       month: selectedMonth,
-      studentId: ""
+      studentId: "",
+      includeNotes: exportIncludeNotes,
+      includeMissedReasons: exportIncludeMissed,
     });
     const { base64, filename } = res.data;
     const binary = atob(base64);
@@ -279,10 +294,22 @@ export default function ServiceHoursPage() {
           <span className="text-xs text-[var(--modal-text-muted)]">Total: </span>
           <span className="text-sm font-bold text-[var(--modal-text)]">{(totalMinutes / 60).toFixed(1)} hours</span>
         </div>
-        <Button onClick={handleExportPDF} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
-          <Download className="w-4 h-4" />
-          Export PDF
-        </Button>
+        <div className="flex flex-col gap-1">
+          <Button onClick={handleExportPDF} className="bg-[#400070] hover:bg-[#5B00A0] text-white gap-2">
+            <Download className="w-4 h-4" />
+            Export PDF
+          </Button>
+          <div className="flex items-center gap-3 text-xs text-[var(--modal-text-muted)]">
+            <label className="flex items-center gap-1 cursor-pointer">
+              <input type="checkbox" checked={exportIncludeNotes} onChange={e => setExportIncludeNotes(e.target.checked)} className="w-3 h-3" />
+              Include notes
+            </label>
+            <label className="flex items-center gap-1 cursor-pointer">
+              <input type="checkbox" checked={exportIncludeMissed} onChange={e => setExportIncludeMissed(e.target.checked)} className="w-3 h-3" />
+              Include missed reasons
+            </label>
+          </div>
+        </div>
       </div>
 
       {/* Category Breakdown */}
@@ -364,6 +391,26 @@ export default function ServiceHoursPage() {
               <div className="space-y-2">
                 <Label>General Notes</Label>
                 <Textarea value={form.notes} onChange={(e) => setForm(p => ({ ...p, notes: e.target.value }))} className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] h-20" />
+              </div>
+              <div className="space-y-2">
+                <Label>Missed Service Reason <span className="text-[var(--modal-text-muted)] font-normal">(optional)</span></Label>
+                <Select value={form.missedReason || ""} onValueChange={(v) => setForm(p => ({ ...p, missedReason: v, missedReasonNote: "" }))}>
+                  <SelectTrigger className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]">
+                    <SelectValue placeholder="None — session completed normally" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}>None</SelectItem>
+                    {MISSED_REASONS.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                {form.missedReason === "Other" && (
+                  <Input
+                    value={form.missedReasonNote}
+                    onChange={(e) => setForm(p => ({ ...p, missedReasonNote: e.target.value }))}
+                    placeholder="Brief description…"
+                    className="bg-white border-[var(--modal-border)] text-[var(--modal-text)]"
+                  />
+                )}
               </div>
               <div className="flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setShowForm(false)} className="border-[var(--modal-border)] text-[var(--modal-text)]">Cancel</Button>

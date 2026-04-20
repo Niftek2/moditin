@@ -1,0 +1,69 @@
+{
+  "name": "ServiceEntry",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of service"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "DirectService",
+        "Planning",
+        "Consultation",
+        "Evaluation",
+        "IEPMeeting",
+        "Travel"
+      ],
+      "description": "Time category"
+    },
+    "minutes": {
+      "type": "number",
+      "description": "Duration in minutes"
+    },
+    "entryMethod": {
+      "type": "string",
+      "enum": [
+        "Timer",
+        "Manual"
+      ],
+      "description": "How the time was recorded"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Session notes"
+    },
+    "monthKey": {
+      "type": "string",
+      "description": "YYYY-MM format for monthly grouping"
+    },
+    "missedReason": {
+      "type": "string",
+      "enum": [
+        "StudentAbsent",
+        "ProviderAbsent",
+        "Meeting",
+        "Testing",
+        "ScheduleConflict",
+        "NoSchool",
+        "Other"
+      ],
+      "description": "Optional reason if session was missed or shortened"
+    },
+    "missedReasonNote": {
+      "type": "string",
+      "description": "Free-text note when missedReason is Other"
+    }
+  },
+  "required": [
+    "date",
+    "category",
+    "minutes"
+  ]
+}
