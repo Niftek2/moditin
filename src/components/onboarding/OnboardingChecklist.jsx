@@ -12,36 +12,41 @@ export const ONBOARDING_STEPS = [
   {
     id: "add_student",
     title: "Add your first student",
-    description: "Create a student profile using initials only (e.g., A.B.). You'll attach goals, services, and equipment to them.",
-    action: { label: "Go to Students", to: createPageUrl("Students") },
+    description: "This is where everything starts. Create a profile for one of your students using their initials only — no full names needed. Once they're added, you can attach goals, track service time, and manage their equipment all in one place.",
+    tip: "Use initials like \"A.B.\" — the app is designed to keep student data private.",
+    action: { label: "Go to Students →", to: createPageUrl("Students") },
     icon: "👤",
   },
   {
     id: "set_iep_dates",
-    title: "Set IEP dates",
-    description: "Open a student profile and fill in their IEP start date and annual review date so you get timely reminders.",
-    action: { label: "Open a Student", to: createPageUrl("Students") },
+    title: "Enter IEP dates for a student",
+    description: "Open a student's profile and scroll to the IEP section. Enter their IEP start date and annual review date. The app will automatically remind you before key deadlines.",
+    tip: "You can find this in the student profile under the 'IEP' tab.",
+    action: { label: "Go to Students →", to: createPageUrl("Students") },
     icon: "📅",
   },
   {
     id: "assign_goal",
     title: "Assign an IEP goal",
-    description: "Use the AI-powered Goal Bank to find or generate a SMART goal and assign it to a student.",
-    action: { label: "Open Goal Bank", to: createPageUrl("GoalBank") },
+    description: "Head to the Goal Bank to browse ready-made SMART goals for Deaf/Hard of Hearing students, or use the AI Goal Creator to generate one. Then assign it directly to a student.",
+    tip: "Goals are organized by domain (e.g., Auditory Skills, Self-Advocacy) and grade band.",
+    action: { label: "Open Goal Bank →", to: createPageUrl("GoalBank") },
     icon: "🎯",
   },
   {
     id: "log_session",
-    title: "Log your first session",
-    description: "Record direct service time for a student using the timer or manual entry. This builds your monthly service log.",
-    action: { label: "Log a Session", to: createPageUrl("ServiceHours") },
+    title: "Log your first service session",
+    description: "Go to Service Hours and record the time you spent with a student. You can use the built-in timer during a session, or enter the minutes manually afterward. This builds your monthly service log automatically.",
+    tip: "Select a student and category (e.g., Direct Service) before starting the timer.",
+    action: { label: "Go to Service Hours →", to: createPageUrl("ServiceHours") },
     icon: "⏱️",
   },
   {
     id: "explore_calendar",
     title: "Schedule a session on the calendar",
-    description: "Add a session to your calendar to get organized and track scheduled vs. completed services.",
-    action: { label: "Open Calendar", to: createPageUrl("Calendar") },
+    description: "Open the Calendar and tap any time slot to add a session. You can assign it to a student, set the session type, and choose in-person or telepractice. This helps you plan your week and track what's been scheduled vs. completed.",
+    tip: "Use the Day view to see your full schedule at a glance.",
+    action: { label: "Open Calendar →", to: createPageUrl("Calendar") },
     icon: "📆",
   },
 ];
@@ -138,7 +143,8 @@ export default function OnboardingChecklist() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 16, scale: 0.96 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 w-80 shadow-2xl rounded-2xl overflow-hidden border border-[var(--modal-border)]"
+        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 w-88 shadow-2xl rounded-2xl overflow-hidden border border-[var(--modal-border)]"
+        style={{ width: "360px" }}
         style={{ boxShadow: "0 8px 40px rgba(64,0,112,0.18)" }}
       >
         {/* Header */}
@@ -150,9 +156,9 @@ export default function OnboardingChecklist() {
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-yellow-300 shrink-0" />
             <div>
-              <p className="text-white font-bold text-sm leading-tight">Getting Started</p>
+              <p className="text-white font-bold text-sm leading-tight">Setup Guide</p>
               <p className="text-purple-200 text-xs">
-                {allDone ? "All done! 🎉" : `${completed.length} of ${ONBOARDING_STEPS.length} completed`}
+                {allDone ? "All done! 🎉" : `${completed.length} of ${ONBOARDING_STEPS.length} steps done — tap to expand`}
               </p>
             </div>
           </div>
@@ -189,44 +195,54 @@ export default function OnboardingChecklist() {
               className="bg-white overflow-hidden"
             >
               {allDone ? (
-                <div className="p-5 text-center">
-                  <div className="text-3xl mb-2">🎉</div>
-                  <p className="font-bold text-[#400070] text-sm">You're all set!</p>
-                  <p className="text-xs text-[var(--modal-text-muted)] mt-1">You've completed every onboarding step. Enjoy Modal Itinerant!</p>
+                <div className="p-6 text-center">
+                  <div className="text-4xl mb-3">🎉</div>
+                  <p className="font-bold text-[#400070] text-base">You're all set!</p>
+                  <p className="text-sm text-[var(--modal-text-muted)] mt-1 leading-snug">You've completed every setup step. You're ready to use Modal Itinerant!</p>
                 </div>
               ) : (
-                <div className="divide-y divide-[var(--modal-border)]">
+                <div className="divide-y divide-[var(--modal-border)] max-h-[70vh] overflow-y-auto">
                   {ONBOARDING_STEPS.map((step, idx) => {
                     const isDone = completed.includes(step.id);
                     const isNext = !isDone && ONBOARDING_STEPS.slice(0, idx).every(s => completed.includes(s.id));
                     return (
                       <div
                         key={step.id}
-                        className={`flex items-start gap-3 px-4 py-3 transition-colors ${isNext ? "bg-[#F7F3FA]" : ""}`}
+                        className={`flex items-start gap-3 px-4 py-4 transition-colors ${isNext ? "bg-[#F7F3FA]" : isDone ? "bg-white opacity-60" : "bg-white"}`}
                       >
                         <div className="mt-0.5 shrink-0">
                           {isDone
                             ? <CheckCircle2 className="w-5 h-5 text-green-500" />
-                            : <Circle className={`w-5 h-5 ${isNext ? "text-[#6B2FB9]" : "text-[var(--modal-border)]"}`} />
+                            : <Circle className={`w-5 h-5 ${isNext ? "text-[#6B2FB9]" : "text-gray-300"}`} />
                           }
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm">{step.icon}</span>
-                            <p className={`text-sm font-semibold leading-tight ${isDone ? "line-through text-[var(--modal-text-muted)]" : "text-[var(--modal-text)]"}`}>
-                              {step.title}
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className="text-base">{step.icon}</span>
+                            <p className={`text-sm font-bold leading-tight ${isDone ? "line-through text-[var(--modal-text-muted)]" : "text-[var(--modal-text)]"}`}>
+                              Step {idx + 1}: {step.title}
                             </p>
                           </div>
                           {!isDone && (
-                            <p className="text-xs text-[var(--modal-text-muted)] mt-0.5 leading-snug">{step.description}</p>
-                          )}
-                          {isNext && !isDone && (
-                            <Link
-                              to={step.action.to}
-                              className="inline-flex items-center gap-1 mt-1.5 text-xs font-semibold text-[#400070] hover:text-[#5B00A0] transition-colors"
-                            >
-                              {step.action.label} <ArrowRight className="w-3 h-3" />
-                            </Link>
+                            <>
+                              <p className="text-xs text-[var(--modal-text-muted)] mt-1 leading-relaxed">{step.description}</p>
+                              {step.tip && (
+                                <div className="flex items-start gap-1.5 mt-2 bg-yellow-50 border border-yellow-200 rounded-lg px-2.5 py-1.5">
+                                  <span className="text-xs">💡</span>
+                                  <p className="text-xs text-yellow-800 leading-snug">{step.tip}</p>
+                                </div>
+                              )}
+                              <Link
+                                to={step.action.to}
+                                className={`inline-flex items-center gap-1 mt-2 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                                  isNext
+                                    ? "bg-[#400070] text-white hover:bg-[#5B00A0]"
+                                    : "text-[#400070] hover:text-[#5B00A0]"
+                                }`}
+                              >
+                                {step.action.label}
+                              </Link>
+                            </>
                           )}
                         </div>
                       </div>
