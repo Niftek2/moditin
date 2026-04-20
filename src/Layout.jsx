@@ -13,6 +13,7 @@ import SubscriptionGate, { SubscriptionProvider } from "./components/shared/Subs
 import { DemoProvider, useDemo } from "./components/demo/DemoContext";
 import DemoBanner from "./components/demo/DemoBanner";
 import PWAInstallPrompt from "./components/layout/PWAInstallPrompt";
+import OnboardingChecklist from "./components/onboarding/OnboardingChecklist";
 
 function AppShell({ children, currentPageName, agreed, setAgreed }) {
   const { isDemoMode } = useDemo();
@@ -71,6 +72,7 @@ function AppShell({ children, currentPageName, agreed, setAgreed }) {
       <StickyTermsFooter />
       <PWAInstallPrompt />
       {!agreed && <TermsAgreementModal onAgree={() => setAgreed(true)} />}
+      {!isDemoMode && <OnboardingChecklist />}
     </div>
   );
 }

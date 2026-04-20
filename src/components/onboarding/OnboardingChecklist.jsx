@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Circle, ChevronDown, ChevronUp, X, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../../utils";
+import { base44 } from "@/api/base44Client";
 
 const STORAGE_KEY = "modal_onboarding_v1";
 const DISMISSED_KEY = "modal_onboarding_dismissed_v1";
@@ -78,20 +79,26 @@ export function shouldShowOnboarding(studentCount) {
   return completed.length < ONBOARDING_STEPS.length;
 }
 
-export default function OnboardingChecklist({ studentCount = 0 }) {
+export default function OnboardingChecklist() {
   const [completed, setCompleted] = useState(getCompletedSteps);
   const [expanded, setExpanded] = useState(true);
   const [dismissed, setDismissed] = useState(isOnboardingDismissed);
   const [visible, setVisible] = useState(false);
 
-  // Auto-mark "add_student" when they have students
+  // Auto-mark "add_student" by checking if user has any students
   useEffect(() => {
-    if (studentCount > 0 && !completed.includes("add_student")) {
-      const updated = [...completed, "add_student"];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      setCompleted(updated);
-    }
-  }, [studentCount]);
+    if (completed.includes("add_student")) return;
+    base44.auth.me().then(user => {
+      if (!user) return;
+      base44.entities.Student.filter({ created_by: user.email }, null, 1).then(students => {
+        if (students.length > 0) {
+          const updated = [...getCompletedSteps(), "add_student"];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify([...new Set(updated)]));
+          setCompleted([...new Set(updated)]);
+        }
+      }).catch(() => {});
+    }).catch(() => {});
+  }, []);
 
   // Show after a short delay
   useEffect(() => {
