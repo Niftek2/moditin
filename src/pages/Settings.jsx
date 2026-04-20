@@ -292,6 +292,31 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Compliance Alert on Dashboard */}
+        <div className="modal-card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-[var(--modal-text)]">Dashboard Compliance Alert</h3>
+              <p className="text-xs text-[var(--modal-text-muted)] mt-1">Show a monthly compliance summary on your dashboard so you can quickly see which students are behind on minutes.</p>
+            </div>
+            <button
+              onClick={async () => {
+                const newVal = !user?.showComplianceAlert;
+                await base44.auth.updateMe({ showComplianceAlert: newVal });
+                setUser(u => ({ ...u, showComplianceAlert: newVal }));
+              }}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors cursor-pointer ml-4 ${
+                user?.showComplianceAlert ? "bg-[#400070]" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={!!user?.showComplianceAlert}
+              aria-label="Toggle compliance alert on dashboard"
+            >
+              <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg transform transition-transform ${user?.showComplianceAlert ? "translate-x-5" : "translate-x-0"}`} />
+            </button>
+          </div>
+        </div>
+
         {/* Restart Tutorial */}
         <div className="modal-card p-6">
           <div className="flex items-center justify-between">

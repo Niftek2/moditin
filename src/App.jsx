@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SchoolsDistricts from './pages/SchoolsDistricts';
 import AudioManagement from './pages/AudioManagement';
+import ComplianceReport from './pages/ComplianceReport';
 import FerpaDpa from './pages/FerpaDpa';
 import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import DemoSignups from './pages/DemoSignups';
@@ -83,6 +84,7 @@ const AuthenticatedApp = () => {
       <Route path="/FerpaDpa" element={<FerpaDpa />} />
       <Route path="/QuotesAdmin" element={<QuotesAdmin />} />
       <Route path="/AudioManagement" element={<AudioManagement />} />
+      <Route path="/ComplianceReport" element={<LayoutWrapper currentPageName="ComplianceReport"><ComplianceReport /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

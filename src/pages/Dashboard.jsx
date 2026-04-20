@@ -19,6 +19,7 @@ import { getColorForStudent } from "../components/utils/colorMapping";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useDemo } from "../components/demo/DemoContext";
 import GuidedTour, { hasTourBeenDone, resetTour, consumeTourQueue } from "../components/shared/GuidedTour";
+import ComplianceAlert from "../components/compliance/ComplianceAlert";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
@@ -57,6 +58,7 @@ export default function Dashboard() {
   }, [isDemoMode]);
 
   const firstName = user?.firstName || "";
+  const [complianceDismissed, setComplianceDismissed] = useState(false);
 
   const { data: studentsRaw = [] } = useQuery({
     queryKey: ["students", user?.email],
@@ -173,6 +175,21 @@ export default function Dashboard() {
         </div>
         <DailyQuote />
       </motion.div>
+
+      {/* Compliance Alert */}
+      {(user?.showComplianceAlert || isDemoMode) && !complianceDismissed && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, duration: 0.3 }}
+        >
+          <ComplianceAlert
+            students={students}
+            services={services}
+            onDismiss={() => setComplianceDismissed(true)}
+          />
+        </motion.div>
+      )}
 
       {/* BLOCK A: TODAY */}
       <motion.div
