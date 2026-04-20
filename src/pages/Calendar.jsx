@@ -1,3 +1,4 @@
+import useOnboardingProgress from "../components/onboarding/useOnboardingProgress";
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -14,10 +15,12 @@ import DriveConflictModal from "../components/calendar/DriveConflictModal";
 import SchedulerWizard from "../components/calendar/scheduler/SchedulerWizard";
 import { checkDriveConflict, getEventsForDay } from "../components/calendar/calendarUtils";
 import { useDemo } from "../components/demo/DemoContext";
+import useOnboardingProgress from "../components/onboarding/useOnboardingProgress";
 
 const VIEWS = ["Day", "Week", "Month"];
 
 export default function CalendarPage() {
+  useOnboardingProgress("explore_calendar");
   const [view, setView] = useState("Day");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showForm, setShowForm] = useState(false);

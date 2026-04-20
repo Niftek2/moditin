@@ -1,3 +1,4 @@
+import useOnboardingProgress from "../components/onboarding/useOnboardingProgress";
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,12 +14,14 @@ import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import AIGoalCreator from "../components/goalbank/AIGoalCreator";
 import { useDemo } from "../components/demo/DemoContext";
+import useOnboardingProgress from "../components/onboarding/useOnboardingProgress";
 
 const DOMAINS = ["Auditory Skills", "Self-Advocacy", "Speech", "Receptive Language", "Expressive Language", "Pragmatics", "Literacy Access", "Hearing Equipment Use", "Classroom Listening"];
 const GRADE_BANDS = ["PK", "K", "1-2", "3-5", "6-8", "9-12"];
 const BASELINE_LEVELS = ["Emerging", "Developing", "Mastering"];
 
 export default function GoalBankPage() {
+  useOnboardingProgress("assign_goal");
   const params = new URLSearchParams(window.location.search);
   const studentId = params.get("studentId");
 

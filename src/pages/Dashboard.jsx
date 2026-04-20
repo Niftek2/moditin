@@ -19,6 +19,7 @@ import { getColorForStudent } from "../components/utils/colorMapping";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useDemo } from "../components/demo/DemoContext";
 import GuidedTour, { hasTourBeenDone, resetTour, consumeTourQueue } from "../components/shared/GuidedTour";
+import OnboardingChecklist, { resetOnboarding } from "../components/onboarding/OnboardingChecklist";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
@@ -357,6 +358,7 @@ export default function Dashboard() {
       </motion.div>
     </div>
     <GuidedTour run={runTour} onFinish={() => setRunTour(false)} />
+    {!isDemoMode && <OnboardingChecklist studentCount={students.length} />}
     </PullToRefresh>
   );
 }

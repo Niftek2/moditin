@@ -10,6 +10,7 @@ import PageHeader from "../components/shared/PageHeader";
 import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
 import PWAInstallGuideModal from "../components/shared/PWAInstallGuideModal";
+import { resetOnboarding } from "../components/onboarding/OnboardingChecklist";
 
 const isIosMode = typeof window !== "undefined" && (
   window.ModalApp?.platform === "ios" ||
@@ -264,6 +265,22 @@ export default function SettingsPage() {
         <div className="modal-card p-6">
           <h3 className="font-semibold text-[var(--modal-text)] mb-4">Audio Settings</h3>
           <AudioSettings />
+        </div>
+
+        {/* Restart Tutorial */}
+        <div className="modal-card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-[var(--modal-text)]">Onboarding Tutorial</h3>
+              <p className="text-xs text-[var(--modal-text-muted)] mt-1">Restart the Getting Started checklist if you'd like a refresher on the core features.</p>
+            </div>
+            <button
+              onClick={() => { resetOnboarding(); window.location.href = "/Dashboard"; }}
+              className="flex items-center gap-2 text-sm font-semibold text-[#400070] hover:text-[#5B00A0] transition-colors whitespace-nowrap ml-4"
+            >
+              Restart
+            </button>
+          </div>
         </div>
 
         {/* Data Privacy */}

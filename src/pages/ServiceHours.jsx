@@ -13,6 +13,7 @@ import PageHeader from "../components/shared/PageHeader";
 import EmptyState from "../components/shared/EmptyState";
 import SessionNotesForm from "../components/servicehours/SessionNotesForm";
 import { useDemo } from "../components/demo/DemoContext";
+import useOnboardingProgress from "../components/onboarding/useOnboardingProgress";
 
 const CATEGORIES = ["DirectService", "Planning", "Consultation", "Evaluation", "IEPMeeting", "Travel"];
 const CATEGORY_LABELS = {
@@ -21,6 +22,7 @@ const CATEGORY_LABELS = {
 };
 
 export default function ServiceHoursPage() {
+  useOnboardingProgress("log_session");
   const [showForm, setShowForm] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [timerRunning, setTimerRunning] = useState(false);
