@@ -29,9 +29,16 @@ export default function StudentMinuteTracker({ student, services, studentId }) {
   const indirectRequired = student?.indirectMinutes;
   const indirectFreq = student?.indirectMinutesFrequency;
 
-  // Use current month
+  // Use current month — normalize both live (ServiceEntry) and demo (services) shapes
   const currentMonthKey = new Date().toISOString().slice(0, 7);
-  const monthServices = (services || []).filter(s => (s.monthKey || s.date?.slice(0, 7)) === currentMonthKey);
+  const normalizedServices = (services || []).map(s => ({
+    minutes: s.minutes ?? s.durationMinutes ?? 0,
+    date: s.date ?? s.sessionDate ?? "",
+    monthKey: s.monthKey ?? (s.date ?? s.sessionDate ?? "").slice(0, 7),
+    // Demo data has sessionType "Direct"/"Indirect"; live data has category
+    category: s.category ?? (s.sessionType === "Direct" ? "DirectService" : s.sessionType === "Indirect" ? "Planning" : "DirectService"),
+  }));
+  const monthServices = normalizedServices.filter(s => s.monthKey === currentMonthKey);
 
   const directLogged = monthServices
     .filter(s => s.category === "DirectService")

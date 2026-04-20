@@ -157,8 +157,8 @@ export default function ServiceHoursPage() {
       monthKey: form.date.slice(0, 7),
     };
     // Clean up optional missed reason fields
-    if (!payload.missedReason) { delete payload.missedReason; delete payload.missedReasonNote; }
-    if (payload.missedReason !== "Other") { delete payload.missedReasonNote; }
+    if (!payload.missedReason || payload.missedReason === "") { delete payload.missedReason; delete payload.missedReasonNote; }
+    else if (payload.missedReason !== "Other") { delete payload.missedReasonNote; }
 
     if (editingId) {
       updateMutation.mutate({ id: editingId, data: payload });
