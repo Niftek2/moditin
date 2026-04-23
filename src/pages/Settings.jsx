@@ -326,6 +326,31 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Monthly Compliance Email */}
+        <div className="modal-card p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-[var(--modal-text)]">Monthly Compliance Email</h3>
+              <p className="text-xs text-[var(--modal-text-muted)] mt-1">Get an email on the 1st of each month summarizing which students are on track and which are behind on required service minutes.</p>
+            </div>
+            <button
+              onClick={async () => {
+                const newVal = !user?.sendMonthlyComplianceNotice;
+                await base44.auth.updateMe({ sendMonthlyComplianceNotice: newVal });
+                setUser(u => ({ ...u, sendMonthlyComplianceNotice: newVal }));
+              }}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors cursor-pointer ml-4 ${
+                user?.sendMonthlyComplianceNotice ? "bg-[#400070]" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={!!user?.sendMonthlyComplianceNotice}
+              aria-label="Toggle monthly compliance email"
+            >
+              <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg transform transition-transform ${user?.sendMonthlyComplianceNotice ? "translate-x-5" : "translate-x-0"}`} />
+            </button>
+          </div>
+        </div>
+
         {/* Restart Tutorial */}
         <div className="modal-card p-6">
           <div className="flex items-center justify-between">
