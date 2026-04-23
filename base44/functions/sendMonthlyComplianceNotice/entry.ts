@@ -26,18 +26,18 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
   const behindRowsHtml = behindStudents.map(s => `
     <tr>
-      <td style="padding:12px 16px;border-bottom:1px solid #EADDF5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-        <div style="display:inline-block;width:32px;height:32px;border-radius:50%;background:#EADDF5;color:#400070;text-align:center;line-height:32px;font-weight:700;font-size:13px;vertical-align:middle;margin-right:10px;">
+      <td class="behind-row" style="padding:12px 16px;border-bottom:1px solid #FCD34D;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+        <span class="behind-avatar" style="display:inline-block;width:32px;height:32px;border-radius:16px;background:#FEF3C7;color:#92400E;text-align:center;line-height:32px;font-weight:700;font-size:13px;vertical-align:middle;margin-right:10px;">
           ${(s.studentInitials || "?").charAt(0)}
-        </div>
-        <span style="font-size:14px;font-weight:600;color:#1A1028;vertical-align:middle;">${s.studentInitials || "—"}</span>
+        </span>
+        <span class="behind-name" style="font-size:14px;font-weight:600;color:#1A1028;vertical-align:middle;">${s.studentInitials || "—"}</span>
       </td>
-      <td style="padding:12px 16px;border-bottom:1px solid #EADDF5;text-align:right;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+      <td class="behind-row" style="padding:12px 16px;border-bottom:1px solid #FCD34D;text-align:right;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
         ${s.reqDirect ? `
-          <div style="font-size:13px;color:#92400E;font-weight:600;">Direct: ${s.loggedDirect}/${s.reqDirect} min (${s.directPct}%)</div>
+          <div class="behind-stats" style="font-size:13px;color:#92400E;font-weight:600;">Direct: ${s.loggedDirect}/${s.reqDirect} min (${s.directPct}%)</div>
         ` : ""}
         ${s.reqIndirect ? `
-          <div style="font-size:12px;color:#92400E;margin-top:2px;">Indirect: ${s.loggedIndirect}/${s.reqIndirect} min (${s.indirectPct}%)</div>
+          <div class="behind-stats" style="font-size:12px;color:#92400E;margin-top:2px;">Indirect: ${s.loggedIndirect}/${s.reqIndirect} min (${s.indirectPct}%)</div>
         ` : ""}
       </td>
     </tr>
@@ -45,24 +45,62 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
   return `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
 <title>Monthly Compliance Summary</title>
+<style>
+  /* Mobile */
+  @media only screen and (max-width: 600px) {
+    .container { width: 100% !important; border-radius: 0 !important; }
+    .px-32 { padding-left: 20px !important; padding-right: 20px !important; }
+    .stat-cell { display: block !important; width: 100% !important; padding: 6px 0 !important; }
+    .header-title { font-size: 20px !important; }
+  }
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    body, .bg-page { background: #1A1028 !important; }
+    .card { background: #2A1A3E !important; box-shadow: none !important; }
+    .text-primary { color: #F5EFFB !important; }
+    .text-muted { color: #C4B5D4 !important; }
+    .stat-box-neutral { background: #3A2754 !important; border-color: #4A3468 !important; }
+    .stat-box-neutral-text { color: #EADDF5 !important; }
+    .stat-box-neutral-label { color: #C4B5D4 !important; }
+    .stat-box-green { background: #0F3A2A !important; border-color: #1E5C44 !important; }
+    .stat-box-green-text, .stat-box-green-label { color: #6EE7B7 !important; }
+    .stat-box-amber { background: #3A2A10 !important; border-color: #6B4A1C !important; }
+    .stat-box-amber-text, .stat-box-amber-label { color: #FCD34D !important; }
+    .behind-section-title { color: #FCD34D !important; }
+    .behind-table { background: #2A1F0E !important; border-color: #6B4A1C !important; }
+    .behind-row { border-color: #4A3418 !important; }
+    .behind-avatar { background: #4A3418 !important; color: #FCD34D !important; }
+    .behind-name { color: #F5EFFB !important; }
+    .behind-stats { color: #FCD34D !important; }
+    .ontrack-box { background: #0F3A2A !important; border-color: #1E5C44 !important; }
+    .ontrack-title, .ontrack-text { color: #6EE7B7 !important; }
+    .footer { background: #140A1F !important; border-color: #2A1A3E !important; }
+    .footer-text { color: #A89BB8 !important; }
+    .footer-link { color: #C4A8E0 !important; }
+    .cta-btn { background: #6B2FB9 !important; }
+  }
+</style>
 </head>
-<body style="margin:0;padding:0;background:#F7F3FA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1028;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F3FA;padding:32px 16px;">
+<body class="bg-page" style="margin:0;padding:0;background:#F7F3FA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1A1028;">
+  <table width="100%" cellpadding="0" cellspacing="0" class="bg-page" style="background:#F7F3FA;padding:32px 16px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(64,0,112,0.08);">
+        <table width="600" cellpadding="0" cellspacing="0" class="container card" style="max-width:600px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(64,0,112,0.08);">
 
-          <!-- Header -->
+          <!-- Header (gradient — stays branded in both modes) -->
           <tr>
-            <td style="background:linear-gradient(135deg,#400070 0%,#6B2FB9 100%);padding:32px 32px 24px 32px;text-align:center;">
-              <div style="display:inline-block;padding:8px 14px;background:rgba(255,255,255,0.15);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#FFFFFF;text-transform:uppercase;margin-bottom:16px;">
+            <td class="px-32" style="background:#400070;background-image:linear-gradient(135deg,#400070 0%,#6B2FB9 100%);padding:32px;text-align:center;">
+              <div style="display:inline-block;padding:8px 14px;background:rgba(255,255,255,0.18);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#FFFFFF;text-transform:uppercase;margin-bottom:16px;">
                 Modal Itinerant
               </div>
-              <h1 style="margin:0;color:#FFFFFF;font-size:24px;font-weight:700;line-height:1.3;">
+              <h1 class="header-title" style="margin:0;color:#FFFFFF;font-size:24px;font-weight:700;line-height:1.3;">
                 Monthly Compliance Summary
               </h1>
               <p style="margin:8px 0 0 0;color:#EADDF5;font-size:14px;">${monthLabel}</p>
@@ -71,9 +109,9 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
           <!-- Greeting -->
           <tr>
-            <td style="padding:32px 32px 8px 32px;">
-              <p style="margin:0 0 8px 0;font-size:16px;color:#1A1028;">Hi ${firstName || "there"},</p>
-              <p style="margin:0;font-size:14px;line-height:1.6;color:#4A4A4A;">
+            <td class="px-32" style="padding:28px 32px 8px 32px;">
+              <p class="text-primary" style="margin:0 0 8px 0;font-size:16px;color:#1A1028;">Hi ${firstName || "there"},</p>
+              <p class="text-muted" style="margin:0;font-size:14px;line-height:1.6;color:#4A4A4A;">
                 Here's your service minute compliance summary for <strong>${monthLabel}</strong>.
               </p>
             </td>
@@ -81,25 +119,25 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
           <!-- Stats row -->
           <tr>
-            <td style="padding:24px 32px 16px 32px;">
+            <td class="px-32" style="padding:20px 32px 12px 32px;">
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="33%" style="padding:8px;">
-                    <div style="background:#F7F3FA;border:1px solid #EADDF5;border-radius:12px;padding:16px;text-align:center;">
-                      <div style="font-size:28px;font-weight:700;color:#400070;line-height:1;">${totalTracked}</div>
-                      <div style="font-size:11px;color:#4A4A4A;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Tracked</div>
+                  <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
+                    <div class="stat-box-neutral" style="background:#F7F3FA;border:1px solid #EADDF5;border-radius:12px;padding:16px;text-align:center;">
+                      <div class="stat-box-neutral-text" style="font-size:28px;font-weight:700;color:#400070;line-height:1;">${totalTracked}</div>
+                      <div class="stat-box-neutral-label" style="font-size:11px;color:#4A4A4A;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Tracked</div>
                     </div>
                   </td>
-                  <td width="33%" style="padding:8px;">
-                    <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:16px;text-align:center;">
-                      <div style="font-size:28px;font-weight:700;color:#047857;line-height:1;">${onTrackCount}</div>
-                      <div style="font-size:11px;color:#047857;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">On Track</div>
+                  <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
+                    <div class="stat-box-green" style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:16px;text-align:center;">
+                      <div class="stat-box-green-text" style="font-size:28px;font-weight:700;color:#047857;line-height:1;">${onTrackCount}</div>
+                      <div class="stat-box-green-label" style="font-size:11px;color:#047857;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">On Track</div>
                     </div>
                   </td>
-                  <td width="33%" style="padding:8px;">
-                    <div style="background:${hasBehind ? "#FEF3C7" : "#F7F3FA"};border:1px solid ${hasBehind ? "#FCD34D" : "#EADDF5"};border-radius:12px;padding:16px;text-align:center;">
-                      <div style="font-size:28px;font-weight:700;color:${hasBehind ? "#92400E" : "#4A4A4A"};line-height:1;">${behindStudents.length}</div>
-                      <div style="font-size:11px;color:${hasBehind ? "#92400E" : "#4A4A4A"};margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Behind</div>
+                  <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
+                    <div class="${hasBehind ? 'stat-box-amber' : 'stat-box-neutral'}" style="background:${hasBehind ? "#FEF3C7" : "#F7F3FA"};border:1px solid ${hasBehind ? "#FCD34D" : "#EADDF5"};border-radius:12px;padding:16px;text-align:center;">
+                      <div class="${hasBehind ? 'stat-box-amber-text' : 'stat-box-neutral-text'}" style="font-size:28px;font-weight:700;color:${hasBehind ? "#92400E" : "#4A4A4A"};line-height:1;">${behindStudents.length}</div>
+                      <div class="${hasBehind ? 'stat-box-amber-label' : 'stat-box-neutral-label'}" style="font-size:11px;color:${hasBehind ? "#92400E" : "#4A4A4A"};margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Behind</div>
                     </div>
                   </td>
                 </tr>
@@ -110,14 +148,14 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
           ${hasBehind ? `
           <!-- Behind students -->
           <tr>
-            <td style="padding:16px 32px 8px 32px;">
-              <h2 style="margin:0 0 12px 0;font-size:16px;font-weight:700;color:#92400E;">
+            <td class="px-32" style="padding:12px 32px 8px 32px;">
+              <h2 class="behind-section-title" style="margin:0 0 10px 0;font-size:16px;font-weight:700;color:#92400E;">
                 ⚠️ Students Needing Attention
               </h2>
-              <p style="margin:0 0 16px 0;font-size:13px;color:#4A4A4A;line-height:1.5;">
+              <p class="text-muted" style="margin:0 0 14px 0;font-size:13px;color:#4A4A4A;line-height:1.5;">
                 The following ${behindStudents.length === 1 ? "student was" : "students were"} below required service minutes last month:
               </p>
-              <table width="100%" cellpadding="0" cellspacing="0" style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:12px;overflow:hidden;">
+              <table width="100%" cellpadding="0" cellspacing="0" class="behind-table" style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:12px;overflow:hidden;">
                 ${behindRowsHtml}
               </table>
             </td>
@@ -125,11 +163,11 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
           ` : `
           <!-- All on track -->
           <tr>
-            <td style="padding:16px 32px 8px 32px;">
-              <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:24px;text-align:center;">
+            <td class="px-32" style="padding:12px 32px 8px 32px;">
+              <div class="ontrack-box" style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:24px;text-align:center;">
                 <div style="font-size:32px;margin-bottom:8px;">🎉</div>
-                <h2 style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:#047857;">All students on track!</h2>
-                <p style="margin:0;font-size:13px;color:#047857;">Every tracked student met their required service minutes for ${monthLabel}.</p>
+                <h2 class="ontrack-title" style="margin:0 0 6px 0;font-size:16px;font-weight:700;color:#047857;">All students on track!</h2>
+                <p class="ontrack-text" style="margin:0;font-size:13px;color:#047857;">Every tracked student met their required service minutes for ${monthLabel}.</p>
               </div>
             </td>
           </tr>
@@ -137,8 +175,8 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
           <!-- CTA -->
           <tr>
-            <td style="padding:24px 32px 32px 32px;text-align:center;">
-              <a href="https://app.base44.com/ComplianceReport" style="display:inline-block;background:#400070;color:#FFFFFF;font-size:14px;font-weight:600;padding:12px 28px;border-radius:12px;text-decoration:none;">
+            <td class="px-32" style="padding:24px 32px 32px 32px;text-align:center;">
+              <a href="https://app.base44.com/ComplianceReport" class="cta-btn" style="display:inline-block;background:#400070;color:#FFFFFF;font-size:14px;font-weight:600;padding:14px 28px;border-radius:12px;text-decoration:none;">
                 View Full Compliance Report
               </a>
             </td>
@@ -146,12 +184,12 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
 
           <!-- Footer -->
           <tr>
-            <td style="background:#F7F3FA;padding:20px 32px;border-top:1px solid #EADDF5;text-align:center;">
-              <p style="margin:0 0 4px 0;font-size:11px;color:#4A4A4A;">
+            <td class="footer px-32" style="background:#F7F3FA;padding:20px 32px;border-top:1px solid #EADDF5;text-align:center;">
+              <p class="footer-text" style="margin:0 0 4px 0;font-size:11px;color:#4A4A4A;line-height:1.5;">
                 You're receiving this because monthly compliance notices are enabled in your settings.
               </p>
-              <p style="margin:0;font-size:11px;color:#4A4A4A;">
-                <a href="https://app.base44.com/Settings" style="color:#6B2FB9;text-decoration:none;">Manage notification preferences</a>
+              <p class="footer-text" style="margin:0;font-size:11px;color:#4A4A4A;">
+                <a href="https://app.base44.com/Settings" class="footer-link" style="color:#6B2FB9;text-decoration:none;">Manage notification preferences</a>
               </p>
             </td>
           </tr>
