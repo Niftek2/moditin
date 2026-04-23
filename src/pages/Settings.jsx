@@ -11,6 +11,9 @@ import DeleteAccountDialog from "../components/shared/DeleteAccountDialog";
 import AudioSettings from "../components/shared/AudioSettings";
 import PWAInstallGuideModal from "../components/shared/PWAInstallGuideModal";
 import { resetOnboarding } from "../components/onboarding/OnboardingChecklist";
+import { useDemo } from "../components/demo/DemoContext";
+
+const DEMO_USER = { firstName: "Nadia", email: "nadia@itinerant.modaleducation.com" };
 
 const isIosMode = typeof window !== "undefined" && (
   window.ModalApp?.platform === "ios" ||
@@ -18,7 +21,8 @@ const isIosMode = typeof window !== "undefined" && (
 );
 
 export default function SettingsPage() {
-  const [user, setUser] = useState(null);
+  const { isDemoMode } = useDemo();
+  const [user, setUser] = useState(isDemoMode ? DEMO_USER : null);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ firstName: "", email: "" });
   const [savingProfile, setSavingProfile] = useState(false);
@@ -39,6 +43,11 @@ export default function SettingsPage() {
   const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
+    if (isDemoMode) {
+      setProfileForm({ firstName: DEMO_USER.firstName, email: DEMO_USER.email });
+      setIsDemo(true);
+      return;
+    }
     base44.auth.me().then((u) => {
       setUser(u);
       setProfileForm({ firstName: u?.firstName || "", email: u?.email || "" });
@@ -48,7 +57,7 @@ export default function SettingsPage() {
     if (!isIosMode) {
       base44.functions.invoke("stripeStatus", {}).then(res => setSubStatus(res.data)).catch(() => {});
     }
-  }, []);
+  }, [isDemoMode]);
 
   const handleSaveProfile = async () => {
     setSavingProfile(true);

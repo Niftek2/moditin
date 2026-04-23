@@ -28,6 +28,7 @@ import {
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
 import { base44 } from "@/api/base44Client";
+import { useDemo } from "../demo/DemoContext";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
@@ -69,6 +70,7 @@ export default function Sidebar({ currentPage }) {
   const [recentStudents, setRecentStudents] = useState(getRecentStudents);
   const [userRole, setUserRole] = useState(null);
   const queryClient = useQueryClient();
+  const { isDemoMode } = useDemo();
 
   useEffect(() => {
     base44.auth.me().then(u => setUserRole(u?.role)).catch(() => {});
@@ -150,8 +152,8 @@ export default function Sidebar({ currentPage }) {
         })}
       </nav>
 
-      {/* Recently Viewed */}
-      {recentStudents.length > 0 && (
+      {/* Recently Viewed — hidden in demo mode to avoid leaking real caseload */}
+      {!isDemoMode && recentStudents.length > 0 && (
         <div className="px-3 pb-2">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--modal-text-muted)] px-2 mb-1">Recently Viewed</p>
           <div className="space-y-0.5">
