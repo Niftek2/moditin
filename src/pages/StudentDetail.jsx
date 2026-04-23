@@ -24,12 +24,14 @@ import GoalBankModal from "../components/goalbank/GoalBankModal";
 import GoalProgressTracker from "../components/goals/GoalProgressTracker";
 import StudentContactsSection from "../components/students/StudentContactsSection";
 import StudentScheduleSection from "../components/students/StudentScheduleSection";
+import StudentCalendarView from "../components/students/StudentCalendarView";
 import StudentMinuteTracker from "../components/students/StudentMinuteTracker";
 import { useDemo } from "../components/demo/DemoContext";
 
 const TABS = [
   { id: "Overview",       label: "Overview",       icon: Layers,      desc: "Summary & quick actions" },
   { id: "Goals",          label: "Goals",           icon: Target,      desc: "IEP goals & progress" },
+  { id: "Calendar",       label: "Calendar",        icon: CalendarDays,desc: "All sessions · attendance" },
   { id: "Service Log",    label: "Service Log",     icon: Clock,       desc: "Sessions & hours" },
   { id: "Audiology",      label: "Audiology",       icon: Ear,         desc: "Hearing snapshot" },
   { id: "Listening",      label: "Listening",       icon: Headphones,  desc: "Ling 6 check history" },
@@ -444,6 +446,12 @@ export default function StudentDetailPage() {
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === "Calendar" && (
+        <div id="tab-Calendar" role="tabpanel" aria-labelledby="tab-Calendar">
+          <StudentCalendarView studentId={studentId} student={student} />
         </div>
       )}
 
