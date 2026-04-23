@@ -1,0 +1,81 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user",
+        "manager"
+      ],
+      "default": "user"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "User's first name for personalized display"
+    },
+    "districtId": {
+      "type": "string",
+      "description": "FK to District entity (set for teachers belonging to a district)"
+    },
+    "districtStatus": {
+      "type": "string",
+      "enum": [
+        "active",
+        "pending_deletion"
+      ],
+      "default": "active",
+      "description": "Status of teacher's district account"
+    },
+    "scheduledDeletionDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the account will be permanently deleted (30-day grace period)"
+    },
+    "globalTravelBuffer": {
+      "type": "number",
+      "description": "Default travel buffer in minutes applied to scheduling conflict checks"
+    },
+    "workingHours": {
+      "type": "object",
+      "description": "Teacher's working hours window used by the Intelligent Scheduler",
+      "properties": {
+        "start": {
+          "type": "string",
+          "description": "HH:mm \u2014 e.g. '08:00'"
+        },
+        "end": {
+          "type": "string",
+          "description": "HH:mm \u2014 e.g. '16:30'"
+        }
+      }
+    },
+    "termsAgreedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the user agreed to Terms of Service"
+    },
+    "minutesReminderFrequency": {
+      "type": "string",
+      "enum": [
+        "Weekly",
+        "Monthly"
+      ],
+      "description": "How often the user wants service minute reminders (null = off)"
+    },
+    "showComplianceAlert": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to show the monthly compliance alert on the dashboard"
+    },
+    "sendMonthlyComplianceNotice": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to email a monthly compliance summary on the 1st of each month"
+    }
+  },
+  "required": [
+    "firstName"
+  ]
+}
