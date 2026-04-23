@@ -60,23 +60,16 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
     .stat-cell { display: block !important; width: 100% !important; padding: 6px 0 !important; }
     .header-title { font-size: 20px !important; }
   }
-  /* Dark mode */
+  /* Dark mode (Apple Mail, Outlook.com — Gmail mobile ignores this and auto-inverts instead) */
   @media (prefers-color-scheme: dark) {
     body, .bg-page { background: #1A1028 !important; }
     .card { background: #2A1A3E !important; box-shadow: none !important; }
     .text-primary { color: #F5EFFB !important; }
     .text-muted { color: #C4B5D4 !important; }
-    .stat-box-neutral { background: #3A2754 !important; border-color: #4A3468 !important; }
-    .stat-box-neutral-text { color: #EADDF5 !important; }
-    .stat-box-neutral-label { color: #C4B5D4 !important; }
-    .stat-box-green { background: #0F3A2A !important; border-color: #1E5C44 !important; }
-    .stat-box-green-text, .stat-box-green-label { color: #6EE7B7 !important; }
-    .stat-box-amber { background: #3A2A10 !important; border-color: #6B4A1C !important; }
-    .stat-box-amber-text, .stat-box-amber-label { color: #FCD34D !important; }
     .behind-section-title { color: #FCD34D !important; }
-    .behind-table { background: #2A1F0E !important; border-color: #6B4A1C !important; }
-    .behind-row { border-color: #4A3418 !important; }
-    .behind-avatar { background: #4A3418 !important; color: #FCD34D !important; }
+    .behind-table { background: #3A2A10 !important; border-color: #6B4A1C !important; }
+    .behind-row { border-color: #6B4A1C !important; }
+    .behind-avatar { background: #6B4A1C !important; color: #FCD34D !important; }
     .behind-name { color: #F5EFFB !important; }
     .behind-stats { color: #FCD34D !important; }
     .ontrack-box { background: #0F3A2A !important; border-color: #1E5C44 !important; }
@@ -84,7 +77,6 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
     .footer { background: #140A1F !important; border-color: #2A1A3E !important; }
     .footer-text { color: #A89BB8 !important; }
     .footer-link { color: #C4A8E0 !important; }
-    .cta-btn { background: #6B2FB9 !important; }
   }
 </style>
 </head>
@@ -94,16 +86,16 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" class="container card" style="max-width:600px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(64,0,112,0.08);">
 
-          <!-- Header (gradient — stays branded in both modes) -->
+          <!-- Header (solid purple — works in both light & dark mail clients) -->
           <tr>
-            <td class="px-32" style="background:#400070;background-image:linear-gradient(135deg,#400070 0%,#6B2FB9 100%);padding:32px;text-align:center;">
-              <div style="display:inline-block;padding:8px 14px;background:rgba(255,255,255,0.18);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#FFFFFF;text-transform:uppercase;margin-bottom:16px;">
+            <td class="px-32" style="background:#400070;padding:32px;text-align:center;">
+              <div style="display:inline-block;padding:8px 14px;background:#FFFFFF;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#400070;text-transform:uppercase;margin-bottom:16px;">
                 Modal Itinerant
               </div>
-              <h1 class="header-title" style="margin:0;color:#FFFFFF;font-size:24px;font-weight:700;line-height:1.3;">
+              <h1 class="header-title" style="margin:0;color:#FFFFFF;font-size:24px;font-weight:700;line-height:1.3;mso-line-height-rule:exactly;">
                 Monthly Compliance Summary
               </h1>
-              <p style="margin:8px 0 0 0;color:#EADDF5;font-size:14px;">${monthLabel}</p>
+              <p style="margin:10px 0 0 0;color:#FFFFFF;font-size:14px;font-weight:500;opacity:0.95;">${monthLabel}</p>
             </td>
           </tr>
 
@@ -117,27 +109,27 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
             </td>
           </tr>
 
-          <!-- Stats row -->
+          <!-- Stats row — high-contrast filled cards so auto-invert keeps them readable -->
           <tr>
             <td class="px-32" style="padding:20px 32px 12px 32px;">
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
-                    <div class="stat-box-neutral" style="background:#F7F3FA;border:1px solid #EADDF5;border-radius:12px;padding:16px;text-align:center;">
-                      <div class="stat-box-neutral-text" style="font-size:28px;font-weight:700;color:#400070;line-height:1;">${totalTracked}</div>
-                      <div class="stat-box-neutral-label" style="font-size:11px;color:#4A4A4A;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Tracked</div>
+                    <div class="stat-box-neutral" style="background:#400070;border-radius:12px;padding:18px 12px;text-align:center;">
+                      <div class="stat-box-neutral-text" style="font-size:32px;font-weight:800;color:#FFFFFF;line-height:1;">${totalTracked}</div>
+                      <div class="stat-box-neutral-label" style="font-size:11px;color:#FFFFFF;margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;opacity:0.9;">Tracked</div>
                     </div>
                   </td>
                   <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
-                    <div class="stat-box-green" style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:12px;padding:16px;text-align:center;">
-                      <div class="stat-box-green-text" style="font-size:28px;font-weight:700;color:#047857;line-height:1;">${onTrackCount}</div>
-                      <div class="stat-box-green-label" style="font-size:11px;color:#047857;margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">On Track</div>
+                    <div class="stat-box-green" style="background:#047857;border-radius:12px;padding:18px 12px;text-align:center;">
+                      <div class="stat-box-green-text" style="font-size:32px;font-weight:800;color:#FFFFFF;line-height:1;">${onTrackCount}</div>
+                      <div class="stat-box-green-label" style="font-size:11px;color:#FFFFFF;margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;opacity:0.9;">On Track</div>
                     </div>
                   </td>
                   <td width="33%" class="stat-cell" style="padding:6px;vertical-align:top;">
-                    <div class="${hasBehind ? 'stat-box-amber' : 'stat-box-neutral'}" style="background:${hasBehind ? "#FEF3C7" : "#F7F3FA"};border:1px solid ${hasBehind ? "#FCD34D" : "#EADDF5"};border-radius:12px;padding:16px;text-align:center;">
-                      <div class="${hasBehind ? 'stat-box-amber-text' : 'stat-box-neutral-text'}" style="font-size:28px;font-weight:700;color:${hasBehind ? "#92400E" : "#4A4A4A"};line-height:1;">${behindStudents.length}</div>
-                      <div class="${hasBehind ? 'stat-box-amber-label' : 'stat-box-neutral-label'}" style="font-size:11px;color:${hasBehind ? "#92400E" : "#4A4A4A"};margin-top:6px;text-transform:uppercase;letter-spacing:0.5px;">Behind</div>
+                    <div class="stat-box-amber" style="background:${hasBehind ? "#B45309" : "#6B7280"};border-radius:12px;padding:18px 12px;text-align:center;">
+                      <div class="stat-box-amber-text" style="font-size:32px;font-weight:800;color:#FFFFFF;line-height:1;">${behindStudents.length}</div>
+                      <div class="stat-box-amber-label" style="font-size:11px;color:#FFFFFF;margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;opacity:0.9;">Behind</div>
                     </div>
                   </td>
                 </tr>
