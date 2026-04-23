@@ -168,7 +168,7 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
           <!-- CTA -->
           <tr>
             <td class="px-32" style="padding:24px 32px 32px 32px;text-align:center;">
-              <a href="https://app.base44.com/ComplianceReport" class="cta-btn" style="display:inline-block;background:#400070;color:#FFFFFF;font-size:14px;font-weight:600;padding:14px 28px;border-radius:12px;text-decoration:none;">
+              <a href="https://itinerant.modaleducation.com/ComplianceReport" class="cta-btn" style="display:inline-block;background:#400070;color:#FFFFFF;font-size:14px;font-weight:600;padding:14px 28px;border-radius:12px;text-decoration:none;">
                 View Full Compliance Report
               </a>
             </td>
@@ -181,7 +181,7 @@ function renderEmailHTML({ firstName, monthLabel, behindStudents, onTrackCount, 
                 You're receiving this because monthly compliance notices are enabled in your settings.
               </p>
               <p class="footer-text" style="margin:0;font-size:11px;color:#4A4A4A;">
-                <a href="https://app.base44.com/Settings" class="footer-link" style="color:#6B2FB9;text-decoration:none;">Manage notification preferences</a>
+                <a href="https://itinerant.modaleducation.com/Settings" class="footer-link" style="color:#6B2FB9;text-decoration:none;">Manage notification preferences</a>
               </p>
             </td>
           </tr>
