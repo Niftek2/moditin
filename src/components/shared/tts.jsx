@@ -1,83 +1,75 @@
 /**
- * TTS Service - Cross-platform Text-to-Speech using native APIs
- * Web: Web Speech API (SpeechSynthesis)
+ * TTS Service — uses Speechify (custom Nadia voice) via backend function.
+ * Falls back to native SpeechSynthesis only if Speechify fails.
  */
+import { base44 } from "@/api/base44Client";
 
-let currentUtterance = null;
+let currentAudio = null;
+let currentToken = 0;
 
-/**
- * Check if TTS is supported on this device/browser
- */
 export function isSupported() {
-  return typeof window !== 'undefined' && !!window.speechSynthesis;
+  return typeof window !== "undefined";
 }
 
 /**
- * Speak text with given rate
- * @param {string} text - Text to speak
- * @param {number} rate - Speech rate (0.75, 1.0, 1.25)
- * @returns {Promise<void>}
+ * Speak text via Speechify (Nadia voice) with adjustable rate.
+ * @param {string} text
+ * @param {number} rate - 0.5 to 2.0 (default 1.0)
  */
 export async function speak(text, rate = 1.0) {
-  if (!isSupported()) {
-    console.warn("TTS not supported on this device");
-    return;
-  }
-
-  // Stop any current speech
+  if (!text || !isSupported()) return;
   stop();
 
+  const token = ++currentToken;
   try {
-    const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = rate;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+    const res = await base44.functions.invoke("speechifyTts", { text, rate });
+    if (token !== currentToken) return; // a newer speak() superseded us
 
-    // Store reference for stop function
-    currentUtterance = utterance;
+    const audioUrl = res?.data?.audioUrl;
+    if (!audioUrl) throw new Error("No audio returned");
 
-    // Speak
-    synth.speak(utterance);
+    const audio = new Audio(audioUrl);
+    audio.playbackRate = 1.0; // rate is already baked into the audio via SSML
+    currentAudio = audio;
+    audio.onended = () => { if (currentAudio === audio) currentAudio = null; };
+    await audio.play();
   } catch (error) {
-    console.error("TTS error:", error);
+    console.error("Speechify TTS failed, falling back to browser:", error);
+    if (token === currentToken) fallbackSpeak(text, rate);
   }
 }
 
-/**
- * Stop current speech
- */
+function fallbackSpeak(text, rate) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = rate;
+  window.speechSynthesis.speak(utterance);
+}
+
 export function stop() {
+  currentToken++; // invalidate any in-flight fetch
   try {
-    const synth = window.speechSynthesis;
-    if (synth) {
-      synth.cancel();
-      currentUtterance = null;
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
     }
-  } catch (error) {
-    console.error("TTS stop error:", error);
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  } catch (e) {
+    console.error("TTS stop error:", e);
   }
 }
 
-/**
- * Check if currently speaking
- */
 export function isSpeaking() {
-  try {
-    return window.speechSynthesis?.speaking || false;
-  } catch {
-    return false;
-  }
+  if (currentAudio && !currentAudio.paused && !currentAudio.ended) return true;
+  if (typeof window !== "undefined" && window.speechSynthesis?.speaking) return true;
+  return false;
 }
 
-/**
- * Apply user settings to speech
- * @param {Object} settings - UserAudioSettings object
- * @param {string} text - Text to speak
- */
 export async function speakWithSettings(text, settings) {
   if (!settings?.enabled) return;
-  
-  const rate = settings.rate || 1.0;
-  await speak(text, rate);
+  await speak(text, settings.rate || 1.0);
 }

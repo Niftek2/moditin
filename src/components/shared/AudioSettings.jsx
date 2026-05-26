@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
@@ -101,17 +101,29 @@ export default function AudioSettings() {
         <>
           {/* Speech Rate */}
           <div className="space-y-2">
-            <Label htmlFor="rate" className="text-[var(--modal-text)]">Speech Rate</Label>
-            <Select value={settings.rate?.toString()} onValueChange={(val) => handleUpdate({ rate: parseFloat(val) })}>
-              <SelectTrigger id="rate" className="bg-white border-[var(--modal-border)] text-[var(--modal-text)] w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0.75">0.75x (Slow)</SelectItem>
-                <SelectItem value="1.0">1.0x (Normal)</SelectItem>
-                <SelectItem value="1.25">1.25x (Fast)</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="rate" className="text-[var(--modal-text)]">Speech Rate</Label>
+              <span className="text-sm font-semibold text-[#400070] tabular-nums">
+                {(settings.rate || 1.0).toFixed(2)}×
+              </span>
+            </div>
+            <Slider
+              id="rate"
+              min={0.5}
+              max={2.0}
+              step={0.05}
+              value={[settings.rate || 1.0]}
+              onValueChange={(vals) => setSettings(prev => ({ ...prev, rate: vals[0] }))}
+              onValueCommit={(vals) => handleUpdate({ rate: vals[0] })}
+              disabled={saving}
+              className="w-full"
+            />
+            <div className="flex justify-between text-[10px] text-[var(--modal-text-muted)]">
+              <span>0.5× Slower</span>
+              <span>1.0× Normal</span>
+              <span>2.0× Faster</span>
+            </div>
+            <p className="text-xs text-[var(--modal-text-muted)]">Using your custom Nadia voice (Speechify).</p>
           </div>
 
           {/* Speak Answer Choices */}
