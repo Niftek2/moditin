@@ -26,6 +26,7 @@ Deno.serve(async (req) => {
     const safeText = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const ssml = `<speak><prosody rate="${ratePercent}%">${safeText}</prosody></speak>`;
 
+    // Speechify API (same endpoint serves Studio + Developer keys)
     const resp = await fetch('https://api.sws.speechify.com/v1/audio/speech', {
       method: 'POST',
       headers: {
@@ -38,6 +39,9 @@ Deno.serve(async (req) => {
         audio_format: 'mp3',
       }),
     });
+
+    console.log('Speechify key length:', apiKey.length, 'prefix:', apiKey.substring(0, 4));
+    console.log('Voice ID:', voiceId);
 
     if (!resp.ok) {
       const errBody = await resp.text();
