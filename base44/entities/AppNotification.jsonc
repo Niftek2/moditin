@@ -1,0 +1,52 @@
+{
+  "name": "AppNotification",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "AppointmentReminder",
+        "IEPAnnualReviewReminder",
+        "IEPStartDateReminder",
+        "CustomReminder",
+        "DriveConflict"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "calendarEventId": {
+      "type": "string",
+      "description": "Optional FK to CalendarEvent"
+    },
+    "studentId": {
+      "type": "string",
+      "description": "Optional FK to Student"
+    },
+    "triggerDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "isRead": {
+      "type": "boolean",
+      "default": false
+    },
+    "snoozedUntil": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ownerEmail": {
+      "type": "string",
+      "description": "Email of the user who owns this notification \u2014 used for FERPA-compliant per-teacher scoping"
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "body",
+    "triggerDateTime"
+  ]
+}

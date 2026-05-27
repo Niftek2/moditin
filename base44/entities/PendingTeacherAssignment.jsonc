@@ -1,0 +1,35 @@
+{
+  "name": "PendingTeacherAssignment",
+  "type": "object",
+  "properties": {
+    "teacherEmail": {
+      "type": "string",
+      "description": "Email of the invited teacher"
+    },
+    "teacherName": {
+      "type": "string",
+      "description": "Display name of the invited teacher"
+    },
+    "districtId": {
+      "type": "string",
+      "description": "FK to District"
+    },
+    "districtName": {
+      "type": "string",
+      "description": "Cached district name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "applied",
+        "failed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "teacherEmail",
+    "districtId"
+  ]
+}

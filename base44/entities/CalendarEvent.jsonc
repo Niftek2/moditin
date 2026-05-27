@@ -1,0 +1,126 @@
+{
+  "name": "CalendarEvent",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Event title"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "DirectService",
+        "Consultation",
+        "Evaluation",
+        "IEPMeeting",
+        "Planning",
+        "Travel",
+        "Other"
+      ]
+    },
+    "startDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "endDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "setting": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid",
+        "NotApplicable"
+      ],
+      "default": "InPerson"
+    },
+    "isDraft": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sandbox flag \u2014 draft events are scheduler suggestions not yet committed to the live calendar"
+    },
+    "studentId": {
+      "type": "string",
+      "description": "Optional FK to Student"
+    },
+    "studentInitials": {
+      "type": "string",
+      "description": "Cached student initials for display"
+    },
+    "locationLabel": {
+      "type": "string",
+      "description": "Generic label only, e.g. 'School A'"
+    },
+    "notes": {
+      "type": "string",
+      "description": "PII-guarded notes"
+    },
+    "driveTimeMinutes": {
+      "type": "integer",
+      "default": 0
+    },
+    "driveTimeIncluded": {
+      "type": "boolean",
+      "default": false
+    },
+    "bypassDriveWarning": {
+      "type": "boolean",
+      "default": false
+    },
+    "bypassReason": {
+      "type": "string"
+    },
+    "reminderMinutes": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "Lead times in minutes for reminders"
+    },
+    "recurrenceType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Daily",
+        "Weekly",
+        "Monthly"
+      ],
+      "default": "None",
+      "description": "How this event repeats"
+    },
+    "recurrenceDaysOfWeek": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "0=Sun..6=Sat, used when recurrenceType=Weekly"
+    },
+    "recurrenceDayOfMonth": {
+      "type": "integer",
+      "description": "Day of month (1-31), used when recurrenceType=Monthly"
+    },
+    "recurrenceInterval": {
+      "type": "integer",
+      "default": 1
+    },
+    "recurrenceEndDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "recurrenceParentId": {
+      "type": "string"
+    },
+    "isRecurrenceTemplate": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "title",
+    "eventType",
+    "startDateTime",
+    "endDateTime"
+  ]
+}

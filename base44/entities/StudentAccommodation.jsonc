@@ -1,0 +1,22 @@
+{
+  "name": "StudentAccommodation",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student"
+    },
+    "accommodationId": {
+      "type": "string",
+      "description": "Reference to Accommodation"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Implementation notes"
+    }
+  },
+  "required": [
+    "studentId",
+    "accommodationId"
+  ]
+}

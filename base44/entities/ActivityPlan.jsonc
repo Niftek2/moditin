@@ -1,0 +1,95 @@
+{
+  "name": "ActivityPlan",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student (owned by same user)"
+    },
+    "studentGoalId": {
+      "type": "string",
+      "description": "Reference to StudentGoal"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Planned session date"
+    },
+    "serviceModel": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid"
+      ],
+      "description": "Service delivery model for this session"
+    },
+    "sessionLength": {
+      "type": "number",
+      "description": "Session length in minutes"
+    },
+    "communicationFocus": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "LSL",
+          "Spoken Language",
+          "ASL",
+          "ASL/English Bilingual",
+          "Total Communication",
+          "Visual Supports",
+          "Auditory Training"
+        ]
+      },
+      "description": "Communication modalities targeted in this session"
+    },
+    "hearingTechConsiderations": {
+      "type": "string",
+      "description": "Hearing technology checks or considerations for the session"
+    },
+    "warmup": {
+      "type": "string",
+      "description": "Warmup activity"
+    },
+    "coreActivity": {
+      "type": "string",
+      "description": "Core activity"
+    },
+    "wrapUp": {
+      "type": "string",
+      "description": "Wrap-up activity"
+    },
+    "environmentalAdaptations": {
+      "type": "string",
+      "description": "Environmental adaptations (in-person and/or telepractice)"
+    },
+    "visualSupportsPlanned": {
+      "type": "string",
+      "description": "Visual supports planned for this session"
+    },
+    "materialsList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Materials needed"
+    },
+    "dataCollectionPrompt": {
+      "type": "string",
+      "description": "Data collection prompt aligned to measurement type"
+    },
+    "isTemplate": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this plan is saved as a reusable template"
+    },
+    "templateName": {
+      "type": "string",
+      "description": "Name of the template if isTemplate is true"
+    }
+  },
+  "required": [
+    "studentId"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "AssessmentEntry",
+  "type": "object",
+  "properties": {
+    "reportDraftId": {
+      "type": "string",
+      "description": "FK to ReportDraft"
+    },
+    "assessmentType": {
+      "type": "string",
+      "description": "Assessment name/type"
+    },
+    "assessmentDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "rawScoresJson": {
+      "type": "string",
+      "description": "JSON object of entered scores"
+    },
+    "observations": {
+      "type": "string"
+    },
+    "strengths": {
+      "type": "string"
+    },
+    "needs": {
+      "type": "string"
+    },
+    "implications": {
+      "type": "string"
+    },
+    "generatedNarrative": {
+      "type": "string",
+      "description": "AI-generated paragraph for this assessment"
+    },
+    "includeInFinal": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "reportDraftId",
+    "assessmentType"
+  ]
+}

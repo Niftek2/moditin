@@ -1,0 +1,31 @@
+{
+  "name": "Accommodation",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "Classroom Access",
+        "Instructional Delivery",
+        "Hearing Technology",
+        "Assessments",
+        "Communication Supports",
+        "Environmental",
+        "Other"
+      ],
+      "description": "Accommodation category"
+    },
+    "name": {
+      "type": "string",
+      "description": "Accommodation name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    }
+  },
+  "required": [
+    "category",
+    "name"
+  ]
+}

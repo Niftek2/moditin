@@ -1,0 +1,62 @@
+{
+  "name": "ActivityLog",
+  "type": "object",
+  "properties": {
+    "templateType": {
+      "type": "string",
+      "enum": [
+        "AuditoryDiscrimination",
+        "ListeningComprehension",
+        "SelfAdvocacy",
+        "VocabularyVisual",
+        "FollowingDirections",
+        "EquipmentKnowledge"
+      ],
+      "description": "Type of activity generated"
+    },
+    "title": {
+      "type": "string",
+      "description": "Activity title"
+    },
+    "gradeBand": {
+      "type": "string",
+      "description": "Target grade band"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "Emerging",
+        "Developing",
+        "Mastering"
+      ],
+      "description": "Difficulty level"
+    },
+    "languageLevel": {
+      "type": "string",
+      "enum": [
+        "Simplified",
+        "Standard",
+        "Advanced"
+      ],
+      "description": "Language complexity level"
+    },
+    "activityContent": {
+      "type": "object",
+      "description": "Full activity content (teacherDirections, studentDirections, passage, items)"
+    },
+    "linkedGoalText": {
+      "type": "string",
+      "description": "Optional linked IEP goal text"
+    },
+    "generatedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the activity was generated"
+    }
+  },
+  "required": [
+    "templateType",
+    "title",
+    "activityContent"
+  ]
+}

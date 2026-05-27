@@ -1,0 +1,57 @@
+{
+  "name": "AssessmentTool",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Assessment tool name"
+    },
+    "category": {
+      "type": "string",
+      "description": "Assessment category"
+    },
+    "accessType": {
+      "type": "string",
+      "enum": [
+        "FreeScreening",
+        "StandardizedPaid"
+      ],
+      "description": "Access type"
+    },
+    "primaryPurpose": {
+      "type": "string",
+      "description": "Primary purpose of the assessment"
+    },
+    "typicalAgeRange": {
+      "type": "string",
+      "description": "Typical age range"
+    },
+    "domainsMeasured": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Domains measured by this assessment"
+    },
+    "recommendedUseCases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommended use cases"
+    },
+    "cautionNotes": {
+      "type": "string",
+      "description": "Caution notes for administration"
+    },
+    "requiresCertifiedAdministration": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether certified administration is required"
+    }
+  },
+  "required": [
+    "name",
+    "accessType"
+  ]
+}

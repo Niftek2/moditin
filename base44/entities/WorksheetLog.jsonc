@@ -1,0 +1,38 @@
+{
+  "name": "WorksheetLog",
+  "type": "object",
+  "properties": {
+    "templateType": {
+      "type": "string",
+      "description": "Type of worksheet template used"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Topic or theme of the worksheet"
+    },
+    "gradeLevel": {
+      "type": "string",
+      "description": "Grade level the worksheet was created for"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of the generated worksheet"
+    },
+    "worksheetContent": {
+      "type": "object",
+      "description": "Full worksheet content (title, instructions, items, footer)"
+    },
+    "generatedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the worksheet was generated"
+    }
+  },
+  "required": [
+    "templateType",
+    "topic",
+    "gradeLevel",
+    "title",
+    "worksheetContent"
+  ]
+}

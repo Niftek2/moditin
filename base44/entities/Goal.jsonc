@@ -1,0 +1,98 @@
+{
+  "name": "Goal",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "enum": [
+        "Auditory Skills",
+        "Self-Advocacy",
+        "Speech",
+        "Receptive Language",
+        "Expressive Language",
+        "Pragmatics",
+        "Literacy Access",
+        "Hearing Equipment Use",
+        "Classroom Listening"
+      ],
+      "description": "Goal domain"
+    },
+    "gradeBand": {
+      "type": "string",
+      "enum": [
+        "PK",
+        "K",
+        "1-2",
+        "3-5",
+        "6-8",
+        "9-12"
+      ],
+      "description": "Target grade band"
+    },
+    "baselineLevel": {
+      "type": "string",
+      "enum": [
+        "Emerging",
+        "Developing",
+        "Mastering"
+      ],
+      "description": "Baseline performance level"
+    },
+    "setting": {
+      "type": "string",
+      "enum": [
+        "GeneralEd",
+        "SmallGroup",
+        "OneToOne"
+      ],
+      "description": "Instructional setting"
+    },
+    "deliveryModel": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid"
+      ],
+      "description": "Service delivery model"
+    },
+    "measurementType": {
+      "type": "string",
+      "enum": [
+        "Trials",
+        "Rubric",
+        "Frequency",
+        "Duration"
+      ],
+      "description": "Data collection measurement type"
+    },
+    "annualGoal": {
+      "type": "string",
+      "description": "SMART annual goal text"
+    },
+    "baselinePrompt": {
+      "type": "string",
+      "description": "Baseline data collection prompt"
+    },
+    "objectives": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "3 short-term objectives"
+    },
+    "progressMonitoring": {
+      "type": "string",
+      "description": "Progress monitoring method"
+    },
+    "isCustom": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a user-created custom goal"
+    }
+  },
+  "required": [
+    "domain",
+    "annualGoal"
+  ]
+}

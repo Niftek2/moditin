@@ -1,0 +1,91 @@
+{
+  "name": "ReportDraft",
+  "type": "object",
+  "properties": {
+    "studentInitials": {
+      "type": "string",
+      "description": "Student initials only \u2014 no full names"
+    },
+    "reportType": {
+      "type": "string",
+      "enum": [
+        "Initial Evaluation",
+        "Triennial Evaluation",
+        "Annual Update",
+        "Supplemental Report"
+      ]
+    },
+    "evaluatorName": {
+      "type": "string"
+    },
+    "evaluationStartDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "evaluationCompletionDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "reportDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "communicationMode": {
+      "type": "string",
+      "enum": [
+        "Spoken English",
+        "ASL",
+        "Spoken English + ASL",
+        "Total Communication",
+        "Other"
+      ]
+    },
+    "homeLanguage": {
+      "type": "string"
+    },
+    "gradeLevel": {
+      "type": "string"
+    },
+    "pronouns": {
+      "type": "string"
+    },
+    "selectedAssessmentsJson": {
+      "type": "string",
+      "description": "JSON array of selected assessment types and dates"
+    },
+    "reportDataJson": {
+      "type": "string",
+      "description": "JSON blob of all form data"
+    },
+    "generatedDocumentJson": {
+      "type": "string",
+      "description": "JSON blob of assembled report sections"
+    },
+    "generatedPreviewHtml": {
+      "type": "string",
+      "description": "HTML preview of report"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "In Progress",
+        "Draft Generated",
+        "Exported",
+        "Archived"
+      ],
+      "default": "In Progress"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false
+    },
+    "currentStep": {
+      "type": "integer",
+      "default": 1
+    }
+  },
+  "required": [
+    "studentInitials",
+    "reportType"
+  ]
+}

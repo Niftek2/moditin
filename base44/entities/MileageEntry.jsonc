@@ -1,0 +1,32 @@
+{
+  "name": "MileageEntry",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of travel"
+    },
+    "miles": {
+      "type": "number",
+      "description": "Miles driven"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Purpose of travel"
+    },
+    "linkedServiceEntryId": {
+      "type": "string",
+      "description": "Optional link to a service entry"
+    },
+    "monthKey": {
+      "type": "string",
+      "description": "YYYY-MM format for monthly grouping"
+    }
+  },
+  "required": [
+    "date",
+    "miles",
+    "purpose"
+  ]
+}

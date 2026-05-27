@@ -1,0 +1,53 @@
+{
+  "name": "StudentContacts",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student entity"
+    },
+    "caseManagerName": {
+      "type": "string",
+      "description": "Case manager name"
+    },
+    "caseManagerEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Case manager email"
+    },
+    "parentFirstName": {
+      "type": "string",
+      "description": "Parent first name only"
+    },
+    "parentPhone": {
+      "type": "string",
+      "description": "Parent phone number"
+    },
+    "parentEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Parent email"
+    },
+    "additionalTeamMembers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Additional team member contacts"
+    }
+  },
+  "required": [
+    "studentId"
+  ]
+}

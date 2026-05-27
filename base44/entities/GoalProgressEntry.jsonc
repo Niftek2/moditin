@@ -1,0 +1,61 @@
+{
+  "name": "GoalProgressEntry",
+  "type": "object",
+  "properties": {
+    "studentGoalId": {
+      "type": "string",
+      "description": "FK to StudentGoal"
+    },
+    "studentId": {
+      "type": "string",
+      "description": "FK to Student (denormalized for filtering)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of check-in"
+    },
+    "progressType": {
+      "type": "string",
+      "enum": [
+        "percentage",
+        "numerical_score",
+        "qualitative_status"
+      ],
+      "description": "Type of progress data logged"
+    },
+    "percentageValue": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage value (0-100), used when progressType=percentage"
+    },
+    "numericalScore": {
+      "type": "number",
+      "description": "Score achieved, used when progressType=numerical_score"
+    },
+    "numericalMaxScore": {
+      "type": "number",
+      "description": "Max possible score, used when progressType=numerical_score"
+    },
+    "qualitativeStatus": {
+      "type": "string",
+      "enum": [
+        "Emerging",
+        "Developing",
+        "Mastering"
+      ],
+      "description": "Qualitative level, used when progressType=qualitative_status"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes for this check-in"
+    }
+  },
+  "required": [
+    "studentGoalId",
+    "studentId",
+    "date",
+    "progressType"
+  ]
+}

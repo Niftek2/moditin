@@ -1,0 +1,71 @@
+{
+  "name": "EquipmentTroubleshootSession",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "FK to Student"
+    },
+    "equipmentType": {
+      "type": "string",
+      "enum": [
+        "HearingAid",
+        "CochlearImplant",
+        "BAHA",
+        "FM_DM_System",
+        "SoundfieldSystem",
+        "Charger",
+        "Battery",
+        "Other"
+      ]
+    },
+    "issueType": {
+      "type": "string",
+      "enum": [
+        "NoSound",
+        "IntermittentSound",
+        "DistortedSound",
+        "TooLoud",
+        "TooSoft",
+        "FeedbackWhistling",
+        "WillNotTurnOn",
+        "BatteryIssue",
+        "ConnectivityIssue",
+        "TeacherUnsure"
+      ]
+    },
+    "stepsTaken": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Array of step objects with responses"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "Resolved",
+        "PartiallyResolved",
+        "Referred"
+      ]
+    },
+    "referralSuggested": {
+      "type": "boolean",
+      "default": false
+    },
+    "recurringFlag": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if same equipment + issue detected 3+ times in 30 days"
+    },
+    "notes": {
+      "type": "string",
+      "description": "PII-guarded notes"
+    }
+  },
+  "required": [
+    "studentId",
+    "equipmentType",
+    "issueType"
+  ]
+}

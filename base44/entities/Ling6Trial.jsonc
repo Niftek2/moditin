@@ -1,0 +1,67 @@
+{
+  "name": "Ling6Trial",
+  "type": "object",
+  "properties": {
+    "ling6SessionId": {
+      "type": "string",
+      "description": "FK to Ling6Session"
+    },
+    "sound": {
+      "type": "string",
+      "enum": [
+        "m",
+        "oo",
+        "ah",
+        "ee",
+        "sh",
+        "s"
+      ]
+    },
+    "trialNumber": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "responseType": {
+      "type": "string",
+      "enum": [
+        "Detected",
+        "Identified",
+        "NoResponse",
+        "Incorrect"
+      ]
+    },
+    "responseDetail": {
+      "type": "string",
+      "description": "What the student said or pointed to"
+    },
+    "promptLevel": {
+      "type": "string",
+      "enum": [
+        "Independent",
+        "Repetition",
+        "ClosedSet",
+        "OpenSet",
+        "VisualCue"
+      ]
+    },
+    "latencySeconds": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "Sure",
+        "Unsure"
+      ]
+    }
+  },
+  "required": [
+    "ling6SessionId",
+    "sound",
+    "trialNumber",
+    "responseType"
+  ]
+}

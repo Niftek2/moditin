@@ -1,0 +1,65 @@
+{
+  "name": "LabelingActivityRecord",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student"
+    },
+    "activityType": {
+      "type": "string",
+      "enum": [
+        "hearingAid",
+        "cochlearImplant"
+      ],
+      "description": "Type of labeling activity"
+    },
+    "sessionDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of activity"
+    },
+    "startTime": {
+      "type": "string",
+      "format": "time",
+      "description": "Start time of activity"
+    },
+    "durationMinutes": {
+      "type": "number",
+      "description": "Total duration in minutes"
+    },
+    "correctLabels": {
+      "type": "integer",
+      "description": "Number of correctly placed labels"
+    },
+    "totalLabels": {
+      "type": "integer",
+      "description": "Total labels in activity"
+    },
+    "incorrectAttempts": {
+      "type": "integer",
+      "description": "Number of incorrect placement attempts"
+    },
+    "durationSeconds": {
+      "type": "integer",
+      "description": "Total duration in seconds"
+    },
+    "linkedToSession": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether appended to session note"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Reference to ServiceEntry if linked"
+    }
+  },
+  "required": [
+    "studentId",
+    "activityType",
+    "sessionDate",
+    "startTime",
+    "correctLabels",
+    "totalLabels"
+  ]
+}

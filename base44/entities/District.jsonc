@@ -1,0 +1,58 @@
+{
+  "name": "District",
+  "type": "object",
+  "properties": {
+    "districtName": {
+      "type": "string",
+      "description": "Name of the district or organization"
+    },
+    "institutionState": {
+      "type": "string",
+      "description": "State or province of the institution"
+    },
+    "managerUserId": {
+      "type": "string",
+      "description": "FK to User entity \u2014 the district manager/purchaser"
+    },
+    "managerEmail": {
+      "type": "string",
+      "description": "Email of the district manager"
+    },
+    "planName": {
+      "type": "string",
+      "description": "Stripe plan name (e.g. Starter, District, Program)"
+    },
+    "licensedTeacherCount": {
+      "type": "integer",
+      "description": "Total number of licensed teacher seats"
+    },
+    "stripeSubscriptionId": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "stripeCustomerId": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "trialing",
+        "past_due",
+        "canceled"
+      ],
+      "default": "trialing",
+      "description": "Subscription status"
+    },
+    "trialEndDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the free trial ends"
+    }
+  },
+  "required": [
+    "managerEmail",
+    "licensedTeacherCount"
+  ]
+}

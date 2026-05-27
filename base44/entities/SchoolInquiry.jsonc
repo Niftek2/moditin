@@ -1,0 +1,41 @@
+{
+  "name": "SchoolInquiry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Contact name"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact email"
+    },
+    "schoolDistrict": {
+      "type": "string",
+      "description": "School or district name"
+    },
+    "estimatedUsers": {
+      "type": "number",
+      "description": "Estimated number of users"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "New",
+        "Contacted",
+        "Closed"
+      ],
+      "default": "New"
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "schoolDistrict"
+  ]
+}

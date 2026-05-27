@@ -1,0 +1,31 @@
+{
+  "name": "TeacherProfile",
+  "type": "object",
+  "properties": {
+    "teacherName": {
+      "type": "string",
+      "description": "Teacher display name"
+    },
+    "title": {
+      "type": "string",
+      "description": "Professional title or role"
+    },
+    "districtDisplayName": {
+      "type": "string",
+      "description": "District name for display in reports"
+    },
+    "districtLogoUrl": {
+      "type": "string",
+      "description": "URL of uploaded district logo PNG"
+    },
+    "signatureBlock": {
+      "type": "string",
+      "description": "Optional signature/credential block text for report footer"
+    },
+    "preferencesJson": {
+      "type": "string",
+      "description": "JSON blob for saved preferences"
+    }
+  },
+  "required": []
+}

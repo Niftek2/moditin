@@ -1,0 +1,49 @@
+{
+  "name": "InteractiveActivityItem",
+  "type": "object",
+  "properties": {
+    "activitySessionId": {
+      "type": "string",
+      "description": "FK to InteractiveActivitySession"
+    },
+    "itemNumber": {
+      "type": "integer"
+    },
+    "questionText": {
+      "type": "string"
+    },
+    "answerChoices": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "correctAnswer": {
+      "type": "string"
+    },
+    "selectedAnswer": {
+      "type": "string"
+    },
+    "isCorrect": {
+      "type": "boolean"
+    },
+    "promptLevel": {
+      "type": "string",
+      "enum": [
+        "Independent",
+        "Repetition",
+        "ClosedSet",
+        "OpenSet",
+        "VisualCue"
+      ]
+    },
+    "responseLatencySeconds": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "activitySessionId",
+    "itemNumber",
+    "questionText"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "name": "Equipment",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Hearing Aids",
+        "Cochlear Implants",
+        "FM/DM",
+        "Soundfield",
+        "Accessories",
+        "Batteries",
+        "Chargers",
+        "Earmolds",
+        "Loaners"
+      ],
+      "description": "Equipment type"
+    },
+    "description": {
+      "type": "string",
+      "description": "Equipment description"
+    },
+    "serialNumber": {
+      "type": "string",
+      "description": "Serial or identification number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "NeedsRepair",
+        "Loaned",
+        "Retired"
+      ],
+      "default": "Active",
+      "description": "Current equipment status"
+    },
+    "reminderSchedule": {
+      "type": "string",
+      "enum": [
+        "Daily",
+        "Weekly",
+        "Monthly",
+        "None"
+      ],
+      "default": "None",
+      "description": "Check reminder frequency"
+    }
+  },
+  "required": [
+    "studentId",
+    "type"
+  ]
+}

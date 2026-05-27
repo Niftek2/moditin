@@ -1,0 +1,167 @@
+{
+  "name": "StudentAudiologySnapshot",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "FK to Student (unique one-to-one)"
+    },
+    "lastAudiogramDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of last audiogram"
+    },
+    "hearingLossType": {
+      "type": "string",
+      "enum": [
+        "Sensorineural",
+        "Conductive",
+        "Mixed",
+        "ANSD",
+        "CentralAuditoryProcessingConcerns",
+        "Unknown",
+        "Other"
+      ]
+    },
+    "hearingLossTypeOther": {
+      "type": "string",
+      "description": "Text if hearingLossType = Other"
+    },
+    "hearingLossDetail": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Unilateral",
+          "Bilateral",
+          "Asymmetric",
+          "Fluctuating",
+          "Progressive",
+          "Sudden",
+          "HistoryOfOtitisMedia",
+          "HistoryOfTubes",
+          "EnlargedVestibularAqueduct",
+          "Genetic",
+          "NoiseExposure",
+          "NotKnown"
+        ]
+      }
+    },
+    "hearingLossLaterality": {
+      "type": "string",
+      "enum": [
+        "Bilateral",
+        "Left",
+        "Right",
+        "Unknown"
+      ]
+    },
+    "configuration": {
+      "type": "string",
+      "enum": [
+        "Flat",
+        "Sloping",
+        "Rising",
+        "CookieBite",
+        "NotKnown"
+      ]
+    },
+    "severityRange": {
+      "type": "string",
+      "enum": [
+        "Mild",
+        "Moderate",
+        "ModeratelySevere",
+        "Severe",
+        "Profound",
+        "MixedRange",
+        "Unknown"
+      ]
+    },
+    "onset": {
+      "type": "string",
+      "enum": [
+        "Congenital",
+        "Acquired",
+        "Unknown"
+      ]
+    },
+    "progression": {
+      "type": "string",
+      "enum": [
+        "Stable",
+        "Progressive",
+        "Fluctuating",
+        "Unknown"
+      ]
+    },
+    "etiologyKnown": {
+      "type": "string",
+      "enum": [
+        "Known",
+        "Unknown",
+        "NotShared"
+      ]
+    },
+    "etiologyNotes": {
+      "type": "string",
+      "description": "Non-identifiable notes on etiology"
+    },
+    "equipmentUsed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "HearingAids",
+          "CochlearImplant",
+          "BAHA",
+          "FM_DM",
+          "Soundfield",
+          "CROS",
+          "None",
+          "Other"
+        ]
+      }
+    },
+    "equipmentDetails": {
+      "type": "string",
+      "description": "Optional equipment details"
+    },
+    "listeningAccessNotes": {
+      "type": "string",
+      "description": "Best ear, benefits from, quiet needs, etc."
+    },
+    "hlHistoryNotes": {
+      "type": "string",
+      "description": "HL-related history notes, non-identifiable"
+    },
+    "confirmNoIdentifying": {
+      "type": "boolean",
+      "default": false,
+      "description": "User confirmed no PII entered"
+    },
+    "audiogramImageUrl": {
+      "type": "string",
+      "description": "Legacy single image URL (deprecated)"
+    },
+    "audiogramImages": {
+      "type": "array",
+      "description": "Array of saved audiogram images with timestamps",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "description": "ISO datetime"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "studentId"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "name": "Student",
+  "type": "object",
+  "properties": {
+    "studentInitials": {
+      "type": "string",
+      "description": "Student initials in Fi.La. format \u2014 max 6 characters",
+      "maxLength": 6
+    },
+    "gradeBand": {
+      "type": "string",
+      "enum": [
+        "PK",
+        "K",
+        "1-2",
+        "3-5",
+        "6-8",
+        "9-12",
+        "Transition",
+        "Adult"
+      ],
+      "description": "Grade band"
+    },
+    "primaryEligibility": {
+      "type": "string",
+      "description": "Primary eligibility category"
+    },
+    "schoolCode": {
+      "type": "string",
+      "description": "School code \u2014 4 letters max, no full school names",
+      "maxLength": 4
+    },
+    "locationId": {
+      "type": "string",
+      "description": "Generic location identifier (e.g. school code) for grouping and travel optimization \u2014 no full names"
+    },
+    "serviceDeliveryModel": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid"
+      ],
+      "description": "Service delivery model"
+    },
+    "consultOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this student is consult-only (no direct service minutes required)"
+    },
+    "availabilityWindows": {
+      "type": "object",
+      "description": "Per-day availability windows keyed by day-of-week index (0=Sun). Value is array of {start, end} in HH:mm format.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "string",
+              "description": "HH:mm"
+            },
+            "end": {
+              "type": "string",
+              "description": "HH:mm"
+            }
+          }
+        }
+      }
+    },
+    "iepStartDate": {
+      "type": "string",
+      "format": "date",
+      "description": "IEP start date"
+    },
+    "iepAnnualReviewDate": {
+      "type": "string",
+      "format": "date",
+      "description": "IEP annual review date"
+    },
+    "triennialEvaluationDate": {
+      "type": "string",
+      "format": "date",
+      "description": "3-year re-evaluation (triennial) due date"
+    },
+    "directMinutes": {
+      "type": "integer",
+      "description": "IEP Direct service minutes"
+    },
+    "directMinutesFrequency": {
+      "type": "string",
+      "enum": [
+        "Daily",
+        "Weekly",
+        "Monthly",
+        "Annually",
+        "Other"
+      ],
+      "description": "Frequency for direct service minutes"
+    },
+    "directMinutesFrequencyOther": {
+      "type": "string",
+      "description": "Custom frequency description when directMinutesFrequency is Other"
+    },
+    "indirectMinutes": {
+      "type": "integer",
+      "description": "IEP Indirect service minutes"
+    },
+    "indirectMinutesFrequency": {
+      "type": "string",
+      "enum": [
+        "Daily",
+        "Weekly",
+        "Monthly",
+        "Annually",
+        "Other"
+      ],
+      "description": "Frequency for indirect service minutes"
+    },
+    "indirectMinutesFrequencyOther": {
+      "type": "string",
+      "description": "Custom frequency description when indirectMinutesFrequency is Other"
+    },
+    "notes": {
+      "type": "string",
+      "description": "General notes \u2014 no identifying information"
+    },
+    "warmNotes": {
+      "type": "string",
+      "description": "Warm notes about the student"
+    },
+    "communicationModality": {
+      "type": "string",
+      "enum": [
+        "LSL",
+        "ASL",
+        "Bilingual ASL/English",
+        "Total Communication",
+        "Other"
+      ],
+      "description": "Primary communication modality"
+    },
+    "primaryLanguage": {
+      "type": "string",
+      "enum": [
+        "ASL",
+        "English",
+        "ASL/English Bilingual",
+        "Other"
+      ],
+      "description": "Primary language"
+    },
+    "readingLevelBand": {
+      "type": "string",
+      "enum": [
+        "Emergent (PreK-K)",
+        "Early (1-2)",
+        "Developing (3-5)",
+        "Expanding (6-8)",
+        "Academic (9-12)"
+      ],
+      "description": "Reading level band for language complexity adjustments"
+    },
+    "aslInstructionFocus": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether ASL instruction is a focus area"
+    },
+    "colorTag": {
+      "type": "string",
+      "enum": [
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "purple",
+        "pink",
+        "gray"
+      ],
+      "default": "gray",
+      "description": "Color tag for student organization"
+    }
+  },
+  "required": [
+    "studentInitials"
+  ]
+}

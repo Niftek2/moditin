@@ -1,0 +1,40 @@
+{
+  "name": "StudentGoal",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "Reference to Student"
+    },
+    "goalId": {
+      "type": "string",
+      "description": "Reference to Goal"
+    },
+    "customBaseline": {
+      "type": "string",
+      "description": "Customized baseline for this student"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Met",
+        "Discontinued",
+        "Revised"
+      ],
+      "default": "Active",
+      "description": "Goal status"
+    },
+    "assignedDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "studentId",
+    "goalId"
+  ]
+}

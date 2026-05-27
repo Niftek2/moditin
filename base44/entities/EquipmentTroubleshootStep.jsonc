@@ -1,0 +1,34 @@
+{
+  "name": "EquipmentTroubleshootStep",
+  "type": "object",
+  "properties": {
+    "sessionId": {
+      "type": "string",
+      "description": "FK to EquipmentTroubleshootSession"
+    },
+    "stepNumber": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stepPrompt": {
+      "type": "string",
+      "description": "Instruction or question for this step"
+    },
+    "response": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "No",
+        "Unsure",
+        "Completed",
+        "NotCompleted",
+        "NotApplicable"
+      ]
+    }
+  },
+  "required": [
+    "sessionId",
+    "stepNumber",
+    "stepPrompt"
+  ]
+}

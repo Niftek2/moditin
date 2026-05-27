@@ -1,0 +1,88 @@
+{
+  "name": "InteractiveActivitySession",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "FK to Student"
+    },
+    "linkedGoalId": {
+      "type": "string",
+      "description": "FK to StudentGoal (optional)"
+    },
+    "linkedServiceLogEntryId": {
+      "type": "string",
+      "description": "FK to ServiceEntry (optional)"
+    },
+    "templateType": {
+      "type": "string",
+      "enum": [
+        "AuditoryDiscrimination",
+        "ListeningComprehension",
+        "SelfAdvocacy",
+        "VocabularyVisual",
+        "FollowingDirections",
+        "EquipmentKnowledge"
+      ]
+    },
+    "setting": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "Emerging",
+        "Developing",
+        "Mastering"
+      ]
+    },
+    "gradeBand": {
+      "type": "string"
+    },
+    "totalItems": {
+      "type": "integer"
+    },
+    "totalCorrect": {
+      "type": "integer"
+    },
+    "percentCorrect": {
+      "type": "number"
+    },
+    "durationMinutes": {
+      "type": "number"
+    },
+    "promptSummary": {
+      "type": "string"
+    },
+    "teacherNotes": {
+      "type": "string"
+    },
+    "linkedGoalText": {
+      "type": "string"
+    },
+    "studentInitials": {
+      "type": "string"
+    },
+    "teacherDirections": {
+      "type": "string",
+      "description": "Directions for the teacher on how to deliver the activity"
+    },
+    "studentDirections": {
+      "type": "string",
+      "description": "Directions for the student on what to do"
+    },
+    "passage": {
+      "type": "string",
+      "description": "Passage text for auditory comprehension or other activities"
+    }
+  },
+  "required": [
+    "studentId",
+    "templateType"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "DemoSignup",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email entered at the demo gate"
+    }
+  },
+  "required": [
+    "email"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "UserAudioSettings",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "Reference to User (one-to-one relationship)"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether read-aloud is enabled globally"
+    },
+    "rate": {
+      "type": "number",
+      "enum": [
+        0.75,
+        1.0,
+        1.25
+      ],
+      "default": 1.0,
+      "description": "Speech rate multiplier"
+    },
+    "speakChoices": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to speak answer choices in activities"
+    },
+    "autoSpeakPrompt": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to auto-speak prompt on new item"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  },
+  "required": [
+    "userId"
+  ]
+}

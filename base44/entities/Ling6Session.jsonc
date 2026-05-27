@@ -1,0 +1,108 @@
+{
+  "name": "Ling6Session",
+  "type": "object",
+  "properties": {
+    "studentId": {
+      "type": "string",
+      "description": "FK to Student"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Session date/time"
+    },
+    "linkedServiceLogEntryId": {
+      "type": "string",
+      "description": "Optional FK to ServiceEntry"
+    },
+    "setting": {
+      "type": "string",
+      "enum": [
+        "InPerson",
+        "Telepractice",
+        "Hybrid"
+      ]
+    },
+    "deliveryMethod": {
+      "type": "string",
+      "enum": [
+        "LiveVoice",
+        "SoundClip"
+      ],
+      "description": "How sounds were delivered"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "Quiet",
+        "TypicalClassroom",
+        "Noisy",
+        "Other"
+      ]
+    },
+    "environmentOther": {
+      "type": "string",
+      "description": "Free text if environment = Other"
+    },
+    "distance": {
+      "type": "string",
+      "enum": [
+        "1ft",
+        "3ft",
+        "6ft",
+        "10ft",
+        "Other"
+      ]
+    },
+    "distanceOther": {
+      "type": "string",
+      "description": "Free text if distance = Other"
+    },
+    "hearingTechWorn": {
+      "type": "string",
+      "enum": [
+        "HA",
+        "CI",
+        "BAHA",
+        "None",
+        "Unknown",
+        "Other"
+      ]
+    },
+    "techStatus": {
+      "type": "string",
+      "enum": [
+        "On",
+        "Off",
+        "Unknown",
+        "NotApplicable"
+      ]
+    },
+    "earTested": {
+      "type": "string",
+      "enum": [
+        "Both",
+        "Left",
+        "Right"
+      ]
+    },
+    "caregiverPresent": {
+      "type": "boolean",
+      "default": false
+    },
+    "notes": {
+      "type": "string",
+      "description": "Session notes (PII-guarded)"
+    },
+    "disclaimerAccepted": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "studentId",
+    "deliveryMethod",
+    "earTested",
+    "disclaimerAccepted"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "name": "PersonalReminder",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Reminder title (required, no PII)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional notes \u2014 no identifiable information"
+    },
+    "linkedStudentId": {
+      "type": "string",
+      "description": "Optional FK to Student"
+    },
+    "linkedStudentInitials": {
+      "type": "string",
+      "description": "Cached student initials for display"
+    },
+    "dueDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the reminder is due"
+    },
+    "reminderLeadTimeMinutes": {
+      "type": "integer",
+      "enum": [
+        5,
+        10,
+        15,
+        30,
+        60,
+        1440
+      ],
+      "default": 15,
+      "description": "Lead time in minutes before dueDateTime to trigger alert"
+    },
+    "recurrence": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Daily",
+        "Weekly",
+        "Monthly",
+        "CustomIntervalDays"
+      ],
+      "default": "None"
+    },
+    "customIntervalDays": {
+      "type": "integer",
+      "description": "Used when recurrence = CustomIntervalDays"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "default": "Medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Pending",
+        "Completed",
+        "Snoozed"
+      ],
+      "default": "Pending"
+    },
+    "snoozeUntil": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a snoozed reminder should re-surface"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "title",
+    "dueDateTime"
+  ]
+}

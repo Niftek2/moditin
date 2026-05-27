@@ -1,0 +1,44 @@
+{
+  "name": "EquipmentLog",
+  "type": "object",
+  "properties": {
+    "equipmentId": {
+      "type": "string",
+      "description": "Reference to Equipment"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Check date"
+    },
+    "checkType": {
+      "type": "string",
+      "enum": [
+        "DailyCheck",
+        "WeeklyCheck",
+        "IssueReport",
+        "Repair",
+        "Replacement"
+      ],
+      "description": "Type of log entry"
+    },
+    "issueDescription": {
+      "type": "string",
+      "description": "Description of issue if any"
+    },
+    "actionTaken": {
+      "type": "string",
+      "description": "Action taken"
+    },
+    "resolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the issue is resolved"
+    }
+  },
+  "required": [
+    "equipmentId",
+    "date",
+    "checkType"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "name": "Quote",
+  "type": "object",
+  "properties": {
+    "quoteNumber": {
+      "type": "string",
+      "description": "Unique quote reference number"
+    },
+    "contactName": {
+      "type": "string",
+      "description": "Name of the contact"
+    },
+    "contactTitle": {
+      "type": "string",
+      "description": "Title of the contact"
+    },
+    "contactEmail": {
+      "type": "string",
+      "description": "Email the quote was sent to"
+    },
+    "schoolName": {
+      "type": "string",
+      "description": "School or district name"
+    },
+    "schoolAddress": {
+      "type": "string",
+      "description": "School address"
+    },
+    "seats": {
+      "type": "integer",
+      "description": "Number of teacher seats"
+    },
+    "planName": {
+      "type": "string",
+      "description": "Plan name (Starter, District, Program)"
+    },
+    "currency": {
+      "type": "string",
+      "enum": [
+        "USD",
+        "CAD"
+      ],
+      "description": "Quote currency"
+    },
+    "pricePerSeat": {
+      "type": "number",
+      "description": "Price per seat per year"
+    },
+    "totalPrice": {
+      "type": "number",
+      "description": "Total annual price"
+    },
+    "quoteDate": {
+      "type": "string",
+      "description": "Human-readable quote date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "viewed",
+        "converted",
+        "expired",
+        "cancelled"
+      ],
+      "default": "sent",
+      "description": "Current status of the quote"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal admin notes"
+    }
+  },
+  "required": [
+    "quoteNumber",
+    "contactEmail",
+    "schoolName"
+  ]
+}

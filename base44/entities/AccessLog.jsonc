@@ -1,0 +1,51 @@
+{
+  "name": "AccessLog",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "ID of the user who performed the action"
+    },
+    "userEmail": {
+      "type": "string",
+      "description": "Email of the user who performed the action"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "StudentViewed",
+        "ServiceLogExported",
+        "ReportGenerated",
+        "StudentDataExported",
+        "TermsAgreed"
+      ],
+      "description": "Type of access, disclosure, or consent event"
+    },
+    "studentId": {
+      "type": "string",
+      "description": "ID of the student record accessed (if applicable)"
+    },
+    "studentInitials": {
+      "type": "string",
+      "description": "Cached student initials for display (initials only)"
+    },
+    "ipAddress": {
+      "type": "string",
+      "description": "IP address of the requesting client"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the access event occurred"
+    },
+    "details": {
+      "type": "string",
+      "description": "Optional additional context (e.g. month exported, terms version)"
+    }
+  },
+  "required": [
+    "userEmail",
+    "action",
+    "timestamp"
+  ]
+}

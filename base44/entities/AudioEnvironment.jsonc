@@ -1,0 +1,42 @@
+{
+  "name": "AudioEnvironment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name of the audio environment"
+    },
+    "fileUrl": {
+      "type": "string",
+      "description": "URL of the uploaded audio file"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the audio environment for context"
+    },
+    "order": {
+      "type": "number",
+      "description": "Order for sorting in the UI",
+      "default": 0
+    },
+    "gain": {
+      "type": "number",
+      "description": "Overall noise gain (0.0 to 1.0)",
+      "default": 0.3
+    },
+    "lowShelfGain": {
+      "type": "number",
+      "description": "Low shelf filter gain",
+      "default": 6
+    },
+    "highShelfGain": {
+      "type": "number",
+      "description": "High shelf filter gain",
+      "default": -12
+    }
+  },
+  "required": [
+    "name",
+    "fileUrl"
+  ]
+}
