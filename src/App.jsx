@@ -15,6 +15,7 @@ import FerpaDpa from './pages/FerpaDpa';
 import DistrictManagerDashboard from './pages/DistrictManagerDashboard';
 import DemoSignups from './pages/DemoSignups';
 import QuotesAdmin from './pages/QuotesAdmin';
+import AppStoreGuide from './pages/AppStoreGuide';
 
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -85,6 +86,7 @@ const AuthenticatedApp = () => {
       <Route path="/QuotesAdmin" element={<QuotesAdmin />} />
       <Route path="/AudioManagement" element={<AudioManagement />} />
       <Route path="/ComplianceReport" element={<LayoutWrapper currentPageName="ComplianceReport"><ComplianceReport /></LayoutWrapper>} />
+      <Route path="/AppStoreGuide" element={<LayoutWrapper currentPageName="AppStoreGuide"><AppStoreGuide /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
