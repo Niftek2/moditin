@@ -26,8 +26,8 @@ Deno.serve(async (req) => {
     const safeText = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const ssml = `<speak><prosody rate="${ratePercent}%">${safeText}</prosody></speak>`;
 
-    // Speechify API (same endpoint serves Studio + Developer keys)
-    const resp = await fetch('https://api.sws.speechify.com/v1/audio/speech', {
+    // Speechify API
+    const resp = await fetch('https://api.speechify.ai/v1/audio/speech', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -37,6 +37,7 @@ Deno.serve(async (req) => {
         input: ssml,
         voice_id: voiceId,
         audio_format: 'mp3',
+        model: 'simba-english',
       }),
     });
 
@@ -50,8 +51,7 @@ Deno.serve(async (req) => {
     }
 
     const data = await resp.json();
-    // Speechify returns { audio_data: <base64 mp3>, ... }
-    const audioBase64 = data.audio_data || data.audioData;
+    const audioBase64 = data.audio_data;
     if (!audioBase64) {
       console.error('Speechify response missing audio_data:', data);
       return Response.json({ error: 'No audio returned' }, { status: 502 });
