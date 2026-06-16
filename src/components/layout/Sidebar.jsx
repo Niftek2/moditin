@@ -50,39 +50,51 @@ const navItems = [
   { name: "Audiogram Plotter", icon: BarChart2, page: "AudiogramPlotter" },
 ];
 
-const RECENTLY_VIEWED_KEY = "modal_recently_viewed_students";
+const RECENTLY_VIEWED_PREFIX = "modal_recently_viewed_students_";
 
-function getRecentStudents() {
-  try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]"); } catch { return []; }
+// Cache the current user id so the synchronous trackStudentView can scope per-user.
+let currentUserId = null;
+base44.auth.me().then(u => { currentUserId = u?.id || null; }).catch(() => {});
+
+function recentKey(userId) {
+  return RECENTLY_VIEWED_PREFIX + (userId || "anon");
+}
+
+function getRecentStudents(userId) {
+  try { return JSON.parse(localStorage.getItem(recentKey(userId)) || "[]"); } catch { return []; }
 }
 
 export function trackStudentView(studentId, studentInitials) {
   if (!studentId) return;
   try {
-    const existing = getRecentStudents().filter(s => s.id !== studentId);
+    const existing = getRecentStudents(currentUserId).filter(s => s.id !== studentId);
     const updated = [{ id: studentId, initials: studentInitials || "?" }, ...existing].slice(0, 3);
-    localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(updated));
+    localStorage.setItem(recentKey(currentUserId), JSON.stringify(updated));
   } catch {}
 }
 
 export default function Sidebar({ currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [recentStudents, setRecentStudents] = useState(getRecentStudents);
+  const [recentStudents, setRecentStudents] = useState([]);
   const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null);
   const queryClient = useQueryClient();
   const { isDemoMode } = useDemo();
 
   useEffect(() => {
-    base44.auth.me().then(u => setUserRole(u?.role)).catch(() => {});
+    base44.auth.me().then(u => {
+      setUserRole(u?.role);
+      setUserId(u?.id || null);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
-    const onStorage = () => setRecentStudents(getRecentStudents());
+    const onStorage = () => setRecentStudents(getRecentStudents(userId));
     window.addEventListener("storage", onStorage);
     // Also poll on page change
-    setRecentStudents(getRecentStudents());
+    setRecentStudents(getRecentStudents(userId));
     return () => window.removeEventListener("storage", onStorage);
-  }, [currentPage]);
+  }, [currentPage, userId]);
 
   const handleLogout = () => {
     // Purge all in-memory cached query data before logout
