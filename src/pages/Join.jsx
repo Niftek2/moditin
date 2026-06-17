@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, FlaskConical, LogIn, Target, Clock, Ear, FileText, Zap, CheckCircle, CalendarDays, MapPin, Wrench, BookOpen, Bell } from "lucide-react";
+import { ArrowRight, FlaskConical, LogIn, Target, Clock, Ear, FileText, Zap, CheckCircle, CalendarDays, MapPin, Wrench, BookOpen, Bell, Smartphone } from "lucide-react";
 import DemoEmailGate from "../components/demo/DemoEmailGate";
+import PWAInstallGuideModal from "../components/shared/PWAInstallGuideModal";
 import { Link } from "react-router-dom";
 
 const FEATURES = [
@@ -20,6 +21,7 @@ const FEATURES = [
 
 export default function JoinPage() {
   const [showDemoGate, setShowDemoGate] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#0d0020] flex overflow-hidden relative">
@@ -129,6 +131,15 @@ export default function JoinPage() {
               </Button>
             </Link>
 
+            {/* Get the App */}
+            <button
+              onClick={() => setShowInstall(true)}
+              className="w-full mt-4 flex items-center justify-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors py-3 rounded-2xl border border-white/15 hover:border-white/30"
+            >
+              <Smartphone className="w-4 h-4" />
+              Install the app on your phone
+            </button>
+
             {/* Trust badges */}
             <div className="mt-8 flex items-center justify-center gap-5 flex-wrap">
               {["14-day free trial", "Cancel anytime"].map((t) =>
@@ -158,6 +169,8 @@ export default function JoinPage() {
           onEnter={() => { setShowDemoGate(false); window.location.href = "/Dashboard?demo=1"; }}
           onCancel={() => setShowDemoGate(false)} />
       }
+
+      {showInstall && <PWAInstallGuideModal onClose={() => setShowInstall(false)} />}
     </div>
   );
 }
