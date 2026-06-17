@@ -23,10 +23,12 @@ import {
   Activity,
   Sparkles,
   AudioWaveform,
-  BarChart2
+  BarChart2,
+  Smartphone
 } from "lucide-react";
 import HearingAidIcon from "../shared/HearingAidIcon";
 import GlobalSearch from "../shared/GlobalSearch";
+import PWAInstallGuideModal from "../shared/PWAInstallGuideModal";
 import { base44 } from "@/api/base44Client";
 import { useDemo } from "../demo/DemoContext";
 
@@ -78,6 +80,7 @@ export default function Sidebar({ currentPage }) {
   const [recentStudents, setRecentStudents] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
   const queryClient = useQueryClient();
   const { isDemoMode } = useDemo();
 
@@ -232,6 +235,13 @@ export default function Sidebar({ currentPage }) {
           </Link>
         )}
         <button
+          onClick={() => { setShowInstall(true); setMobileOpen(false); }}
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-[#4A4A4A] hover:text-[#400070] hover:bg-[#F7F3FA] w-full transition-all"
+        >
+          <Smartphone className="w-5 h-5 text-[#5A5A5A]" />
+          <span>Get the App</span>
+        </button>
+        <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-[#4A4A4A] hover:text-red-500 hover:bg-red-50 w-full transition-all"
         >
@@ -268,6 +278,8 @@ export default function Sidebar({ currentPage }) {
       <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-[var(--modal-border)] pt-1">
         {navContent}
       </aside>
+
+      {showInstall && <PWAInstallGuideModal onClose={() => setShowInstall(false)} />}
     </>
   );
 }

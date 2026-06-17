@@ -7,6 +7,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { PWAInstallProvider } from '@/components/shared/PWAInstallContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SchoolsDistricts from './pages/SchoolsDistricts';
 import AudioManagement from './pages/AudioManagement';
@@ -96,12 +97,14 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <TrafficAnalytics />
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
+        <PWAInstallProvider>
+          <Router>
+            <NavigationTracker />
+            <TrafficAnalytics />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </PWAInstallProvider>
       </QueryClientProvider>
     </AuthProvider>
   )

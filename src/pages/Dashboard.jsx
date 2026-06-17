@@ -20,6 +20,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useDemo } from "../components/demo/DemoContext";
 import GuidedTour, { hasTourBeenDone, resetTour, consumeTourQueue } from "../components/shared/GuidedTour";
 import ComplianceAlert from "../components/compliance/ComplianceAlert";
+import GetTheAppCard from "../components/shared/GetTheAppCard";
 
 export default function Dashboard() {
   useScrollRestore("Dashboard");
@@ -280,6 +281,17 @@ export default function Dashboard() {
           </Link>
           </div>
           </motion.div>
+
+      {/* Get the App invite */}
+      {!isDemoMode && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.3 }}
+        >
+          <GetTheAppCard />
+        </motion.div>
+      )}
 
       {/* BLOCK C: MY STUDENTS */}
       <motion.div
