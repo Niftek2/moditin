@@ -137,7 +137,7 @@ export default function JoinPage() {
               className="w-full mt-4 flex items-center justify-center gap-2 text-sm font-medium text-white/70 hover:text-white transition-colors py-3 rounded-2xl border border-white/15 hover:border-white/30"
             >
               <Smartphone className="w-4 h-4" />
-              Install the app on your phone
+              Get the App
             </button>
 
             {/* Trust badges */}
