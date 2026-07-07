@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import {
   Users, UserPlus, Trash2, Building2, AlertTriangle, Loader2,
-  Check, CreditCard, ArrowUpCircle, X, RefreshCw, Settings
+  Check, CreditCard, ArrowUpCircle, X, RefreshCw, Settings, BookOpen
 } from "lucide-react";
 
 const PLANS = [
@@ -354,11 +354,18 @@ export default function DistrictManagerDashboard() {
               <p className="text-white/90 text-sm">{user?.email}</p>
             </div>
           </div>
-          <Link to="/Settings" title="Settings & Billing">
-            <div className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 flex items-center justify-center transition-all">
-              <Settings className="w-5 h-5 text-white" />
-            </div>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/AgencyOnboardingGuide" title="Onboarding Guide (PDF)">
+              <div className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 flex items-center justify-center transition-all">
+                <BookOpen className="w-5 h-5 text-white" />
+              </div>
+            </Link>
+            <Link to="/Settings" title="Settings & Billing">
+              <div className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 flex items-center justify-center transition-all">
+                <Settings className="w-5 h-5 text-white" />
+              </div>
+            </Link>
+          </div>
         </div>
 
         {/* Subscription Status Card */}
