@@ -8,6 +8,21 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
+    // Manager self-heal: if this user is the purchaser of a district subscription,
+    // make sure they have manager access and are linked to their district record
+    const managedDistricts = await base44.asServiceRole.entities.District.filter({ managerEmail: user.email });
+    if (managedDistricts.length > 0) {
+      const md = managedDistricts[0];
+      if (user.role !== 'manager' && user.role !== 'admin') {
+        await base44.asServiceRole.entities.User.update(user.id, { role: 'manager' });
+        console.log(`Self-heal: promoted ${user.email} to manager of district ${md.id}`);
+      }
+      if (!md.managerUserId) {
+        await base44.asServiceRole.entities.District.update(md.id, { managerUserId: user.id });
+      }
+      return Response.json({ applied: true, isManager: true, districtId: md.id });
+    }
+
     // Already has a district — nothing to do
     if (user.districtId) {
       return Response.json({ applied: false, reason: 'already has district' });
@@ -29,12 +44,10 @@ Deno.serve(async (req) => {
       return Response.json({ applied: false, reason: 'district not found' });
     }
 
-    // Apply district to user
-    await base44.asServiceRole.entities.User.update(user.id, {
-      districtId: assignment.districtId,
-      districtStatus: 'active',
-      role: 'user',
-    });
+    // Apply district to user (never downgrade managers/admins)
+    const updates = { districtId: assignment.districtId, districtStatus: 'active' };
+    if (user.role !== 'manager' && user.role !== 'admin') updates.role = 'user';
+    await base44.asServiceRole.entities.User.update(user.id, updates);
 
     // Mark assignment applied
     await base44.asServiceRole.entities.PendingTeacherAssignment.update(assignment.id, { status: 'applied' });

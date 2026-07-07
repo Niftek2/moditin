@@ -12,6 +12,20 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'no email' });
     }
 
+    // If this new user is the purchaser/manager of a district, promote them immediately
+    const managedDistricts = await base44.asServiceRole.entities.District.filter({ managerEmail: newUser.email });
+    if (managedDistricts.length > 0) {
+      const md = managedDistricts[0];
+      if (newUser.role !== 'admin') {
+        await base44.asServiceRole.entities.User.update(newUser.id, { role: 'manager' });
+      }
+      if (!md.managerUserId) {
+        await base44.asServiceRole.entities.District.update(md.id, { managerUserId: newUser.id });
+      }
+      console.log(`Promoted new user ${newUser.email} to manager of district ${md.id}`);
+      return Response.json({ promoted: true, districtId: md.id });
+    }
+
     const pending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({
       teacherEmail: newUser.email,
       status: 'pending',
@@ -52,12 +66,10 @@ Deno.serve(async (req) => {
     }
     const district = districts[0];
 
-    // Activate the teacher
-    await base44.asServiceRole.entities.User.update(newUser.id, {
-      districtId: assignment.districtId,
-      districtStatus: 'active',
-      role: 'user',
-    });
+    // Activate the teacher (never downgrade managers/admins)
+    const teacherUpdates = { districtId: assignment.districtId, districtStatus: 'active' };
+    if (newUser.role !== 'manager' && newUser.role !== 'admin') teacherUpdates.role = 'user';
+    await base44.asServiceRole.entities.User.update(newUser.id, teacherUpdates);
 
     // Mark assignment applied
     await base44.asServiceRole.entities.PendingTeacherAssignment.update(assignment.id, { status: 'applied' });

@@ -70,19 +70,38 @@ Deno.serve(async (req) => {
             trialEndDate: trialEndDate.toISOString(),
           });
           console.log(`District upgraded: ${districtId}`);
+
+          // Ensure the manager still has the manager role (self-heal on upgrade)
+          try {
+            const mgrs = await base44.asServiceRole.entities.User.filter({ email: existing.managerEmail || purchaserEmail });
+            if (mgrs.length > 0 && mgrs[0].role !== 'manager' && mgrs[0].role !== 'admin') {
+              await base44.asServiceRole.entities.User.update(mgrs[0].id, { role: 'manager' });
+              console.log(`Restored manager role for ${mgrs[0].email}`);
+            }
+          } catch (e) {
+            console.error('Failed to verify manager role on upgrade:', e.message);
+          }
         } else {
           // New district: promote purchaser and create record
-          const purchaserUsers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
           let purchaserUserId = null;
-          if (purchaserUsers.length > 0) {
-            purchaserUserId = purchaserUsers[0].id;
-            await base44.asServiceRole.auth.updateUser(purchaserUserId, { role: 'manager' });
-            console.log(`Promoted ${purchaserEmail} to manager`);
-          } else {
-            await base44.asServiceRole.users.inviteUser(purchaserEmail, 'manager');
-            console.log(`Invited purchaser ${purchaserEmail} as manager`);
-            const newPurchasers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
-            if (newPurchasers.length > 0) purchaserUserId = newPurchasers[0].id;
+          try {
+            const purchaserUsers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+            if (purchaserUsers.length > 0) {
+              purchaserUserId = purchaserUsers[0].id;
+              if (purchaserUsers[0].role !== 'admin') {
+                await base44.asServiceRole.entities.User.update(purchaserUserId, { role: 'manager' });
+              }
+              console.log(`Promoted ${purchaserEmail} to manager`);
+            } else {
+              await base44.asServiceRole.users.inviteUser(purchaserEmail, 'manager');
+              console.log(`Invited purchaser ${purchaserEmail} as manager`);
+              const newPurchasers = await base44.asServiceRole.entities.User.filter({ email: purchaserEmail });
+              if (newPurchasers.length > 0) purchaserUserId = newPurchasers[0].id;
+            }
+          } catch (e) {
+            // Don't let promotion failure block district creation — self-heal
+            // in checkAndApplyMyDistrict/applyPendingAssignments will fix the role later
+            console.error(`Failed to promote/invite purchaser ${purchaserEmail}:`, e.message);
           }
 
           const districtRecord = await base44.asServiceRole.entities.District.create({
@@ -109,17 +128,31 @@ Deno.serve(async (req) => {
     for (const email of teacherEmails) {
       if (!email || email === purchaserEmail) continue;
       try {
-        await base44.asServiceRole.users.inviteUser(email, "user");
-        console.log(`Invited teacher: ${email}`);
-        if (districtId) {
-          await new Promise(r => setTimeout(r, 500));
-          const newUsers = await base44.asServiceRole.entities.User.filter({ email });
-          if (newUsers.length > 0) {
-            await base44.asServiceRole.entities.User.update(newUsers[0].id, {
+        const existingUsers = await base44.asServiceRole.entities.User.filter({ email });
+        if (existingUsers.length > 0) {
+          // Already registered — apply the district license directly
+          if (districtId) {
+            await base44.asServiceRole.entities.User.update(existingUsers[0].id, {
               districtId,
               districtStatus: 'active',
             });
+            console.log(`Linked existing teacher ${email} to district ${districtId}`);
           }
+        } else {
+          // Not registered yet — create a pending assignment so their license
+          // is applied automatically the moment they sign up
+          if (districtId) {
+            await base44.asServiceRole.entities.PendingTeacherAssignment.create({
+              teacherEmail: email,
+              teacherName: '',
+              districtId,
+              districtName: institutionName || '',
+              status: 'pending',
+            });
+            console.log(`Created pending assignment for ${email}`);
+          }
+          await base44.asServiceRole.users.inviteUser(email, "user");
+          console.log(`Invited teacher: ${email}`);
         }
       } catch (e) {
         console.error(`Failed to invite ${email}:`, e.message);

@@ -12,6 +12,23 @@ Deno.serve(async (req) => {
     const students = await base44.entities.Student.filter({ created_by: user.email });
     const studentCount = students.length;
 
+    // Self-heal: if this user purchased a district/school plan, ensure they have manager access
+    try {
+      const managed = await base44.asServiceRole.entities.District.filter({ managerEmail: user.email });
+      if (managed.length > 0) {
+        if (user.role !== 'manager' && user.role !== 'admin') {
+          await base44.asServiceRole.entities.User.update(user.id, { role: 'manager' });
+          user.role = 'manager';
+          console.log(`Self-heal: promoted ${user.email} to manager of district ${managed[0].id}`);
+        }
+        if (!managed[0].managerUserId) {
+          await base44.asServiceRole.entities.District.update(managed[0].id, { managerUserId: user.id });
+        }
+      }
+    } catch (e) {
+      console.error('Manager self-heal failed:', e.message);
+    }
+
     // Check direct Stripe subscription first
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length > 0) {
@@ -45,7 +62,23 @@ Deno.serve(async (req) => {
     } else {
       // Get districtId from user record
       const userRecords = await base44.asServiceRole.entities.User.filter({ email: user.email });
-      const districtId = userRecords[0]?.districtId;
+      let districtId = userRecords[0]?.districtId;
+
+      // Self-heal: apply a pending teacher assignment if their district invited them
+      if (!districtId) {
+        try {
+          const pending = await base44.asServiceRole.entities.PendingTeacherAssignment.filter({ teacherEmail: user.email, status: 'pending' });
+          if (pending.length > 0) {
+            districtId = pending[0].districtId;
+            await base44.asServiceRole.entities.User.update(user.id, { districtId, districtStatus: 'active' });
+            await base44.asServiceRole.entities.PendingTeacherAssignment.update(pending[0].id, { status: 'applied' });
+            console.log(`Self-heal: applied pending district assignment for ${user.email}`);
+          }
+        } catch (e) {
+          console.error('Teacher self-heal failed:', e.message);
+        }
+      }
+
       if (districtId) {
         const districts = await base44.asServiceRole.entities.District.filter({ id: districtId });
         if (districts.length > 0) district = districts[0];
