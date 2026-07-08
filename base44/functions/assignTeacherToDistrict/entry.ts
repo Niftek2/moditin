@@ -1,5 +1,36 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
+async function sendViaGmail(accessToken, to, subject, htmlContent) {
+  const boundary = `boundary_${Date.now()}`;
+  const rawMessage = [
+    `From: Modal Education <sales@modaleducation.com>`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    `MIME-Version: 1.0`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    ``,
+    `--${boundary}`,
+    `Content-Type: text/html; charset=UTF-8`,
+    `Content-Transfer-Encoding: quoted-printable`,
+    ``,
+    htmlContent,
+    `--${boundary}--`,
+  ].join('\r\n');
+  const encoded = btoa(unescape(encodeURIComponent(rawMessage)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ raw: encoded }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`Gmail send error to ${to}:`, err);
+    throw new Error(`Failed to send invitation email`);
+  }
+  return res.json();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -95,9 +126,14 @@ Deno.serve(async (req) => {
       });
       console.log(`Created PendingTeacherAssignment for new user ${teacherEmail}`);
 
-      // Invite the user via the platform
-      await base44.users.inviteUser(teacherEmail, 'user');
-      console.log(`Sent platform invite to new user ${teacherEmail}`);
+      // Invite the user via the platform (non-fatal — managers may not have
+      // platform invite permission, and teachers can self-register anyway)
+      try {
+        await base44.users.inviteUser(teacherEmail, 'user');
+        console.log(`Sent platform invite to new user ${teacherEmail}`);
+      } catch (inviteError) {
+        console.error(`Platform invite failed for ${teacherEmail} (non-fatal):`, inviteError.message);
+      }
 
       // Send our own clear invitation email
       const signUpUrl = 'https://itinerant.modaleducation.com';
@@ -224,12 +260,11 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: teacherEmail,
-        subject: `You've been invited to Modal Itinerant by ${districtName}`,
-        body: inviteEmailBody,
-      });
-      console.log(`Sent custom invite email to new user ${teacherEmail}`);
+      // New users aren't registered in the app yet, so the built-in SendEmail
+      // integration rejects them — send via the Gmail connector instead
+      const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+      await sendViaGmail(accessToken, teacherEmail, `You've been invited to Modal Itinerant by ${districtName}`, inviteEmailBody);
+      console.log(`Sent custom invite email via Gmail to new user ${teacherEmail}`);
     }
 
     console.log(`assignTeacherToDistrict complete: ${teacherEmail} → district ${districtId} (existing: ${isExisting})`);

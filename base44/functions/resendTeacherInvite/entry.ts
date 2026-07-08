@@ -1,5 +1,36 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
+async function sendViaGmail(accessToken, to, subject, htmlContent) {
+  const boundary = `boundary_${Date.now()}`;
+  const rawMessage = [
+    `From: Modal Education <sales@modaleducation.com>`,
+    `To: ${to}`,
+    `Subject: ${subject}`,
+    `MIME-Version: 1.0`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    ``,
+    `--${boundary}`,
+    `Content-Type: text/html; charset=UTF-8`,
+    `Content-Transfer-Encoding: quoted-printable`,
+    ``,
+    htmlContent,
+    `--${boundary}--`,
+  ].join('\r\n');
+  const encoded = btoa(unescape(encodeURIComponent(rawMessage)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ raw: encoded }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`Gmail send error to ${to}:`, err);
+    throw new Error(`Failed to send invitation email`);
+  }
+  return res.json();
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -119,13 +150,16 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: teacherEmail,
-      subject: isExisting
-        ? `Reminder: Log in to Modal Itinerant`
-        : `Reminder: Create your Modal Itinerant account`,
-      body: emailBody,
-    });
+    const subject = isExisting
+      ? `Reminder: Log in to Modal Itinerant`
+      : `Reminder: Create your Modal Itinerant account`;
+    if (isExisting) {
+      await base44.asServiceRole.integrations.Core.SendEmail({ to: teacherEmail, subject, body: emailBody });
+    } else {
+      // Non-registered users can't receive built-in SendEmail — use Gmail connector
+      const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+      await sendViaGmail(accessToken, teacherEmail, subject, emailBody);
+    }
 
     console.log(`Resent invite to ${teacherEmail} (assignment ${pendingAssignmentId})`);
     return Response.json({ success: true });
