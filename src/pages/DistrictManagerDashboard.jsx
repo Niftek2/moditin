@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import {
   Users, UserPlus, Trash2, Building2, AlertTriangle, Loader2,
-  Check, CreditCard, ArrowUpCircle, X, RefreshCw, Settings, BookOpen
+  Check, CreditCard, ArrowUpCircle, X, RefreshCw, Settings, BookOpen, Copy
 } from "lucide-react";
 
 const PLANS = [
@@ -37,6 +37,8 @@ export default function DistrictManagerDashboard() {
   const [addLoading, setAddLoading] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
   const [addError, setAddError] = useState("");
+  const [inviteLinkEmail, setInviteLinkEmail] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   // Focus trap refs for modals
   const removeModalRef = useRef(null);
@@ -187,6 +189,7 @@ export default function DistrictManagerDashboard() {
         districtId: district.id,
       });
       setAddSuccess(true);
+      setInviteLinkEmail(res.data?.emailSent === false ? newEmail : null);
       setNewEmail("");
       setNewName("");
       await loadData();
@@ -197,16 +200,27 @@ export default function DistrictManagerDashboard() {
     }
   };
 
+  const copyInvite = (email, id) => {
+    const text = `You've been invited to Modal Itinerant by ${district?.districtName || "your district"}! Create your account at https://itinerant.modaleducation.com — be sure to sign up with this exact email: ${email}. Your license will be applied automatically.`;
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2500);
+  };
+
   const handleResendInvite = async (pendingId) => {
     setResendingId(pendingId);
     setResendSuccess(null);
     try {
-      await base44.functions.invoke("resendTeacherInvite", {
+      const res = await base44.functions.invoke("resendTeacherInvite", {
         pendingAssignmentId: pendingId,
         districtId: district.id,
       });
-      setResendSuccess(pendingId);
-      setTimeout(() => setResendSuccess(null), 3000);
+      if (res.data?.emailSent === false) {
+        setResendSuccess(null);
+      } else {
+        setResendSuccess(pendingId);
+        setTimeout(() => setResendSuccess(null), 3000);
+      }
     } catch (e) {
       console.error("Failed to resend invite:", e);
     } finally {
@@ -454,10 +468,28 @@ export default function DistrictManagerDashboard() {
             <Input type="email" placeholder="teacher@district.org" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
             <div aria-live="polite" role="status">
               {addError && <p className="text-red-600 text-sm" role="alert">{addError}</p>}
-              {addSuccess && (
+              {addSuccess && !inviteLinkEmail && (
                 <p className="text-green-600 text-sm flex items-center gap-1">
-                  <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with their temporary password.
+                  <Check className="w-4 h-4" /> Teacher invited! They'll receive a welcome email with instructions.
                 </p>
+              )}
+              {addSuccess && inviteLinkEmail && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-2">
+                  <p className="text-amber-800 text-sm">
+                    <Check className="w-4 h-4 inline mr-1 text-green-600" />
+                    Seat reserved for <strong>{inviteLinkEmail}</strong> — but the invite email couldn't be sent automatically. Copy the invitation below and send it to them yourself.
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyInvite(inviteLinkEmail, "add_form")}
+                    className="border-amber-300 text-amber-800 hover:bg-amber-100 text-xs"
+                  >
+                    {copiedId === "add_form" ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3" />}
+                    {copiedId === "add_form" ? "Copied!" : "Copy invitation message"}
+                  </Button>
+                </div>
               )}
             </div>
             <Button
@@ -511,6 +543,17 @@ export default function DistrictManagerDashboard() {
                       <p className="text-blue-600 text-xs">{t.email}</p>
                     </div>
                     <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => copyInvite(t.email, pendingId)}
+                        aria-label={`Copy invitation for ${t.full_name || t.email}`}
+                        className="text-blue-500 hover:text-blue-700 p-1 rounded-lg hover:bg-blue-100 transition-colors"
+                        title="Copy invitation message to share yourself"
+                      >
+                        {copiedId === pendingId
+                          ? <Check className="w-4 h-4 text-green-600" aria-hidden="true" />
+                          : <Copy className="w-4 h-4" aria-hidden="true" />
+                        }
+                      </button>
                       <button
                         onClick={() => handleResendInvite(pendingId)}
                         disabled={resendingId === pendingId}

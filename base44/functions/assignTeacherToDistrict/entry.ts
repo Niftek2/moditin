@@ -57,6 +57,7 @@ Deno.serve(async (req) => {
     // Check if user already exists in the app
     const found = await base44.asServiceRole.entities.User.filter({ email: teacherEmail });
     const isExisting = found.length > 0;
+    let emailSent = true;
 
     if (isExisting) {
       // Existing user — update district info directly
@@ -261,14 +262,21 @@ Deno.serve(async (req) => {
 </html>`;
 
       // New users aren't registered in the app yet, so the built-in SendEmail
-      // integration rejects them — send via the Gmail connector instead
-      const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-      await sendViaGmail(accessToken, teacherEmail, `You've been invited to Modal Itinerant by ${districtName}`, inviteEmailBody);
-      console.log(`Sent custom invite email via Gmail to new user ${teacherEmail}`);
+      // integration rejects them — try the Gmail connector; if it can't send
+      // (e.g. missing permission), don't fail the assignment — the manager
+      // gets a copyable invite link instead.
+      try {
+        const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+        await sendViaGmail(accessToken, teacherEmail, `You've been invited to Modal Itinerant by ${districtName}`, inviteEmailBody);
+        console.log(`Sent custom invite email via Gmail to new user ${teacherEmail}`);
+      } catch (mailError) {
+        emailSent = false;
+        console.error(`Invite email failed for ${teacherEmail} (non-fatal):`, mailError.message);
+      }
     }
 
-    console.log(`assignTeacherToDistrict complete: ${teacherEmail} → district ${districtId} (existing: ${isExisting})`);
-    return Response.json({ success: true, isNewUser: !isExisting });
+    console.log(`assignTeacherToDistrict complete: ${teacherEmail} → district ${districtId} (existing: ${isExisting}, emailSent: ${emailSent})`);
+    return Response.json({ success: true, isNewUser: !isExisting, emailSent, inviteLink: loginUrl });
 
   } catch (error) {
     console.error('assignTeacherToDistrict error:', error);

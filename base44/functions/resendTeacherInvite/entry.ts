@@ -153,16 +153,24 @@ Deno.serve(async (req) => {
     const subject = isExisting
       ? `Reminder: Log in to Modal Itinerant`
       : `Reminder: Create your Modal Itinerant account`;
+    let emailSent = true;
     if (isExisting) {
       await base44.asServiceRole.integrations.Core.SendEmail({ to: teacherEmail, subject, body: emailBody });
     } else {
-      // Non-registered users can't receive built-in SendEmail — use Gmail connector
-      const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
-      await sendViaGmail(accessToken, teacherEmail, subject, emailBody);
+      // Non-registered users can't receive built-in SendEmail — try the Gmail
+      // connector; if it can't send, return gracefully so the manager can
+      // share the invite link manually.
+      try {
+        const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+        await sendViaGmail(accessToken, teacherEmail, subject, emailBody);
+      } catch (mailError) {
+        emailSent = false;
+        console.error(`Resend email failed for ${teacherEmail} (non-fatal):`, mailError.message);
+      }
     }
 
-    console.log(`Resent invite to ${teacherEmail} (assignment ${pendingAssignmentId})`);
-    return Response.json({ success: true });
+    console.log(`Resent invite to ${teacherEmail} (assignment ${pendingAssignmentId}, emailSent: ${emailSent})`);
+    return Response.json({ success: true, emailSent, inviteLink: loginUrl });
   } catch (error) {
     console.error('resendTeacherInvite error:', error);
     return Response.json({ error: error.message }, { status: 500 });
