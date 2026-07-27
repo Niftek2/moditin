@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { PWAInstallProvider } from '@/components/shared/PWAInstallContext';
+import SiteMovedModal from '@/components/shared/SiteMovedModal';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import SchoolsDistricts from './pages/SchoolsDistricts';
 import AudioManagement from './pages/AudioManagement';
@@ -103,6 +104,7 @@ function App() {
           <Router>
             <NavigationTracker />
             <TrafficAnalytics />
+            <SiteMovedModal />
             <AuthenticatedApp />
           </Router>
           <Toaster />
