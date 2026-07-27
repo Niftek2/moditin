@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ArrowRight, Archive } from "lucide-react";
+import { ArrowRight, Archive, Loader2 } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const NEW_SITE_URL = "https://dhhitinerant.com";
 const DISMISS_KEY = "site_moved_dismissed_v1";
@@ -9,9 +10,10 @@ export default function SiteMovedModal() {
     () => sessionStorage.getItem(DISMISS_KEY) === "true"
   );
   const [seconds, setSeconds] = useState(15);
+  const [staying, setStaying] = useState(false);
 
   useEffect(() => {
-    if (dismissed) return;
+    if (dismissed || staying) return;
     const timer = setInterval(() => {
       setSeconds((s) => {
         if (s <= 1) {
@@ -23,10 +25,23 @@ export default function SiteMovedModal() {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [dismissed]);
+  }, [dismissed, staying]);
 
-  const handleStay = () => {
+  const handleStay = async () => {
+    setStaying(true);
     sessionStorage.setItem(DISMISS_KEY, "true");
+    let loggedIn = false;
+    try {
+      loggedIn = await base44.auth.isAuthenticated();
+    } catch (e) {
+      loggedIn = false;
+    }
+    if (!loggedIn && window.location.pathname !== "/Join") {
+      // Signed-out visitors go to the sign-in page to access their archived account
+      window.location.href = "/Join";
+      return;
+    }
+    setStaying(false);
     setDismissed(true);
   };
 
@@ -67,9 +82,10 @@ export default function SiteMovedModal() {
         </a>
         <button
           onClick={handleStay}
-          className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-[#D8CDE5] text-[#400070] font-semibold text-sm hover:bg-[#F7F3FA] transition-colors"
+          disabled={staying}
+          className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-[#D8CDE5] text-[#400070] font-semibold text-sm hover:bg-[#F7F3FA] transition-colors disabled:opacity-60"
         >
-          <Archive className="w-4 h-4" />
+          {staying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Archive className="w-4 h-4" />}
           Stay & View My Archived Account
         </button>
         <p className="text-xs text-[#A0A0A0] mt-3">
