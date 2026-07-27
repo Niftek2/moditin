@@ -12,6 +12,7 @@ import AudioSettings from "../components/shared/AudioSettings";
 import PWAInstallGuideModal from "../components/shared/PWAInstallGuideModal";
 import { resetOnboarding } from "../components/onboarding/OnboardingChecklist";
 import { useDemo } from "../components/demo/DemoContext";
+import ExportMyDataCard from "../components/settings/ExportMyDataCard";
 
 const DEMO_USER = { firstName: "Nadia", email: "nadia@itinerant.modaleducation.com" };
 
@@ -124,6 +125,9 @@ export default function SettingsPage() {
       <PageHeader title="Settings" subtitle="Account settings" />
 
       <div className="space-y-6 max-w-2xl">
+        {/* Export data for the new site */}
+        <ExportMyDataCard />
+
         {/* Account */}
         <div className="modal-card p-6">
           <div className="flex items-center justify-between mb-4">

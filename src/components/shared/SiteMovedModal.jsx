@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Archive } from "lucide-react";
 
 const NEW_SITE_URL = "https://dhhitinerant.com";
+const DISMISS_KEY = "site_moved_dismissed_v1";
 
 export default function SiteMovedModal() {
+  const [dismissed, setDismissed] = useState(
+    () => sessionStorage.getItem(DISMISS_KEY) === "true"
+  );
   const [seconds, setSeconds] = useState(15);
 
   useEffect(() => {
+    if (dismissed) return;
     const timer = setInterval(() => {
       setSeconds((s) => {
         if (s <= 1) {
@@ -18,7 +23,14 @@ export default function SiteMovedModal() {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [dismissed]);
+
+  const handleStay = () => {
+    sessionStorage.setItem(DISMISS_KEY, "true");
+    setDismissed(true);
+  };
+
+  if (dismissed) return null;
 
   return (
     <div
@@ -40,17 +52,29 @@ export default function SiteMovedModal() {
         </p>
         <p className="font-bold text-[#400070] text-lg mb-4">dhhitinerant.com</p>
         <p className="text-sm text-[#4A4A4A] mb-6">
-          Your account and all of your data are waiting for you there. You'll be
-          redirected automatically in <span className="font-semibold">{seconds}</span> second{seconds === 1 ? "" : "s"}.
+          You'll be redirected automatically in{" "}
+          <span className="font-semibold">{seconds}</span> second{seconds === 1 ? "" : "s"}.
+          Or stay here to view your archived account and export your data for
+          transfer to the new site.
         </p>
         <a
           href={NEW_SITE_URL}
-          className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white font-semibold text-base"
+          className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white font-semibold text-base mb-3"
           style={{ background: "linear-gradient(135deg, #400070 0%, #6B2FB9 100%)" }}
         >
           Go to the New Site Now
           <ArrowRight className="w-4 h-4" />
         </a>
+        <button
+          onClick={handleStay}
+          className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-[#D8CDE5] text-[#400070] font-semibold text-sm hover:bg-[#F7F3FA] transition-colors"
+        >
+          <Archive className="w-4 h-4" />
+          Stay & View My Archived Account
+        </button>
+        <p className="text-xs text-[#A0A0A0] mt-3">
+          You can export your data from Settings → Export My Data.
+        </p>
       </div>
     </div>
   );
